@@ -30,13 +30,14 @@ import org.diylc.swingframework.IDrawingProvider;
   import com.lowagie.text.pdf.PdfTemplate;
   import com.lowagie.text.pdf.PdfWriter;
 */
-import com.lowagie.itext.Document;
-import com.lowagie.itext.DocumentException;
-import com.lowagie.itext.pdf.BaseFont;
-import com.lowagie.itext.pdf.DefaultFontMapper;
-import com.lowagie.itext.pdf.PdfContentByte;
-import com.lowagie.itext.pdf.PdfTemplate;
-import com.lowagie.itext.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+//import com.lowagie.itext.DocumentException;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+//import com.lowagie.itext.pdf.DefaultFontMapper;
+//import com.lowagie.itext.pdf.PdfContentByte;
+//import com.lowagie.itext.pdf.PdfTemplate;
+import com.itextpdf.kernel.pdf.PdfWriter;
 
 /**
  * Utility class that handles image exports to:
@@ -90,16 +91,16 @@ public class DrawingExporter {
 
 			Dimension d = provider.getSize();
 
-			double pageRatio = pageFormat.getWidth()
-			    / pageFormat.getHeight();
+			double pageRatio = (pageFormat.getWidth()
+					    / pageFormat.getHeight());
 			double imageRatio = d.getWidth() / d.getHeight();
 			double scale;
 			if (imageRatio > pageRatio) {
-			    scale = (pageFormat.getWidth() - 2 * margin)
-				/ d.getWidth();
+			    scale = ((pageFormat.getWidth() - 2 * margin)
+				     / d.getWidth());
 			} else {
-			    scale = (pageFormat.getHeight() - 2 * margin)
-				/ d.getHeight();
+			    scale = ((pageFormat.getHeight() - 2 * margin)
+				     / d.getHeight());
 			}
 			if (scale > 1) {
 			    scale = 1d;
@@ -114,11 +115,13 @@ public class DrawingExporter {
 
 			if (scale < 1) {
 			    String warningStr = "Note: image has been scaled down to fit the page.";
-			    g2d.drawString(warningStr, 0, (int) (d.getHeight()
-								 * scale + metrics.getHeight()));
+			    g2d.drawString(warningStr,
+					   0,
+					   (int) (d.getHeight() * scale
+						  + metrics.getHeight()));
 			}
 
-			//					g2d.scale(scale, scale);
+			// g2d.scale(scale, scale);
 
 			provider.draw(pageIndex, g2d, scale);
 
@@ -136,21 +139,31 @@ public class DrawingExporter {
      * 
      * @param provider
      * @param file
-     * @throws DocumentException
+     // * @throws DocumentException
      * @throws FileNotFoundException
      */
     public void exportPDF(IDrawingProvider provider, File file)
-	throws FileNotFoundException, DocumentException {
+	throws FileNotFoundException {
+	//throws FileNotFoundException, DocumentException {
+
 	Dimension d = provider.getSize();
 	// We have to scale everything down because PDF resolution is slightly
 	// lower.
 	double factor = 1f * PDF_RESOLUTION / SCREEN_RESOLUTION;
 	float totalWidth = (float) (factor * (2 * margin + d.getWidth()));
 	float totalHeight = (float) (factor * (2 * margin + d.getHeight()));
-	Document document = new Document(new com.lowagie.text.Rectangle(
-									totalWidth, totalHeight));
-	PdfWriter writer = PdfWriter.getInstance(document,
-						 new FileOutputStream(file));
+	/*
+	Document document =
+	    new Document(new com.lowagie.text.Rectangle(totalWidth, totalHeight));
+	PdfWriter writer =
+	    PdfWriter.getInstance(document, new FileOutputStream(file));
+	*/
+	PdfWriter writer = new PdfWriter(OUTPUT_FILE,
+					 new WriterProperties());
+	PdfDocument pdfDoc = new PdfDocument(writer);
+	// TODO: Use size from totalWidth * totalHeight!
+	// PageSize.A4.rotate() is just a placeholder! //ola 20191217
+	Document document = new Document(pdfDoc, PageSize.A4.rotate());
 	document.open();
 	DefaultFontMapper mapper = new DefaultFontMapper() {
 		@Override
@@ -182,8 +195,10 @@ public class DrawingExporter {
 	    PdfContentByte contentByte = writer.getDirectContent();
 	    PdfTemplate template = contentByte.createTemplate(totalWidth,
 							      totalHeight);
-	    Graphics2D g2d = template.createGraphics((float) (factor * d
-							      .getWidth()), (float) (factor * d.getHeight()), mapper);
+	    Graphics2D g2d =
+		template.createGraphics((float) (factor * d.getWidth()),
+					(float) (factor * d.getHeight()),
+					mapper);
 	    //			g2d.scale(factor, factor);
 	    provider.draw(i, g2d, factor);
 	    contentByte.addTemplate(template, (float) margin, (float) margin);
