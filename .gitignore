@@ -4,5 +4,6 @@
 *.eml
 \#*
 .\#*
+log/
 target/
 typescript
