@@ -1,3 +1,16 @@
+DIY Layout Creator
+==================
+
+* Build
+
+  mvn package
+
+or
+
+  mvn -B package 2>&1 | tee log/mvn.out
+
+* Original README
+
 <p align="justify"><strong>DIYLC is provided free of charge and can be used and redistributed freely. Please note that it takes a lot of time and effort to build, test and maintain it and to interact with the growing community of users. If you find DIYLC useful and want to support further development, please consider making a small PayPal donation. Every little bit counts! If you have some extra parts, transistors, tubes, ICs, caps...anything useful for a fellow DIYer, I'll gladly accept a donation in parts.</strong></p>
 <p align="center"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U6GLS8HLTSU88" rel="nofollow"><img src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif"></a> </p>
 <a href="https://github.com/bancika/diy-layout-creator/releases/latest">Click here</a> to get the latest version for all platforms.</a><br>
