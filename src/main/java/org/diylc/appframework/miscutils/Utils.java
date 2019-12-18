@@ -132,82 +132,12 @@ public class Utils {
 
 	return classes;
     }
-    /*
-    private static Set<Class<?>> getClasses(ClassLoader loader, String packageName)
-	throws IOException, ClassNotFoundException {
-
-	Set<Class<?>> classes = new HashSet<Class<?>>();
-	String path = packageName.replace('.', '/');
-	Enumeration<URL> resources = loader.getResources(path);
-	if (resources != null) {
-	    while (resources.hasMoreElements()) {
-		String filePath = URLDecoder.decode(resources.nextElement().getFile(), "UTF-8");
-
-		if (filePath != null) {
-		    if ((filePath.indexOf("!") > 0)
-			&& (filePath.indexOf(".jar") > 0)) {
-
-			String jarPath =
-			    filePath.substring(0, filePath.lastIndexOf("!")).substring(filePath.indexOf(":") + 1);
-
-			classes.addAll(getFromJARFile(jarPath, path));
-		    } else {
-			classes.addAll(getFromDirectory(new File(filePath), packageName));
-		    }
-		}
-	    }
-	}
-	return classes;
-    }
-    */
-
-    public static Set<Class<?>> getFromDirectory(File directory, String packageName)
-	throws ClassNotFoundException {
-	
-	Set<Class<?>> classes = new HashSet<Class<?>>();
-	if (directory.exists()) {
-	    LOG.debug("Scanning directory: " + directory.getAbsolutePath());
-	    for (String file : directory.list()) {
-		if (file.endsWith(".class")) {
-		    String name = packageName + '.' + stripFilenameExtension(file);
-		    Class<?> clazz = Class.forName(name);
-		    classes.add(clazz);
-		}
-	    }
-	}
-	return classes;
-    }
 
     private static String stripFilenameExtension(String file) {
 	int i = file.length() - 1;
 	while (file.charAt(i) != '.' && i > 0)
 	    i--;
 	return file.substring(0, i);
-    }
-
-    public static Set<Class<?>> getFromJARFile(String jar, String packageName)
-	throws FileNotFoundException, IOException, ClassNotFoundException {
-
-	Set<Class<?>> classes = new HashSet<Class<?>>();
-	LOG.debug("Scanning jar: " + jar);
-	JarInputStream jarFile = new JarInputStream(new FileInputStream(jar));
-	try {
-	    JarEntry jarEntry;
-	    do {
-		jarEntry = jarFile.getNextJarEntry();
-		if (jarEntry != null) {
-		    String className = jarEntry.getName();
-		    if (className.endsWith(".class")) {
-			className = stripFilenameExtension(className);
-			if (className.startsWith(packageName))
-			    classes.add(Class.forName(className.replace('/', '.')));
-		    }
-		}
-	    } while (jarEntry != null);
-	} finally {
-	    jarFile.close();
-	}
-	return classes;
     }
 
     /**
