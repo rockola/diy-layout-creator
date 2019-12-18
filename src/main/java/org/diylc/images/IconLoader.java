@@ -93,7 +93,8 @@ public enum IconLoader {
     }
 
     public Icon getIcon() {
-	String path = "/resources/org/diylc/images/" + name;
+	//String path = "/resources/org/diylc/images/" + name;
+	String path = name;
 	java.net.URL imgURL = getClass().getResource(path);
 	if (imgURL != null) {
 	    return new ImageIcon(imgURL, name);
