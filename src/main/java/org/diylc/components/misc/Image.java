@@ -62,7 +62,7 @@ public class Image extends AbstractTransparentComponent<Void> {
     private static byte DEFAULT_SCALE = 25;
 
     static {
-	String name = "image.png";
+	String name = "/org/diylc/images/image.png";
 	java.net.URL imgURL = Image.class.getResource(name);
 	if (imgURL != null) {
 	    ICON = new ImageIcon(imgURL, name);
@@ -85,7 +85,7 @@ public class Image extends AbstractTransparentComponent<Void> {
 
     public Image() {
 	try {
-	    data = IOUtils.toByteArray(Image.class.getResourceAsStream("image.png"));
+	    data = IOUtils.toByteArray(Image.class.getResourceAsStream("/org/diylc/images/image.png"));
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
