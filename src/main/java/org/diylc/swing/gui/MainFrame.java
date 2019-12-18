@@ -1,5 +1,4 @@
 /*
-
   DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2018 held jointly by the individual authors.
 
@@ -107,6 +106,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     public MainFrame() {
 	super("DIYLC 3");
+
 	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	setPreferredSize(new Dimension(1024, 700));
 	createBasePanels();
