@@ -54,7 +54,9 @@ public class Serializer {
 	XStream.setupDefaultSecurity(xsj); // to be removed after 1.5		
 	String[] allowTypes = new String[] {
 	    "org.diylc.**",
-	    "com.diyfever.**"
+	    "com.diyfever.**",
+	    "java.lang.**",
+	    "java.awt.**",
 	};
 	xs.allowTypesByWildcard(allowTypes);
 	xsd.allowTypesByWildcard(allowTypes);
@@ -67,6 +69,17 @@ public class Serializer {
 	initSerializer();
 	BufferedInputStream in =
 	    new BufferedInputStream(new URL(url).openStream());
+	Object o = xsd.fromXML(in);
+	in.close();
+	return o;
+    }
+
+    public static Object fromResource(String r)
+	throws IOException {
+
+	initSerializer();
+	BufferedInputStream in =
+	    new BufferedInputStream(Serializer.class.getResourceAsStream(r));
 	Object o = xsd.fromXML(in);
 	in.close();
 	return o;
