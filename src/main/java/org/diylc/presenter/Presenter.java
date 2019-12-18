@@ -108,7 +108,7 @@ public class Presenter implements IPlugInPort {
 	try {
 	    @SuppressWarnings("unchecked")
 		List<Version> allVersions =
-		(List<Version>) Serializer.fromFile("update.xml");
+		(List<Version>) Serializer.fromResource("/org/diylc/update.xml");
 	    CURRENT_VERSION = allVersions.get(allVersions.size() - 1).getVersionNumber();
 	    LOG.info("Current DIYLC version: " + CURRENT_VERSION);
 	    RECENT_VERSIONS = allVersions.subList(allVersions.size() - 10, allVersions.size());
@@ -130,8 +130,10 @@ public class Presenter implements IPlugInPort {
 	try {
 	    @SuppressWarnings("unchecked")
 		Map<String, List<Template>> map =
-		(Map<String, List<Template>>) Serializer.fromFile("variants.xml");
-	    defaultVariantMap = new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
+		(Map<String, List<Template>>) Serializer.fromResource("/org/diylc/variants.xml");
+	    LOG.info("Loading default variant map");
+	    defaultVariantMap =
+		new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	    defaultVariantMap.putAll(map);
 	    LOG.info(String.format("Loaded default variants for %d components",
 				   (defaultVariantMap == null
@@ -404,12 +406,18 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, List<ComponentType>> getComponentTypes() {
+	LOG.info("getComponentTypes()");
 	if (componentTypes == null) {
 	    LOG.info("Loading component types.");
 	    componentTypes = new HashMap<String, List<ComponentType>>();
 	    Set<Class<?>> componentTypeClasses = null;
 	    try {
 		componentTypeClasses = Utils.getClasses("org.diylc.components");
+		/*
+		  // removed functionality - does this do anything? //ola 20191218
+		  // if it does do something (loads component classes from "library" (?))
+		  // it should probably use Utils.getClasses() as above
+
 		try {
 		    List<Class<?>> additionalComponentTypeClasses =
 			JarScanner.getInstance().scanFolder("library", IDIYComponent.class);
@@ -418,9 +426,12 @@ public class Presenter implements IPlugInPort {
 		} catch (Exception e) {
 		    LOG.warn("Could not find additional type classes", e);
 		}
+		*/
 
 		for (Class<?> clazz : componentTypeClasses) {
-		    if (!Modifier.isAbstract(clazz.getModifiers()) && IDIYComponent.class.isAssignableFrom(clazz)) {
+		    if (!Modifier.isAbstract(clazz.getModifiers())
+			&& IDIYComponent.class.isAssignableFrom(clazz)) {
+
 			ComponentType componentType =
 			    ComponentProcessor.getInstance().extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) clazz);
 			if (componentType == null)
@@ -2321,8 +2332,10 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public List<Template> getVariantsFor(ComponentType type) {
-	Map<String, List<Template>> lookupMap = new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
+	Map<String, List<Template>> lookupMap =
+	    new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 
+	LOG.info("Getting variant map from [" + TEMPLATES_KEY + "]");
 	Map<String, List<Template>> variantMap =
 	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
 	if (variantMap != null)
@@ -2669,27 +2682,34 @@ public class Presenter implements IPlugInPort {
 
 	upgradedVariants = true;
 
-	LOG.info("Checking if variants need to be updated");
-	Map<String, List<Template>> lookupMap = new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
+	LOG.info("Checking if variants need to be updated using ["
+		 + TEMPLATES_KEY + "]");
+	Map<String, List<Template>> lookupMap =
+	    new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	Map<String, List<Template>> variantMap =
 	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
 
 	if (variantMap == null)
 	    return;
 
-	Map<String, ComponentType> typeMap = new TreeMap<String, ComponentType>(String.CASE_INSENSITIVE_ORDER);
+	Map<String, ComponentType> typeMap =
+	    new TreeMap<String, ComponentType>(String.CASE_INSENSITIVE_ORDER);
 
+	LOG.info("Getting component types");
 	Map<String, List<ComponentType>> componentTypes = getComponentTypes();
-	for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet())
+	for (Map.Entry<String, List<ComponentType>> entry
+		 : componentTypes.entrySet())
 	    for (ComponentType type : entry.getValue()) {
 		typeMap.put(type.getInstanceClass().getCanonicalName(), type);
 		typeMap.put(type.getCategory() + "." + type.getName(), type);
 		if (type.getCategory().contains("Electro-Mechanical"))
-		    typeMap.put(type.getCategory().replace("Electro-Mechanical", "Electromechanical") + "." + type.getName(),
+		    typeMap.put(type.getCategory().replace("Electro-Mechanical",
+							   "Electromechanical") + "." + type.getName(),
 				type);
 	    }
 
-	Map<String, List<Template>> newVariantMap = new HashMap<String, List<Template>>();
+	Map<String, List<Template>> newVariantMap =
+	    new HashMap<String, List<Template>>();
 
 	lookupMap.putAll(variantMap);
 
