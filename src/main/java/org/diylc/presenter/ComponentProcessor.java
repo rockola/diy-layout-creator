@@ -131,7 +131,7 @@ public class ComponentProcessor {
 	    componentInstance.drawIcon(g2d, Presenter.ICON_SIZE, Presenter.ICON_SIZE);
 	    icon = new ImageIcon(image);
 	} catch (Exception e) {
-	    LOG.error("Error drawing component icon", e);
+	    LOG.error("Error drawing component icon for " + clazz.getName(), e);
 	}
 	ComponentType componentType =
 	    new ComponentType(name, description, creationMethod, category, namePrefix,
