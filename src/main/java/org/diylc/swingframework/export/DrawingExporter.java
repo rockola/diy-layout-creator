@@ -6,15 +6,19 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -31,6 +35,7 @@ import org.diylc.swingframework.IDrawingProvider;
   import com.lowagie.text.pdf.PdfWriter;
 */
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 //import com.lowagie.itext.DocumentException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -38,6 +43,13 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 //import com.lowagie.itext.pdf.PdfContentByte;
 //import com.lowagie.itext.pdf.PdfTemplate;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+
+import com.orsonpdf.PDFDocument;
+import com.orsonpdf.PDFGraphics2D;
+import com.orsonpdf.Page;
 
 /**
  * Utility class that handles image exports to:
@@ -143,7 +155,7 @@ public class DrawingExporter {
      * @throws FileNotFoundException
      */
     public void exportPDF(IDrawingProvider provider, File file)
-	throws FileNotFoundException {
+	throws FileNotFoundException, IOException {
 	//throws FileNotFoundException, DocumentException {
 
 	Dimension d = provider.getSize();
@@ -158,13 +170,18 @@ public class DrawingExporter {
 	PdfWriter writer =
 	    PdfWriter.getInstance(document, new FileOutputStream(file));
 	*/
-	PdfWriter writer = new PdfWriter(OUTPUT_FILE,
-					 new WriterProperties());
+	PdfWriter writer = new PdfWriter(file);
 	PdfDocument pdfDoc = new PdfDocument(writer);
 	// TODO: Use size from totalWidth * totalHeight!
 	// PageSize.A4.rotate() is just a placeholder! //ola 20191217
-	Document document = new Document(pdfDoc, PageSize.A4.rotate());
-	document.open();
+	//Document document = new Document(pdfDoc, PageSize.A4.rotate());
+	Document document = new Document(pdfDoc);
+	PDFDocument graphicPage = new PDFDocument();
+	Rectangle boundingRectangle = new Rectangle((int) totalWidth,
+						    (int) totalHeight);
+	Page page = graphicPage.createPage(boundingRectangle);
+	//document.open();
+	/* iText 5 stuff
 	DefaultFontMapper mapper = new DefaultFontMapper() {
 		@Override
 		public BaseFontParameters getBaseFontParameters(String arg0) {
@@ -181,6 +198,7 @@ public class DrawingExporter {
 	} else if (Utils.isUnix()) {
 	    mapper.insertDirectory("/usr/share/fonts/truetype/");
 	}
+	*/
 	// Map map = mapper.getMapper();
 	// for (Iterator i = map.keySet().iterator(); i.hasNext();) {
 	// String name = (String) i.next();
@@ -190,8 +208,10 @@ public class DrawingExporter {
 
 	for (int i = 0; i < provider.getPageCount(); i++) {
 	    if (i > 0) {
-		document.newPage();
+		// document.newPage();
+		page = graphicPage.createPage(boundingRectangle);
 	    }
+	    /*
 	    PdfContentByte contentByte = writer.getDirectContent();
 	    PdfTemplate template = contentByte.createTemplate(totalWidth,
 							      totalHeight);
@@ -203,6 +223,15 @@ public class DrawingExporter {
 	    provider.draw(i, g2d, factor);
 	    contentByte.addTemplate(template, (float) margin, (float) margin);
 	    g2d.dispose();
+	    */
+	    PDFGraphics2D g2 = page.getGraphics2D();
+	    provider.draw(i, g2, factor);
+
+	    PdfReader r = new PdfReader(new ByteArrayInputStream(graphicPage.getPDFBytes()));
+	    PdfDocument gDoc = new PdfDocument(r);
+	    PdfFormXObject c = gDoc.getFirstPage().copyAsFormXObject(pdfDoc);
+	    Image im = new Image(c);
+	    document.add(im);
 	}
 	document.close();
     }
