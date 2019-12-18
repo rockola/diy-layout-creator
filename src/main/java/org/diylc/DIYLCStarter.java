@@ -74,11 +74,13 @@ public class DIYLCStarter {
 
 	ConfigurationManager.initialize("diylc");
 
-	LOG.debug("Java version: " + System.getProperty("java.runtime.version") + " by "
-		  + System.getProperty("java.vm.vendor"));
-	LOG.debug("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+	LOG.debug("Java version: " + System.getProperty("java.runtime.version")
+		  + " by " + System.getProperty("java.vm.vendor"));
+	LOG.debug("OS: " + System.getProperty("os.name") + " "
+		  + System.getProperty("os.version"));
 
-	LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
+	LOG.info("Starting DIYLC with working directory "
+		 + System.getProperty("user.dir"));
 
 	try {
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -97,9 +99,13 @@ public class DIYLCStarter {
 
 		    for (int i = 0; i < fonts.length; i++) {
 			try {
-			    LOG.info("Dynamically loading font: " + fonts[i].getName());
-			    Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fonts[i].getAbsolutePath())).deriveFont(12f);
-			    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			    LOG.info("Dynamically loading font: "
+				     + fonts[i].getName());
+			    Font customFont =
+				Font.createFont(Font.TRUETYPE_FONT,
+						new File(fonts[i].getAbsolutePath())).deriveFont(12f);
+			    GraphicsEnvironment ge =
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
 			    // register the font
 			    ge.registerFont(customFont);
 			} catch (IOException e) {
