@@ -10,8 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import org.diylc.appframework.Serializer;
 
 public class UpdateChecker {
 
@@ -34,10 +33,8 @@ public class UpdateChecker {
     @SuppressWarnings("unchecked")
     public List<Version> findNewVersions() throws Exception {
 	LOG.info("Trying to download file: " + updateFileURL);
-	BufferedInputStream in = new BufferedInputStream(new URL(updateFileURL).openStream());
-	XStream xStream = new XStream(new DomDriver());
-	List<Version> allVersions = (List<Version>) xStream.fromXML(in);
-	in.close();
+	List<Version> allVersions =
+	    (List<Version>) Serializer.fromURL(updateFileURL);
 	List<Version> filteredVersions = new ArrayList<Version>();
 	for (Version version : allVersions) {
 	    if (currentVersion.compareTo(version.getVersionNumber()) < 0) {
@@ -53,7 +50,9 @@ public class UpdateChecker {
 	List<Version> versions = findNewVersions();
 	if (versions != null && !versions.isEmpty()) {
 	    Version v = versions.get(0);
-	    return v.getName() + "v" + v.getVersionNumber() + " released on " + dateFormat.format(v.getReleaseDate());
+	    return v.getName()
+		+ "v" + v.getVersionNumber()
+		+ " released on " + dateFormat.format(v.getReleaseDate());
 	}
 	return null;
     }
@@ -68,11 +67,17 @@ public class UpdateChecker {
 	    String changeStr = "";
 	    for (Change change : version.getChanges()) {
 		changeStr +=
-		    String.format(CHANGE_HTML, convertChangeTypeToHTML(change.getChangeType()), change.getDescription());
+		    String.format(CHANGE_HTML,
+				  convertChangeTypeToHTML(change.getChangeType()),
+				  change.getDescription());
 	    }
 	    bodyHtml +=
-		String.format(VERSION_HTML, version.getVersionNumber().getMajor(), version.getVersionNumber().getMinor(),
-			      version.getVersionNumber().getBuild(), dateFormat.format(version.getReleaseDate()), changeStr);
+		String.format(VERSION_HTML,
+			      version.getVersionNumber().getMajor(),
+			      version.getVersionNumber().getMinor(),
+			      version.getVersionNumber().getBuild(),
+			      dateFormat.format(version.getReleaseDate()),
+			      changeStr);
 	}
 	return String.format(MAIN_HTML, bodyHtml);
     }
