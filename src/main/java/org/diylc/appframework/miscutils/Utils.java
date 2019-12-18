@@ -122,7 +122,7 @@ public class Utils {
 	Set<Class<?>> classes = new HashSet<Class<?>>();
 
 	ClassPath cp = ClassPath.from(loader);
-	for (ClassPath.ClassInfo ci : cp.getTopLevelClasses(packageName)) {
+	for (ClassPath.ClassInfo ci : cp.getTopLevelClassesRecursive(packageName)) {
 	    
 	    LOG.debug("Found class [" + ci.getSimpleName()
 		      + "] in package [" + ci.getPackageName()
