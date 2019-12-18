@@ -1,23 +1,21 @@
 /*
-
   DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2018 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 package org.diylc.presenter;
 
@@ -120,10 +118,14 @@ public class ComponentProcessor {
 	try {
 	    IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
 	    Image image =
-		new BufferedImage(Presenter.ICON_SIZE, Presenter.ICON_SIZE, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+		new BufferedImage(Presenter.ICON_SIZE,
+				  Presenter.ICON_SIZE,
+				  java.awt.image.BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = (Graphics2D) image.getGraphics();
-	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				 RenderingHints.VALUE_ANTIALIAS_ON);
+	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+				 RenderingHints.VALUE_RENDER_QUALITY);
 	    // g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
 	    // RenderingHints.VALUE_STROKE_PURE);
 	    componentInstance.drawIcon(g2d, Presenter.ICON_SIZE, Presenter.ICON_SIZE);
@@ -132,8 +134,10 @@ public class ComponentProcessor {
 	    LOG.error("Error drawing component icon", e);
 	}
 	ComponentType componentType =
-	    new ComponentType(name, description, creationMethod, category, namePrefix, author, icon, clazz, zOrder,
-			      flexibleZOrder, bomPolicy, autoEdit, transformer, keywordPolicy, keywordTag);
+	    new ComponentType(name, description, creationMethod, category, namePrefix,
+			      author, icon, clazz, zOrder,
+			      flexibleZOrder, bomPolicy, autoEdit, transformer,
+			      keywordPolicy, keywordTag);
 	componentTypeMap.put(clazz.getName(), componentType);
 	return componentType;
     }
@@ -152,7 +156,9 @@ public class ComponentProcessor {
 	for (Method getter : clazz.getMethods()) {
 	    if (getter.getName().startsWith("get")) {
 		try {
-		    if (getter.isAnnotationPresent(EditableProperty.class) && !getter.isAnnotationPresent(Deprecated.class)) {
+		    if (getter.isAnnotationPresent(EditableProperty.class)
+			&& !getter.isAnnotationPresent(Deprecated.class)) {
+
 			EditableProperty annotation = getter.getAnnotation(EditableProperty.class);
 			String name;
 			if (annotation.name().equals("")) {
@@ -161,10 +167,16 @@ public class ComponentProcessor {
 			    name = annotation.name();
 			}
 			IPropertyValidator validator = getPropertyValidator(annotation.validatorClass());
-			Method setter = clazz.getMethod("set" + getter.getName().substring(3), getter.getReturnType());
+			Method setter = clazz.getMethod("set" + getter.getName().substring(3),
+							getter.getReturnType());
 			PropertyWrapper property =
-			    new PropertyWrapper(name, getter.getReturnType(), getter.getName(), setter.getName(),
-						annotation.defaultable(), validator, annotation.sortOrder());
+			    new PropertyWrapper(name,
+						getter.getReturnType(),
+						getter.getName(),
+						setter.getName(),
+						annotation.defaultable(),
+						validator,
+						annotation.sortOrder());
 			properties.add(property);
 		    }
 		} catch (NoSuchMethodException e) {
