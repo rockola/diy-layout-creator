@@ -52,12 +52,15 @@ import java.util.TreeMap;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+
+import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.JarScanner;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
+
 import org.diylc.common.BuildingBlockPackage;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
@@ -89,9 +92,6 @@ import org.diylc.netlist.Position;
 import org.diylc.netlist.SwitchSetup;
 import org.diylc.utils.Constants;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 /**
  * The main presenter class, contains core app logic and drawing routines.
  * 
@@ -106,10 +106,9 @@ public class Presenter implements IPlugInPort {
     // Read the latest version from the local update.xml file
     static {
 	try {
-	    BufferedInputStream in = new BufferedInputStream(new FileInputStream("update.xml"));
-	    XStream xStream = new XStream(new DomDriver());
 	    @SuppressWarnings("unchecked")
-		List<Version> allVersions = (List<Version>) xStream.fromXML(in);
+		List<Version> allVersions =
+		(List<Version>) Serializer.fromFile("update.xml");
 	    CURRENT_VERSION = allVersions.get(allVersions.size() - 1).getVersionNumber();
 	    LOG.info("Current DIYLC version: " + CURRENT_VERSION);
 	    RECENT_VERSIONS = allVersions.subList(allVersions.size() - 10, allVersions.size());
@@ -120,7 +119,6 @@ public class Presenter implements IPlugInPort {
 			return -o1.getVersionNumber().compareTo(o2.getVersionNumber());
 		    }
 		});
-	    in.close();
 	} catch (IOException e) {
 	    LOG.error("Could not find version number, using default", e);
 	}
@@ -130,21 +128,22 @@ public class Presenter implements IPlugInPort {
     private static Map<String, List<Template>> defaultVariantMap = null;
     static {
 	try {
-	    BufferedInputStream in = new BufferedInputStream(new FileInputStream("variants.xml"));
-	    XStream xStream = new XStream(new DomDriver());
 	    @SuppressWarnings("unchecked")
-		Map<String, List<Template>> map = (Map<String, List<Template>>) xStream.fromXML(in);
+		Map<String, List<Template>> map =
+		(Map<String, List<Template>>) Serializer.fromFile("variants.xml");
 	    defaultVariantMap = new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	    defaultVariantMap.putAll(map);
-	    in.close();
-	    LOG.info(String.format("Loaded default variants for %d components", defaultVariantMap == null ? 0
-				   : defaultVariantMap.size()));
+	    LOG.info(String.format("Loaded default variants for %d components",
+				   (defaultVariantMap == null
+				    ? 0
+				    : defaultVariantMap.size())));
 	} catch (IOException e) {
 	    LOG.error("Could not load default variants", e);
 	}
     }
 
-    public static final List<IDIYComponent<?>> EMPTY_SELECTION = Collections.emptyList();
+    public static final List<IDIYComponent<?>> EMPTY_SELECTION =
+	Collections.emptyList();
 
     public static final int ICON_SIZE = 32;
 
@@ -153,16 +152,18 @@ public class Presenter implements IPlugInPort {
     private Project currentProject;
     private Map<String, List<ComponentType>> componentTypes;
     /**
-     * {@link List} of {@link IAutoCreator} objects that are capable of creating more components
-     * automatically when a component is created, e.g. Solder Pads.
+     * {@link List} of {@link IAutoCreator} objects that are capable
+     * of creating more components automatically when a component is
+     * created, e.g. Solder Pads.
      */
     private List<IAutoCreator> autoCreators;
     // Maps component class names to ComponentType objects.
     private List<IPlugIn> plugIns;
 
     private Set<IDIYComponent<?>> selectedComponents;
-    // Maps components that have at least one dragged point to set of indices
-    // that designate which of their control points are being dragged.
+    // Maps components that have at least one dragged point to set of
+    // indices that designate which of their control points are being
+    // dragged.
     private Map<IDIYComponent<?>, Set<Integer>> controlPointMap;
     private Set<IDIYComponent<?>> lockedComponents;
 
@@ -209,7 +210,8 @@ public class Presenter implements IPlugInPort {
     }
 
     public void installPlugin(IPlugIn plugIn) {
-	LOG.info(String.format("installPlugin(%s)", plugIn.getClass().getSimpleName()));
+	LOG.info(String.format("installPlugin(%s)",
+			       plugIn.getClass().getSimpleName()));
 	plugIns.add(plugIn);
 	plugIn.connect(this);
 	messageDispatcher.registerListener(plugIn);
@@ -225,7 +227,8 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public Double[] getAvailableZoomLevels() {
-	return new Double[] {0.25d, 0.3333d, 0.5d, 0.6667d, 0.75d, 1d, 1.25d, 1.5d, 2d, 2.5d, 3d};
+	return new Double[] {0.25d, 0.3333d, 0.5d, 0.6667d, 0.75d, 1d,
+			     1.25d, 1.5d, 2d, 2.5d, 3d};
     }
 
     @Override
@@ -2303,10 +2306,7 @@ public class Presenter implements IPlugInPort {
 		}
 	    }
 	    try {
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("variants.xml"));
-		XStream xStream = new XStream(new DomDriver());
-		xStream.toXML(defaultVariantMap, out);
-		out.close();
+		Serializer.toFile("variants.xml", defaultVariantMap);
 		// no more user variants
 		ConfigurationManager.getInstance().writeValue(TEMPLATES_KEY, null);
 		LOG.info("Saved default variants");
@@ -2601,12 +2601,8 @@ public class Presenter implements IPlugInPort {
     @Override
     public int importVariants(String fileName) throws IOException {
 	LOG.debug(String.format("importVariants(%s)", fileName));
-	BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName));
-	XStream xStream = new XStream(new DomDriver());
 
-	VariantPackage pkg = (VariantPackage) xStream.fromXML(in);
-
-	in.close();
+	VariantPackage pkg = (VariantPackage) Serializer.fromFile(fileName);	
 
 	if (pkg == null || pkg.getVariants().isEmpty())
 	    return 0;
@@ -2640,12 +2636,9 @@ public class Presenter implements IPlugInPort {
     @Override
     public int importBlocks(String fileName) throws IOException {
 	LOG.debug(String.format("importBlocks(%s)", fileName));
-	BufferedInputStream in = new BufferedInputStream(new FileInputStream(fileName));
-	XStream xStream = new XStream(new DomDriver());
 
-	BuildingBlockPackage pkg = (BuildingBlockPackage) xStream.fromXML(in);
-
-	in.close();
+	BuildingBlockPackage pkg =
+	    (BuildingBlockPackage) Serializer.fromFile(fileName);
 
 	if (pkg == null || pkg.getBlocks().isEmpty())
 	    return 0;
