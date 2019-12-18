@@ -161,8 +161,9 @@ public class Utils {
 	return file.substring(0, i);
     }
 
-    public static Set<Class<?>> getFromJARFile(String jar, String packageName) throws FileNotFoundException, IOException,
-										      ClassNotFoundException {
+    public static Set<Class<?>> getFromJARFile(String jar, String packageName)
+	throws FileNotFoundException, IOException, ClassNotFoundException {
+
 	Set<Class<?>> classes = new HashSet<Class<?>>();
 	LOG.debug("Scanning jar: " + jar);
 	JarInputStream jarFile = new JarInputStream(new FileInputStream(jar));
