@@ -19,9 +19,9 @@ or
 
 # License
 
-Source code is released under (https://www.gnu.org/licenses/gpl-3.0.txt)[GNU General Public License version 3].
+Source code is released under [https://www.gnu.org/licenses/gpl-3.0.txt](GNU General Public License version 3).
 
-(https://itextpdf.com)[iText 7] is licensed under the AGPL license. 
+[https://itextpdf.com](iText 7) is licensed under the AGPL license. 
 
 # Original README
 
