@@ -110,8 +110,9 @@ public class Utils {
 	return getClasses(loader, packageName);
     }
 
-    public static Set<Class<?>> getClasses(ClassLoader loader, String packageName) throws IOException,
-											  ClassNotFoundException {
+    private static Set<Class<?>> getClasses(ClassLoader loader, String packageName)
+	throws IOException, ClassNotFoundException {
+
 	Set<Class<?>> classes = new HashSet<Class<?>>();
 	String path = packageName.replace('.', '/');
 	Enumeration<URL> resources = loader.getResources(path);
@@ -120,8 +121,11 @@ public class Utils {
 		String filePath = URLDecoder.decode(resources.nextElement().getFile(), "UTF-8");
 
 		if (filePath != null) {
-		    if ((filePath.indexOf("!") > 0) && (filePath.indexOf(".jar") > 0)) {
-			String jarPath = filePath.substring(0, filePath.lastIndexOf("!")).substring(filePath.indexOf(":") + 1);
+		    if ((filePath.indexOf("!") > 0)
+			&& (filePath.indexOf(".jar") > 0)) {
+
+			String jarPath =
+			    filePath.substring(0, filePath.lastIndexOf("!")).substring(filePath.indexOf(":") + 1);
 
 			classes.addAll(getFromJARFile(jarPath, path));
 		    } else {
@@ -133,7 +137,9 @@ public class Utils {
 	return classes;
     }
 
-    public static Set<Class<?>> getFromDirectory(File directory, String packageName) throws ClassNotFoundException {
+    public static Set<Class<?>> getFromDirectory(File directory, String packageName)
+	throws ClassNotFoundException {
+	
 	Set<Class<?>> classes = new HashSet<Class<?>>();
 	if (directory.exists()) {
 	    LOG.debug("Scanning directory: " + directory.getAbsolutePath());
