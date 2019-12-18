@@ -96,8 +96,8 @@ public class ProjectFileManager {
 
 	XStream.setupDefaultSecurity(xStream);
 	String[] allowTypes = new String[] {
-	    "org.diylc.**"
-	    // "com.diyfever.**"
+	    "org.diylc.**",
+	    "java.awt.**"
 	};
 	xStream.allowTypesByWildcard(allowTypes);
 
@@ -119,8 +119,12 @@ public class ProjectFileManager {
 	xStream.addImmutableType(org.diylc.core.measures.Power.class);
 	xStream.addImmutableType(org.diylc.core.measures.Inductance.class);
 	xStream.addImmutableType(org.diylc.core.measures.Size.class);
+
 	this.xStreamOld = new XStream(new DomDriver());
 	xStreamOld.autodetectAnnotations(true);
+	XStream.setupDefaultSecurity(xStreamOld);
+	xStreamOld.allowTypesByWildcard(allowTypes);
+
 	this.messageDispatcher = messageDispatcher;
     }
 
