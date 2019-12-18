@@ -1,6 +1,9 @@
 DIY Layout Creator
 ==================
 
+This version is self-contained (no jar files except those fetched by
+Maven) and can be compiled in a modern Java environment (e.g. OpenJDK 11).
+
 ## Build
 
     mvn package
