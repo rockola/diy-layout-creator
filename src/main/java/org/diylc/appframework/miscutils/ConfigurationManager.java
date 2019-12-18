@@ -76,7 +76,8 @@ public class ConfigurationManager {
     private void initializeConfiguration() {
 	LOG.info("Initializing configuration");
 
-	File configFile = new File(path + fileName);
+	String configFileName = path + fileName;
+	File configFile = new File(configFileName);
 	// if there's no file in the preferred folder, look for it in the app folder
 	if (!configFile.exists()) {
 	    configFile = new File(fileName);
@@ -85,7 +86,7 @@ public class ConfigurationManager {
 	    try {
 		// Reader reader = new InputStreamReader(in, "UTF-8");
 		configuration =
-		    (Map<String, Object>) Serializer.fromFile(configFile);
+		    (Map<String, Object>) Serializer.fromFile(configFileName);
 	    } catch (Exception e) {
 		LOG.error("Could not initialize configuration", e);
 		// make a backup of the old config file
@@ -123,9 +124,9 @@ public class ConfigurationManager {
     private void saveConfiguration() {
 	LOG.info("Saving configuration");
 
-	File configFile = new File(path + fileName);
-	new File(path).mkdirs();
+	String configFile = path + fileName;
 	try {
+	    new File(path).mkdirs();
 	    // Writer writer = new OutputStreamWriter(out, "UTF-8");
 	    Serializer.toFile(configFile, configuration);
 	} catch (Exception e) {
