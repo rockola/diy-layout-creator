@@ -34,6 +34,8 @@ import org.diylc.images.IconLoader;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.ISwingUI;
 
+import org.diylc.appframework.Serializer;
+
 /**
  * Controls configuration menu.
  * 
