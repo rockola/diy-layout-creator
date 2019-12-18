@@ -88,6 +88,11 @@ public class DIYLCStarter {
 	    LOG.error("Could not set Look&Feel", e);
 	}
     
+	/*
+	  // TODO:
+	  //Should be done using getResource()
+	  //and also should be done with free fonts
+
 	Thread fontThread = new Thread(new Runnable() {
 
 		@Override
@@ -123,6 +128,7 @@ public class DIYLCStarter {
 		}
 	    });
 	fontThread.start();
+	*/
 
 	String val = System.getProperty(SCRIPT_RUN);
 	if (!"true".equals(val)) {
