@@ -51,118 +51,118 @@ import org.diylc.swingframework.FontChooserComboBox;
  */
 public class DIYLCStarter {
 
-  private static final Logger LOG = Logger.getLogger(DIYLCStarter.class);
+    private static final Logger LOG = Logger.getLogger(DIYLCStarter.class);
 
-  private static final String SCRIPT_RUN = "org.diylc.scriptRun";
+    private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
-    // Initialize splash screen
-    final SplashScreen splash = SplashScreen.getSplashScreen();
-    new DIYLCSplash(splash).start();    
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+	// Initialize splash screen
+	final SplashScreen splash = SplashScreen.getSplashScreen();
+	new DIYLCSplash(splash).start();
 
-    URL url = DIYLCStarter.class.getResource("log4j.properties");
-    Properties properties = new Properties();
-    try {
-      properties.load(url.openStream());
-      PropertyConfigurator.configure(properties);
-    } catch (Exception e) {
-      LOG.error("Could not initialize log4j configuration", e);
-    }
+	URL url = DIYLCStarter.class.getResource("log4j.properties");
+	Properties properties = new Properties();
+	try {
+	    properties.load(url.openStream());
+	    PropertyConfigurator.configure(properties);
+	} catch (Exception e) {
+	    LOG.error("Could not initialize log4j configuration", e);
+	}
 
-    ConfigurationManager.initialize("diylc");
+	ConfigurationManager.initialize("diylc");
 
-    LOG.debug("Java version: " + System.getProperty("java.runtime.version") + " by "
-        + System.getProperty("java.vm.vendor"));
-    LOG.debug("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
+	LOG.debug("Java version: " + System.getProperty("java.runtime.version") + " by "
+		  + System.getProperty("java.vm.vendor"));
+	LOG.debug("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"));
 
-    LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
+	LOG.info("Starting DIYLC with working directory " + System.getProperty("user.dir"));
 
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) {
-      LOG.error("Could not set Look&Feel", e);
-    }
+	try {
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	} catch (Exception e) {
+	    LOG.error("Could not set Look&Feel", e);
+	}
     
-    Thread fontThread = new Thread(new Runnable() {
+	Thread fontThread = new Thread(new Runnable() {
 
-      @Override
-      public void run() {        
-        LOG.debug("Starting font pre-loading");
+		@Override
+		public void run() {        
+		    LOG.debug("Starting font pre-loading");
         
-        File dir = new File("fonts");
-        File[] fonts = dir.listFiles();
+		    File dir = new File("fonts");
+		    File[] fonts = dir.listFiles();
 
-        for (int i = 0; i < fonts.length; i++) {
-          try {
-            LOG.info("Dynamically loading font: " + fonts[i].getName());
-            Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fonts[i].getAbsolutePath())).deriveFont(12f);
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            // register the font
-            ge.registerFont(customFont);
-          } catch (IOException e) {
-            LOG.error("Could not load font", e);
-          } catch (FontFormatException e) {
-            LOG.error("Font format error", e);
-          }
-        }
+		    for (int i = 0; i < fonts.length; i++) {
+			try {
+			    LOG.info("Dynamically loading font: " + fonts[i].getName());
+			    Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fonts[i].getAbsolutePath())).deriveFont(12f);
+			    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			    // register the font
+			    ge.registerFont(customFont);
+			} catch (IOException e) {
+			    LOG.error("Could not load font", e);
+			} catch (FontFormatException e) {
+			    LOG.error("Font format error", e);
+			}
+		    }
         
-        FontChooserComboBox box = new FontChooserComboBox();
-        box.getPreferredSize();
-        JPanel p = new JPanel();
-        box.paint(p.getGraphics());
-        LOG.debug("Finished font pre-loading");
-      }
-    });
-    fontThread.start();
+		    FontChooserComboBox box = new FontChooserComboBox();
+		    box.getPreferredSize();
+		    JPanel p = new JPanel();
+		    box.paint(p.getGraphics());
+		    LOG.debug("Finished font pre-loading");
+		}
+	    });
+	fontThread.start();
 
-    String val = System.getProperty(SCRIPT_RUN);
-    if (!"true".equals(val)) {
-      int response =
-          JOptionPane.showConfirmDialog(null, "It is not recommended to run DIYLC by clicking on the diylc.jar file.\n"
-              + "Please use diylc.exe on Windows or run.sh on OSX/Linux to ensure the best\n"
-              + "performance and reliability. Do you want to continue?", "DIYLC", JOptionPane.YES_NO_OPTION,
-              JOptionPane.WARNING_MESSAGE);
-      if (response != JOptionPane.YES_OPTION) {
-        System.exit(0);
-      }
-    }
+	String val = System.getProperty(SCRIPT_RUN);
+	if (!"true".equals(val)) {
+	    int response =
+		JOptionPane.showConfirmDialog(null, "It is not recommended to run DIYLC by clicking on the diylc.jar file.\n"
+					      + "Please use diylc.exe on Windows or run.sh on OSX/Linux to ensure the best\n"
+					      + "performance and reliability. Do you want to continue?", "DIYLC", JOptionPane.YES_NO_OPTION,
+					      JOptionPane.WARNING_MESSAGE);
+	    if (response != JOptionPane.YES_OPTION) {
+		System.exit(0);
+	    }
+	}
 
-    MainFrame mainFrame = new MainFrame();
-    mainFrame.setLocationRelativeTo(null);
-    mainFrame.setVisible(true);
-    if (args.length > 0) {
-      mainFrame.getPresenter().loadProjectFromFile(args[0]);
-    } else {
-      boolean showTemplates = ConfigurationManager.getInstance().readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, false);
-      if (showTemplates) {
-        TemplateDialog templateDialog = new TemplateDialog(mainFrame, mainFrame.getPresenter());
-        if (!templateDialog.getFiles().isEmpty()) {
-          templateDialog.setVisible(true);
-        }
-      }
-    }
+	MainFrame mainFrame = new MainFrame();
+	mainFrame.setLocationRelativeTo(null);
+	mainFrame.setVisible(true);
+	if (args.length > 0) {
+	    mainFrame.getPresenter().loadProjectFromFile(args[0]);
+	} else {
+	    boolean showTemplates = ConfigurationManager.getInstance().readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, false);
+	    if (showTemplates) {
+		TemplateDialog templateDialog = new TemplateDialog(mainFrame, mainFrame.getPresenter());
+		if (!templateDialog.getFiles().isEmpty()) {
+		    templateDialog.setVisible(true);
+		}
+	    }
+	}
 
-    properties = new Properties();
-    try {
-      LOG.info("Injecting default properties.");
-      File f = new File("config.properties");
-      if (f.exists()) {
-        properties.load(new FileInputStream(f));
-        PropertyInjector.injectProperties(properties);
-      }
-    } catch (Exception e) {
-      LOG.error("Could not read config.properties file", e);
-    }
+	properties = new Properties();
+	try {
+	    LOG.info("Injecting default properties.");
+	    File f = new File("config.properties");
+	    if (f.exists()) {
+		properties.load(new FileInputStream(f));
+		PropertyInjector.injectProperties(properties);
+	    }
+	} catch (Exception e) {
+	    LOG.error("Could not read config.properties file", e);
+	}
     
-    if (ConfigurationManager.getInstance().isFileWithErrors())
-      mainFrame.showMessage("<html>"
-          + "There was an error reading the configuration file and it was replaced by a default configuration.<br>"
-          + "The backup file is created and placed in user directory under '.diylc' sub-directory with '~' at the end.<br>"
-          + "This can happen when running two versions of DIYLC on the same machine at the same time.<br>"          
-          + "Replace the main 'config.xml' file with the backup when running the latest version of DIYLC."
-          + "</html>", "Warning", IView.WARNING_MESSAGE);
-  }
+	if (ConfigurationManager.getInstance().isFileWithErrors())
+	    mainFrame.showMessage("<html>"
+				  + "There was an error reading the configuration file and it was replaced by a default configuration.<br>"
+				  + "The backup file is created and placed in user directory under '.diylc' sub-directory with '~' at the end.<br>"
+				  + "This can happen when running two versions of DIYLC on the same machine at the same time.<br>"
+				  + "Replace the main 'config.xml' file with the backup when running the latest version of DIYLC."
+				  + "</html>", "Warning", IView.WARNING_MESSAGE);
+    }
 }
