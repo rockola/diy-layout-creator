@@ -66,7 +66,12 @@ public class PhpFlatProxy implements IFlatProxy {
 	    return null;
 	}
 	// Deserialize the stream
-	return Serializer.fromInputStream(stream);
+	try {
+	    return Serializer.fromInputStream(stream);
+	} catch (IOException e) {
+	    LOG.error(e);
+	}
+	return null;
     }
 
     private String createPhpFileName(String url, String methodName) {
