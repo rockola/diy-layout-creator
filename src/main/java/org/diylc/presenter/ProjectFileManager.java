@@ -93,6 +93,14 @@ public class ProjectFileManager {
 		    };
 		}
 	    };
+
+	XStream.setupDefaultSecurity(xStream);
+	String[] allowTypes = new String[] {
+	    "org.diylc.**"
+	    // "com.diyfever.**"
+	};
+	xStream.allowTypesByWildcard(allowTypes);
+
 	xStream.autodetectAnnotations(true);
 	xStream.alias("point", java.awt.Point.class);
 	xStream.alias("font", java.awt.Font.class);
