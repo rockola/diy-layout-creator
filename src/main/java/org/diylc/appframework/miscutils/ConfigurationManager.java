@@ -120,7 +120,7 @@ public class ConfigurationManager {
 	}
     }
 
-    private void saveConfigration() {
+    private void saveConfiguration() {
 	LOG.info("Saving configuration");
 
 	File configFile = new File(path + fileName);
@@ -183,7 +183,7 @@ public class ConfigurationManager {
 
     public void writeValue(String key, Object value) {
 	configuration.put(key, value);
-	saveConfigration();
+	saveConfiguration();
 	if (listeners.containsKey(key)) {
 	    for (IConfigListener listener : listeners.get(key)) {
 		listener.valueChanged(key, value);
