@@ -334,7 +334,9 @@ public class MainFrame extends JFrame implements ISwingUI {
     }
 
     @Override
-    public void injectDynamicSubmenu(String name, Icon icon, String parentMenuName, final IDynamicSubmenuHandler handler) {
+    public void injectDynamicSubmenu(String name, Icon icon, String parentMenuName,
+				     final IDynamicSubmenuHandler handler) {
+
 	LOG.info(String.format("injectDynamicSubmenu(%s, icon, %s)", name, parentMenuName));
 	final JMenu menu = findOrCreateMenu(parentMenuName);
 	final JMenu submenu = new JMenu(name);
@@ -381,6 +383,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     @Override
     public <T extends Object> void executeBackgroundTask(final ITask<T> task, boolean blockUI) {
+
 	if (blockUI)
 	    getGlassPane().setVisible(true);
 	SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
@@ -443,8 +446,11 @@ public class MainFrame extends JFrame implements ISwingUI {
 		    fileName = "Untitled";
 		}
 		String modified = (Boolean) params[1] ? " (modified)" : "";
-		setTitle(String.format("DIYLC G3 version %s.%s - %s %s", plugInPort.getCurrentVersionNumber().getMinor(),
-				       plugInPort.getCurrentVersionNumber().getBuild(), fileName, modified));
+		setTitle(String.format("DIYLC G3 version %s.%s - %s %s",
+				       plugInPort.getCurrentVersionNumber().getMinor(),
+				       plugInPort.getCurrentVersionNumber().getBuild(),
+				       fileName,
+				       modified));
 	    }
 	}
     }
