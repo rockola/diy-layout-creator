@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import org.diylc.appframework.Serializer;
+
 /**
  * {@link IFlatProxy} implementation for PHP. Method names are
  * interpreted as PHP script names, excluding the ".php"
