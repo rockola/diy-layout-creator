@@ -1,7 +1,7 @@
 DIY Layout Creator
 ==================
 
-* Build
+# Build
 
   mvn package
 
@@ -9,21 +9,21 @@ or
 
   mvn -B package 2>&1 | tee log/mvn.out
 
-* Run
+# Run
 
   mvn exec:exec
 
 or
 
-  mvn exec:exec 2>&1 | tee log/run-$(date +%Y%m%d%H%M)
+  mvn -B exec:exec 2>&1 | tee log/run-$(date +%Y%m%d%H%M)
 
-* License
+# License
 
 Source code is released under (https://www.gnu.org/licenses/gpl-3.0.txt)[GNU General Public License version 3].
 
 (https://itextpdf.com)[iText 7] is licensed under the AGPL license. 
 
-* Original README
+# Original README
 
 <p align="justify"><strong>DIYLC is provided free of charge and can be used and redistributed freely. Please note that it takes a lot of time and effort to build, test and maintain it and to interact with the growing community of users. If you find DIYLC useful and want to support further development, please consider making a small PayPal donation. Every little bit counts! If you have some extra parts, transistors, tubes, ICs, caps...anything useful for a fellow DIYer, I'll gladly accept a donation in parts.</strong></p>
 <p align="center"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U6GLS8HLTSU88" rel="nofollow"><img src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif"></a> </p>
