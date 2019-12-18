@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import org.diylc.appframework.images.IconLoader;
+import org.diylc.images.IconLoader;
 import org.diylc.swingframework.IDrawingProvider;
 import org.diylc.swingframework.images.CursorLoader;
 

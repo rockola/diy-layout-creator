@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import org.diylc.appframework.images.IconLoader;
+import org.diylc.images.IconLoader;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
