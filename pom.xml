@@ -272,6 +272,8 @@
                 <mainClass>DIYLCRunner</mainClass>
 		-->
                 <mainClass>DIYLCStarter</mainClass>
+		<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+		<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               </manifest>
             </archive>
           </configuration>
