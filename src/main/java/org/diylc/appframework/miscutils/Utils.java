@@ -19,6 +19,8 @@ import java.util.jar.JarInputStream;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.reflect.ClassPath;
+
 public class Utils {
 
     private static final Logger LOG = Logger.getLogger(Utils.class);
@@ -118,6 +120,23 @@ public class Utils {
 	throws IOException, ClassNotFoundException {
 
 	Set<Class<?>> classes = new HashSet<Class<?>>();
+
+	ClassPath cp = ClassPath.from(loader);
+	for (ClassPath.ClassInfo ci : cp.getTopLevelClasses(packageName)) {
+	    
+	    LOG.debug("Found class [" + ci.getSimpleName()
+		      + "] in package [" + ci.getPackageName()
+		      + "] aka [" + ci.getName() + "]");
+	    classes.add(ci.load());
+	}
+
+	return classes;
+    }
+    /*
+    private static Set<Class<?>> getClasses(ClassLoader loader, String packageName)
+	throws IOException, ClassNotFoundException {
+
+	Set<Class<?>> classes = new HashSet<Class<?>>();
 	String path = packageName.replace('.', '/');
 	Enumeration<URL> resources = loader.getResources(path);
 	if (resources != null) {
@@ -140,6 +159,7 @@ public class Utils {
 	}
 	return classes;
     }
+    */
 
     public static Set<Class<?>> getFromDirectory(File directory, String packageName)
 	throws ClassNotFoundException {
