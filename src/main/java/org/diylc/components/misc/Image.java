@@ -150,14 +150,17 @@ public class Image extends AbstractTransparentComponent<Void> {
 
     public ImageIcon getImage() {
 	if (image != null) {
+	    /*
+	      REMOVED for use of sun.awt.image
+	      
+	      Any old files requiring this could be e.g. converted
+	      with an external utility //ola 20191220
+
 	    // when loading old files, convert the stored image to
 	    // byte array and then then discard it, we won't be
 	    // needing it anymore
 
-	    //BufferedImage bi = ((ToolkitImage) image.getImage()).getBufferedImage();
-	    BufferedImage bi = new BufferedImage(image.getWidth(null),
-						 image.getHeight(null),
-						 BufferedImage.TYPE_INT_ARGB);
+	    BufferedImage bi = ((ToolkitImage) image.getImage()).getBufferedImage();
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    try {
 		ImageIO.write(bi, "png", baos);
@@ -166,6 +169,7 @@ public class Image extends AbstractTransparentComponent<Void> {
 	    } catch (IOException e) {
 	    }      
 	    // don't save back to the file
+	    */
 	    image = null;
 	}
 
