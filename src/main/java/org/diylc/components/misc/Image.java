@@ -1,22 +1,22 @@
 /*
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2019 held jointly by
- * the individual authors.
- * 
- * This file is part of DIYLC.
- * 
- * DIYLC is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * DIYLC is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC). Copyright (c) 2009-2019 held jointly by
+  the individual authors.
+  
+  This file is part of DIYLC.
+  
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.components.misc;
 
 import java.awt.AlphaComposite;
@@ -46,13 +46,14 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PercentEditor;
 
-import sun.awt.image.ToolkitImage;
+// import sun.awt.image.ToolkitImage;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 
 @ComponentDescriptor(name = "Image", author = "Branislav Stojkovic", category = "Misc",
-		     description = "User defined image", instanceNamePrefix = "Img", zOrder = IDIYComponent.COMPONENT,
+		     description = "User defined image", instanceNamePrefix = "Img",
+		     zOrder = IDIYComponent.COMPONENT,
 		     flexibleZOrder = true, bomPolicy = BomPolicy.NEVER_SHOW)
 public class Image extends AbstractTransparentComponent<Void> {
 
@@ -96,13 +97,15 @@ public class Image extends AbstractTransparentComponent<Void> {
 		     IDrawingObserver drawingObserver) {
 	double s = 1d * getScale() / DEFAULT_SCALE;
 	Shape clip = g2d.getClip().getBounds();
-	if (!clip.intersects(new Rectangle2D.Double(point.getX(), point.getY(), getImage().getIconWidth() * s, getImage()
-						    .getIconHeight() * s))) {
+	if (!clip.intersects(new Rectangle2D.Double(point.getX(), point.getY(),
+						    getImage().getIconWidth() * s,
+						    getImage().getIconHeight() * s))) {
 	    return;
 	}
 	Composite oldComposite = g2d.getComposite();
 	if (alpha < MAX_ALPHA) {
-	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+							1f * alpha / MAX_ALPHA));
 	}
 
 	g2d.scale(s, s);
@@ -112,7 +115,9 @@ public class Image extends AbstractTransparentComponent<Void> {
 	    g2d.scale(1 / s, 1 / s);
 	    g2d.setColor(SELECTION_COLOR);
 	    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-	    g2d.drawRect(point.x, point.y, (int) (getImage().getIconWidth() * s), (int) (getImage().getIconHeight() * s));
+	    g2d.drawRect(point.x, point.y,
+			 (int) (getImage().getIconWidth() * s),
+			 (int) (getImage().getIconHeight() * s));
 	}
     }
 
@@ -148,7 +153,9 @@ public class Image extends AbstractTransparentComponent<Void> {
 
     public ImageIcon getImage() {
 	if (image != null) {
-	    // when loading old files, convert the stored image to byte array and then then discard it, we won't be needing it anymore
+	    // when loading old files, convert the stored image to
+	    // byte array and then then discard it, we won't be
+	    // needing it anymore
 	    BufferedImage bi = ((ToolkitImage) image.getImage()).getBufferedImage();
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    try {
