@@ -141,7 +141,9 @@ public class ProjectFileManager {
 	    try {
 		componentTypeClasses = Utils.getClasses("org.diylc.parsing");
 		for (Class<?> clazz : componentTypeClasses) {
-		    if (!Modifier.isAbstract(clazz.getModifiers()) && IOldFileParser.class.isAssignableFrom(clazz)) {
+		    if (!Modifier.isAbstract(clazz.getModifiers())
+			&& IOldFileParser.class.isAssignableFrom(clazz)) {
+
 			IOldFileParser instance = (IOldFileParser) clazz.newInstance();
 			parsers.add(instance);
 		    }
