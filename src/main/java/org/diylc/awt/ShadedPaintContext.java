@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.awt;
 
@@ -31,10 +29,10 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.Raster;
 import java.lang.ref.WeakReference;
 
-import sun.awt.image.IntegerComponentRaster;
+// import sun.awt.image.IntegerComponentRaster;
 
 public class ShadedPaintContext implements PaintContext {
-  
+
     static ColorModel xrgbmodel =
         new DirectColorModel(24, 0x00ff0000, 0x0000ff00, 0x000000ff);
     static ColorModel xbgrmodel =
@@ -50,10 +48,10 @@ public class ShadedPaintContext implements PaintContext {
                 if (ras != null &&
                     ras.getWidth() >= w &&
                     ras.getHeight() >= h)
-                {
-                    cached = null;
-                    return ras;
-                }
+		    {
+			cached = null;
+			return ras;
+		    }
             }
         }
         return cm.createCompatibleWritableRaster(w, h);
@@ -88,8 +86,8 @@ public class ShadedPaintContext implements PaintContext {
     ColorModel model;
 
     public ShadedPaintContext(ColorModel cm,
-                                Point2D p1, Point2D p2, AffineTransform xform,
-                                Color c1, Color c2) {
+			      Point2D p1, Point2D p2, AffineTransform xform,
+			      Color c1, Color c2) {
         // First calculate the distance moved in user space when
         // we move a single unit along the X & Y axes in device space.
         Point2D xvec = new Point2D.Double(1, 0);
@@ -144,7 +142,7 @@ public class ShadedPaintContext implements PaintContext {
                 Color c = c1; c1 = c2; c2 = c;
                 dx = -dx;
                 dy = -dy;
-            }            
+            }
         }
 
         Point2D dp1 = xform.transform(p1, null);
@@ -170,11 +168,11 @@ public class ShadedPaintContext implements PaintContext {
                     dcm.getRedMask() == 0xff &&
                     dcm.getGreenMask() == 0xff00 &&
                     dcm.getBlueMask() == 0xff0000)
-                {
-                    model = xbgrmodel;
-                    tmp = r1; r1 = b1; b1 = tmp;
-                    tmp = dr; dr = db; db = tmp;
-                }
+		    {
+			model = xbgrmodel;
+			tmp = r1; r1 = b1; b1 = tmp;
+			tmp = dr; dr = db; db = tmp;
+		    }
             }
         } else {
             model = ColorModel.getRGBdefault();
@@ -222,14 +220,18 @@ public class ShadedPaintContext implements PaintContext {
             rast = getCachedRaster(model, w, h);
             saved = rast;
         }
+
+	/*
+	  TODO: COMMENTED OUT THE OFFENDING BITS! //ola 20191220
+
         IntegerComponentRaster irast = (IntegerComponentRaster) rast;
+	
         int off = irast.getDataOffset(0);
         int adjust = irast.getScanlineStride() - w;
         int[] pixels = irast.getDataStorage();
-
-        clipFillRaster(pixels, off, adjust, w, h, rowrel, dx, dy);        
-
-//        irast.markDirty();
+        clipFillRaster(pixels, off, adjust, w, h, rowrel, dx, dy);
+	*/
+	//        irast.markDirty();
 
         return rast;
     }
