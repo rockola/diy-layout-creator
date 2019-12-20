@@ -46,10 +46,7 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PercentEditor;
 
-// import sun.awt.image.ToolkitImage;
-
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 
 @ComponentDescriptor(name = "Image", author = "Branislav Stojkovic", category = "Misc",
 		     description = "User defined image", instanceNamePrefix = "Img",
@@ -156,7 +153,11 @@ public class Image extends AbstractTransparentComponent<Void> {
 	    // when loading old files, convert the stored image to
 	    // byte array and then then discard it, we won't be
 	    // needing it anymore
-	    BufferedImage bi = ((ToolkitImage) image.getImage()).getBufferedImage();
+
+	    //BufferedImage bi = ((ToolkitImage) image.getImage()).getBufferedImage();
+	    BufferedImage bi = new BufferedImage(image.getWidth(null),
+						 image.getHeight(null),
+						 BufferedImage.TYPE_INT_ARGB);
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    try {
 		ImageIO.write(bi, "png", baos);
