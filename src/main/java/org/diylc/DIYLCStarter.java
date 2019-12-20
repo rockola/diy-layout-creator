@@ -74,6 +74,15 @@ public class DIYLCStarter {
 
 	ConfigurationManager.initialize("diylc");
 
+	Package p = DIYLCStarter.class.getPackage();
+	LOG.debug("DIYLCStarter package name: " + p.getName());
+	LOG.debug("Implementation version: " + p.getImplementationVersion());
+	LOG.debug("Implementation title: " + p.getImplementationTitle());
+	LOG.debug("Implementation vendor: " + p.getImplementationVendor());
+	LOG.debug("Specification version: " + p.getSpecificationVersion());
+	LOG.debug("Specification title: " + p.getSpecificationTitle());
+	LOG.debug("Specification vendor: " + p.getSpecificationVendor());
+	//
 	LOG.debug("Java version: " + System.getProperty("java.runtime.version")
 		  + " by " + System.getProperty("java.vm.vendor"));
 	LOG.debug("OS: " + System.getProperty("os.name") + " "
