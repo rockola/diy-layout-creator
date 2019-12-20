@@ -145,6 +145,11 @@
       <artifactId>guava</artifactId>
       <version>28.1-jre</version>
     </dependency>
+    <dependency>
+      <groupId>org.abcl</groupId>
+      <artifactId>abcl</artifactId>
+      <version>1.6.0</version>
+    </dependency>
   </dependencies>
 
   <repositories>
