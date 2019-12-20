@@ -21,7 +21,7 @@ package org.diylc.presenter;
 
 import org.diylc.core.measures.AbstractMeasure;
 
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+// import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -76,7 +76,7 @@ public class MeasureConverter implements Converter {
 	}    
 	try {
 	    Class requiredType = context.getRequiredType(); 
-	    ParameterizedTypeImpl generic = (ParameterizedTypeImpl)requiredType.getGenericSuperclass();
+	    ParameterizedTypeImpl generic = (ParameterizedTypeImpl) requiredType.getGenericSuperclass();
 	    Class unitType = (Class)generic.getActualTypeArguments()[0];
 	    Object unit = unitStr == null ? null : Enum.valueOf(unitType, unitStr);
 	    return requiredType.getConstructor(Double.class, unitType).newInstance(value, unit);      
