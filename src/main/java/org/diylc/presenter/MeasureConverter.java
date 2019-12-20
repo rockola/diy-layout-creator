@@ -30,10 +30,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Serializes objects of types derived from {@link AbstractMeasure} objects in a compact format. Backwards compatible when unmarshalling.
- * 
- * @author Branislav Stojkovic
- */
+  Serializes objects of types derived from {@link AbstractMeasure}
+  objects in a compact format. Backwards compatible when
+  unmarshalling.
+
+  @author Branislav Stojkovic
+*/
 public class MeasureConverter implements Converter {
 
     @SuppressWarnings("rawtypes")
