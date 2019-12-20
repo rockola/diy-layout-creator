@@ -7,14 +7,14 @@
   <groupId>org.diylc</groupId>
   <artifactId>diy-layout-creator</artifactId>
   <version>3.57.0-rockola</version>
+  <packaging>jar</packaging>
 
   <name>diy-layout-creator</name>
   <url>https://github.com/rockola/diy-layout-creator</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>9</maven.compiler.release>
     <!-- dependency properties -->
     <itext.version>RELEASE</itext.version>
   </properties>
@@ -200,6 +200,7 @@
 	  <configuration>
 	    <archive>
 	      <manifest>
+		<mainClass>org.diylc.DIYLCStarter</mainClass>
 		<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 		<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 	      </manifest>
