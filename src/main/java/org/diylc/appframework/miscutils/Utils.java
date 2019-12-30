@@ -63,10 +63,14 @@ public class Utils {
 	Object clone = null;
 
 	try {
-	    clone = o.getClass().newInstance();
+	    clone = o.getClass().getDeclaredConstructor().newInstance();
 	} catch (InstantiationException e) {
 	    e.printStackTrace();
 	} catch (IllegalAccessException e) {
+	    e.printStackTrace();
+	} catch (NoSuchMethodException e) {
+	    e.printStackTrace();
+	} catch (InvocationTargetException e) {
 	    e.printStackTrace();
 	}
 
