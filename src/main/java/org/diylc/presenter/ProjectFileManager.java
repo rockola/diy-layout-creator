@@ -147,7 +147,8 @@ public class ProjectFileManager {
 		    if (!Modifier.isAbstract(clazz.getModifiers())
 			&& IOldFileParser.class.isAssignableFrom(clazz)) {
 
-			IOldFileParser instance = (IOldFileParser) clazz.newInstance();
+			IOldFileParser instance =
+			    (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
 			parsers.add(instance);
 		    }
 		}
