@@ -465,7 +465,7 @@ public class Presenter implements IPlugInPort {
 		classes = Utils.getClasses("org.diylc.components.autocreate");
 		for (Class<?> clazz : classes) {
 		    if (IAutoCreator.class.isAssignableFrom(clazz)) {
-			autoCreators.add((IAutoCreator) clazz.newInstance());
+			autoCreators.add((IAutoCreator) clazz.getDeclaredConstructor().newInstance());
 			LOG.debug("Loaded auto-creator: " + clazz.getName());
 		    }
 		}
@@ -1726,8 +1726,8 @@ public class Presenter implements IPlugInPort {
 
 		@Override
 		public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-		    return new Integer(currentProject.getComponents().indexOf(o2)).compareTo(currentProject.getComponents()
-											     .indexOf(o1));
+		    return Integer.valueOf(currentProject.getComponents().indexOf(o2))
+			.compareTo(currentProject.getComponents().indexOf(o1));
 		}
 	    });
 
@@ -1779,8 +1779,8 @@ public class Presenter implements IPlugInPort {
 
 		@Override
 		public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-		    return new Integer(currentProject.getComponents().indexOf(o1)).compareTo(currentProject.getComponents()
-											     .indexOf(o2));
+		    return Integer.valueOf(currentProject.getComponents().indexOf(o1))
+			.compareTo(currentProject.getComponents().indexOf(o2));
 		}
 	    });
 
@@ -2543,8 +2543,8 @@ public class Presenter implements IPlugInPort {
 
 		@Override
 		public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-		    return new Integer(currentProject.getComponents().indexOf(o1)).compareTo(currentProject.getComponents()
-											     .indexOf(o2));
+		    return Integer.valueOf(currentProject.getComponents().indexOf(o1))
+			.compareTo(currentProject.getComponents().indexOf(o2));
 		}
 	    });
 	blocks.put(blockName, blockComponents);
@@ -2972,7 +2972,7 @@ public class Presenter implements IPlugInPort {
 
 	    for (Class<?> clazz : classes) {
 		if (!Modifier.isAbstract(clazz.getModifiers()) && INetlistAnalyzer.class.isAssignableFrom(clazz)) {
-		    result.add((INetlistAnalyzer) clazz.newInstance());
+		    result.add((INetlistAnalyzer) clazz.getDeclaredConstructor().newInstance());
 		}
 	    }
 
