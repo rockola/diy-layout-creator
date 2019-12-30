@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2018 held jointly by the individual authors.
+  Copyright (c) 2009-2019 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -110,6 +110,9 @@ public class ProjectFileManager {
 	xStream.registerConverter(new ColorConverter());
 	xStream.registerConverter(new FontConverter());
 	xStream.registerConverter(new MeasureConverter());
+	/*
+	  NOTE: XStream.addImmutableType() has been deprecated! //ola 20191230
+	*/
 	xStream.addImmutableType(Color.class);
 	xStream.addImmutableType(java.awt.Point.class);
 	xStream.addImmutableType(org.diylc.core.measures.Voltage.class);
