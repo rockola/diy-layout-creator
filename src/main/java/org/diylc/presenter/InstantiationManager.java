@@ -253,8 +253,12 @@ public class InstantiationManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<IDIYComponent<?>> instantiateComponent(ComponentType componentType, Template template, Point point,
-						       Project currentProject) throws InstantiationException, IllegalAccessException {
+    public List<IDIYComponent<?>> instantiateComponent(ComponentType componentType,
+						       Template template,
+						       Point point,
+						       Project currentProject)
+	throws InstantiationException, IllegalAccessException,
+	       InvocationTargetException, NoSuchMethodException {
 	LOG.info("Instatiating component of type: " + componentType.getInstanceClass().getName());
 
 	// Instantiate the component.
