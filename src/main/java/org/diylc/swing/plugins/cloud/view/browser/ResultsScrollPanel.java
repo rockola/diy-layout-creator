@@ -54,7 +54,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.text.DefaultCaret;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
@@ -88,7 +88,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(ResultsScrollPanel.class);
+  private static final Logger LOG = LogManager.getLogger(ResultsScrollPanel.class);
 
   private JPanel resultsPanel;
   /**

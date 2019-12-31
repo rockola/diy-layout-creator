@@ -6,11 +6,11 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class ClassLoaderUtil {
 	// Log object
-	private static Logger LOG = Logger.getLogger(ClassLoaderUtil.class);
+	private static Logger LOG = LogManager.getLogger(ClassLoaderUtil.class);
 
 	// Parameters
 	private static final Class<?>[] parameters = new Class<?>[] { URL.class };

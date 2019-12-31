@@ -1,20 +1,22 @@
 /*
- * 
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
- * This file is part of DIYLC.
- * 
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC). 
+  Copyright (c) 2009-2019 held jointly by the individual authors.
+  
+  This file is part of DIYLC.
+  
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc;
 
 import java.awt.Font;
@@ -31,8 +33,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
 import org.diylc.core.IView;
@@ -51,7 +53,7 @@ import org.diylc.swingframework.FontChooserComboBox;
  */
 public class DIYLCStarter {
 
-    private static final Logger LOG = Logger.getLogger(DIYLCStarter.class);
+    private static final Logger LOG = LogManager.getLogger(DIYLCStarter.class);
 
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
@@ -59,9 +61,20 @@ public class DIYLCStarter {
      * @param args
      */
     public static void main(String[] args) {
+	ClassLoader loader = DIYLCStarter.class.getClassLoader();
+	System.out.println("Foo[");
+	System.out.println(loader.getResource("org/diylc/DIYLCStarter.class"));
+	System.out.println(loader.getResource("log4j2.xml"));	
+	System.out.println("]Bar[");
+	System.out.println(System.getProperty("java.class.path"));	
+	System.out.println("]Baz");
+
 	// Initialize splash screen
 	final SplashScreen splash = SplashScreen.getSplashScreen();
 	new DIYLCSplash(splash).start();
+
+	/*
+	  // Obsolete log4j v1 initialization
 
 	URL url = DIYLCStarter.class.getResource("log4j.properties");
 	Properties properties = new Properties();
@@ -71,6 +84,7 @@ public class DIYLCStarter {
 	} catch (Exception e) {
 	    LOG.error("Could not initialize log4j configuration", e);
 	}
+	*/
 
 	ConfigurationManager.initialize("diylc");
 
@@ -166,6 +180,8 @@ public class DIYLCStarter {
 	    }
 	}
 
+	/*
+	  // probably not needed //ola 20191230
 	properties = new Properties();
 	try {
 	    LOG.info("Injecting default properties.");
@@ -177,6 +193,7 @@ public class DIYLCStarter {
 	} catch (Exception e) {
 	    LOG.error("Could not read config.properties file", e);
 	}
+	*/
     
 	if (ConfigurationManager.getInstance().isFileWithErrors())
 	    mainFrame.showMessage("<html>"

@@ -53,7 +53,7 @@ import javax.swing.UIManager;
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.styles.EdgedBalloonStyle;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.announcements.AnnouncementProvider;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -80,7 +80,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(StatusBar.class);
+  private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
   public static String UPDATE_URL = "http://www.diy-fever.com/update.xml";
   private static String HIGHLIGHT_CONNECTED_TIP = "Click on a component to highlight area directly or indirectly connected to the area below the cursor. To continue editing, this mode needs to be switched OFF";

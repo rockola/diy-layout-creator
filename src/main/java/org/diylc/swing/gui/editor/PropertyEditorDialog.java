@@ -42,14 +42,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ValidationException;
 import org.diylc.swingframework.ButtonDialog;
 
 public class PropertyEditorDialog extends ButtonDialog {
 
-  private static final Logger LOG = Logger.getLogger(PropertyEditorDialog.class);
+  private static final Logger LOG = LogManager.getLogger(PropertyEditorDialog.class);
 
   private static final long serialVersionUID = 1L;
 

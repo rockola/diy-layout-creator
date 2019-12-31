@@ -26,7 +26,7 @@ import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.diylc.DIYLCStarter;
 import org.diylc.presenter.Presenter;
@@ -34,7 +34,7 @@ import org.diylc.swing.gui.DummyView;
 
 public class BatchConverter {
   
-  private static final Logger LOG = Logger.getLogger(BatchConverter.class);
+  private static final Logger LOG = LogManager.getLogger(BatchConverter.class);
 
   public static void main(String[] args) {
     URL url = DIYLCStarter.class.getResource("log4j.properties");

@@ -32,7 +32,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.CommentEntity;
@@ -59,7 +59,7 @@ public class CloudPresenter {
 
   private static String ERROR = "Error";
 
-  private final static Logger LOG = Logger.getLogger(CloudPresenter.class);
+  private final static Logger LOG = LogManager.getLogger(CloudPresenter.class);
   private static final Object SUCCESS = "Success";
 
   private IServiceAPI service;

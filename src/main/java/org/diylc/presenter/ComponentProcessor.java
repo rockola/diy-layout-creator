@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.PropertyWrapper;
@@ -53,7 +53,7 @@ import org.diylc.core.annotations.KeywordPolicy;
  */
 public class ComponentProcessor {
 
-    private static final Logger LOG = Logger.getLogger(ComponentProcessor.class);
+    private static final Logger LOG = LogManager.getLogger(ComponentProcessor.class);
 
     private static ComponentProcessor instance;
 

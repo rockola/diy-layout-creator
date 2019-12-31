@@ -74,7 +74,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 //import org.apache.log4j.lf5.viewer.categoryexplorer.TreeModelAdapter;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -95,7 +95,7 @@ public class TreePanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = Logger.getLogger(TreePanel.class);
+    private static final Logger LOG = LogManager.getLogger(TreePanel.class);
 
     public static final String COMPONENT_SHORTCUT_KEY = "componentShortcuts";
 

@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 
 
@@ -84,7 +84,7 @@ public class UpdateDialog extends JDialog {
     					JOptionPane.showMessageDialog(UpdateDialog.this,
     							"Could not launch default browser. To downlaod the latest version visit "
     									+ latestVersionUrl);
-    					Logger.getLogger(UpdateDialog.class).error("Could not launch default browser",
+    					LogManager.getLogger(UpdateDialog.class).error("Could not launch default browser",
     							e1);
     				}
     			}

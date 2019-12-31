@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility class that provides JAR manipulation methods.
@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class JarScanner {
 
-	private static final Logger LOG = Logger.getLogger(JarScanner.class);
+	private static final Logger LOG = LogManager.getLogger(JarScanner.class);
 
 	private static JarScanner instance;
 

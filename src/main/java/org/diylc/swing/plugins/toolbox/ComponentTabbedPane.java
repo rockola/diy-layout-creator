@@ -39,7 +39,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
@@ -59,7 +59,7 @@ class ComponentTabbedPane extends JTabbedPane {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(ComponentTabbedPane.class);
+  private static final Logger LOG = LogManager.getLogger(ComponentTabbedPane.class);
 
   public static int SCROLL_STEP = Presenter.ICON_SIZE + ComponentButtonFactory.MARGIN * 2 + 2;
 

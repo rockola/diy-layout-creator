@@ -37,7 +37,7 @@ import java.lang.reflect.Type;
 
 import javax.swing.JComboBox;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.swingframework.DoubleArrayTextField;

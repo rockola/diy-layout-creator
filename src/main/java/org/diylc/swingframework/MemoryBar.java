@@ -13,7 +13,7 @@ import java.text.Format;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * {@link JComponent} that draws current memory usage as a vertical bar. Details
@@ -26,7 +26,7 @@ public class MemoryBar extends JComponent {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = Logger.getLogger(MemoryBar.class);
+	private static final Logger LOG = LogManager.getLogger(MemoryBar.class);
 
 	private static final int DELAY = 10000;
 	private static final boolean USE_LOG = false;

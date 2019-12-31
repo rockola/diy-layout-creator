@@ -9,22 +9,24 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.logging.Logger;
 import org.diylc.images.IconLoader;
 
 
 /**
- * Utility that handles undo/redo operations. Use {@link #getUndoAction()} and
- * {@link #getRedoAction()} to obtain instances of actions that may be used for menus, buttons, etc.
- * Action states are updated automatically, i.e. they are enabled and disabled when they need to be.
- * 
- * @author Branislav Stojkovic
- * 
- * @param <T> type of entities that actions are performed upon
- */
+  Utility that handles undo/redo operations. Use 
+  {@link #getUndoAction()} and {@link #getRedoAction()} to obtain
+  instances of actions that may be used for menus, buttons, etc.
+  Action states are updated automatically, i.e. they are enabled and
+  disabled when they need to be.
+
+  @author Branislav Stojkovic
+
+  @param <T> type of entities that actions are performed upon
+*/
 public class UndoHandler<T> {
 
-    private static final Logger LOG = Logger.getLogger(UndoHandler.class);
+    private static final Logger LOG = LogManager.getLogger(UndoHandler.class);
 
     public static final int MAX_STACK_SIZE = 32;
 

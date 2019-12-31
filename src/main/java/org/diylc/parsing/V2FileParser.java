@@ -26,7 +26,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
@@ -87,7 +87,7 @@ import org.w3c.dom.NodeList;
 
 public class V2FileParser implements IOldFileParser {
 
-  private static final Logger LOG = Logger.getLogger(V2FileParser.class);
+  private static final Logger LOG = LogManager.getLogger(V2FileParser.class);
   private static final Size V2_GRID_SPACING = new Size(0.1d, SizeUnit.in);
 
   @Override

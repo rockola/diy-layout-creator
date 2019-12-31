@@ -31,7 +31,7 @@ import java.util.ListIterator;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
@@ -57,7 +57,7 @@ public class CloudPlugIn implements IPlugIn {
 
   private static final String ONLINE_TITLE = "Project Cloud";
 
-  private final static Logger LOG = Logger.getLogger(CloudPlugIn.class);
+  private final static Logger LOG = LogManager.getLogger(CloudPlugIn.class);
 
   private ISwingUI swingUI;
   private IPlugInPort plugInPort;

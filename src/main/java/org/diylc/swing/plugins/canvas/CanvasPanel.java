@@ -50,7 +50,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
@@ -67,7 +67,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(CanvasPlugin.class);
+  private static final Logger LOG = LogManager.getLogger(CanvasPlugin.class);
   
   public static boolean RENDER_VISIBLE_RECT_ONLY = true;
 

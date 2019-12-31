@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility class that injects the provided properties into class static fields.
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  */
 public class PropertyInjector {
 
-	private static final Logger LOG = Logger.getLogger(PropertyInjector.class);
+	private static final Logger LOG = LogManager.getLogger(PropertyInjector.class);
 
 	private PropertyInjector() {
 	}

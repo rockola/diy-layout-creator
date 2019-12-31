@@ -29,7 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;
@@ -45,7 +45,7 @@ public class UploadManagerFrame extends JFrame implements ISimpleView {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(UploadManagerFrame.class);
+  private static final Logger LOG = LogManager.getLogger(UploadManagerFrame.class);
 
   private ResultsScrollPanel resultsScrollPane;
 

@@ -36,7 +36,7 @@ import java.lang.reflect.Type;
 
 import javax.swing.JComboBox;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.core.measures.Unit;
@@ -47,7 +47,7 @@ public class MeasureEditor extends Container {
 
   private static final long serialVersionUID = 1L;
 
-  private final static Logger LOG = Logger.getLogger(MeasureEditor.class);
+  private final static Logger LOG = LogManager.getLogger(MeasureEditor.class);
 
   private Color oldBg;
   private DoubleTextField valueField;
