@@ -1651,10 +1651,9 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setDefaultPropertyValue(Class<?> clazz, String propertyName, Object value) {
-	LOG.trace("setProjectDefaultPropertyValue(%s, %s, %s)",
-		  clazz.getName(), propertyName, value);
-	LOG.debug("Default property value set for %s:%s",
-		  Project.getClass().getName(), propertyName);
+	LOG.trace("setDefaultPropertyValue(%s, %s, %s) default set for %s:%s",
+		  clazz.getName(), propertyName, value,
+		  Project.class.getName(), propertyName);
 	ConfigurationManager.getInstance().writeValue(DEFAULTS_KEY_PREFIX + clazz.getName() + ":" + propertyName,
 						      value);
     }
@@ -2205,7 +2204,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public void setNewComponentTypeSlot(ComponentType componentType, Template template, boolean forceInstatiate) {
 	LOG.trace("setNewComponentSlot(%s)",
-		  componentType == null ? "null" : componentType.getName()));
+		  componentType == null ? "null" : componentType.getName());
 	if (componentType != null && componentType.getInstanceClass() == null) {
 	    LOG.info("Cannot set new component type slot for type [%s]", componentType.getName());
 	    setNewComponentTypeSlot(null, null, false);
@@ -2353,7 +2352,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public List<Template> getVariantsFor(ComponentType type) {
 	LOG.trace("getVariantsFor(%s) Getting variant map from [%s]",
-		  type == null ? "null" : type.getName()));
+		  type == null ? "null" : type.getName(),
 		  TEMPLATES_KEY);
 
 	Map<String, List<Template>> lookupMap =
