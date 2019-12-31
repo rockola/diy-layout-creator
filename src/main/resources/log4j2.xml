@@ -3,19 +3,24 @@
   <Appenders>
     <RollingFile name="RollingFile"
 		 fileName="${user.home}/.diylc/logs/log.txt"
-		 filePattern="${user.home}/.diylc/logs/diylc-%d{yyyy-MM-dd}-%i.log">
+		 ignoreExceptions="false">
       <PatternLayout>
-	<Pattern>
-	</Pattern>
+	<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
       </PatternLayout>
       <Policies>
-	<TimeBasedTriggeringPolicy />
+	<TimeBasedTriggeringPolicy interval="1"/>
       </Policies>
+      <DefaultRolloverStrategy max="5" />
     </RollingFile>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout
+          pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+    </Console>
   </Appenders>
   <Loggers>
-    <Root level="error">
+    <Root level="debug">
       <AppenderRef ref="RollingFile"/>
+      <AppenderRef ref="console"/>
     </Root>
   </Loggers>
 </Configuration>
