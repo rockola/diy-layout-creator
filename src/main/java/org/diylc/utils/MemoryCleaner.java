@@ -27,6 +27,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class MemoryCleaner {
 

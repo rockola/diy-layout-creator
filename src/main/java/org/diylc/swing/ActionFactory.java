@@ -46,7 +46,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.logging.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BuildingBlockPackage;

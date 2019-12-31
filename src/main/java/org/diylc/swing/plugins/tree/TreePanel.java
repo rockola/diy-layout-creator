@@ -75,6 +75,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 //import org.apache.log4j.lf5.viewer.categoryexplorer.TreeModelAdapter;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;

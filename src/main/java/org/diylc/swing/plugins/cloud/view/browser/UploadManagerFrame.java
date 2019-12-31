@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;

@@ -35,6 +35,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.PropertyWrapper;
