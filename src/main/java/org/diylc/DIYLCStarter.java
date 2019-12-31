@@ -62,13 +62,22 @@ public class DIYLCStarter {
      * @param args
      */
     public static void main(String[] args) {
+
+	LOG.info("DIYLC is running");
+
+	try {
+	    LOG.debug("Setting Look and Feel to %s", UIManager.getSystemLookAndFeelClassName());
+	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	} catch (Exception e) {
+	    LOG.error("Could not set Look and Feel", e);
+	}
+
 	ClassLoader loader = DIYLCStarter.class.getClassLoader();
-	System.out.println("Foo[");
-	System.out.println(loader.getResource("org/diylc/DIYLCStarter.class"));
-	System.out.println(loader.getResource("log4j2.xml"));	
-	System.out.println("]Bar[");
-	System.out.println(System.getProperty("java.class.path"));	
-	System.out.println("]Baz");
+	LOG.debug("DIYLCStarter.class coming from %s",
+		  loader.getResource("org/diylc/DIYLCStarter.class"));
+	LOG.debug("log4j2.xml coming from %s",
+		  loader.getResource("log4j2.xml"));
+	LOG.debug("java.class.path is %s", System.getProperty("java.class.path"));	
 
 	// Initialize splash screen
 	final SplashScreen splash = SplashScreen.getSplashScreen();
@@ -90,28 +99,23 @@ public class DIYLCStarter {
 	ConfigurationManager.initialize("diylc");
 
 	Package p = DIYLCStarter.class.getPackage();
-	LOG.debug("DIYLCStarter package name: " + p.getName());
-	LOG.debug("Implementation version: " + p.getImplementationVersion());
-	LOG.debug("Implementation title: " + p.getImplementationTitle());
-	LOG.debug("Implementation vendor: " + p.getImplementationVendor());
-	LOG.debug("Specification version: " + p.getSpecificationVersion());
-	LOG.debug("Specification title: " + p.getSpecificationTitle());
-	LOG.debug("Specification vendor: " + p.getSpecificationVendor());
+	LOG.debug("DIYLCStarter package: %s", p.getName());
+	LOG.debug("Implementation: version [%s] title [%s] vendor [%s]",
+		  p.getImplementationVersion(),
+		  p.getImplementationTitle(),
+		  p.getImplementationVendor());
+	LOG.debug("Specification: version [%s] title [%s] vendor [%s]",	
+		  p.getSpecificationVersion(),
+		  p.getSpecificationTitle(),
+		  p.getSpecificationVendor());
 	//
-	LOG.debug("Java version: " + System.getProperty("java.runtime.version")
-		  + " by " + System.getProperty("java.vm.vendor"));
-	LOG.debug("OS: " + System.getProperty("os.name") + " "
-		  + System.getProperty("os.version"));
-
+	LOG.info("OS: %s %s, Java version: %s by %s",
+		  System.getProperty("os.name"),
+		  System.getProperty("os.version"),
+		  System.getProperty("java.runtime.version"),
+		  System.getProperty("java.vm.vendor"));
 	LOG.info("Starting DIYLC with working directory "
 		 + System.getProperty("user.dir"));
-
-	try {
-	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	} catch (Exception e) {
-	    LOG.error("Could not set Look&Feel", e);
-	}
-    
 	/*
 	  // TODO:
 	  //Should be done using getResource()
