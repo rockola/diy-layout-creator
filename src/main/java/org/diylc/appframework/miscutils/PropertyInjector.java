@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility class that injects the provided properties into class static fields.

@@ -28,6 +28,7 @@ import java.awt.Font;
 import javax.swing.JLabel;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.annotations.DynamicList;
 import org.diylc.core.annotations.MultiLineText;

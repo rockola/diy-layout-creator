@@ -10,6 +10,7 @@ import java.awt.image.PixelGrabber;
 import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

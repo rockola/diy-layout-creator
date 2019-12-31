@@ -14,6 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * {@link JComponent} that draws current memory usage as a vertical bar. Details
