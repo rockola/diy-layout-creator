@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2018 held jointly by the individual authors.
+  Copyright (c) 2009-2019 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -266,7 +266,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     @Override
     public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
-	LOG.info(String.format("injectGUIComponent(%s, %s)", component.getClass().getName(), position));
+	LOG.trace("injectGUIComponent(%s, %s)", component.getClass().getName(), position);
 	switch (position) {
 	case SwingConstants.TOP:
 	    topPanel.add(component);
@@ -291,8 +291,9 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     @Override
     public void injectMenuAction(Action action, String menuName) {
-	LOG.info(String.format("injectMenuAction(%s, %s)", action == null ? "Separator" : action.getValue(Action.NAME),
-			       menuName));
+	LOG.trace("injectMenuAction(%s, %s)",
+		  action == null ? "Separator" : action.getValue(Action.NAME),
+		  menuName);
 	JMenu menu = findOrCreateMenu(menuName);
 	if (action == null) {
 	    menu.addSeparator();
@@ -320,7 +321,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 
     @Override
     public void injectSubmenu(String name, Icon icon, String parentMenuName) {
-	LOG.info(String.format("injectSubmenu(%s, icon, %s)", name, parentMenuName));
+	LOG.trace("injectSubmenu(%s, icon, %s)", name, parentMenuName);
 	JMenu menu = findOrCreateMenu(parentMenuName);
 	JMenu submenu = new JMenu(name);
 	submenu.setIcon(icon);
@@ -337,7 +338,7 @@ public class MainFrame extends JFrame implements ISwingUI {
     public void injectDynamicSubmenu(String name, Icon icon, String parentMenuName,
 				     final IDynamicSubmenuHandler handler) {
 
-	LOG.info(String.format("injectDynamicSubmenu(%s, icon, %s)", name, parentMenuName));
+	LOG.trace("injectDynamicSubmenu(%s, icon, %s)", name, parentMenuName);
 	final JMenu menu = findOrCreateMenu(parentMenuName);
 	final JMenu submenu = new JMenu(name);
 	submenu.setIcon(icon);
