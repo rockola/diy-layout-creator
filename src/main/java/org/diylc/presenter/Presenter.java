@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -212,7 +213,7 @@ public class Presenter implements IPlugInPort {
     }
 
     public void installPlugin(IPlugIn plugIn) {
-	LOG.trace("installPlugin(%s)", plugIn.getClass().getSimpleName());
+	LOG.trace("installPlugin({})", plugIn.getClass().getSimpleName());
 	plugIns.add(plugIn);
 	plugIn.connect(this);
 	messageDispatcher.registerListener(plugIn);
@@ -239,7 +240,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setZoomLevel(double zoomLevel) {
-	LOG.trace("setZoomLevel(%s)", zoomLevel);
+	LOG.trace("setZoomLevel({})", zoomLevel);
 	if (drawingManager.getZoomLevel() == zoomLevel) {
 	    return;
 	}
@@ -272,8 +273,9 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public Dimension getCanvasDimensions(boolean useZoom, boolean includeExtraSpace) {
-	return drawingManager.getCanvasDimensions(currentProject, useZoom ? drawingManager.getZoomLevel()
-						  : 1 / Constants.PIXEL_SIZE, includeExtraSpace);
+	return drawingManager.getCanvasDimensions(currentProject,
+						  (useZoom ? drawingManager.getZoomLevel() : 1 / Constants.PIXEL_SIZE),
+						  includeExtraSpace);
     }
 
     @Override
@@ -283,7 +285,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void loadProject(Project project, boolean freshStart, String filename) {
-	LOG.trace("loadProject(%s, %s)", project.getTitle(), freshStart);
+	LOG.trace("loadProject({}, {})", project.getTitle(), freshStart);
 	this.currentProject = project;
 	drawingManager.clearComponentAreaMap();
 	drawingManager.clearContinuityArea();
@@ -311,7 +313,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void loadProjectFromFile(String fileName) {
-	LOG.trace("loadProjectFromFile(%s)", fileName);
+	LOG.trace("loadProjectFromFile({})", fileName);
 	List<String> warnings = null;
 	try {
 	    warnings = new ArrayList<String>();
@@ -360,8 +362,10 @@ public class Presenter implements IPlugInPort {
     public boolean allowFileAction() {
 	if (projectFileManager.isModified()) {
 	    int response =
-		view.showConfirmDialog("There are unsaved changes. Would you like to save them?", "Warning",
-				       IView.YES_NO_CANCEL_OPTION, IView.WARNING_MESSAGE);
+		view.showConfirmDialog("There are unsaved changes. Would you like to save them?",
+				       "Warning",
+				       IView.YES_NO_CANCEL_OPTION,
+				       IView.WARNING_MESSAGE);
 	    if (response == IView.YES_OPTION) {
 		if (this.getCurrentFileName() == null) {
 		    File file = view.promptFileSave();
@@ -380,7 +384,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void saveProjectToFile(String fileName, boolean isBackup) {
-	LOG.trace("saveProjectToFile(%s)", fileName);
+	LOG.trace("saveProjectToFile({})", fileName);
 	try {
 	    currentProject.setFileVersion(CURRENT_VERSION);
 	    projectFileManager.serializeProjectToFile(currentProject, fileName, isBackup);
@@ -520,18 +524,19 @@ public class Presenter implements IPlugInPort {
 	    componentSlotToDraw = instantiationManager.getComponentSlot();
 	}
 	List<IDIYComponent<?>> failedComponents =
-	    drawingManager
-            .drawProject(
-			 g2d,
-			 currentProject,
-			 drawOptions,
-			 newFiler,
-			 selectionRect,
-			 selectedComponents,
-			 getLockedComponents(),
-			 groupedComponents,
-			 Arrays.asList(instantiationManager.getFirstControlPoint(),
-				       instantiationManager.getPotentialControlPoint()), componentSlotToDraw, dragInProgress, externalZoom);
+	    drawingManager.drawProject(g2d,
+				       currentProject,
+				       drawOptions,
+				       newFiler,
+				       selectionRect,
+				       selectedComponents,
+				       getLockedComponents(),
+				       groupedComponents,
+				       Arrays.asList(instantiationManager.getFirstControlPoint(),
+						     instantiationManager.getPotentialControlPoint()),
+				       componentSlotToDraw,
+				       dragInProgress,
+				       externalZoom);
 	List<String> failedComponentNames = new ArrayList<String>();
 	for (IDIYComponent<?> component : failedComponents) {
 	    failedComponentNames.add(component.getName());
@@ -572,15 +577,18 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void mouseClicked(Point point, int button, boolean ctrlDown, boolean shiftDown, boolean altDown, int clickCount) {
-	LOG.trace("mouseClicked(%s, %s, %s, %s, %s)", point, button, ctrlDown, shiftDown, altDown);
+    public void mouseClicked(Point point, int button,
+			     boolean ctrlDown, boolean shiftDown, boolean altDown,
+			     int clickCount) {
+	LOG.trace("mouseClicked({}, {}, {}, {}, {})",
+		  point, button, ctrlDown, shiftDown, altDown);
 	Point scaledPoint = scalePoint(point);
 	if (clickCount >= 2) {
 	    editSelection();
 	} else {
 	    if (instantiationManager.getComponentTypeSlot() != null) {
 		// Try to rotate the component on right click while creating.
-		if (button != IPlugInPort.BUTTON1) {
+		if (button != MouseEvent.BUTTON1) {
 		    instantiationManager.tryToRotateComponentSlot();
 		    messageDispatcher.dispatchMessage(EventType.REPAINT);
 		    return;
@@ -682,7 +690,8 @@ public class Presenter implements IPlugInPort {
 			}
 		    } else {
 			// Otherwise just select that one component.
-			if (button == BUTTON1 || (button == BUTTON3 && newSelection.size() == 1)
+			if (button == MouseEvent.BUTTON1
+			    || (button == MouseEvent.BUTTON3 && newSelection.size() == 1)
 			    || !newSelection.contains(topComponent)) {
 			    newSelection.clear();
 			}
@@ -736,7 +745,7 @@ public class Presenter implements IPlugInPort {
 	    && key != IKeyProcessor.VK_V) {
 	    return false;
 	}
-	LOG.trace("keyPressed(%s, %s, %s, %s)", key, ctrlDown, shiftDown, altDown);
+	LOG.trace("keyPressed({}, {}, {}, {})", key, ctrlDown, shiftDown, altDown);
 	Map<IDIYComponent<?>, Set<Integer>> controlPointMap =
 	    new HashMap<IDIYComponent<?>, Set<Integer>>();
 	// If there aren't any control points, try to add all the selected
@@ -897,7 +906,7 @@ public class Presenter implements IPlugInPort {
 				break;
 			    }
 			} catch (Exception e) {
-			    LOG.warn("Error reading control point for component of type: %s",
+			    LOG.warn("Error reading control point for component of type {}",
 				     component.getClass().getName());
 			}
 		    }
@@ -999,7 +1008,7 @@ public class Presenter implements IPlugInPort {
 	if (selectedComponents == null || selectedComponents.isEmpty())
 	    return;
 
-	LOG.trace("nudgeSelection(%s, %s, %s)", xOffset, yOffset, includeStuckComponents);
+	LOG.trace("nudgeSelection({}, {}, {})", xOffset, yOffset, includeStuckComponents);
 	Map<IDIYComponent<?>, Set<Integer>> controlPointMap =
 	    new HashMap<IDIYComponent<?>, Set<Integer>>();
 	// If there aren't any control points, try to add all the selected
@@ -1047,10 +1056,10 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void dragStarted(Point point, int dragAction, boolean forceSelectionRect) {
-	LOG.trace("dragStarted(%s, %s)", point, dragAction);
+	LOG.trace("dragStarted({}, {})", point, dragAction);
 	if (instantiationManager.getComponentTypeSlot() != null) {
 	    LOG.debug("Cannot start drag because a new component is being created.");
-	    mouseClicked(point, IPlugInPort.BUTTON1,
+	    mouseClicked(point, MouseEvent.BUTTON1,
 			 dragAction == DnDConstants.ACTION_COPY,
 			 dragAction == DnDConstants.ACTION_LINK,
 			 dragAction == DnDConstants.ACTION_MOVE, 1);
@@ -1519,7 +1528,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void dragEnded(Point point) {
-	LOG.trace("dragEnded(%s)", point);
+	LOG.trace("dragEnded({})", point);
 
 	Point scaledPoint = scalePoint(point);
 
@@ -1570,7 +1579,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void pasteComponents(Collection<IDIYComponent<?>> components, boolean autoGroup) {
-	LOG.trace("pasteComponents(%s, %s)", components, autoGroup);
+	LOG.trace("pasteComponents({}, {})", components, autoGroup);
 	instantiationManager.pasteComponents(components, this.previousScaledPoint, isSnapToGrid(),
 					     currentProject.getGridSpacing(), autoGroup, this.currentProject);
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
@@ -1640,10 +1649,10 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setSelectionDefaultPropertyValue(String propertyName, Object value) {
-	LOG.trace("setSelectionDefaultPropertyValue(%s, %s)", propertyName, value);
+	LOG.trace("setSelectionDefaultPropertyValue({}, {})", propertyName, value);
 	for (IDIYComponent<?> component : selectedComponents) {
 	    String className = component.getClass().getName();
-	    LOG.debug("Default property value set for %s:%s ", className, propertyName);
+	    LOG.debug("Default property value set for {}:{}", className, propertyName);
 	    ConfigurationManager.getInstance().writeValue(DEFAULTS_KEY_PREFIX + className + ":" + propertyName,
 							  value);
 	}
@@ -1651,7 +1660,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setDefaultPropertyValue(Class<?> clazz, String propertyName, Object value) {
-	LOG.trace("setDefaultPropertyValue(%s, %s, %s) default set for %s:%s",
+	LOG.trace("setDefaultPropertyValue({}, {}, {}) default set for {}:{}",
 		  clazz.getName(), propertyName, value,
 		  Project.class.getName(), propertyName);
 	ConfigurationManager.getInstance().writeValue(DEFAULTS_KEY_PREFIX + clazz.getName() + ":" + propertyName,
@@ -1694,7 +1703,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setLayerLocked(int layerZOrder, boolean locked) {
-	LOG.trace("setLayerLocked(%s, %s)", layerZOrder, locked);
+	LOG.trace("setLayerLocked({}, {})", layerZOrder, locked);
 	Project oldProject = currentProject.clone();
 	if (locked) {
 	    currentProject.getLockedLayers().add(layerZOrder);
@@ -1713,7 +1722,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setLayerVisibility(int layerZOrder, boolean visible) {
-	LOG.trace("setLayerVisibility(%s, %s)", layerZOrder, visible);
+	LOG.trace("setLayerVisibility({}, {})", layerZOrder, visible);
 	Project oldProject = currentProject.clone();
 	if (visible) {
 	    currentProject.getHiddenLayers().remove(layerZOrder);
@@ -1754,7 +1763,7 @@ public class Presenter implements IPlugInPort {
 									  (Class<? extends IDIYComponent<?>>) component.getClass());
 	    int index = currentProject.getComponents().indexOf(component);
 	    if (index < 0) {
-		LOG.warn("Component [%s] not found in the project", component.getName());
+		LOG.warn("Component {} not found in the project", component.getName());
 	    } else
 		while (index > 0) {
 		    IDIYComponent<?> componentBefore = currentProject.getComponents().get(index - 1);
@@ -1807,7 +1816,7 @@ public class Presenter implements IPlugInPort {
 									  (Class<? extends IDIYComponent<?>>) component.getClass());
 	    int index = currentProject.getComponents().indexOf(component);
 	    if (index < 0) {
-		LOG.warn("Component [%s] not found in the project", component.getName());
+		LOG.warn("Component {} not found in the project", component.getName());
 	    } else
 		while (index < currentProject.getComponents().size() - 1) {
 		    IDIYComponent<?> componentAfter = currentProject.getComponents().get(index + 1);
@@ -1856,9 +1865,9 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void renumberSelectedComponents(final boolean xAxisFirst) {
-	LOG.trace("renumberSelectedComponents(%s)", xAxisFirst ? "TRUE" : "false");
+	LOG.trace("renumberSelectedComponents({})", xAxisFirst ? "TRUE" : "false");
 	if (getSelectedComponents().isEmpty()) {
-	    LOG.debug("renumberSelectedComponents(%s): no selection", xAxisFirst ? "TRUE" : "false");
+	    LOG.debug("renumberSelectedComponents({}) no selection", xAxisFirst ? "TRUE" : "false");
 	    return;
 	}
 	Project oldProject = currentProject.clone();
@@ -1949,7 +1958,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void expandSelection(ExpansionMode expansionMode) {
-	LOG.trace("expandSelection(%s)", expansionMode);
+	LOG.trace("expandSelection({})", expansionMode);
 	List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>(this.selectedComponents);
 	List<Netlist> netlists = extractNetlists(false);
 	List<Set<IDIYComponent<?>>> allGroups = NetlistAnalyzer.extractComponentGroups(netlists);
@@ -2131,7 +2140,7 @@ public class Presenter implements IPlugInPort {
     }
 
     private void applyPropertiesToSelection(List<PropertyWrapper> properties) {
-	LOG.trace("applyPropertiesToSelection(%s)", properties);
+	LOG.trace("applyPropertiesToSelection({})", properties);
 	Project oldProject = currentProject.clone();
 	try {
 	    for (IDIYComponent<?> component : selectedComponents) {
@@ -2175,7 +2184,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void applyProperties(Object obj, List<PropertyWrapper> properties) {
-	LOG.trace("applyProperties(%s, %s)", obj, properties);
+	LOG.trace("applyProperties({}, {})", obj, properties);
 	Project oldProject = currentProject.clone();
 	try {
 	    for (PropertyWrapper property : properties) {
@@ -2203,10 +2212,11 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void setNewComponentTypeSlot(ComponentType componentType, Template template, boolean forceInstatiate) {
-	LOG.trace("setNewComponentSlot(%s)",
+	LOG.trace("setNewComponentSlot({})",
 		  componentType == null ? "null" : componentType.getName());
 	if (componentType != null && componentType.getInstanceClass() == null) {
-	    LOG.info("Cannot set new component type slot for type [%s]", componentType.getName());
+
+	    LOG.warn("Cannot set new component type slot for type {}", componentType.getName());
 	    setNewComponentTypeSlot(null, null, false);
 	    return;
 	}
@@ -2253,7 +2263,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void saveSelectedComponentAsVariant(String variantName) {
-	LOG.trace("saveSelectedComponentAsVariant(%s)", variantName);
+	LOG.trace("saveSelectedComponentAsVariant({})", variantName);
 	if (selectedComponents.size() != 1) {
 	    throw new RuntimeException("Can only save a single component as a variant at once.");
 	}
@@ -2351,7 +2361,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public List<Template> getVariantsFor(ComponentType type) {
-	LOG.trace("getVariantsFor(%s) Getting variant map from [%s]",
+	LOG.trace("getVariantsFor({}) Getting variant map from {}",
 		  type == null ? "null" : type.getName(),
 		  TEMPLATES_KEY);
 
@@ -2416,7 +2426,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public void applyVariantToSelection(Template template) {
-	LOG.trace("applyTemplateToSelection(%s)", template.getName());
+	LOG.trace("applyTemplateToSelection({})", template.getName());
 
 	Project oldProject = currentProject.clone();
 
@@ -2443,7 +2453,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void deleteVariant(ComponentType type, String templateName) {
-	LOG.trace("deleteTemplate(%s, %s)", type, templateName);
+	LOG.trace("deleteTemplate({}, {})", type, templateName);
 	Map<String, List<Template>> templateMap =
 	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
 	if (templateMap != null) {
@@ -2478,7 +2488,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void setDefaultVariant(ComponentType type, String templateName) {
-	LOG.trace("setTemplateDefault(%s, %s)", type, templateName);
+	LOG.trace("setTemplateDefault({}, {})", type, templateName);
 	Map<String, String> defaultTemplateMap =
 	    (Map<String, String>) ConfigurationManager.getInstance().readObject(DEFAULT_TEMPLATES_KEY, null);
 	if (defaultTemplateMap == null)
@@ -2555,7 +2565,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void saveSelectionAsBlock(String blockName) {
-	LOG.trace("saveSelectionAsBlock(%s)", blockName);
+	LOG.trace("saveSelectionAsBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
 	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
 	if (blocks == null)
@@ -2576,7 +2586,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void loadBlock(String blockName) throws InvalidBlockException {
-	LOG.trace("loadBlock(%s)", blockName);
+	LOG.trace("loadBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
 	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
 	if (blocks != null) {
@@ -2596,7 +2606,7 @@ public class Presenter implements IPlugInPort {
 		    testComponents.add(clone);
 		    clones.add(clone);
 		} catch (CloneNotSupportedException e) {
-		    LOG.error("Could not clone component [%s]", c);
+		    LOG.error("Could not clone component {}", c);
 		}
 	    // paste them to the project
 	    pasteComponents(clones, true);
@@ -2607,7 +2617,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public void deleteBlock(String blockName) {
-	LOG.trace("deleteBlock(%s)", blockName);
+	LOG.trace("deleteBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
 	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
 	if (blocks != null) {
@@ -2635,7 +2645,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public int importVariants(String fileName) throws IOException {
-	LOG.trace("importVariants(%s)", fileName);
+	LOG.trace("importVariants({})", fileName);
 
 	VariantPackage pkg = (VariantPackage) Serializer.fromFile(fileName);	
 
@@ -2670,7 +2680,7 @@ public class Presenter implements IPlugInPort {
     @SuppressWarnings("unchecked")
     @Override
     public int importBlocks(String fileName) throws IOException {
-	LOG.trace("importBlocks(%s)", fileName);
+	LOG.trace("importBlocks({})", fileName);
 
 	BuildingBlockPackage pkg =
 	    (BuildingBlockPackage) Serializer.fromFile(fileName);
@@ -2704,7 +2714,7 @@ public class Presenter implements IPlugInPort {
 
 	upgradedVariants = true;
 
-	LOG.info("upgradeVariants() Checking if variants need to be updated using [%s]",
+	LOG.info("upgradeVariants() Checking if variants need to be updated using {}",
 		 TEMPLATES_KEY);
 	Map<String, List<Template>> lookupMap =
 	    new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
@@ -2743,7 +2753,7 @@ public class Presenter implements IPlugInPort {
 		// to
 		// upgrade
 	    } else {
-		LOG.warn("Could not upgrade variants for: %s", entry.getKey());
+		LOG.warn("Could not upgrade variants for {}", entry.getKey());
 	    }
 	}
 
