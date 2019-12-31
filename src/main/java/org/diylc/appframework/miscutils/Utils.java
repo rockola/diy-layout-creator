@@ -68,9 +68,7 @@ public class Utils {
 	    e.printStackTrace();
 	} catch (IllegalAccessException e) {
 	    e.printStackTrace();
-	} catch (NoSuchMethodException e) {
-	    e.printStackTrace();
-	} catch (InvocationTargetException e) {
+	} catch (ReflectiveOperationException e) {
 	    e.printStackTrace();
 	}
 
