@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.DrawOption;
@@ -65,7 +65,7 @@ import org.diylc.utils.Constants;
  */
 public class DrawingManager {
 
-  private static final Logger LOG = Logger.getLogger(DrawingManager.class);
+  private static final Logger LOG = LogManager.getLogger(DrawingManager.class);
 
   public static int CONTROL_POINT_SIZE = 7;
   public static double EXTRA_SPACE = 0.25;

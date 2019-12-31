@@ -8,7 +8,7 @@ import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.commons.compiler.ISimpleCompiler;
 import org.codehaus.janino.CompilerFactory;
 
@@ -20,7 +20,7 @@ import org.codehaus.janino.CompilerFactory;
  */
 public class ProxyFactory {
 
-  private static final Logger LOG = Logger.getLogger(ProxyFactory.class);
+  private static final Logger LOG = LogManager.getLogger(ProxyFactory.class);
 
   private IFlatProxy flatProxy;
 

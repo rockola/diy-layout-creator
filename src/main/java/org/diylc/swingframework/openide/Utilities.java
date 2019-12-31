@@ -40,7 +40,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 public final class Utilities {
-  private static final Logger LOG = Logger.getLogger(Utilities.class.getName());
+  private static final Logger LOG = LogManager.getLogger(Utilities.class.getName());
   public static final int OS_WINNT = 1;
   public static final int OS_WIN95 = 2;
   public static final int OS_WIN98 = 4;

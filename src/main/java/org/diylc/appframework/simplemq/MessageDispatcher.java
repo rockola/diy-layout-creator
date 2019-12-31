@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Utility for synchronous or asynchronous message distribution.
@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  */
 public class MessageDispatcher<E extends Enum<E>> {
 
-	private static final Logger LOG = Logger.getLogger(MessageDispatcher.class);
+	private static final Logger LOG = LogManager.getLogger(MessageDispatcher.class);
 
 	private Map<IMessageListener<E>, EnumSet<E>> listenerMap;
 	private Object mutex = new Object();

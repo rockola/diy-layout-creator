@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -78,7 +78,7 @@ import org.w3c.dom.NodeList;
 
 public class V1FileParser implements IOldFileParser {
 
-  private static final Logger LOG = Logger.getLogger(V1FileParser.class);
+  private static final Logger LOG = LogManager.getLogger(V1FileParser.class);
 
   private static final Size V1_GRID_SPACING = new Size(0.1d, SizeUnit.in);
   private static final Map<String, Color> V1_COLOR_MAP = new HashMap<String, Color>();

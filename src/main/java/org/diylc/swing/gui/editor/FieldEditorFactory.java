@@ -27,7 +27,7 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.annotations.DynamicList;
 import org.diylc.core.annotations.MultiLineText;
@@ -41,7 +41,7 @@ import org.diylc.core.measures.AbstractMeasure;
  */
 public class FieldEditorFactory {
 
-  private static final Logger LOG = Logger.getLogger(FieldEditorFactory.class);
+  private static final Logger LOG = LogManager.getLogger(FieldEditorFactory.class);
 
   public static Component createFieldEditor(PropertyWrapper property) {
     try {

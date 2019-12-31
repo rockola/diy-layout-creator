@@ -17,13 +17,13 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.reflect.ClassPath;
 
 public class Utils {
 
-    private static final Logger LOG = Logger.getLogger(Utils.class);
+    private static final Logger LOG = LogManager.getLogger(Utils.class);
 
     static final String[] browsers = {"google-chrome", "firefox", "opera",
 				      "epiphany", "konqueror", "conkeror",

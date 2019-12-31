@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.EnumSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
@@ -43,7 +43,7 @@ import org.diylc.appframework.Serializer;
  */
 public class ConfigPlugin implements IPlugIn {
 
-    private static final Logger LOG = Logger.getLogger(ConfigPlugin.class);
+    private static final Logger LOG = LogManager.getLogger(ConfigPlugin.class);
 
     private static final String CONFIG_MENU = "Config";
     private static final String THEME_MENU = "Theme";

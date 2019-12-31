@@ -26,11 +26,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class MemoryCleaner {
 
-  private static final Logger LOG = Logger.getLogger(MemoryCleaner.class);
+  private static final Logger LOG = LogManager.getLogger(MemoryCleaner.class);
 
   public static void clean(Object obj) {
     Class<?> clazz = obj.getClass();

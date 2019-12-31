@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
@@ -51,7 +51,7 @@ import org.diylc.core.measures.Size;
  */
 public class InstantiationManager {
 
-    private static final Logger LOG = Logger.getLogger(InstantiationManager.class);
+    private static final Logger LOG = LogManager.getLogger(InstantiationManager.class);
 
     public static int MAX_RECENT_COMPONENTS = 16;
 

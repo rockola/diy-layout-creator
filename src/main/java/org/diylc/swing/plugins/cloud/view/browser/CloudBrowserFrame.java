@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;
@@ -64,7 +64,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOG = Logger.getLogger(CloudBrowserFrame.class);
+  private static final Logger LOG = LogManager.getLogger(CloudBrowserFrame.class);
 
   private JPanel mainPanel;
   private JTabbedPane tabbedPane;

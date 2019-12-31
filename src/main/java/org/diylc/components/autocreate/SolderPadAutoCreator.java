@@ -24,7 +24,7 @@ package org.diylc.components.autocreate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.components.connectivity.SolderPad;
 import org.diylc.core.IDIYComponent;
@@ -32,7 +32,7 @@ import org.diylc.core.annotations.IAutoCreator;
 
 public class SolderPadAutoCreator implements IAutoCreator {
 
-  private static final Logger LOG = Logger.getLogger(SolderPadAutoCreator.class);
+  private static final Logger LOG = LogManager.getLogger(SolderPadAutoCreator.class);
   
   public static final String AUTO_PADS_KEY = "autoCreatePads";
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import org.diylc.appframework.Serializer;
 
@@ -28,7 +28,7 @@ import org.diylc.appframework.Serializer;
  */
 public class PhpFlatProxy implements IFlatProxy {
 
-    private static final Logger LOG = Logger.getLogger(PhpFlatProxy.class);
+    private static final Logger LOG = LogManager.getLogger(PhpFlatProxy.class);
 
     @Override
     public InputStream invoke(String url, String methodName,

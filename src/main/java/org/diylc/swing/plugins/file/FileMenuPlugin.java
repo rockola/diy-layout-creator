@@ -26,7 +26,7 @@ import java.awt.event.KeyEvent;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.EventType;
 import org.diylc.common.INetlistAnalyzer;
@@ -44,7 +44,7 @@ import org.diylc.swing.ISwingUI;
  */
 public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
 
-  private static final Logger LOG = Logger.getLogger(FileMenuPlugin.class);
+  private static final Logger LOG = LogManager.getLogger(FileMenuPlugin.class);
 
   private static final String FILE_TITLE = "File";
   private static final String TRACE_MASK_TITLE = "Trace Mask";

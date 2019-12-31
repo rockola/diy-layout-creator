@@ -51,7 +51,7 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
@@ -99,7 +99,7 @@ import org.diylc.utils.Constants;
  */
 public class Presenter implements IPlugInPort {
 
-    private static final Logger LOG = Logger.getLogger(Presenter.class);
+    private static final Logger LOG = LogManager.getLogger(Presenter.class);
 
     public static VersionNumber CURRENT_VERSION = new VersionNumber(3, 0, 0);
     public static List<Version> RECENT_VERSIONS = null;

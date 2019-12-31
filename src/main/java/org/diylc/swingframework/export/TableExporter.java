@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
  */
 public class TableExporter {
 
-    private final static Logger LOG = Logger.getLogger(TableExporter.class);
+    private final static Logger LOG = LogManager.getLogger(TableExporter.class);
 
     private static TableExporter instance;
 

@@ -34,7 +34,7 @@ import java.util.EnumSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
@@ -45,7 +45,7 @@ public class AutoSavePlugin implements IPlugIn {
 
   private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory("diylc") + "backup";
 
-  private static final Logger LOG = Logger.getLogger(AutoSavePlugin.class);
+  private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
 
   public static long BACKUP_FREQ_MS = 60 * 1000;
   public static int MAX_TOTAL_SIZE_MB = 64;

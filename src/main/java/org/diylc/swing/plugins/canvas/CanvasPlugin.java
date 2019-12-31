@@ -47,7 +47,7 @@ import javax.swing.JScrollBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.appframework.miscutils.Utils;
@@ -72,7 +72,7 @@ import org.diylc.swingframework.ruler.RulerScrollPane;
 
 public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
-  private static final Logger LOG = Logger.getLogger(CanvasPlugin.class);
+  private static final Logger LOG = LogManager.getLogger(CanvasPlugin.class);
 
   private RulerScrollPane scrollPane;
   private CanvasPanel canvasPanel;

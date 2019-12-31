@@ -54,7 +54,7 @@ import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
@@ -85,7 +85,7 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class MainFrame extends JFrame implements ISwingUI {
 
-    private static final Logger LOG = Logger.getLogger(MainFrame.class);
+    private static final Logger LOG = LogManager.getLogger(MainFrame.class);
 
     private static final long serialVersionUID = 1L;
 

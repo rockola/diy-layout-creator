@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 
 
@@ -20,69 +20,69 @@ import org.diylc.appframework.miscutils.Utils;
  */
 public class LinkLabel extends JLabel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a hyperlink with the specified url and protocol. For web page
-	 * links use <br>
-	 * <br>
-	 * <code>protocol = "http://", url = "www.some-site.com"</code><br>
-	 * <br>
-	 * For email use<br>
-	 * <br>
-	 * <code>protocol = "mailto:", url = "somebody@some-site.com"</code> <br>
-	 * <br>
-	 * Other constructors should not be used as they will create a plain
-	 * {@link JLabel}.
-	 * 
-	 * @param protocol
-	 * @param url
-	 */
-	public LinkLabel(final String protocol, final String url) {
-		super("<html><u>" + url + "</u></html>");
-		setForeground(Color.blue);
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		addMouseListener(new MouseAdapter() {
+    /**
+       Creates a hyperlink with the specified url and protocol. For web page
+       links use
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					Utils.openURL(protocol + url);
-				} catch (Exception e1) {
-					Logger.getLogger(LinkLabel.class).error("Could not launch default browser",
-							e1);
-				}
-			}
-		});
-	}
+       <code>protocol = "http://", url = "www.some-site.com"</code>
 
-	@Deprecated
-	public LinkLabel() {
-		super();
-	}
+       For email use
 
-	@Deprecated
-	public LinkLabel(Icon image, int horizontalAlignment) {
-		super(image, horizontalAlignment);
-	}
+       <code>protocol = "mailto:", url = "somebody@some-site.com"</code> <br>
 
-	@Deprecated
-	public LinkLabel(Icon image) {
-		super(image);
-	}
+       Other constructors should not be used as they will create a plain
+       {@link JLabel}.
 
-	@Deprecated
-	public LinkLabel(String text, Icon icon, int horizontalAlignment) {
-		super(text, icon, horizontalAlignment);
-	}
+       @param protocol
+       @param url
+    */
+    public LinkLabel(final String protocol, final String url) {
+	super("<html><u>" + url + "</u></html>");
+	setForeground(Color.blue);
+	setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	addMouseListener(new MouseAdapter() {
 
-	@Deprecated
-	public LinkLabel(String text, int horizontalAlignment) {
-		super(text, horizontalAlignment);
-	}
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		    try {
+			Utils.openURL(protocol + url);
+		    } catch (Exception e1) {
+			LogManager.getLogger(LinkLabel.class).error("Could not launch default browser",
+								    e1);
+		    }
+		}
+	    });
+    }
 
-	@Deprecated
-	public LinkLabel(String text) {
-		super(text);
-	}
+    @Deprecated
+    public LinkLabel() {
+	super();
+    }
+
+    @Deprecated
+    public LinkLabel(Icon image, int horizontalAlignment) {
+	super(image, horizontalAlignment);
+    }
+
+    @Deprecated
+    public LinkLabel(Icon image) {
+	super(image);
+    }
+
+    @Deprecated
+    public LinkLabel(String text, Icon icon, int horizontalAlignment) {
+	super(text, icon, horizontalAlignment);
+    }
+
+    @Deprecated
+    public LinkLabel(String text, int horizontalAlignment) {
+	super(text, horizontalAlignment);
+    }
+
+    @Deprecated
+    public LinkLabel(String text) {
+	super(text);
+    }
 }

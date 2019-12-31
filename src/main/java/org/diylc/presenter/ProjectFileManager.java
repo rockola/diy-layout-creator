@@ -39,7 +39,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.VersionNumber;
@@ -58,7 +58,7 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 public class ProjectFileManager {
 
-    private static final Logger LOG = Logger.getLogger(ProjectFileManager.class);
+    private static final Logger LOG = LogManager.getLogger(ProjectFileManager.class);
 
     private XStream xStream;
     // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in

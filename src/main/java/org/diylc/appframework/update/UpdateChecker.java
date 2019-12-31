@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import org.diylc.appframework.Serializer;
 
 public class UpdateChecker {
 
-    private static final Logger LOG = Logger.getLogger(UpdateChecker.class);
+    private static final Logger LOG = LogManager.getLogger(UpdateChecker.class);
 
     private static final String VERSION_HTML = "<p><b>v%d.%d.%d (released on %s)</b><br>\n%s</p>\n";
     private static final String CHANGE_HTML = "&nbsp;&nbsp;&nbsp;<b>&rsaquo;</b>&nbsp;[%s] %s<br>\n";

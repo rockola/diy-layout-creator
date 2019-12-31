@@ -28,7 +28,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
@@ -170,7 +170,7 @@ public class HelpMenuPlugin implements IPlugIn {
       try {
         Utils.openURL(url);
       } catch (Exception e1) {
-        Logger.getLogger(LinkLabel.class).error("Could not launch default browser", e1);
+        LogManager.getLogger(LinkLabel.class).error("Could not launch default browser", e1);
       }
     }
   }
