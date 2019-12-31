@@ -2,7 +2,7 @@
 <Configuration status="WARN">
   <Appenders>
     <RollingFile name="RollingFile"
-		 fileName="${user.home}/.diylc/logs/log.txt"
+		 fileName="${sys:user.home}/.diylc/logs/log.txt"
 		 ignoreExceptions="false">
       <PatternLayout>
 	<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
