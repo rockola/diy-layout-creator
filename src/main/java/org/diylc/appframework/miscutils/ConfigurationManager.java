@@ -162,7 +162,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static boolean readBoolean(String key, boolean defaultValue) {
+    public static boolean getBoolean(String key, boolean defaultValue) {
 	return getInstance().readBoolean(key, defaultValue);
     }
 
@@ -174,7 +174,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static boolean readString(String key, boolean defaultValue) {
+    public static boolean getString(String key, boolean defaultValue) {
 	return getInstance().readString(key, defaultValue);
     }
 
@@ -186,7 +186,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static int readInt(String key, boolean defaultValue) {
+    public static int getInt(String key, boolean defaultValue) {
 	return getInstance().readInt(key, defaultValue);
     }
 
@@ -198,7 +198,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static int readFloat(String key, boolean defaultValue) {
+    public static int getFloat(String key, boolean defaultValue) {
 	return getInstance().readFloat(key, defaultValue);
     }
 
@@ -210,7 +210,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static double readDouble(String key, boolean defaultValue) {
+    public static double getDouble(String key, boolean defaultValue) {
 	return getInstance().readDouble(key, defaultValue);
     }
 
@@ -222,7 +222,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static Object readObject(String key, boolean defaultValue) {
+    public static Object getObject(String key, boolean defaultValue) {
 	return getInstance().readObject(key, defaultValue);
     }
 
@@ -236,7 +236,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static void writeValue(String key, Object value) {
+    public static void putValue(String key, Object value) {
 	getInstance().writeValue(key, value);
     }
 }
