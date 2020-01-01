@@ -88,8 +88,12 @@ public class ConfigurationManager {
 	listenerList.add(listener);
     }
   
-    public boolean isFileWithErrors() {
-	return fileWithErrors;
+    public static void addListener(String key, IConfigListener listener) {
+	getInstance().addConfigListener(key, listener);
+    }
+
+    public static boolean isFileWithErrors() {
+	return getInstance().fileWithErrors;
     }
 
     @SuppressWarnings("unchecked")
@@ -165,6 +169,10 @@ public class ConfigurationManager {
     public static boolean getBoolean(String key, boolean defaultValue) {
 	return getInstance().readBoolean(key, defaultValue);
     }
+    // default boolean value = false
+    public static boolean getBoolean(String key) {
+	return getBoolean(key, false);
+    }
 
     public String readString(String key, String defaultValue) {
 	if (configuration.containsKey(key)) {
@@ -174,8 +182,12 @@ public class ConfigurationManager {
 	}
     }
 
-    public static boolean getString(String key, boolean defaultValue) {
+    public static String getString(String key, String defaultValue) {
 	return getInstance().readString(key, defaultValue);
+    }
+    // default String value = null
+    public static String getString(String key) {
+	return getInstance().readString(key, null);
     }
 
     public int readInt(String key, int defaultValue) {
@@ -186,7 +198,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static int getInt(String key, boolean defaultValue) {
+    public static int getInt(String key, int defaultValue) {
 	return getInstance().readInt(key, defaultValue);
     }
 
@@ -198,7 +210,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static int getFloat(String key, boolean defaultValue) {
+    public static float getFloat(String key, float defaultValue) {
 	return getInstance().readFloat(key, defaultValue);
     }
 
@@ -210,7 +222,7 @@ public class ConfigurationManager {
 	}
     }
 
-    public static double getDouble(String key, boolean defaultValue) {
+    public static double getDouble(String key, double defaultValue) {
 	return getInstance().readDouble(key, defaultValue);
     }
 
@@ -222,9 +234,14 @@ public class ConfigurationManager {
 	}
     }
 
-    public static Object getObject(String key, boolean defaultValue) {
+    public static Object getObject(String key, Object defaultValue) {
 	return getInstance().readObject(key, defaultValue);
     }
+    // default Object value = null
+    public static Object getObject(String key) {
+	return getObject(key, null);
+    }
+
 
     public void writeValue(String key, Object value) {
 	configuration.put(key, value);
