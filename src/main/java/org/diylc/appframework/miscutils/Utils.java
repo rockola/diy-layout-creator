@@ -118,9 +118,11 @@ public class Utils {
 	ClassPath cp = ClassPath.from(loader);
 	for (ClassPath.ClassInfo ci : cp.getTopLevelClassesRecursive(packageName)) {
 	    
-	    LOG.debug("Found class [" + ci.getSimpleName()
-		      + "] in package [" + ci.getPackageName()
-		      + "] aka [" + ci.getName() + "]");
+	    LOG.debug("getClasses(loader, '{}') Found class {} in package {} ({})",
+		      packageName,
+		      ci.getSimpleName(),
+		      ci.getPackageName(),
+		      ci.getName());
 	    classes.add(ci.load());
 	}
 
