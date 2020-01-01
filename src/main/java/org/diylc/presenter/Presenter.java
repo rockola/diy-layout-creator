@@ -348,7 +348,7 @@ public class Presenter implements IPlugInPort {
 
     @SuppressWarnings("unchecked")
     private void addToRecentFiles(String fileName) {
-	List<String> recentFiles = (List<String>) ConfigurationManager.getInstance().readObject(RECENT_FILES_KEY, null);
+	List<String> recentFiles = (List<String>) ConfigurationManager.getObject(RECENT_FILES_KEY);
 	if (recentFiles == null)
 	    recentFiles = new ArrayList<String>();
 	recentFiles.remove(fileName);
@@ -2272,7 +2272,7 @@ public class Presenter implements IPlugInPort {
 	    ComponentProcessor.getInstance().extractComponentTypeFrom(
 								      (Class<? extends IDIYComponent<?>>) component.getClass());
 	Map<String, List<Template>> variantMap =
-	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
+	    (Map<String, List<Template>>) ConfigurationManager.getObject(TEMPLATES_KEY);
 	if (variantMap == null) {
 	    variantMap = new HashMap<String, List<Template>>();
 	}
@@ -2368,8 +2368,8 @@ public class Presenter implements IPlugInPort {
 	Map<String, List<Template>> lookupMap =
 	    new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	Map<String, List<Template>> variantMap =
-	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY,
-											null);
+	    (Map<String, List<Template>>) ConfigurationManager.getObject(TEMPLATES_KEY);
+
 	if (variantMap != null)
 	    lookupMap.putAll(variantMap);
 
@@ -2455,7 +2455,7 @@ public class Presenter implements IPlugInPort {
     public void deleteVariant(ComponentType type, String templateName) {
 	LOG.trace("deleteTemplate({}, {})", type, templateName);
 	Map<String, List<Template>> templateMap =
-	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
+	    (Map<String, List<Template>>) ConfigurationManager.getObject(TEMPLATES_KEY);
 	if (templateMap != null) {
 	    // try by class name and then by old category.type format
 	    String key1 = type.getInstanceClass().getCanonicalName();
@@ -2490,7 +2490,7 @@ public class Presenter implements IPlugInPort {
     public void setDefaultVariant(ComponentType type, String templateName) {
 	LOG.trace("setTemplateDefault({}, {})", type, templateName);
 	Map<String, String> defaultTemplateMap =
-	    (Map<String, String>) ConfigurationManager.getInstance().readObject(DEFAULT_TEMPLATES_KEY, null);
+	    (Map<String, String>) ConfigurationManager.getObject(DEFAULT_TEMPLATES_KEY);
 	if (defaultTemplateMap == null)
 	    defaultTemplateMap = new HashMap<String, String>();
 
@@ -2513,7 +2513,7 @@ public class Presenter implements IPlugInPort {
     @Override
     public String getDefaultVariant(ComponentType type) {
 	Map<String, String> defaultTemplateMap =
-	    (Map<String, String>) ConfigurationManager.getInstance().readObject(DEFAULT_TEMPLATES_KEY, null);
+	    (Map<String, String>) ConfigurationManager.getObject(DEFAULT_TEMPLATES_KEY);
 	if (defaultTemplateMap == null)
 	    return null;
 
@@ -2567,7 +2567,7 @@ public class Presenter implements IPlugInPort {
     public void saveSelectionAsBlock(String blockName) {
 	LOG.trace("saveSelectionAsBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
-	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
+	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(BLOCKS_KEY);
 	if (blocks == null)
 	    blocks = new HashMap<String, List<IDIYComponent<?>>>();
 	List<IDIYComponent<?>> blockComponents = new ArrayList<IDIYComponent<?>>(this.selectedComponents);
@@ -2588,7 +2588,7 @@ public class Presenter implements IPlugInPort {
     public void loadBlock(String blockName) throws InvalidBlockException {
 	LOG.trace("loadBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
-	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
+	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(BLOCKS_KEY);
 	if (blocks != null) {
 	    Collection<IDIYComponent<?>> components = blocks.get(blockName);
 	    if (components == null)
@@ -2619,7 +2619,7 @@ public class Presenter implements IPlugInPort {
     public void deleteBlock(String blockName) {
 	LOG.trace("deleteBlock({})", blockName);
 	Map<String, List<IDIYComponent<?>>> blocks =
-	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
+	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(BLOCKS_KEY);
 	if (blocks != null) {
 	    blocks.remove(blockName);
 	    ConfigurationManager.getInstance().writeValue(BLOCKS_KEY, blocks);
@@ -2653,7 +2653,7 @@ public class Presenter implements IPlugInPort {
 	    return 0;
 
 	Map<String, List<Template>> variantMap =
-	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY, null);
+	    (Map<String, List<Template>>) ConfigurationManager.getObject(TEMPLATES_KEY);
 	if (variantMap == null) {
 	    variantMap = new HashMap<String, List<Template>>();
 	}
@@ -2689,7 +2689,7 @@ public class Presenter implements IPlugInPort {
 	    return 0;
 
 	Map<String, List<IDIYComponent<?>>> blocks =
-	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(BLOCKS_KEY, null);
+	    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(BLOCKS_KEY);
 	if (blocks == null) {
 	    blocks = new HashMap<String, List<IDIYComponent<?>>>();
 	}
@@ -2719,8 +2719,7 @@ public class Presenter implements IPlugInPort {
 	Map<String, List<Template>> lookupMap =
 	    new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	Map<String, List<Template>> variantMap =
-	    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(TEMPLATES_KEY,
-											null);
+	    (Map<String, List<Template>>) ConfigurationManager.getObject(TEMPLATES_KEY);
 
 	if (variantMap == null)
 	    return;
