@@ -35,9 +35,9 @@ import javax.swing.UIManager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
+import org.diylc.common.Message;
 import org.diylc.core.IView;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
@@ -66,22 +66,22 @@ public class DIYLCStarter {
 	LOG.info("DIYLC is running");
 
 	try {
-	    LOG.debug("Setting Look and Feel to %s", UIManager.getSystemLookAndFeelClassName());
+	    LOG.debug("Setting Look and Feel to {}", UIManager.getSystemLookAndFeelClassName());
 	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	} catch (Exception e) {
 	    LOG.error("Could not set Look and Feel", e);
 	}
 
 	ClassLoader loader = DIYLCStarter.class.getClassLoader();
-	LOG.debug("DIYLCStarter.class coming from %s",
+	LOG.debug("DIYLCStarter.class coming from {}",
 		  loader.getResource("org/diylc/DIYLCStarter.class"));
-	LOG.debug("log4j2.xml coming from %s",
+	LOG.debug("log4j2.xml coming from {}",
 		  loader.getResource("log4j2.xml"));
-	LOG.debug("java.class.path is %s", System.getProperty("java.class.path"));	
+	LOG.debug("java.class.path is {}", System.getProperty("java.class.path"));
 
 	// Initialize splash screen
 	final SplashScreen splash = SplashScreen.getSplashScreen();
-	new DIYLCSplash(splash).start();
+	new Splash(splash).start();
 
 	/*
 	  // Obsolete log4j v1 initialization
@@ -99,17 +99,17 @@ public class DIYLCStarter {
 	ConfigurationManager.initialize("diylc");
 
 	Package p = DIYLCStarter.class.getPackage();
-	LOG.debug("DIYLCStarter package: %s", p.getName());
-	LOG.debug("Implementation: version [%s] title [%s] vendor [%s]",
+	LOG.debug("DIYLCStarter package: {}", p.getName());
+	LOG.debug("Implementation: version [{}] title [{}] vendor [{}]",
 		  p.getImplementationVersion(),
 		  p.getImplementationTitle(),
 		  p.getImplementationVendor());
-	LOG.debug("Specification: version [%s] title [%s] vendor [%s]",	
+	LOG.debug("Specification: version [{}] title [{}] vendor [{}]",	
 		  p.getSpecificationVersion(),
 		  p.getSpecificationTitle(),
 		  p.getSpecificationVendor());
 	//
-	LOG.info("OS: %s %s, Java version: %s by %s",
+	LOG.info("OS: {} {}, Java version: {} by {}",
 		  System.getProperty("os.name"),
 		  System.getProperty("os.version"),
 		  System.getProperty("java.runtime.version"),
@@ -201,11 +201,8 @@ public class DIYLCStarter {
 	*/
     
 	if (ConfigurationManager.getInstance().isFileWithErrors())
-	    mainFrame.showMessage("<html>"
-				  + "There was an error reading the configuration file and it was replaced by a default configuration.<br>"
-				  + "The backup file is created and placed in user directory under '.diylc' sub-directory with '~' at the end.<br>"
-				  + "This can happen when running two versions of DIYLC on the same machine at the same time.<br>"
-				  + "Replace the main 'config.xml' file with the backup when running the latest version of DIYLC."
-				  + "</html>", "Warning", IView.WARNING_MESSAGE);
+	    mainFrame.showMessage(Message.getHTML("configuration-file-errors"),
+				  "Warning",
+				  IView.WARNING_MESSAGE);
     }
 }
