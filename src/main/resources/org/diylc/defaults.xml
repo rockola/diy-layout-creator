@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <app>
+    <title>DIY Layout Creator</title>
+    <author>Branislav Stojkovic and others</author>
+  </app>
+  <project>
+    <new-title>New Project</new-title>
+  </project>
+  <menu>
+    <help>
+      <title>Help</title>
+      <user-manual>User Manual</user-manual>
+      <faq>FAQ</faq>
+      <component-api>Component API</component-api>
+      <plugin-api>Plugin API</plugin-api>
+      <bug-report>Submit a Bug</bug-report>
+      <donate>Donate</donate>
+    </help>
+  </menu>
+  <url>
+    <manual>https://github.com/bancika/diy-layout-creator/blob/wiki/Manual.md</manual>
+    <faq>https://github.com/bancika/diy-layout-creator/blob/wiki/FAQ.md</faq>
+    <component>https://github.com/bancika/diy-layout-creator/blob/wiki/ComponentAPI.md</component>
+    <plugin>https://github.com/bancika/diy-layout-creator/blob/wiki/PluginAPI.md</plugin>
+    <bug>https://github.com/bancika/diy-layout-creator/issues</bug>
+    <donate>http://diy-fever.com/donate</donate>
+    <website>https://github.com/rockola/diy-layout-creator</website>
+  </url>
+  <font>
+    <!-- "Open Sans is the go to Humanist web font for designers that
+         want a great substitute to Tahoma."
+
+	 https://medium.com/designed-thought/the-top-5-google-sans-serif-typefaces-7477bfbebae7
+	 referenced 2020-01-01 
+    -->
+    <sans-serif>Open Sans</sans-serif>
+    <!-- "Jura is a decent substitue to Eurostile.  The uppercase
+         letters are a closer match than the lowercase.  But after a
+         couple hours searching IMO its the best availible." 
+
+	 http://joelcrawfordsmith.com/closest-font/font/eurostile
+	 referenced 2020-01-01 
+    -->
+    <label>Jura</label>    
+  </font>
+  <icon>
+    <About>about</About>
+    <Add>add</Add>
+    <ApplicationEdit>application_edit</ApplicationEdit>
+    <Arrow>arrow</Arrow>
+    <BOM>bom</BOM>
+    <Back>back</Back>
+    <BlackBoard>blackboard</BlackBoard>
+    <BranchAdd>branch_add</BranchAdd>
+    <BriefcaseAdd>briefcase_add</BriefcaseAdd>
+    <BriefcaseInto>briefcase_into</BriefcaseInto>
+    <Bug>bug</Bug>
+    <CSV>csv</CSV>
+    <Chest>chest</Chest>
+    <Cloud>cloud</Cloud>
+    <CloudBg>cloud_bg</CloudBg>
+    <CloudBig>cloud_big</CloudBig>
+    <CloudDelete>cloud_delete</CloudDelete>
+    <CloudDownload>cloud_download</CloudDownload>
+    <CloudEdit>cloud_edit</CloudEdit>
+    <CloudGear>cloud_gear</CloudGear>
+    <CloudUp>cloud_up</CloudUp>
+    <CloudUpload>cloud_upload</CloudUpload>
+    <CloudWait>cloud_wait</CloudWait>
+    <CoffeebeanEdit>coffeebean_edit</CoffeebeanEdit>
+    <Component>component</Component>
+    <ComponentAdd>component_add</ComponentAdd>
+    <Copy>copy</Copy>
+    <Cut>cut</Cut>
+    <Dashboard>dashboard</Dashboard>
+    <DataFind>data_find</DataFind>
+    <Delete>delete</Delete>
+    <DiskBlue>disk_blue</DiskBlue>
+    <DocumentEdit>document_edit</DocumentEdit>
+    <DocumentPlain>document_plain</DocumentPlain>
+    <DocumentPlainYellow>document_plain_yellow</DocumentPlainYellow>
+    <DocumentsGear>documents_gear</DocumentsGear>
+    <Donate>donate</Donate>
+    <Download>download</Download>
+    <EditComponent>edit_component</EditComponent>
+    <ElementInto>element_into</ElementInto>
+    <ElementsSelection>elements_selection</ElementsSelection>
+    <Error>error</Error>
+    <Excel>excel</Excel>
+    <Exit>exit</Exit>
+    <Eye>eye</Eye>
+    <Faq>faq</Faq>
+    <Find>find</Find>
+    <FitToSize>fit_to_size</FitToSize>
+    <FlipHorizontal>flip_horizontal</FlipHorizontal>
+    <FlipVertical>flip_vertical</FlipVertical>
+    <FolderOut>folder_out</FolderOut>
+    <FormGreen>form_green</FormGreen>
+    <Front>front</Front>
+    <Garbage>garbage</Garbage>
+    <Gears>gears</Gears>
+    <Group>group</Group>
+    <Guitar>guitar</Guitar>
+    <HTML>html</HTML>
+    <Hammer>hammer</Hammer>
+    <Help>help</Help>
+    <History>history</History>
+    <IconLarge>icon_large</IconLarge>
+    <IconMedium>icon_medium</IconMedium>
+    <IconSmall>icon_small</IconSmall>
+    <IdCard>id_card</IdCard>
+    <IdCardAdd>id_card_add</IdCardAdd>
+    <IdCardEdit>id_card_edit</IdCardEdit>
+    <Image>image</Image>
+    <JarBeanInto>jar_bean_into</JarBeanInto>
+    <KeyEdit>key_edit</KeyEdit>
+    <LightBulbOff>lightbulb_off</LightBulbOff>
+    <LightBulbOn>lightbulb_on</LightBulbOn>
+    <MagicWand>magic_wand</MagicWand>
+    <Manual>manual</Manual>
+    <Megaphone>megaphone</Megaphone>
+    <Messages>messages</Messages>
+    <MissingImage>missing_image</MissingImage>
+    <MoveSmall>move_small</MoveSmall>
+    <NavLeftBlue>nav_left_blue</NavLeftBlue>
+    <NavRightBlue>nav_right_blue</NavRightBlue>
+    <NavigateCheck>navigate_check</NavigateCheck>
+    <Node>node</Node>
+    <NotebookAdd>notebook_add</NotebookAdd>
+    <PDF>pdf</PDF>
+    <Paste>paste</Paste>
+    <Pens>pens</Pens>
+    <PhotoScenery>photo_scenery</PhotoScenery>
+    <PinGreen>pin_green</PinGreen>
+    <PinGrey>pin_grey</PinGrey>
+    <Plugin>plugin</Plugin>
+    <Print>print</Print>
+    <Redo>redo</Redo>
+    <RotateCCW>rotate_ccw</RotateCCW>
+    <RotateCW>rotate_cw</RotateCW>
+    <SaveAs>save_as</SaveAs>
+    <Scientist>scientist</Scientist>
+    <Screwdriver>screwdriver</Screwdriver>
+    <ScrollInformation>scroll_information</ScrollInformation>
+    <SearchBox>search</SearchBox>
+    <Selection>selection</Selection>
+    <Size>size</Size>
+    <Sort>sort</Sort>
+    <Spinning>spinning</Spinning>
+    <Splash>splash</Splash>
+    <SplashCeramic>splash_ceramic</SplashCeramic>
+    <SplashElectrolytic>splash_electrolytic</SplashElectrolytic>
+    <SplashFilm>splash_film</SplashFilm>
+    <SplashResistor>splash_resistor</SplashResistor>
+    <StarBlue>star_blue</StarBlue>
+    <StarGrey>star_grey</StarGrey>
+    <TraceMask>trace_mask</TraceMask>
+    <Undo>undo</Undo>
+    <Ungroup>ungroup</Ungroup>
+    <Upload>upload</Upload>
+    <Warning>warning</Warning>
+    <Web>web</Web>
+    <WindowColors>window_colors</WindowColors>
+    <WindowGear>window_gear</WindowGear>
+    <Wrench>wrench</Wrench>
+    <ZoomSmall>zoom_small</ZoomSmall>
+  </icon>
+</configuration>
