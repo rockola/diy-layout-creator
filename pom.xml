@@ -6,7 +6,7 @@
 
   <groupId>org.diylc</groupId>
   <artifactId>diy-layout-creator</artifactId>
-  <version>3.57.0-rockola</version>
+  <version>4.0.0-rockola</version>
   <packaging>jar</packaging>
 
   <name>diy-layout-creator</name>
@@ -46,6 +46,12 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.6</version>
+    </dependency>
+    <!-- Apache commons-text - String utilities -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.8</version>
     </dependency>
     <!-- JAXB-api - XML (un)marshal -->
     <dependency>
@@ -269,6 +275,8 @@
 	    <argument>-Xmx2048m</argument>
 	    <argument>-Dorg.diylc.scriptRun=true</argument>
 	    <argument>-Dfile.encoding=true</argument>
+	    <argument>-Dawt.useSystemAAFontSettings=on</argument>
+	    <argument>-Dswing.aatext=true</argument>
 	    <argument>-classpath</argument>
 	    <classpath />
             <argument>org.diylc.DIYLCStarter</argument>
