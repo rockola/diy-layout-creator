@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.swing.plugins.cloud.view;
 
@@ -47,175 +45,176 @@ import org.diylc.swing.ISimpleView;
 import org.diylc.swing.gui.components.HTMLTextArea;
 
 /**
- * {@link JDialog} that shows a list of comments posted to a cloud project and provides controls for
- * posting more comments.
- * 
- * @author Branislav Stojkovic
- */
+  {@link JDialog} that shows a list of comments posted to a cloud
+  project and provides controls for posting more comments.
+  
+  @author Branislav Stojkovic
+*/
 public class CommentDialog extends JDialog {
 
-  private static final String JUST_NOW = "just now";
+    private static final String JUST_NOW = "just now";
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private ProjectEntity project;
-  private List<CommentEntity> comments;
+    private ProjectEntity project;
+    private List<CommentEntity> comments;
 
-  private JPanel mainPanel;
-  private JPanel listPanel;
-  private JTextArea replyArea;
-  private JButton sendButton;
+    private JPanel mainPanel;
+    private JPanel listPanel;
+    private JTextArea replyArea;
+    private JButton sendButton;
 
-  private int lastPosition = 0;
+    private int lastPosition = 0;
 
-  private ISimpleView cloudUI;
+    private ISimpleView cloudUI;
 
-  public CommentDialog(ISimpleView cloudUI, ProjectEntity project, List<CommentEntity> comments) {
-    super(cloudUI.getOwnerFrame(), "Comments on " + project.getName());
-    this.project = project;
-    this.comments = comments;
-    this.cloudUI = cloudUI;
-    setMinimumSize(new Dimension(400, 600));
-    setContentPane(getMainPanel());
-    pack();
-    setLocationRelativeTo(cloudUI.getOwnerFrame());
-    setModal(true);
-    if (!CloudPresenter.Instance.isLoggedIn()) {
-      getReplyArea().setEnabled(false);
-      getReplyArea().setText("Must be logged in to reply.");
-      getSendButton().setEnabled(false);
+    public CommentDialog(ISimpleView cloudUI, ProjectEntity project, List<CommentEntity> comments) {
+	super(cloudUI.getOwnerFrame(), "Comments on " + project.getName());
+	this.project = project;
+	this.comments = comments;
+	this.cloudUI = cloudUI;
+	setMinimumSize(new Dimension(400, 600));
+	setContentPane(getMainPanel());
+	pack();
+	setLocationRelativeTo(cloudUI.getOwnerFrame());
+	setModal(true);
+	if (!CloudPresenter.Instance.isLoggedIn()) {
+	    getReplyArea().setEnabled(false);
+	    getReplyArea().setText("Must be logged in to reply.");
+	    getSendButton().setEnabled(false);
+	}
     }
-  }
 
-  private JPanel getListPanel() {
-    if (listPanel == null) {
-      listPanel = new JPanel(new GridBagLayout());
-      listPanel.setBackground(Color.white);
-      for (CommentEntity c : comments) {
-        addComment(c);
+    private JPanel getListPanel() {
+	if (listPanel == null) {
+	    listPanel = new JPanel(new GridBagLayout());
+	    listPanel.setBackground(Color.white);
+	    for (CommentEntity c : comments) {
+		addComment(c);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = 10000;
-        gbc.weighty = 1;
-        listPanel.add(new JLabel(), gbc);
-      }
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridy = 10000;
+		gbc.weighty = 1;
+		listPanel.add(new JLabel(), gbc);
+	    }
+	}
+	return listPanel;
     }
-    return listPanel;
-  }
 
-  private JPanel getMainPanel() {
-    if (mainPanel == null) {
-      mainPanel = new JPanel(new GridBagLayout());
-      mainPanel.setBackground(Color.white);
+    private JPanel getMainPanel() {
+	if (mainPanel == null) {
+	    mainPanel = new JPanel(new GridBagLayout());
+	    mainPanel.setBackground(Color.white);
 
-      GridBagConstraints gbc = new GridBagConstraints();
-      gbc.gridx = 0;
-      gbc.gridy = 0;
-      gbc.weighty = 3;
-      gbc.weightx = 1;
-      gbc.fill = GridBagConstraints.BOTH;
-      JScrollPane scroll = new JScrollPane(getListPanel());
-      scroll.getVerticalScrollBar().setUnitIncrement(16);
-      mainPanel.add(scroll, gbc);
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    gbc.weighty = 3;
+	    gbc.weightx = 1;
+	    gbc.fill = GridBagConstraints.BOTH;
+	    JScrollPane scroll = new JScrollPane(getListPanel());
+	    scroll.getVerticalScrollBar().setUnitIncrement(16);
+	    mainPanel.add(scroll, gbc);
 
-      // Add components to the bottom
-      gbc.insets = new Insets(2, 2, 2, 2);
-      gbc.gridy++;
-      gbc.weighty = 0;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.LINE_START;
-      mainPanel.add(new JLabel("Write a reply:"), gbc);
+	    // Add components to the bottom
+	    gbc.insets = new Insets(2, 2, 2, 2);
+	    gbc.gridy++;
+	    gbc.weighty = 0;
+	    gbc.fill = GridBagConstraints.NONE;
+	    gbc.anchor = GridBagConstraints.LINE_START;
+	    mainPanel.add(new JLabel("Write a reply:"), gbc);
 
-      gbc.gridy++;
-      gbc.fill = GridBagConstraints.BOTH;
-      gbc.weighty = 0.5;
-      mainPanel.add(new JScrollPane(getReplyArea()), gbc);
+	    gbc.gridy++;
+	    gbc.fill = GridBagConstraints.BOTH;
+	    gbc.weighty = 0.5;
+	    mainPanel.add(new JScrollPane(getReplyArea()), gbc);
 
-      gbc.gridy++;
-      gbc.weighty = 0;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.anchor = GridBagConstraints.LINE_END;
-      mainPanel.add(getSendButton(), gbc);
+	    gbc.gridy++;
+	    gbc.weighty = 0;
+	    gbc.fill = GridBagConstraints.NONE;
+	    gbc.anchor = GridBagConstraints.LINE_END;
+	    mainPanel.add(getSendButton(), gbc);
+	}
+	return mainPanel;
     }
-    return mainPanel;
-  }
 
-  private JTextArea getReplyArea() {
-    if (replyArea == null) {
-      replyArea = new HTMLTextArea();
-      replyArea.setFont(getSendButton().getFont());
+    private JTextArea getReplyArea() {
+	if (replyArea == null) {
+	    replyArea = new HTMLTextArea();
+	    replyArea.setFont(getSendButton().getFont());
+	}
+	return replyArea;
     }
-    return replyArea;
-  }
 
-  private JButton getSendButton() {
-    if (sendButton == null) {
-      sendButton = new JButton("Send Reply");
-      sendButton.addActionListener(new ActionListener() {
+    private JButton getSendButton() {
+	if (sendButton == null) {
+	    sendButton = new JButton("Send Reply");
+	    sendButton.addActionListener(new ActionListener() {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          final String comment = getReplyArea().getText();
-          if (comment.trim().length() == 0)
-            cloudUI.showMessage("Cannot post an empty comment.", "Cloud Error", IView.ERROR_MESSAGE);
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			final String comment = getReplyArea().getText();
+			if (comment.trim().length() == 0)
+			    cloudUI.error("Cannot post an empty comment.");
 
-          cloudUI.executeBackgroundTask(new ITask<Void>() {
+			cloudUI.executeBackgroundTask(new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              CloudPresenter.Instance.postComment(project.getId(), comment);
-              return null;
-            }
+				@Override
+				public Void doInBackground() throws Exception {
+				    CloudPresenter.Instance.postComment(project.getId(), comment);
+				    return null;
+				}
 
-            @Override
-            public void failed(Exception e) {
-              cloudUI.showMessage("Error posting comment.", "Cloud Error", IView.ERROR_MESSAGE);
-            }
+				@Override
+				public void failed(Exception e) {
+				    cloudUI.error("Error posting comment.");
+				}
 
-            @Override
-            public void complete(Void result) {
-              getReplyArea().setText("");
-              CommentEntity newComment = new CommentEntity();
-              newComment.setPostedAt(JUST_NOW);
-              newComment.setUsername(CloudPresenter.Instance.getCurrentUsername());
-              newComment.setComment(comment);
-              addComment(newComment).requestFocusInWindow();
-              getListPanel().revalidate();
-            }
-          });
-        }
-      });
+				@Override
+				public void complete(Void result) {
+				    getReplyArea().setText("");
+				    CommentEntity newComment = new CommentEntity();
+				    newComment.setPostedAt(JUST_NOW);
+				    newComment.setUsername(CloudPresenter.Instance.currentUsername());
+				    newComment.setComment(comment);
+				    addComment(newComment).requestFocusInWindow();
+				    getListPanel().revalidate();
+				}
+			    });
+		    }
+		});
+	}
+	return sendButton;
     }
-    return sendButton;
-  }
 
-  private JTextArea addComment(CommentEntity c) {
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.gridx = 0;
-    gbc.gridy = lastPosition++;
-    gbc.insets = new Insets(2, 2, 2, 2);
-    gbc.anchor = GridBagConstraints.LINE_START;
-    gbc.weightx = 1;
-    getListPanel().add(
-        new JLabel("<html><b>" + c.getUsername() + "</b> wrote " + (c.getPostedAt().equals(JUST_NOW) ? "" : "on ")
-            + c.getPostedAt() + " </html>"), gbc);
-    gbc.gridy = lastPosition++;
+    private JTextArea addComment(CommentEntity c) {
+	GridBagConstraints gbc = new GridBagConstraints();
+	gbc.fill = GridBagConstraints.NONE;
+	gbc.gridx = 0;
+	gbc.gridy = lastPosition++;
+	gbc.insets = new Insets(2, 2, 2, 2);
+	gbc.anchor = GridBagConstraints.LINE_START;
+	gbc.weightx = 1;
+	getListPanel().add(
+			   new JLabel("<html><b>" + c.getUsername() + "</b> wrote "
+				      + (c.getPostedAt().equals(JUST_NOW) ? "" : "on ")
+				      + c.getPostedAt() + " </html>"), gbc);
+	gbc.gridy = lastPosition++;
 
-    JTextArea commentArea = new HTMLTextArea(c.getComment());
-    commentArea.setEditable(false);
-    commentArea.setFont(getSendButton().getFont());
-    commentArea.setLineWrap(true);
-    commentArea.setWrapStyleWord(true);
-    // commentArea.setRequestFocusEnabled(false);
-    commentArea.setForeground(Color.gray);
-    // DefaultCaret caret = (DefaultCaret) commentArea.getCaret();
-    // caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-    getListPanel().add(commentArea, gbc);
-    gbc.gridy = lastPosition++;
+	JTextArea commentArea = new HTMLTextArea(c.getComment());
+	commentArea.setEditable(false);
+	commentArea.setFont(getSendButton().getFont());
+	commentArea.setLineWrap(true);
+	commentArea.setWrapStyleWord(true);
+	// commentArea.setRequestFocusEnabled(false);
+	commentArea.setForeground(Color.gray);
+	// DefaultCaret caret = (DefaultCaret) commentArea.getCaret();
+	// caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+	getListPanel().add(commentArea, gbc);
+	gbc.gridy = lastPosition++;
 
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    getListPanel().add(new JSeparator(), gbc);
-    return commentArea;
-  }
+	gbc.fill = GridBagConstraints.HORIZONTAL;
+	getListPanel().add(new JSeparator(), gbc);
+	return commentArea;
+    }
 }
