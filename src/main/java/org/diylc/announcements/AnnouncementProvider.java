@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.common.Config;
 import org.diylc.plugins.cloud.model.IServiceAPI;
 
 import com.diyfever.httpproxy.PhpFlatProxy;
@@ -33,7 +34,7 @@ import com.diyfever.httpproxy.ProxyFactory;
 
 public class AnnouncementProvider {
 
-    private String serviceUrl = "http://www.diy-fever.com/diylc/api/v1/announcements.html";
+    private String serviceUrl = Config.getURL("announcements").toString();
     private String LAST_READ_KEY = "announcement.lastReadDate";
 
     private IAnnouncementService service;
@@ -50,7 +51,8 @@ public class AnnouncementProvider {
 	} catch (ParseException e) {
 	}
 	serviceUrl =
-	    ConfigurationManager.getInstance().readString(IServiceAPI.URL_KEY, "http://www.diy-fever.com/diylc/api/v1");
+	    ConfigurationManager.getString(IServiceAPI.URL_KEY,
+					   Config.getURL("api.base").toString());
 	ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
 	service = factory.createProxy(IAnnouncementService.class, serviceUrl);
     }
