@@ -14,7 +14,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>9</maven.compiler.release>
+    <maven.compiler.release>10</maven.compiler.release>
     <!-- dependency properties -->
     <itext.version>RELEASE</itext.version>
   </properties>
@@ -26,6 +26,19 @@
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.28</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-configuration2</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <!-- apparently needed by commons-configuration -->
+    <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.4</version>
     </dependency>
     <!-- Apache commons-io - I/O utilities -->
     <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -64,13 +77,6 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.mod4j.org.eclipse.xtext</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
-    </dependency>
-    -->
     <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -83,6 +89,7 @@
       <version>2.13.0</version>
     </dependency>
     <!-- xStream - old XML (un)marshal library -->
+    <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
@@ -153,6 +160,11 @@
       <version>28.1-jre</version>
     </dependency>
     <dependency>
+      <groupId>com.atlassian.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+      <version>0.13.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.abcl</groupId>
       <artifactId>abcl</artifactId>
       <version>1.6.0</version>
@@ -220,6 +232,9 @@
 	      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 	      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 	    </manifest>
+	    <manifestEntries>
+	      <SplashScreen-Image>/org/diylc/images/splash.png</SplashScreen-Image>
+	    </manifestEntries>
 	  </archive>
 	</configuration>
       </plugin>
@@ -249,7 +264,7 @@
         <configuration>
 	  <executable>java</executable>
 	  <arguments>
-	    <argument>-splash:src/main/resources/org/diylc/images/splash.png</argument>
+	    <argument>-splash:target/classes/org/diylc/images/splash.png</argument>
 	    <argument>-Xms512m</argument>
 	    <argument>-Xmx2048m</argument>
 	    <argument>-Dorg.diylc.scriptRun=true</argument>
@@ -289,6 +304,7 @@
       -->
       <plugin>
 	<artifactId>maven-shade-plugin</artifactId>
+	<version>3.2.1</version>
 	<executions>
 	  <execution>
 	    <phase>package</phase>
@@ -306,7 +322,7 @@
 		  </excludes>
 		</filter>
 	      </filters>
-	      <minimizeJar>true</minimizeJar>
+	      <!-- <minimizeJar>true</minimizeJar> -->
 	      <shadedArtifactAttached>true</shadedArtifactAttached>
 	      <transformers>
 		<transformer implementation=
