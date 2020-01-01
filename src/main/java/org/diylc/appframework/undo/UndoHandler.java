@@ -89,7 +89,8 @@ public class UndoHandler<T> {
 	    super();
 	    putValue(Action.NAME, "Undo");
 	    putValue(AbstractAction.ACCELERATOR_KEY,
-		     KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		     KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+					    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 	    putValue(AbstractAction.SMALL_ICON, IconLoader.Undo.getIcon());
 	}
 
@@ -115,7 +116,8 @@ public class UndoHandler<T> {
 	    super();
 	    putValue(Action.NAME, "Redo");
 	    putValue(AbstractAction.ACCELERATOR_KEY,
-		     KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		     KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+					    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 	    putValue(AbstractAction.SMALL_ICON, IconLoader.Redo.getIcon());
 	}
 
