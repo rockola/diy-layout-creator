@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.diylc.appframework.miscutils.Utils;
+import org.diylc.common.Config;
 import org.diylc.swingframework.IDrawingProvider;
 
 /*
@@ -121,7 +122,8 @@ public class DrawingExporter {
 			g2d.translate(pageFormat.getImageableX() + margin,
 				      pageFormat.getImageableY() + margin);
 
-			g2d.setFont(new Font("Tahoma", Font.PLAIN, 6));
+			g2d.setFont(new Font(Config.getString("font.sans-serif"),
+					     Font.PLAIN, 6));
 			FontMetrics metrics = g2d.getFontMetrics();
 			g2d.setColor(Color.gray);
 
