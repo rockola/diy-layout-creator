@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.common.Config;
 import org.diylc.appframework.Serializer;
 
 public class UpdateChecker {
@@ -19,7 +20,6 @@ public class UpdateChecker {
 
     private static final String VERSION_HTML = "<p><b>v%d.%d.%d (released on %s)</b><br>\n%s</p>\n";
     private static final String CHANGE_HTML = "&nbsp;&nbsp;&nbsp;<b>&rsaquo;</b>&nbsp;[%s] %s<br>\n";
-    private static final String MAIN_HTML = "<html><font face=\"Tahoma\" size=\"2\">\n%s\n</font></html>";
     private static final Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private VersionNumber currentVersion;
@@ -33,9 +33,8 @@ public class UpdateChecker {
 
     @SuppressWarnings("unchecked")
     public List<Version> findNewVersions() throws Exception {
-	LOG.info("Trying to download file: " + updateFileURL);
-	List<Version> allVersions =
-	    (List<Version>) Serializer.fromURL(updateFileURL);
+	LOG.info("Trying to download file {}", updateFileURL);
+	List<Version> allVersions = (List<Version>) Serializer.fromURL(updateFileURL);
 	List<Version> filteredVersions = new ArrayList<Version>();
 	for (Version version : allVersions) {
 	    if (currentVersion.compareTo(version.getVersionNumber()) < 0) {
@@ -43,7 +42,7 @@ public class UpdateChecker {
 	    }
 	}
 	Collections.sort(filteredVersions);
-	LOG.info(filteredVersions.size() + " updates found");
+	LOG.info("{} updates found", filteredVersions.size());
 	return filteredVersions;
     }
 
@@ -80,7 +79,9 @@ public class UpdateChecker {
 			      dateFormat.format(version.getReleaseDate()),
 			      changeStr);
 	}
-	return String.format(MAIN_HTML, bodyHtml);
+	return String.format("<html><font face=\"%s\" size=\"2\">\n%s\n</font></html>",
+			     Config.getString("font.sans-serif"),
+			     bodyHtml);
     }
 
     private static String convertChangeTypeToHTML(ChangeType changeType) {
