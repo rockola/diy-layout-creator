@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC). 
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+  
+  This file is part of DIYLC.
+  
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.appframework.miscutils;
 
 import java.io.File;
@@ -143,12 +162,20 @@ public class ConfigurationManager {
 	}
     }
 
+    public static boolean readBoolean(String key, boolean defaultValue) {
+	return getInstance().readBoolean(key, defaultValue);
+    }
+
     public String readString(String key, String defaultValue) {
 	if (configuration.containsKey(key)) {
 	    return (String) configuration.get(key);
 	} else {
 	    return defaultValue;
 	}
+    }
+
+    public static boolean readString(String key, boolean defaultValue) {
+	return getInstance().readString(key, defaultValue);
     }
 
     public int readInt(String key, int defaultValue) {
@@ -159,12 +186,20 @@ public class ConfigurationManager {
 	}
     }
 
+    public static int readInt(String key, boolean defaultValue) {
+	return getInstance().readInt(key, defaultValue);
+    }
+
     public float readFloat(String key, float defaultValue) {
 	if (configuration.containsKey(key)) {
 	    return (Float) configuration.get(key);
 	} else {
 	    return defaultValue;
 	}
+    }
+
+    public static int readFloat(String key, boolean defaultValue) {
+	return getInstance().readFloat(key, defaultValue);
     }
 
     public double readDouble(String key, double defaultValue) {
@@ -175,12 +210,20 @@ public class ConfigurationManager {
 	}
     }
 
+    public static double readDouble(String key, boolean defaultValue) {
+	return getInstance().readDouble(key, defaultValue);
+    }
+
     public Object readObject(String key, Object defaultValue) {
 	if (configuration.containsKey(key)) {
 	    return configuration.get(key);
 	} else {
 	    return defaultValue;
 	}
+    }
+
+    public static Object readObject(String key, boolean defaultValue) {
+	return getInstance().readObject(key, defaultValue);
     }
 
     public void writeValue(String key, Object value) {
@@ -191,5 +234,9 @@ public class ConfigurationManager {
 		listener.valueChanged(key, value);
 	    }
 	}
+    }
+
+    public static void writeValue(String key, Object value) {
+	getInstance().writeValue(key, value);
     }
 }
