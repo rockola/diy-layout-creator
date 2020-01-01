@@ -141,7 +141,7 @@ public class TreePanel extends JPanel {
 
 	setPreferredSize(new Dimension(240, 200));
 
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.RECENT_COMPONENTS_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.RECENT_COMPONENTS_KEY, new IConfigListener() {
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -157,7 +157,7 @@ public class TreePanel extends JPanel {
 		}
 	    });
 
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.BLOCKS_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.BLOCKS_KEY, new IConfigListener() {
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -176,7 +176,7 @@ public class TreePanel extends JPanel {
 		}
 	    });
 
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.TEMPLATES_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.TEMPLATES_KEY, new IConfigListener() {
 		@Override
 		public void valueChanged(String key, Object value) {
 		    LOG.info("Detected variants change, repainting the tree");
@@ -184,7 +184,7 @@ public class TreePanel extends JPanel {
 		}
 	    });
     
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.FAVORITES_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.FAVORITES_KEY, new IConfigListener() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void valueChanged(String key, Object value) {
@@ -205,7 +205,8 @@ public class TreePanel extends JPanel {
     private void initializeDnD() {
 	// Initialize drag source recognizer.
 	DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(getTree(),
-									     DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_LINK, new TreeGestureListener(plugInPort));
+									     DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_LINK,
+									     new TreeGestureListener(plugInPort));
 	// Initialize drop target.
 	new DropTarget(getTree(), DnDConstants.ACTION_COPY_OR_MOVE, new TreeTargetListener(plugInPort), true);
     }
@@ -224,7 +225,7 @@ public class TreePanel extends JPanel {
       
 	    @SuppressWarnings("unchecked")
 		List<String> recent =
-		(List<String>) ConfigurationManager.getInstance().readObject(IPlugInPort.RECENT_COMPONENTS_KEY, null);
+		(List<String>) ConfigurationManager.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
 	    if (recent != null) {
 		this.recentComponents = new ArrayList<String>(recent);
 		refreshRecentComponents(recent);
@@ -241,8 +242,7 @@ public class TreePanel extends JPanel {
       
 	    @SuppressWarnings("unchecked")
 		Map<String, List<IDIYComponent<?>>> newBlocks =
-		(Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(
-												    IPlugInPort.BLOCKS_KEY, null);
+		(Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(IPlugInPort.BLOCKS_KEY);
 	    if (newBlocks != null) {
 		List<String> blockNames = new ArrayList<String>(newBlocks.keySet());
 		Collections.sort(blockNames);
@@ -259,7 +259,7 @@ public class TreePanel extends JPanel {
 	    this.favoritesNode = new DefaultMutableTreeNode(new Payload("(Favorites)", null), true);
       
 	    @SuppressWarnings("unchecked")
-		List<Favorite> favorites = (List<Favorite>) ConfigurationManager.getInstance().readObject(IPlugInPort.FAVORITES_KEY, null);
+		List<Favorite> favorites = (List<Favorite>) ConfigurationManager.getObject(IPlugInPort.FAVORITES_KEY);
 	    if (favorites != null) {        
 		refreshFavorites(favorites);
 	    } else {
@@ -519,7 +519,7 @@ public class TreePanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 				    HashMap<String, String> map =
-					(HashMap<String, String>) ConfigurationManager.getInstance().readObject(COMPONENT_SHORTCUT_KEY, null);
+					(HashMap<String, String>) ConfigurationManager.getObject(COMPONENT_SHORTCUT_KEY);
 				    if (map == null)
 					map = new HashMap<String, String>();
 
@@ -548,8 +548,7 @@ public class TreePanel extends JPanel {
 				    @Override
 				    public void actionPerformed(ActionEvent e) {
 					HashMap<String, String> map =
-					    (HashMap<String, String>) ConfigurationManager.getInstance().readObject(COMPONENT_SHORTCUT_KEY,
-														    null);
+					    (HashMap<String, String>) ConfigurationManager.getObject(COMPONENT_SHORTCUT_KEY);
 					if (map == null)
 					    map = new HashMap<String, String>();
 
@@ -775,8 +774,7 @@ public class TreePanel extends JPanel {
 
 		if (payload.isVisible()) {
 		    HashMap<String, String> shortcutMap =
-			(HashMap<String, String>) ConfigurationManager.getInstance().readObject(TreePanel.COMPONENT_SHORTCUT_KEY,
-												null);
+			(HashMap<String, String>) ConfigurationManager.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
 		    String identifier =
 			payload.getComponentType() == null ? "block:" + payload.toString() : payload.getComponentType()
 			.getInstanceClass().getCanonicalName();
