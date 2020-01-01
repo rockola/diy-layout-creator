@@ -18,6 +18,73 @@
       <donate>Donate</donate>
     </help>
   </menu>
+  <message>
+    <error/>
+    <info>Information</info>
+    <warn>Warning</warn>
+    <success/>
+    <statusbar>
+      <highlight-connected>Click on a component to highlight area directly or indirectly connected to the area below the cursor. To continue editing, this mode needs to be switched OFF.</highlight-connected>
+      <empty-selection>Selection is empty.</empty-selection>
+      <selection-size-tooltip>Click to calculate selection size</selection-size-tooltip>    
+      <recent-changes-tooltip>Click to show recent changes and updates</recent-changes-tooltip>
+      <no-version-history>Version history is not available.</no-version-history>
+      <public-announcement>Public Announcement</public-announcement>
+      <no-announcements>No new public announcements available.</no-announcements>
+      <failed-announcements>Could not fetch public announcements available.</failed-announcements>            
+      <zoom>Zoom: </zoom>
+    </statusbar>
+    <actionFactory>
+      <success/>
+      <exit/>
+      <cut/>
+      <paste/>
+      <export-variants/>
+      <import-variants/>
+      <no-variants>No variants found to export.</no-variants>
+      <no-variants-selected>No variants selected for export.</no-variants-selected>
+      <variant-export-failed>Could not export variants. Please check the log for details.</variant-export-failed>
+      <variant-import-failed>Could not import variants. Please check the log for details.</variant-import-failed>
+      <variants-exported>Variants exported to "%s".</variants-exported>
+      <variants-imported>%d variant(s) imported from "%s".</variants-imported>      
+      <export-building-blocks/>
+      <import-building-blocks/>
+      <no-building-blocks>No building blocks found to export.</no-building-blocks>
+      <no-building-blocks-selected>No building blocks selected for export.</no-building-blocks-selected>
+      <building-block-export-failed>Could not export building blocks. Please check the log for details.</building-block-export-failed>
+      <building-block-import-failed>Could not import building blocks. Please check the log for details.</building-block-import-failed>
+      <building-blocks-exported>Building blocks exported to "%s".</building-blocks-exported>
+      <building-blocks-imported>%d building block(s) imported from "%s".</building-blocks-imported>
+    </actionFactory>
+    <cloud>
+      <log-in/>
+      <log-out/>
+      <create-new-account/>
+      <account-created>Cloud account created successfully.</account-created>
+      <account-not-created>Failed to create the account.</account-not-created>
+      <manage-account/>
+      <account-updated>Cloud account updated successfully.</account-updated>
+      <account-not-updated>Failed to update the account.</account-not-updated>
+      <login-successful/>
+      <login-error/>      
+      <successfully-logged-in>You have successfully logged into the system. You will remain logged in from this machine until logged out.</successfully-logged-in>
+      <login-failed>Login failed. Please try to login again.</login-failed>
+      <could-not-login>Could not login. Possible reasons are wrong credentials or lack of internet connection.</could-not-login>
+      <could-not-connect>Failed to retrieve user details from cloud server.</could-not-connect>
+      <change-password/>
+      <password-update-failed>Failed to update the password.</password-update-failed>
+      <password-updated/>
+      <upload-project/>
+      <upload-error/>
+      <upload-success/>
+      <project-uploaded>The project has been uploaded to the cloud successfully. Thank you for your contribution!</project-uploaded>
+      <temp-file-error>Could not prepare temporary files to be uploaded to the cloud.</temp-file-error>
+      <file-not-opened>Could not open file.</file-not-opened>
+      <search>Search the Cloud</search>
+      <could-not-search>Failed to retrieve search results.</could-not-search>
+      <manage-my-uploads/>
+    </cloud>
+  </message>
   <url>
     <manual>https://github.com/bancika/diy-layout-creator/blob/wiki/Manual.md</manual>
     <faq>https://github.com/bancika/diy-layout-creator/blob/wiki/FAQ.md</faq>
@@ -26,6 +93,11 @@
     <bug>https://github.com/bancika/diy-layout-creator/issues</bug>
     <donate>http://diy-fever.com/donate</donate>
     <website>https://github.com/rockola/diy-layout-creator</website>
+    <!-- -->
+    <update>http://www.diy-fever.com/update.xml</update>    
+    <cloud>
+      <api>http://www.diy-fever.com/diylc/api/v1</api>
+    </cloud>
   </url>
   <font>
     <!-- "Open Sans is the go to Humanist web font for designers that
