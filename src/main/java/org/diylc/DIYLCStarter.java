@@ -38,7 +38,6 @@ import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
 import org.diylc.common.Message;
-import org.diylc.core.IView;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
@@ -83,19 +82,6 @@ public class DIYLCStarter {
 	final SplashScreen splash = SplashScreen.getSplashScreen();
 	new Splash(splash).start();
 
-	/*
-	  // Obsolete log4j v1 initialization
-
-	URL url = DIYLCStarter.class.getResource("log4j.properties");
-	Properties properties = new Properties();
-	try {
-	    properties.load(url.openStream());
-	    PropertyConfigurator.configure(properties);
-	} catch (Exception e) {
-	    LOG.error("Could not initialize log4j configuration", e);
-	}
-	*/
-
 	ConfigurationManager.initialize("diylc");
 
 	Package p = DIYLCStarter.class.getPackage();
@@ -114,8 +100,9 @@ public class DIYLCStarter {
 		  System.getProperty("os.version"),
 		  System.getProperty("java.runtime.version"),
 		  System.getProperty("java.vm.vendor"));
-	LOG.info("Starting DIYLC with working directory "
-		 + System.getProperty("user.dir"));
+	LOG.info("Starting DIYLC with working directory {}",
+		 System.getProperty("user.dir"));
+
 	/*
 	  // TODO:
 	  //Should be done using getResource()
@@ -161,9 +148,10 @@ public class DIYLCStarter {
 	String val = System.getProperty(SCRIPT_RUN);
 	if (!"true".equals(val)) {
 	    int response =
-		JOptionPane.showConfirmDialog(null, "It is not recommended to run DIYLC by clicking on the diylc.jar file.\n"
-					      + "Please use diylc.exe on Windows or run.sh on OSX/Linux to ensure the best\n"
-					      + "performance and reliability. Do you want to continue?", "DIYLC", JOptionPane.YES_NO_OPTION,
+		JOptionPane.showConfirmDialog(null,
+					      Message.getHTML("startup-warning"),
+					      "DIYLC",
+					      JOptionPane.YES_NO_OPTION,
 					      JOptionPane.WARNING_MESSAGE);
 	    if (response != JOptionPane.YES_OPTION) {
 		System.exit(0);
@@ -176,7 +164,7 @@ public class DIYLCStarter {
 	if (args.length > 0) {
 	    mainFrame.getPresenter().loadProjectFromFile(args[0]);
 	} else {
-	    boolean showTemplates = ConfigurationManager.getInstance().readBoolean(TemplateDialog.SHOW_TEMPLATES_KEY, false);
+	    boolean showTemplates = ConfigurationManager.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
 	    if (showTemplates) {
 		TemplateDialog templateDialog = new TemplateDialog(mainFrame, mainFrame.getPresenter());
 		if (!templateDialog.getFiles().isEmpty()) {
@@ -200,9 +188,7 @@ public class DIYLCStarter {
 	}
 	*/
     
-	if (ConfigurationManager.getInstance().isFileWithErrors())
-	    mainFrame.showMessage(Message.getHTML("configuration-file-errors"),
-				  "Warning",
-				  IView.WARNING_MESSAGE);
+	if (ConfigurationManager.isFileWithErrors())
+	    mainFrame.warn(Message.getHTML("configuration-file-errors"));
     }
 }
