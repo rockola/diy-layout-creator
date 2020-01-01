@@ -258,7 +258,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 	if (ConfigurationManager.getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true)) {
 	    drawOptions.add(DrawOption.ANTIALIASING);
 	}
-	if (ConfigurationManager.getBoolean(IPlugInPort.OUTLINE_KEY), false) {
+	if (ConfigurationManager.getBoolean(IPlugInPort.OUTLINE_KEY, false)) {
 	    drawOptions.add(DrawOption.OUTLINE_MODE);
 	}
 	if (ConfigurationManager.getBoolean(IPlugInPort.SHOW_GRID_KEY, true)) {
