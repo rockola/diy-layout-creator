@@ -94,6 +94,21 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void processMessage(EventType eventType, Object... params) {}
 
+    public class AboutTextAction extends AbstractAction {
+	private String textKey;
+	private AboutDialog about;
+
+	public AboutTextAction(AboutDialog about, String textKey) {
+	    super(textKey, null);
+	    this.about = about;
+	    this.textKey = textKey;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+	    about.setEditorText(Message.getHTML(this.textKey));
+	}
+    }
+
     private AboutDialog getAboutDialog() {
 	if (aboutDialog == null) {
 	    aboutDialog =
@@ -104,6 +119,9 @@ public class HelpMenuPlugin implements IPlugIn {
 							      Config.getURL("website"),
 							      Message.getHTML("interactive-license"));
 	    aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
+
+	    aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));
+	    aboutDialog.addAction("C", "conditions", new AboutTextAction(aboutDialog, "conditions"));
 	}
 	return aboutDialog;
     }
