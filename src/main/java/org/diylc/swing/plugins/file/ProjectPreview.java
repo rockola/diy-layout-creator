@@ -39,7 +39,6 @@ import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.Project;
 import org.diylc.presenter.Presenter;
-import org.diylc.swing.gui.DummyView;
 import org.diylc.swingframework.IFileChooserAccessory;
 
 import org.diylc.appframework.Serializer;
@@ -65,7 +64,7 @@ public class ProjectPreview extends JPanel
 	super();
 
 	setPreferredSize(new Dimension(140, 128));
-	presenter = new Presenter(new DummyView());
+	presenter = new Presenter();
 
 	emptyProject = new Project();
 	emptyProject.setTitle("");
