@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.swing;
 
@@ -34,79 +32,86 @@ import org.diylc.core.IView;
 
 /**
  * Interface for plugin access to the swing front end.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public interface ISwingUI extends IView {
 
-  /**
-   * Injects a custom GUI panels provided by the plug-in and desired position in the window.
-   * Application will layout plug-in panels accordingly. <br>
-   * Valid positions are:
-   * <ul>
-   * <li> {@link SwingConstants#TOP}</li>
-   * <li> {@link SwingConstants#BOTTOM}</li>
-   * <li> {@link SwingConstants#LEFT}</li>
-   * <li> {@link SwingConstants#RIGHT}</li>
-   * </ul>
-   * 
-   * Center position is reserved for the main canvas panel and cannot be used.
-   * 
-   * @param component
-   * @param position
-   * @throws BadPositionException in case invalid position is specified
-   */
-  void injectGUIComponent(JComponent component, int position) throws BadPositionException;
+    /**
+     * Injects a custom GUI panels provided by the plug-in and desired position in the window.
+     * Application will layout plug-in panels accordingly. <br>
+     * Valid positions are:
+     * <ul>
+     * <li> {@link SwingConstants#TOP}</li>
+     * <li> {@link SwingConstants#BOTTOM}</li>
+     * <li> {@link SwingConstants#LEFT}</li>
+     * <li> {@link SwingConstants#RIGHT}</li>
+     * </ul>
+     *
+     * Center position is reserved for the main canvas panel and cannot be used.
+     *
+     * @param component
+     * @param position
+     * @throws BadPositionException in case invalid position is specified
+     */
+    void injectGUIComponent(JComponent component, int position) throws BadPositionException;
 
-  /**
-   * Injects a custom menu action into application's main menu. If <code>action</code> is set to
-   * null {@link Separator} will be added. If the specified menu does not exist it will be
-   * automatically created.
-   * 
-   * @param action {@link Action} to inser
-   * @param menuName name of the menu to insert into
-   */
-  void injectMenuAction(Action action, String menuName);
-  
-  void injectMenuComponent(JComponent component);
+    /**
+     * Injects a custom menu action into application's main menu. If <code>action</code> is set to
+     * null {@link Separator} will be added. If the specified menu does not exist it will be
+     * automatically created.
+     *
+     * @param action {@link Action} to inser
+     * @param menuName name of the menu to insert into
+     */
+    void injectMenuAction(Action action, String menuName);
 
-  /**
-   * Injects a custom submenu into application's main menu. If the specified menu does not exist it
-   * will be automatically created.
-   * 
-   * @param name
-   * @param icon
-   * @param parentMenuName
-   */
-  void injectSubmenu(String name, Icon icon, String parentMenuName);
+    void injectMenuComponent(JComponent component);
 
-  /**
-   * Injects a dynamic submenu into application's main menu. Items are read from the
-   * <code>handler</code> and notifications are sent to the <code>handler</code> when an item is
-   * clicked on.
-   * 
-   * @param name
-   * @param icon
-   * @param parentMenuName
-   * @param handler
-   */
-  void injectDynamicSubmenu(String name, Icon icon, String parentMenuName, IDynamicSubmenuHandler handler);
+    /**
+     * Injects a custom submenu into application's main menu. If the specified menu does not exist it
+     * will be automatically created.
+     *
+     * @param name
+     * @param icon
+     * @param parentMenuName
+     */
+    void injectSubmenu(String name, Icon icon, String parentMenuName);
 
-  /**
-   * Runs a task in background while showing busy cursor and a glass pane if needed.
-   * 
-   * @param task
-   * @param blockUI
-   */
-  <T extends Object> void executeBackgroundTask(ITask<T> task, boolean blockUI);
+    /**
+     * Injects a dynamic submenu into application's main menu. Items are read from the
+     * <code>handler</code> and notifications are sent to the <code>handler</code> when an item is
+     * clicked on.
+     *
+     * @param name
+     * @param icon
+     * @param parentMenuName
+     * @param handler
+     */
+    void injectDynamicSubmenu(String name, Icon icon, String parentMenuName, IDynamicSubmenuHandler handler);
 
-  /**
-   * @return {@link JFrame} that can be used to reference secondary dialogs and frames
-   */
-  JFrame getOwnerFrame();
+    /**
+     * Runs a task in background while showing busy cursor and a glass pane if needed.
+     *
+     * @param task
+     * @param blockUI
+     */
+    <T extends Object> void executeBackgroundTask(ITask<T> task, boolean blockUI);
 
-  /**
-   * 
-   */
-  void bringToFocus();
+    /**
+     * @return {@link JFrame} that can be used to reference secondary dialogs and frames
+     */
+    JFrame getOwnerFrame();
+
+    /**
+     *
+     */
+    void bringToFocus();
+
+    void info(String title, String text);
+    void info(String text);
+    void error(String title, String text);
+    void error(String text);
+    void warn(String title, String text);
+    void warn(String text);
 }
