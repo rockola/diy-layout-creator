@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC). 
+  Copyright (c) 2010-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swingframework.export;
 
 import java.awt.Component;
@@ -27,6 +46,8 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 // import org.apache.poi.xssf.usermodel.XSSFColor;
+
+import org.diylc.common.Config;
 
 /**
  * Utility class that exports {@link JTable} to:
@@ -70,7 +91,7 @@ public class TableExporter {
 	HSSFCellStyle headerStyle = wb.createCellStyle();
 	HSSFFont font = wb.createFont();
 	font.setBold(true);
-	font.setFontName("Tahoma");
+	font.setFontName(Config.getString("font.sans-serif"));
 	headerStyle.setFont(font);
 	headerStyle.setBorderBottom(BorderStyle.THIN);
 	headerStyle.setBorderTop(BorderStyle.THIN);
@@ -89,7 +110,7 @@ public class TableExporter {
 	LOG.debug("Writing the data");
 	HSSFCellStyle cellStyle = wb.createCellStyle();
 	font = wb.createFont();
-	font.setFontName("Tahoma");
+	font.setFontName(Config.getString("font.sans-serif"));
 	cellStyle.setFont(font);
 	cellStyle.setBorderBottom(BorderStyle.THIN);
 	cellStyle.setBorderTop(BorderStyle.THIN);
@@ -146,7 +167,7 @@ public class TableExporter {
 	LOG.info("Exporting table to HTML file: " + file.getAbsolutePath());
 	FileWriter fstream = new FileWriter(file);
 	BufferedWriter out = new BufferedWriter(fstream);
-	out.write("<html><body><font face=\"Tahoma\"><table cellspacing=\"0\" border=\"1\">\n");
+	out.write("<html><body><font face=\"sans-serif\"><table cellspacing=\"0\" border=\"1\">\n");
 
 	LOG.debug("Writing header row");
 	out.write("  <tr>\n");
