@@ -21,8 +21,8 @@ package org.diylc.swing.gui;
 
 import java.awt.Window;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
-
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -183,7 +183,8 @@ public class DialogFactory {
 	}
     }
 
-    public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author, String url,
+    public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author,
+					 URL url,
 					 String htmlContent) {
 	AboutDialog dialog = new AboutDialog(mainFrame, appName, icon, version, author, url, htmlContent);
 	return dialog;

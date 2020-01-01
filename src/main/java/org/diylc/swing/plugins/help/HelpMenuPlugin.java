@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -41,7 +41,6 @@ import org.diylc.images.IconLoader;
 import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.AboutDialog;
-import org.diylc.swingframework.LinkLabel;
 import org.diylc.swingframework.update.UpdateDialog;
 
 /**
@@ -102,7 +101,7 @@ public class HelpMenuPlugin implements IPlugIn {
 							      IconLoader.IconLarge.getIcon(),
 							      plugInPort.getCurrentVersionNumber().toString(),
 							      Config.getString("app.author"),
-							      Config.getURL("website").toString(),
+							      Config.getURL("website"),
 							      Message.getHTML("interactive-license"));
 	    aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
 	}
@@ -170,7 +169,7 @@ public class HelpMenuPlugin implements IPlugIn {
 	    try {
 		Utils.openURL(url);
 	    } catch (Exception e1) {
-		LogManager.getLogger(LinkLabel.class).error("Could not launch default browser", e1);
+		LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
 	    }
 	}
     }

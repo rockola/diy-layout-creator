@@ -30,7 +30,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.net.URL;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -53,11 +53,12 @@ public class AboutDialog extends JDialog {
     private final Icon icon;
     private final String version;
     private final String author;
-    private final String url;
+    private final URL url;
     private final String htmlContent;
 
-    public AboutDialog(JFrame parent, String appName, Icon icon, String version, String author,
-		       String url, String htmlContent) {
+    public AboutDialog(JFrame parent, String appName, Icon icon,
+		       String version, String author,
+		       URL url, String htmlContent) {
 	super(parent, "About");
 	this.appName = appName;
 	this.icon = icon;
@@ -124,7 +125,7 @@ public class AboutDialog extends JDialog {
 	    gbc.insets = new Insets(1, 8, 1, 4);
 	    mainPanel.add(authorLabel, gbc);
 
-	    JLabel urlLabel = new LinkLabel("http://", url);
+	    JLabel urlLabel = new LinkLabel(url);
 
 	    gbc.gridy = 3;
 	    mainPanel.add(urlLabel, gbc);
