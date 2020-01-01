@@ -94,10 +94,11 @@
     <donate>http://diy-fever.com/donate</donate>
     <website>https://github.com/rockola/diy-layout-creator</website>
     <!-- -->
-    <update>http://www.diy-fever.com/update.xml</update>    
-    <cloud>
-      <api>http://www.diy-fever.com/diylc/api/v1</api>
-    </cloud>
+    <update>http://www.diy-fever.com/update.xml</update>
+    <api>
+      <base>http://www.diy-fever.com/diylc/api/v1</base>
+      <announcements>http://www.diy-fever.com/diylc/api/v1/announcements.html</announcements>
+    </api>
   </url>
   <font>
     <!-- "Open Sans is the go to Humanist web font for designers that
