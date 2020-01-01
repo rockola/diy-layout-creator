@@ -52,6 +52,7 @@ import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BuildingBlockPackage;
 import org.diylc.common.ComponentType;
+import org.diylc.common.Config;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.common.IPlugInPort;
@@ -101,6 +102,8 @@ public class ActionFactory {
     }
 
     private ActionFactory() {}
+
+    private static String getMsg(String key) { return Config.getString("message.actionFactory." + key); }
 
     // File menu actions.
 
@@ -744,9 +747,9 @@ public class ActionFactory {
       
 	    try {
 		Map<String, List<Template>> variantMap =
-		    (Map<String, List<Template>>) ConfigurationManager.getInstance().readObject(IPlugInPort.TEMPLATES_KEY, null);
+		    (Map<String, List<Template>>) ConfigurationManager.getObject(IPlugInPort.TEMPLATES_KEY);
 		if (variantMap == null || variantMap.isEmpty()) {
-		    swingUI.showMessage("No variants found to export.", "Error", IView.ERROR_MESSAGE);
+		    swingUI.error(getMsg("no-variants"));
 		    return;
 		}
         
@@ -776,7 +779,7 @@ public class ActionFactory {
 		Object[] selected = dialog.getSelectedOptions();
         
 		if (selected.length == 0) {
-		    swingUI.showMessage("No variants selected for export.", "Error", IView.ERROR_MESSAGE);
+		    swingUI.error(getMsg("no-variants-selected"));
 		    return;      
 		}
         
@@ -790,19 +793,25 @@ public class ActionFactory {
 		}
 	    } catch (Exception ex) {
 		LOG.error("Error preparing variants for export", ex);
-		swingUI.showMessage("Could not export variants. Please check the log for details", "Export Variants", ISwingUI.ERROR_MESSAGE);
+		swingUI.error(getMsg("export-variants"),
+			      getMsg("variant-export-failed"));
 		return;
 	    }
 
-	    final VariantPackage variantPkg = new VariantPackage(selectedVariants, System.getProperty("user.name"));
+	    final VariantPackage variantPkg = new VariantPackage(selectedVariants,
+								 System.getProperty("user.name"));
 
 	    File initialFile =
-		new File(variantPkg.getOwner() == null ? "variants.xml" : ("variants by "
-									   + variantPkg.getOwner().toLowerCase() + ".xml"));
+		new File(variantPkg.getOwner() == null
+			 ? "variants.xml"
+			 : ("variants by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
 	    final File file =
-		DialogFactory.getInstance().showSaveDialog(swingUI.getOwnerFrame(), FileFilterEnum.XML.getFilter(),
-							   initialFile, FileFilterEnum.XML.getExtensions()[0], null);
+		DialogFactory.getInstance().showSaveDialog(swingUI.getOwnerFrame(),
+							   FileFilterEnum.XML.getFilter(),
+							   initialFile,
+							   FileFilterEnum.XML.getExtensions()[0],
+							   null);
 
 	    if (file != null) {
 		swingUI.executeBackgroundTask(new ITask<Void>() {
@@ -824,13 +833,14 @@ public class ActionFactory {
 
 			@Override
 			public void complete(Void result) {
-			    swingUI.showMessage("Variants exported to \"" + file.getName() + "\".", "Success",
-						ISwingUI.INFORMATION_MESSAGE);
+			    swingUI.info(getMsg("success"),
+					 String.format(getMsg("variants-exported"),
+						       file.getName()));
 			}
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.showMessage("Could not export variants: " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
+			    swingUI.error(getMsg("variant-export-failed") + e.getMessage());
 			}
 		    }, true);
 	    }
@@ -857,7 +867,10 @@ public class ActionFactory {
 
 	    final File file =
 		DialogFactory.getInstance().showOpenDialog(FileFilterEnum.XML.getFilter(),
-							   null, FileFilterEnum.XML.getExtensions()[0], null, swingUI.getOwnerFrame());
+							   null,
+							   FileFilterEnum.XML.getExtensions()[0],
+							   null,
+							   swingUI.getOwnerFrame());
 
 	    if (file != null) {
 		swingUI.executeBackgroundTask(new ITask<Integer>() {
@@ -869,13 +882,15 @@ public class ActionFactory {
 
 			@Override
 			public void complete(Integer result) {
-			    swingUI.showMessage(result + " variant(s) imported from \"" + file.getName() + "\".", "Success",
-						ISwingUI.INFORMATION_MESSAGE);
+			    swingUI.info(getMsg("success"),
+					 String.format(getMsg("variants-imported"),
+						       result,
+						       file.getName()));
 			}
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.showMessage("Could not import variants: " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
+			    swingUI.error(getMsg("variant-import-failed") + e.getMessage());
 			}
 		    }, true);
 	    }
@@ -904,9 +919,9 @@ public class ActionFactory {
       
 	    try {
 		Map<String, List<IDIYComponent<?>>> blocks =
-		    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getInstance().readObject(IPlugInPort.BLOCKS_KEY, null);
+		    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(IPlugInPort.BLOCKS_KEY);
 		if (blocks == null || blocks.isEmpty()) {
-		    swingUI.showMessage("No building blocks found to export.", "Error", IView.ERROR_MESSAGE);
+		    swingUI.error(getMsg("no-building-blocks"));
 		    return;
 		}
         
@@ -919,7 +934,9 @@ public class ActionFactory {
 			    return o1.compareToIgnoreCase(o2);
 			}});
         
-		CheckBoxListDialog dialog = new CheckBoxListDialog(swingUI.getOwnerFrame(), "Export Building Blocks", options);
+		CheckBoxListDialog dialog = new CheckBoxListDialog(swingUI.getOwnerFrame(),
+								   getMsg("export-building-blocks"),
+								   options);
         
 		dialog.setVisible(true);      
         
@@ -929,7 +946,7 @@ public class ActionFactory {
 		Object[] selected = dialog.getSelectedOptions();
         
 		if (selected.length == 0) {
-		    swingUI.showMessage("No building blocks selected for export.", "Error", IView.ERROR_MESSAGE);
+		    swingUI.error(getMsg("no-building-blocks-selected"));
 		    return;      
 		}
         
@@ -939,19 +956,25 @@ public class ActionFactory {
 		}
 	    } catch (Exception ex) {
 		LOG.error("Error preparing building blocks for export", ex);
-		swingUI.showMessage("Could not export building blocks. Please check the log for details", "Export Building Blocks", ISwingUI.ERROR_MESSAGE);
+		swingUI.error(getMsg("export-building-blocks"),
+			      getMsg("building-block-export-failed"));
 		return;
 	    }
       
-	    final BuildingBlockPackage variantPkg = new BuildingBlockPackage(selectedBlocks, System.getProperty("user.name"));
+	    final BuildingBlockPackage variantPkg =
+		new BuildingBlockPackage(selectedBlocks, System.getProperty("user.name"));
 
 	    File initialFile =
-		new File(variantPkg.getOwner() == null ? "building blocks.xml" : ("building blocks by "
-										  + variantPkg.getOwner().toLowerCase() + ".xml"));
+		new File(variantPkg.getOwner() == null
+			 ? "building blocks.xml" :
+			 ("building blocks by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
 	    final File file =
-		DialogFactory.getInstance().showSaveDialog(swingUI.getOwnerFrame(), FileFilterEnum.XML.getFilter(),
-							   initialFile, FileFilterEnum.XML.getExtensions()[0], null);
+		DialogFactory.getInstance().showSaveDialog(swingUI.getOwnerFrame(),
+							   FileFilterEnum.XML.getFilter(),
+							   initialFile,
+							   FileFilterEnum.XML.getExtensions()[0],
+							   null);
 
 	    if (file != null) {
 		swingUI.executeBackgroundTask(new ITask<Void>() {
@@ -972,18 +995,15 @@ public class ActionFactory {
 
 			@Override
 			public void complete(Void result) {
-			    swingUI.showMessage("Building blocks exported to \""
-						+ file.getName() + "\".",
-						"Success",
-						ISwingUI.INFORMATION_MESSAGE);
-			}
+			    swingUI.info(getMsg("success"),
+					 String.format(getMsg("building-blocks-exported"),
+						       file.getName()));
+				}
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.showMessage("Could not export building blocks: "
-						+ e.getMessage(),
-						"Error",
-						ISwingUI.ERROR_MESSAGE);
+			    swingUI.error(getMsg("building-block-export-failed")
+					  + e.getMessage());
 			}
 		    }, true);
 	    }
@@ -1001,7 +1021,7 @@ public class ActionFactory {
 	    super();
 	    this.swingUI = swingUI;
 	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Import Building Blocks");
+	    putValue(AbstractAction.NAME, getMsg("import-building-blocks"));
 	}
 
 	@Override
@@ -1011,7 +1031,10 @@ public class ActionFactory {
 
 	    final File file =
 		DialogFactory.getInstance().showOpenDialog(FileFilterEnum.XML.getFilter(),
-							   null, FileFilterEnum.XML.getExtensions()[0], null, swingUI.getOwnerFrame());
+							   null,
+							   FileFilterEnum.XML.getExtensions()[0],
+							   null,
+							   swingUI.getOwnerFrame());
 
 	    if (file != null) {
 		swingUI.executeBackgroundTask(new ITask<Integer>() {
@@ -1023,13 +1046,16 @@ public class ActionFactory {
 
 			@Override
 			public void complete(Integer result) {
-			    swingUI.showMessage(result + " building block(s) imported from \"" + file.getName() + "\".", "Success",
-						ISwingUI.INFORMATION_MESSAGE);
+			    swingUI.info(getMsg("success"),
+					 String.format(getMsg("building-blocks-imported"),
+						       result,
+						       file.getName()));
 			}
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.showMessage("Could not import building blocks: " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
+			    swingUI.error(getMsg("building-block-import-failed")
+					  + e.getMessage());
 			}
 		    }, true);
 	    }
@@ -1045,7 +1071,7 @@ public class ActionFactory {
 	public ExitAction(IPlugInPort plugInPort) {
 	    super();
 	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Exit");
+	    putValue(AbstractAction.NAME, getMsg("exit"));
 	    putValue(AbstractAction.SMALL_ICON, IconLoader.Exit.getIcon());
 	}
 
@@ -1073,7 +1099,7 @@ public class ActionFactory {
 	    this.plugInPort = plugInPort;
 	    this.clipboard = clipboard;
 	    this.clipboardOwner = clipboardOwner;
-	    putValue(AbstractAction.NAME, "Cut");
+	    putValue(AbstractAction.NAME, getMsg("cut"));
 	    putValue(AbstractAction.ACCELERATOR_KEY,
 		     KeyStroke.getKeyStroke(KeyEvent.VK_X,
 					    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
@@ -1100,7 +1126,7 @@ public class ActionFactory {
 	    super();
 	    this.plugInPort = plugInPort;
 	    this.clipboard = clipboard;
-	    putValue(AbstractAction.NAME, "Paste");
+	    putValue(AbstractAction.NAME, getMsg("paste"));
 	    putValue(AbstractAction.ACCELERATOR_KEY,
 		     KeyStroke.getKeyStroke(KeyEvent.VK_V,
 					    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
