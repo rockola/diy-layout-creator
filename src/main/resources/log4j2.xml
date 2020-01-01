@@ -3,6 +3,7 @@
   <Appenders>
     <RollingFile name="RollingFile"
 		 fileName="${sys:user.home}/.diylc/logs/log.txt"
+		 filePattern="${sys:user.home}/.diylc/logs/log-%d{yyyy-MM-dd}-%d{HHmmss}.txt"
 		 ignoreExceptions="false">
       <PatternLayout>
 	<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
@@ -14,7 +15,7 @@
     </RollingFile>
     <Console name="console" target="SYSTEM_OUT">
       <PatternLayout
-          pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+          pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}: %msg%n" />
     </Console>
   </Appenders>
   <Loggers>
