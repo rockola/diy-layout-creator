@@ -91,6 +91,7 @@ import org.diylc.netlist.NetlistAnalyzer;
 import org.diylc.netlist.Node;
 import org.diylc.netlist.Position;
 import org.diylc.netlist.SwitchSetup;
+import org.diylc.swing.gui.DummyView;
 import org.diylc.utils.Constants;
 
 /**
@@ -211,6 +212,8 @@ public class Presenter implements IPlugInPort {
 	// visibleLayers = EnumSet.allOf(ComponentLayer.class);
 	upgradeVariants();
     }
+
+    public Presenter() { this(new DummyView()); }
 
     public void installPlugin(IPlugIn plugIn) {
 	LOG.trace("installPlugin({})", plugIn.getClass().getSimpleName());
@@ -643,7 +646,8 @@ public class Presenter implements IPlugInPort {
 		    }
 		    if (instantiationManager.getComponentSlot() == null) {
 			try {
-			    instantiationManager.instatiatePointByPoint(scaledPoint, currentProject);
+			    instantiationManager.instantiatePointByPoint(scaledPoint,
+									 currentProject);
 			} catch (Exception e) {
 			    view.showMessage("Could not create component. Check log for details.", "Error", IView.ERROR_MESSAGE);
 			    LOG.error("Could not create component", e);
