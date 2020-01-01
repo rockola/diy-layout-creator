@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -63,11 +63,19 @@ public class InstantiationManager {
     private Point potentialControlPoint;
 
     public static final ComponentType clipboardType = new ComponentType("Clipboard contents",
-									"Components from the clipboard", CreationMethod.SINGLE_CLICK, "Multi", "", "", null, null, 0, false, null,
-									false, null, KeywordPolicy.NEVER_SHOW, null);
+									"Components from the clipboard",
+									CreationMethod.SINGLE_CLICK,
+									"Multi", "", "", null, null, 0,
+									false, null,
+									false, null,
+									KeywordPolicy.NEVER_SHOW, null);
     public static final ComponentType blockType = new ComponentType("Building block",
-								    "Components from the building block", CreationMethod.SINGLE_CLICK, "Multi", "", "", null, null, 0, false, null,
-								    false, null, KeywordPolicy.NEVER_SHOW, null);
+								    "Components from the building block",
+								    CreationMethod.SINGLE_CLICK,
+								    "Multi", "", "", null, null, 0,
+								    false, null,
+								    false, null,
+								    KeywordPolicy.NEVER_SHOW, null);
 
     public InstantiationManager() {}
 
@@ -95,7 +103,10 @@ public class InstantiationManager {
 	this.potentialControlPoint = potentialControlPoint;
     }
 
-    public void setComponentTypeSlot(ComponentType componentTypeSlot, Template template, Project currentProject, boolean forceInstatiate)
+    public void setComponentTypeSlot(ComponentType componentTypeSlot,
+				     Template template,
+				     Project currentProject,
+				     boolean forceInstantiate)
 	throws Exception {
 	this.componentTypeSlot = componentTypeSlot;
 	this.template = template;
@@ -104,7 +115,7 @@ public class InstantiationManager {
 	} else {
 	    switch (componentTypeSlot.getCreationMethod()) {
 	    case POINT_BY_POINT:
-		this.componentSlot = forceInstatiate ? instantiateComponent(componentTypeSlot, template, new Point(0, 0), currentProject) : null;
+		this.componentSlot = forceInstantiate ? instantiateComponent(componentTypeSlot, template, new Point(0, 0), currentProject) : null;
 		break;
 	    case SINGLE_CLICK:
 		this.componentSlot = instantiateComponent(componentTypeSlot, template, new Point(0, 0), currentProject);
@@ -115,7 +126,7 @@ public class InstantiationManager {
 	this.potentialControlPoint = null;
     }
 
-    public void instatiatePointByPoint(Point scaledPoint, Project currentProject) throws Exception {
+    public void instantiatePointByPoint(Point scaledPoint, Project currentProject) throws Exception {
 	firstControlPoint = scaledPoint;
 	componentSlot = instantiateComponent(componentTypeSlot, template, firstControlPoint, currentProject);
 
