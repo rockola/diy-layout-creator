@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.swing;
 
@@ -32,19 +30,25 @@ import org.diylc.common.ITask;
  */
 public interface ISimpleView {
 
-  /**
-   * Runs a task in background while showing busy cursor and a glass pane.
-   * 
-   * @param task
-   */
-  <T extends Object> void executeBackgroundTask(ITask<T> task);
+    /**
+     * Runs a task in background while showing busy cursor and a glass pane.
+     * 
+     * @param task
+     */
+    <T extends Object> void executeBackgroundTask(ITask<T> task);
 
-  void showMessage(String message, String title, int messageType);
+    void showMessage(String message, String title, int messageType);
+    void info(String title, String text);
+    void info(String text);
+    void error(String title, String text);
+    void error(String text);
+    void warn(String title, String text);
+    void warn(String text);
 
-  int showConfirmDialog(String message, String title, int optionType, int messageType);
+    int showConfirmDialog(String message, String title, int optionType, int messageType);
 
-  /**
-   * @return {@link JFrame} that can be used to reference secondary dialogs and frames
-   */
-  JFrame getOwnerFrame();
+    /**
+     * @return {@link JFrame} that can be used to reference secondary dialogs and frames
+     */
+    JFrame getOwnerFrame();
 }
