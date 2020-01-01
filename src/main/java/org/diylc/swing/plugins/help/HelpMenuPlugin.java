@@ -58,7 +58,7 @@ public class HelpMenuPlugin implements IPlugIn {
     private ISwingUI swingUI;
 
     private void navigateURL(String menuEntry, Icon icon, String key) {
-	this.swingUI.injectMenuAction(new NavigateURLAction(Config.getString("menu.help." + title),
+	this.swingUI.injectMenuAction(new NavigateURLAction(Config.getString("menu.help." + menuEntry),
 							    icon,
 							    Config.getURL(key).toString()),
 				      HELP_TITLE);
