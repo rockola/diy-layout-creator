@@ -31,6 +31,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -40,6 +41,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 public class AboutDialog extends JDialog {
@@ -48,6 +50,7 @@ public class AboutDialog extends JDialog {
 
     private JPanel mainPanel;
     private JPanel buttonPanel;
+    private JEditorPane editorPane;
 
     private final String appName;
     private final Icon icon;
@@ -138,7 +141,7 @@ public class AboutDialog extends JDialog {
 	    String html = "<head><title>About</title>" + "<style type=\"text/css\">"
 		+ "body {font-family: sans-serif; font-size: 8.5px; } </style></head><body>"
 		+ htmlContent + "</body></html>";
-	    JEditorPane editorPane = new JEditorPane("text/html", html);
+	    editorPane = new JEditorPane("text/html", html);
 	    editorPane.setEditable(false);
 	    editorPane.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
@@ -174,5 +177,15 @@ public class AboutDialog extends JDialog {
 	    buttonPanel.add(closeButton);
 	}
 	return buttonPanel;
+    }
+
+    public void setEditorText(String text) {
+	editorPane.setText(text);
+	editorPane.setCaretPosition(0);
+    }
+
+    public void addAction(String key, String name, AbstractAction action) {
+	mainPanel.getInputMap().put(KeyStroke.getKeyStroke(key), name);
+	mainPanel.getActionMap().put(name, action);
     }
 }
