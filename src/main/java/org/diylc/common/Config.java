@@ -36,6 +36,8 @@ import org.apache.commons.configuration2.io.CombinedLocationStrategy;
 import org.apache.commons.configuration2.io.FileLocationStrategy;
 import org.apache.commons.configuration2.io.FileSystemLocationStrategy;
 
+import org.apache.commons.text.WordUtils;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -96,8 +98,21 @@ public final class Config {
 	return url;
     }
 
+    /**
+       Fetch _key_ contents from defaults as String.
+
+       If contents is the empty string, return key in title case.
+       This means that <key>Key</key> can be stored simply as <key/>.
+       Hyphens in _key_ are changed to spaces.
+       Only the last part after any dot ('.') is used.
+     */
     public static String getString(String key) {
 	initConfig();
-	return config.getString(key);
+	String s = config.getString(key);
+	if (s.isEmpty()) {
+	    int beginIndex = key.lastIndexOf('.') > 0 ? key.lastIndexOf('.') + 1 : 0;
+	    return WordUtils.capitalizeFully(key.substring(beginIndex).replace('-', ' '));
+	}
+	return s;
     }
 }
