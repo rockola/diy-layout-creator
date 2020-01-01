@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 //import org.apache.log4j.PropertyConfigurator;
 import org.diylc.DIYLCStarter;
 import org.diylc.presenter.Presenter;
-import org.diylc.swing.gui.DummyView;
 
 public class BatchConverter {
   
@@ -55,7 +54,7 @@ public class BatchConverter {
 		    return true;
 		}
 	    });
-	Presenter presenter = new Presenter(new DummyView());
+	Presenter presenter = new Presenter();
 	for (File file : matchingFiles) {
 	    if (file.getName() != ""
 		&& file.getName() != "."
