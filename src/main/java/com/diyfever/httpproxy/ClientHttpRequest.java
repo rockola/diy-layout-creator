@@ -20,7 +20,7 @@ import java.util.Iterator;
  * Description: this class helps to send POST HTTP requests with various form data, including files.
  * Cookies can be added to be included in the request.
  * </p>
- * 
+ *
  * @author Vlad Patryshev
  * @version 1.0
  */
@@ -70,7 +70,7 @@ public class ClientHttpRequest {
 
   /**
    * Creates a new multipart POST HTTP request on a freshly opened URLConnection
-   * 
+   *
    * @param connection an already open URL connection
    * @throws IOException
    */
@@ -82,7 +82,7 @@ public class ClientHttpRequest {
 
   /**
    * Creates a new multipart POST HTTP request for a specified URL
-   * 
+   *
    * @param url the URL to send request to
    * @throws IOException
    */
@@ -92,7 +92,7 @@ public class ClientHttpRequest {
 
   /**
    * Creates a new multipart POST HTTP request for a specified URL string
-   * 
+   *
    * @param urlString the string representation of the URL to send request to
    * @throws IOException
    */
@@ -118,7 +118,7 @@ public class ClientHttpRequest {
 
   /**
    * adds a cookie to the requst
-   * 
+   *
    * @param name cookie name
    * @param value cookie value
    * @throws IOException
@@ -129,7 +129,7 @@ public class ClientHttpRequest {
 
   /**
    * adds cookies to the request
-   * 
+   *
    * @param cookies the cookie "name-to-value" map
    * @throws IOException
    */
@@ -141,7 +141,7 @@ public class ClientHttpRequest {
 
   /**
    * adds cookies to the request
-   * 
+   *
    * @param cookies array of cookie names and values (cookies[2*i] is a name, cookies[2*i + 1] is a
    *        value)
    * @throws IOException
@@ -163,7 +163,7 @@ public class ClientHttpRequest {
 
   /**
    * adds a string parameter to the request
-   * 
+   *
    * @param name parameter name
    * @param value parameter value
    * @throws IOException
@@ -193,7 +193,7 @@ public class ClientHttpRequest {
 
   /**
    * adds a file parameter to the request
-   * 
+   *
    * @param name parameter name
    * @param filename the name of the file
    * @param is input stream to read the contents of the file from
@@ -218,7 +218,7 @@ public class ClientHttpRequest {
 
   /**
    * adds a file parameter to the request
-   * 
+   *
    * @param name parameter name
    * @param file the file to upload
    * @throws IOException
@@ -230,7 +230,7 @@ public class ClientHttpRequest {
   /**
    * adds a parameter to the request; if the parameter is a File, the file is uploaded, otherwise
    * the string value of the parameter is passed in the request
-   * 
+   *
    * @param name parameter name
    * @param object parameter value, a File or anything else that can be stringified
    * @throws IOException
@@ -245,7 +245,7 @@ public class ClientHttpRequest {
 
   /**
    * adds parameters to the request
-   * 
+   *
    * @param parameters "name-to-value" map of parameters; if a value is a file, the file is
    *        uploaded, otherwise it is stringified and sent in the request
    * @throws IOException
@@ -261,7 +261,7 @@ public class ClientHttpRequest {
 
   /**
    * adds parameters to the request
-   * 
+   *
    * @param parameters array of parameter names and values (parameters[2*i] is a name,
    *        parameters[2*i + 1] is a value); if a value is a file, the file is uploaded, otherwise
    *        it is stringified and sent in the request
@@ -277,7 +277,7 @@ public class ClientHttpRequest {
 
   /**
    * posts the requests to the server, with all the cookies and parameters that were added
-   * 
+   *
    * @return input stream with the server response
    * @throws IOException
    */
@@ -291,7 +291,7 @@ public class ClientHttpRequest {
   /**
    * posts the requests to the server, with all the cookies and parameters that were added before
    * (if any), and with parameters that are passed in the argument
-   * 
+   *
    * @param parameters request parameters
    * @return input stream with the server response
    * @throws IOException
@@ -305,7 +305,7 @@ public class ClientHttpRequest {
   /**
    * posts the requests to the server, with all the cookies and parameters that were added before
    * (if any), and with parameters that are passed in the argument
-   * 
+   *
    * @param parameters request parameters
    * @return input stream with the server response
    * @throws IOException
@@ -319,7 +319,7 @@ public class ClientHttpRequest {
   /**
    * posts the requests to the server, with all the cookies and parameters that were added before
    * (if any), and with cookies and parameters that are passed in the arguments
-   * 
+   *
    * @param cookies request cookies
    * @param parameters request parameters
    * @return input stream with the server response
@@ -336,7 +336,7 @@ public class ClientHttpRequest {
   /**
    * posts the requests to the server, with all the cookies and parameters that were added before
    * (if any), and with cookies and parameters that are passed in the arguments
-   * 
+   *
    * @param cookies request cookies
    * @param parameters request parameters
    * @return input stream with the server response
@@ -352,7 +352,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to the server, with the specified parameter
-   * 
+   *
    * @param name parameter name
    * @param value parameter value
    * @return input stream with the server response
@@ -366,7 +366,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to the server, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
@@ -382,7 +382,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to the server, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
@@ -401,7 +401,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to the server, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
@@ -422,7 +422,7 @@ public class ClientHttpRequest {
 
   /**
    * posts a new request to specified URL, with parameters that are passed in the argument
-   * 
+   *
    * @param parameters request parameters
    * @return input stream with the server response
    * @throws IOException
@@ -434,7 +434,7 @@ public class ClientHttpRequest {
 
   /**
    * posts a new request to specified URL, with parameters that are passed in the argument
-   * 
+   *
    * @param parameters request parameters
    * @return input stream with the server response
    * @throws IOException
@@ -447,7 +447,7 @@ public class ClientHttpRequest {
   /**
    * posts a new request to specified URL, with cookies and parameters that are passed in the
    * argument
-   * 
+   *
    * @param cookies request cookies
    * @param parameters request parameters
    * @return input stream with the server response
@@ -462,7 +462,7 @@ public class ClientHttpRequest {
   /**
    * posts a new request to specified URL, with cookies and parameters that are passed in the
    * argument
-   * 
+   *
    * @param cookies request cookies
    * @param parameters request parameters
    * @return input stream with the server response
@@ -476,7 +476,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request specified URL, with the specified parameter
-   * 
+   *
    * @param name parameter name
    * @param value parameter value
    * @return input stream with the server response
@@ -489,7 +489,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to specified URL, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
@@ -504,7 +504,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to specified URL, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
@@ -522,7 +522,7 @@ public class ClientHttpRequest {
 
   /**
    * post the POST request to specified URL, with the specified parameters
-   * 
+   *
    * @param name1 first parameter name
    * @param value1 first parameter value
    * @param name2 second parameter name
