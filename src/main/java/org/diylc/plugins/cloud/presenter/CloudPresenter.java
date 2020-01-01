@@ -80,7 +80,7 @@ public class CloudPresenter {
 	if (service == null) {
 	    serviceUrl =
 		ConfigurationManager.getString(IServiceAPI.URL_KEY,
-					       Config.getURL("cloud.api").toString());
+					       Config.getURL("api.base").toString());
 	    ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
 	    service = factory.createProxy(IServiceAPI.class, serviceUrl);
 	}
