@@ -31,6 +31,10 @@ public class Utils {
 				      "midori", "kazehakase", "mozilla"};
     static final String errMsg = "Error attempting to launch web browser";
 
+    public static void openURL(URL url) throws Exception {
+	openURL(url.toString());
+    }
+
     public static void openURL(String url) throws Exception {
 	try { // attempt to use Desktop library from JDK 1.6+
 	    Class<?> d = Class.forName("java.awt.Desktop");
