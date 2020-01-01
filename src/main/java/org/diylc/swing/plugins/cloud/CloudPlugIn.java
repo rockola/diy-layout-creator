@@ -32,6 +32,8 @@ import javax.swing.AbstractAction;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
@@ -79,7 +81,7 @@ public class CloudPlugIn implements IPlugIn {
 	swingUI.injectMenuAction(action, ONLINE_TITLE);
     }
     private void separator() { menuEntry(null); }
-    private String getMsg(String key) { return Config.getMsg("message.cloud." + key); }
+    private String getMsg(String key) { return Config.getString("message.cloud." + key); }
 
     public CloudPlugIn(ISwingUI swingUI) {
 	super();
