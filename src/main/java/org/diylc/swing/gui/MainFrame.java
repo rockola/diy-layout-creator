@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -56,8 +56,10 @@ import javax.swing.event.MenuListener;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.BadPositionException;
+import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
@@ -236,6 +238,26 @@ public class MainFrame extends JFrame implements ISwingUI {
     @Override
     public void showMessage(String message, String title, int messageType) {
 	JOptionPane.showMessageDialog(this, message, title, messageType);
+    }
+
+
+    public void info(String title, String text) {
+	showMessage(text, title, IView.INFORMATION_MESSAGE);
+    }
+    public void info(String text) {
+	info(Config.getString("message.info"), text);
+    }
+    public void error(String title, String text) {
+	showMessage(text, title, IView.ERROR_MESSAGE);
+    }
+    public void error(String text) {
+	error(Config.getString("message.error"), text);
+    }
+    public void warn(String title, String text) {
+	showMessage(text, title, IView.WARNING_MESSAGE);
+    }
+    public void warn(String text) {
+	warn(Config.getString("message.warn"), text);
     }
 
     @Override
@@ -447,7 +469,8 @@ public class MainFrame extends JFrame implements ISwingUI {
 		    fileName = "Untitled";
 		}
 		String modified = (Boolean) params[1] ? " (modified)" : "";
-		setTitle(String.format("DIYLC++ G3 version %s.%s - %s %s",
+		setTitle(String.format("DIYLC v%s.%s.%s - %s %s",
+				       plugInPort.getCurrentVersionNumber().getMajor(),
 				       plugInPort.getCurrentVersionNumber().getMinor(),
 				       plugInPort.getCurrentVersionNumber().getBuild(),
 				       fileName,
