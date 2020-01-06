@@ -234,7 +234,7 @@
 	  <archive>
 	    <manifest>
 	      <addClasspath>true</addClasspath>
-	      <mainClass>org.diylc.DIYLCStarter</mainClass>
+	      <mainClass>org.diylc.DIYLC</mainClass>
 	      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 	      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 	    </manifest>
@@ -279,7 +279,7 @@
 	    <argument>-Dswing.aatext=true</argument>
 	    <argument>-classpath</argument>
 	    <classpath />
-            <argument>org.diylc.DIYLCStarter</argument>
+            <argument>org.diylc.DIYLC</argument>
 	  </arguments>
         </configuration>
       </plugin>
@@ -296,7 +296,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.diylc.DIYLCStarter</mainClass>
+              <mainClass>org.diylc.DIYLC</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -336,7 +336,7 @@
 		<transformer implementation=
 			     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 		  <manifestEntries>
-                    <Main-Class>org.diylc.DIYLCStarter</Main-Class>
+                    <Main-Class>org.diylc.DIYLC</Main-Class>
 		  </manifestEntries>
 		</transformer>
 	      </transformers>

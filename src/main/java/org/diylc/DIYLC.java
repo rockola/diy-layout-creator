@@ -23,14 +23,10 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.SplashScreen;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import java.net.URI;
 import java.net.URL;
-
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -39,10 +35,8 @@ import javax.swing.UIManager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
-import org.diylc.common.Config;
 import org.diylc.common.Message;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
@@ -57,32 +51,12 @@ import org.diylc.swingframework.FontChooserComboBox;
  * @see Presenter
  * @see MainFrame
  */
-public class DIYLC {
+public class DIYLCStarter {
 
-    private static final Logger LOG = LogManager.getLogger(DIYLC.class);
+    private static final Logger LOG = LogManager.getLogger(DIYLCStarter.class);
 
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
-    public static boolean getBoolean(String key, boolean defaultValue) {
-	return ConfigurationManager.getBoolean(key, defaultValue);
-    }
-    public static boolean getBoolean(String key) { return getBoolean(key, false); }
-
-    public static URL getURL(String key) { return Config.getURL(key); }
-    public static URI getURI(String key) { return Config.getURI(key); }    
-    public static String getString(String key, String defaultValue) {
-	// TODO: handle default values for Config values
-	String s = Config.getString(key);
-	if (s == null) {
-	    s = ConfigurationManager.getString(key, defaultValue);
-	}
-	return s;
-    }
-    public static String getString(String key) { return getString(key, null); }
-
-    public static void putValue(String key, Object value) {
-	ConfigurationManager.putValue(key, value);
-    }
     /**
      * @param args
      */
@@ -98,9 +72,9 @@ public class DIYLC {
 	    LOG.error("Could not set Look and Feel", e);
 	}
 
-	ClassLoader loader = DIYLC.class.getClassLoader();
-	LOG.debug("DIYLC.class coming from {}",
-		  loader.getResource("org/diylc/DIYLC.class"));
+	ClassLoader loader = DIYLCStarter.class.getClassLoader();
+	LOG.debug("DIYLCStarter.class coming from {}",
+		  loader.getResource("org/diylc/DIYLCStarter.class"));
 	LOG.debug("log4j2.xml coming from {}",
 		  loader.getResource("log4j2.xml"));
 	LOG.debug("java.class.path is {}", System.getProperty("java.class.path"));
@@ -111,8 +85,8 @@ public class DIYLC {
 
 	ConfigurationManager.initialize("diylc");
 
-	Package p = DIYLC.class.getPackage();
-	LOG.debug("DIYLC package: {}", p.getName());
+	Package p = DIYLCStarter.class.getPackage();
+	LOG.debug("DIYLCStarter package: {}", p.getName());
 	LOG.debug("Implementation: version [{}] title [{}] vendor [{}]",
 		  p.getImplementationVersion(),
 		  p.getImplementationTitle(),
@@ -149,10 +123,9 @@ public class DIYLC {
 	if (args.length > 0) {
 	    mainFrame.getPresenter().loadProjectFromFile(args[0]);
 	} else {
-	    boolean showTemplates = DIYLC.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
+	    boolean showTemplates = ConfigurationManager.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
 	    if (showTemplates) {
-		TemplateDialog templateDialog = new TemplateDialog(mainFrame,
-								   mainFrame.getPresenter());
+		TemplateDialog templateDialog = new TemplateDialog(mainFrame, mainFrame.getPresenter());
 		if (!templateDialog.getFiles().isEmpty()) {
 		    templateDialog.setVisible(true);
 		}
