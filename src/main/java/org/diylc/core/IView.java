@@ -55,7 +55,8 @@ public interface IView {
 
     int showConfirmDialog(String message, String title, int optionType, int messageType);
 
-    boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties);
+    boolean editProperties(List<PropertyWrapper> properties,
+			   Set<PropertyWrapper> defaultedProperties);
 
     File promptFileSave();
 }
