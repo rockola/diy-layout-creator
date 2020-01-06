@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2018 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -92,13 +92,18 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
 						      swingUI,
 						      ""));
 	addAction(actionFactory.createPrintAction(drawingProvider,
-						  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+						  DIYLC.getKeyStroke("Print")));
 	swingUI.injectSubmenu(TRACE_MASK_TITLE, IconLoader.TraceMask.getIcon(), FILE_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportPDFAction(plugInPort, traceMaskDrawingProvider, swingUI, " (mask)"), TRACE_MASK_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportPNGAction(plugInPort, traceMaskDrawingProvider, swingUI, " (mask)"), TRACE_MASK_TITLE);
+	swingUI.injectMenuAction(actionFactory.createExportPDFAction(plugInPort,
+								     traceMaskDrawingProvider,
+								     swingUI, " (mask)"),
+				 TRACE_MASK_TITLE);
+	swingUI.injectMenuAction(actionFactory.createExportPNGAction(plugInPort,
+								     traceMaskDrawingProvider,
+								     swingUI, " (mask)"),
+				 TRACE_MASK_TITLE);
 	swingUI.injectMenuAction(actionFactory.createPrintAction(traceMaskDrawingProvider,
-								 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-								 | KeyEvent.SHIFT_DOWN_MASK),
+								 DIYLC.getKeyStroke("Print Trace Mask")),
 				 TRACE_MASK_TITLE);
 	swingUI.injectSubmenu(ANALYZE_TITLE, IconLoader.Scientist.getIcon(), FILE_TITLE);
 	swingUI.injectMenuAction(actionFactory.createBomAction(plugInPort), ANALYZE_TITLE);
