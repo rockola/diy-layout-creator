@@ -29,11 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -301,10 +297,15 @@ public class Presenter implements IPlugInPort {
 	drawingManager.clearComponentAreaMap();
 	drawingManager.clearContinuityArea();
 	updateSelection(EMPTY_SELECTION);
-	messageDispatcher.dispatchMessage(EventType.PROJECT_LOADED, project, freshStart, filename);
+	messageDispatcher.dispatchMessage(EventType.PROJECT_LOADED,
+					  project,
+					  freshStart,
+					  filename);
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
-	messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED, currentProject.getLockedLayers());
-	messageDispatcher.dispatchMessage(EventType.LAYER_VISIBILITY_CHANGED, currentProject.getHiddenLayers());
+	messageDispatcher.dispatchMessage(EventType.LAYER_STATE_CHANGED,
+					  currentProject.getLockedLayers());
+	messageDispatcher.dispatchMessage(EventType.LAYER_VISIBILITY_CHANGED,
+					  currentProject.getHiddenLayers());
     }
 
     @Override
