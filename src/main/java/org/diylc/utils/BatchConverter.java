@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 //import org.apache.log4j.PropertyConfigurator;
-import org.diylc.DIYLCStarter;
+import org.diylc.DIYLC;
 import org.diylc.presenter.Presenter;
 
 public class BatchConverter {
@@ -39,7 +39,7 @@ public class BatchConverter {
 	throw new Exception("BatchConverter should be turned into a separate utility or rewritten to use log4j2 api.");
 
 	/*
-	URL url = DIYLCStarter.class.getResource("log4j.properties");
+	URL url = DIYLC.class.getResource("log4j.properties");
 	Properties properties = new Properties();
 	try {
 	    properties.load(url.openStream());
