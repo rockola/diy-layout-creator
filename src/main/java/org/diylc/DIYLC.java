@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.apache.logging.log4j.Logger;
@@ -99,6 +100,7 @@ public class DIYLC {
 
     public static URI getURI(String key) { return Config.getURI(key); }
     public static URL getURL(String key) { return Config.getURL(key); }
+    public static KeyStroke getKeyStroke(String key) { return Config.getKeyStroke(key); }
 
     /**
      * @param args
@@ -166,9 +168,10 @@ public class DIYLC {
 	if (args.length > 0) {
 	    mainFrame.getPresenter().loadProjectFromFile(args[0]);
 	} else {
-	    boolean showTemplates = ConfigurationManager.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
+	    boolean showTemplates = DIYLC.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
 	    if (showTemplates) {
-		TemplateDialog templateDialog = new TemplateDialog(mainFrame, mainFrame.getPresenter());
+		TemplateDialog templateDialog = new TemplateDialog(mainFrame,
+								   mainFrame.getPresenter());
 		if (!templateDialog.getFiles().isEmpty()) {
 		    templateDialog.setVisible(true);
 		}
