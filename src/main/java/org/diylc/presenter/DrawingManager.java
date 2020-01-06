@@ -1,5 +1,5 @@
 /*
-  DIY Layout Creator (DIYLC). 
+  DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
@@ -64,7 +64,7 @@ import org.diylc.utils.Constants;
 /**
  * Utility that deals with painting {@link Project} on the {@link Graphics2D} and keeps areas taken
  * by each drawn component.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class DrawingManager {
@@ -120,7 +120,7 @@ public class DrawingManager {
 
     /**
      * Paints the project onto the canvas and returns the list of components that failed to draw.
-     * 
+     *
      * @param g2d
      * @param project
      * @param drawOptions
@@ -165,7 +165,7 @@ public class DrawingManager {
 	G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
 
 	boolean antiAliasing = drawOptions.contains(DrawOption.ANTIALIASING);
-    
+
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 			     antiAliasing
 			     ? RenderingHints.VALUE_ANTIALIAS_ON
@@ -242,7 +242,7 @@ public class DrawingManager {
 		g2dWrapper.draw(new Line2D.Double(0, j, d.width - 1, j));
 	    }
 	}
-    
+
 	Rectangle2D extraSpaceRect = null;
 	AffineTransform extraSpaceTx = null;
 	// manage extra space
@@ -268,13 +268,13 @@ public class DrawingManager {
 
 	    // translate to the new (0, 0)
 	    g2d.transform(AffineTransform.getTranslateInstance(extraSpace, extraSpace));
-	}    
+	}
 
 	// apply zoom
 	if (Math.abs(1.0 - zoom) > 1e-4) {
 	    g2dWrapper.scale(zoom, zoom);
 	}
-    
+
 	// Composite mainComposite = g2d.getComposite();
 	// Composite alphaComposite =
 	// AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
@@ -290,7 +290,7 @@ public class DrawingManager {
 	    ComponentState state = ComponentState.NORMAL;
 	    if (drawOptions.contains(DrawOption.SELECTION)
 		&& selectedComponents.contains(component)) {
-	  
+
 		state = dragInProgress ? ComponentState.DRAGGING : ComponentState.SELECTED;
 	    }
 	    // Do not track the area if component is not invalidated and was
@@ -345,7 +345,7 @@ public class DrawingManager {
 			     || (!groupedComponents.contains(component)
 				 && !selectedComponents.contains(component)
 				 && vp.isAlways()))) {
-			    
+
 			    g2dWrapper.setColor(CONTROL_POINT_COLOR);
 			    Point controlPoint = component.getControlPoint(i);
 			    int pointSize = CONTROL_POINT_SIZE - 2;
@@ -471,7 +471,7 @@ public class DrawingManager {
 	    g2d.fill(continuityArea);
 	    g2d.setComposite(oldComposite);
 	}
-    
+
 	// shade extra space
 	if (SHADE_EXTRA_SPACE && extraSpaceRect != null) {
 	    Area extraSpaceArea = new Area(new Rectangle2D.Double(0, 0,
@@ -529,8 +529,8 @@ public class DrawingManager {
     public double getExtraSpace(Project project) {
 	double width = project.getWidth().convertToPixels();
 	double height = project.getHeight().convertToPixels();
-	double targetExtraSpace = EXTRA_SPACE * Math.max(width, height);    
-	return CalcUtils.roundToGrid(targetExtraSpace, project.getGridSpacing());    
+	double targetExtraSpace = EXTRA_SPACE * Math.max(width, height);
+	return CalcUtils.roundToGrid(targetExtraSpace, project.getGridSpacing());
     }
 
     public Dimension getCanvasDimensions(Project project,
@@ -547,7 +547,7 @@ public class DrawingManager {
 
 	width *= zoomLevel;
 	height *= zoomLevel;
-    
+
 	return new Dimension((int) width, (int) height);
     }
 
@@ -565,7 +565,7 @@ public class DrawingManager {
 	DIYLC.putValue(IPlugInPort.THEME_KEY, theme);
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
     }
-  
+
     public void findContinuityAreaAtPoint(Project project, Point p) {
 	List<Area> areas = getContinuityAreas(project);
 
@@ -578,7 +578,7 @@ public class DrawingManager {
 
 	continuityArea = null;
     }
-  
+
     public List<Area> getContinuityAreas(Project project) {
 	// Find all individual continuity areas for all components
 	List<Area> preliminaryAreas = new ArrayList<Area>();
@@ -586,7 +586,7 @@ public class DrawingManager {
 	Set<Connection> connections = new HashSet<Connection>();
 	for (IDIYComponent<?> c : project.getComponents()) {
 	    ComponentArea a = getComponentArea(c);
-      
+
 	    if (c instanceof IContinuity) {
 		for (int i = 0; i < c.getControlPointCount() - 1; i++)
 		    for (int j = i + 1; j < c.getControlPointCount(); j++)
@@ -623,14 +623,14 @@ public class DrawingManager {
 	    // else
 	    // areas.add(a);
 	}
-    
+
 	expandConnections(connections);
 
 	crunchAreas(areas, connections);
-    
+
 	return areas;
     }
-  
+
     public void expandConnections(Set<Connection> connections) {
 	Set<Connection> toAdd = new HashSet<Connection>();
 	for (Connection c1 : connections)
@@ -652,7 +652,7 @@ public class DrawingManager {
 
     /**
      * Merges all areas that either overlap or are joined by connections.
-     * 
+     *
      * @param areas
      * @param connections
      * @return
@@ -689,7 +689,7 @@ public class DrawingManager {
 			if ((a1.getBounds().contains(p.getP1())
 			     && a2.getBounds().contains(p.getP2())
 			     && a1.contains(p.getP1())
-			     && a2.contains(p.getP2())) || 
+			     && a2.contains(p.getP2())) ||
 			    (a1.getBounds().contains(p.getP2())
 			     && a2.getBounds().contains(p.getP1()))
 			    && a1.contains(p.getP2())
