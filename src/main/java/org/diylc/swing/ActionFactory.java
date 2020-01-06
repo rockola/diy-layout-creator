@@ -277,18 +277,12 @@ public class ActionFactory {
 
     // File menu actions.
 
-    public static class NewAction extends AbstractAction {
+    public static class NewAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
-	public NewAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "New");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("New"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.DocumentPlain.getIcon());
+	public NewAction(IPlugInPort pp) {
+	    super(pp, null, "New", "New", IconLoader.DocumentPlain.getIcon());
 	}
 
 	@Override
@@ -314,20 +308,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class OpenAction extends AbstractAction {
+    public static class OpenAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
-
 	public OpenAction(IPlugInPort plugInPort, ISwingUI swingUI) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
-	    putValue(AbstractAction.NAME, "Open");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Open"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.FolderOut.getIcon());
+	    super(plugInPort, swingUI, "Open", "Open", 
+		  IconLoader.FolderOut.getIcon());
 	}
 
 	@Override
@@ -361,18 +348,14 @@ public class ActionFactory {
 	}
     }
 
-    public static class ImportAction extends AbstractAction {
+    public static class ImportAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
 	private Presenter presenter;
 
 	public ImportAction(IPlugInPort plugInPort, ISwingUI swingUI) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
+	    super(plugInPort, swingUI, "Import", "Import", IconLoader.ElementInto.getIcon());
 	    this.presenter = new Presenter(new IView() {
 
 		    @Override
@@ -395,9 +378,6 @@ public class ActionFactory {
 			return false;
 		    }
 		});
-	    putValue(AbstractAction.NAME, "Import");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Import"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.ElementInto.getIcon());
 	}
 
 	@Override
@@ -437,20 +417,12 @@ public class ActionFactory {
 	}
     }
 
-    public static class SaveAction extends AbstractAction {
+    public static class SaveAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
-
 	public SaveAction(IPlugInPort plugInPort, ISwingUI swingUI) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
-	    putValue(AbstractAction.NAME, "Save");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Save"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.DiskBlue.getIcon());
+	    super(plugInPort, swingUI, "Save", "Save", IconLoader.DiskBlue.getIcon());
 	}
 
 	@Override
@@ -502,20 +474,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class SaveAsAction extends AbstractAction {
+    public static class SaveAsAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
-
 	public SaveAsAction(IPlugInPort plugInPort, ISwingUI swingUI) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
-	    putValue(AbstractAction.NAME, "Save As");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Save As"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.DiskBlue.getIcon());
+	    super(plugInPort, swingUI, "Save As", "Save As",
+		  IconLoader.DiskBlue.getIcon());
 	}
 
 	@Override
@@ -540,24 +505,21 @@ public class ActionFactory {
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.showMessage("Could not save to file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
+			    swingUI.showMessage("Could not save to file. " + e.getMessage(),
+						"Error",
+						ISwingUI.ERROR_MESSAGE);
 			}
 		    }, true);
 	    }
 	}
     }
 
-    public static class CreateBomAction extends AbstractAction {
+    public static class CreateBomAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public CreateBomAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Create B.O.M.");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.BOM.getIcon());
+	    super(plugInPort, "Create B.O.M.", IconLoader.BOM.getIcon());
 	}
 
 	@Override
@@ -578,23 +540,18 @@ public class ActionFactory {
 	}
     }
 
-    public static class ExportPDFAction extends AbstractAction {
+    public static class ExportPDFAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
 	private IDrawingProvider drawingProvider;
-	private ISwingUI swingUI;
-	private IPlugInPort plugInPort;
 	private String defaultSuffix;
 
-	public ExportPDFAction(IPlugInPort plugInPort, IDrawingProvider drawingProvider, ISwingUI swingUI, String defaultSuffix) {
-	    super();
-	    this.plugInPort = plugInPort;
+	public ExportPDFAction(IPlugInPort plugInPort, IDrawingProvider drawingProvider,
+			       ISwingUI swingUI, String defaultSuffix) {
+	    super(plugInPort, swingUI, "Export to PDF", IconLoader.PDF.getIcon());
 	    this.drawingProvider = drawingProvider;
-	    this.swingUI = swingUI;
 	    this.defaultSuffix = defaultSuffix;
-	    putValue(AbstractAction.NAME, "Export to PDF");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.PDF.getIcon());
 	}
 
 	@Override
@@ -633,24 +590,18 @@ public class ActionFactory {
 	}
     }
 
-    public static class ExportPNGAction extends AbstractAction {
+    public static class ExportPNGAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
 	private IDrawingProvider drawingProvider;
-	private ISwingUI swingUI;
-	private IPlugInPort plugInPort;
 	private String defaultSuffix;
 
-	public ExportPNGAction(IPlugInPort plugInPort, IDrawingProvider drawingProvider, ISwingUI swingUI, String defaultSuffix) {
-	    super();
-	    this.plugInPort = plugInPort;
+	public ExportPNGAction(IPlugInPort plugInPort, IDrawingProvider drawingProvider,
+			       ISwingUI swingUI, String defaultSuffix) {
+	    super(plugInPort, swingUI, "Export to PNG", IconLoader.Image.getIcon());
 	    this.drawingProvider = drawingProvider;
-	    this.drawingProvider = drawingProvider;
-	    this.swingUI = swingUI;
 	    this.defaultSuffix = defaultSuffix;
-	    putValue(AbstractAction.NAME, "Export to PNG");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Image.getIcon());
 	}
 
 	@Override
@@ -689,7 +640,7 @@ public class ActionFactory {
 	}
     }
 
-    public static class PrintAction extends AbstractAction {
+    public static class PrintAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
@@ -697,11 +648,8 @@ public class ActionFactory {
 
 	public PrintAction(IDrawingProvider drawingProvider,
 			   KeyStroke acceleratorKey) {
-	    super();
+	    super(null, null, "Print...", acceleratorKey, IconLoader.Print.getIcon());
 	    this.drawingProvider = drawingProvider;
-	    putValue(AbstractAction.NAME, "Print...");
-	    putValue(AbstractAction.ACCELERATOR_KEY, acceleratorKey);
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Print.getIcon());
 	}
 
 	@Override
@@ -715,18 +663,15 @@ public class ActionFactory {
 	}
     }
   
-    public static class ExportVariantsAction extends AbstractAction {
+    public static class ExportVariantsAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private ISwingUI swingUI;
-    
-	private Map<String, ComponentType> typeMap = new TreeMap<String, ComponentType>(String.CASE_INSENSITIVE_ORDER);
+	private Map<String, ComponentType> typeMap =
+	    new TreeMap<String, ComponentType>(String.CASE_INSENSITIVE_ORDER);
 
 	public ExportVariantsAction(ISwingUI swingUI, IPlugInPort plugInPort) {
-	    super();
-	    this.swingUI = swingUI;
-	    putValue(AbstractAction.NAME, "Export Variants");
+	    super(plugInPort, swingUI, "Export Variants");
       
 	    Map<String, List<ComponentType>> componentTypes = plugInPort.getComponentTypes();
 	    for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet())
@@ -844,18 +789,12 @@ public class ActionFactory {
 	}
     }
   
-    public static class ImportVariantsAction extends AbstractAction {
+    public static class ImportVariantsAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private ISwingUI swingUI;
-	private IPlugInPort plugInPort;
-
 	public ImportVariantsAction(ISwingUI swingUI, IPlugInPort plugInPort) {
-	    super();
-	    this.swingUI = swingUI;
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Import Variants");
+	    super(plugInPort, swingUI, "Import Variants");
 	}
 
 	@Override
@@ -1007,25 +946,18 @@ public class ActionFactory {
 	}
     }
   
-    public static class ImportBlocksAction extends AbstractAction {
+    public static class ImportBlocksAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private ISwingUI swingUI;
-	private IPlugInPort plugInPort;
-
 	public ImportBlocksAction(ISwingUI swingUI, IPlugInPort plugInPort) {
-	    super();
-	    this.swingUI = swingUI;
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, getMsg("import-building-blocks"));
+	    super(plugInPort, swingUI, getMsg("import-building-blocks"));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info("ImportBlocksAction triggered");
       
-
 	    final File file =
 		DialogFactory.getInstance().showOpenDialog(FileFilterEnum.XML.getFilter(),
 							   null,
@@ -1059,17 +991,12 @@ public class ActionFactory {
 	}
     }
 
-    public static class ExitAction extends AbstractAction {
+    public static class ExitAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public ExitAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, getMsg("exit"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Exit.getIcon());
+	    super(plugInPort, null, getMsg("exit"), "Quit", IconLoader.Exit.getIcon());
 	}
 
 	@Override
@@ -1083,22 +1010,18 @@ public class ActionFactory {
 
     // Edit menu actions.
 
-    public static class CutAction extends AbstractAction {
+    public static class CutAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private Clipboard clipboard;
 	private ClipboardOwner clipboardOwner;
 
-	public CutAction(IPlugInPort plugInPort, Clipboard clipboard, ClipboardOwner clipboardOwner) {
-	    super();
-	    this.plugInPort = plugInPort;
+	public CutAction(IPlugInPort plugInPort,
+			 Clipboard clipboard, ClipboardOwner clipboardOwner) {
+	    super(plugInPort, null, getMsg("cut"), "Cut", IconLoader.Cut.getIcon());
 	    this.clipboard = clipboard;
 	    this.clipboardOwner = clipboardOwner;
-	    putValue(AbstractAction.NAME, getMsg("cut"));
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Cut"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Cut.getIcon());
 	}
 
 	@Override
@@ -1110,20 +1033,15 @@ public class ActionFactory {
 	}
     }
 
-    public static class PasteAction extends AbstractAction {
+    public static class PasteAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private Clipboard clipboard;
 
 	public PasteAction(IPlugInPort plugInPort, Clipboard clipboard) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, null, getMsg("paste"), "Paste", IconLoader.Paste.getIcon());
 	    this.clipboard = clipboard;
-	    putValue(AbstractAction.NAME, getMsg("paste"));
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Paste"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Paste.getIcon());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1140,22 +1058,18 @@ public class ActionFactory {
 	}
     }
 
-    public static class CopyAction extends AbstractAction {
+    public static class CopyAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private Clipboard clipboard;
 	private ClipboardOwner clipboardOwner;
 
-	public CopyAction(IPlugInPort plugInPort, Clipboard clipboard, ClipboardOwner clipboardOwner) {
-	    super();
-	    this.plugInPort = plugInPort;
+	public CopyAction(IPlugInPort plugInPort,
+			  Clipboard clipboard, ClipboardOwner clipboardOwner) {
+	    super(plugInPort, null, getMsg("copy"), "Copy", IconLoader.Copy.getIcon());
 	    this.clipboard = clipboard;
 	    this.clipboardOwner = clipboardOwner;
-	    putValue(AbstractAction.NAME, "Copy");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Copy"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Copy.getIcon());
 	}
 
 	@Override
@@ -1167,18 +1081,13 @@ public class ActionFactory {
     }
 
 
-    public static class DuplicateAction extends AbstractAction {
+    public static class DuplicateAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public DuplicateAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Duplicate");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Duplicate"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.DocumentsGear.getIcon());
+	    super(plugInPort, null, getMsg("duplicate"), "Duplicate", 
+		  IconLoader.DocumentsGear.getIcon());
 	}
 
 	@Override
@@ -1204,18 +1113,13 @@ public class ActionFactory {
 	return result;
     }
 
-    public static class SelectAllAction extends AbstractAction {
+    public static class SelectAllAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public SelectAllAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Select All");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Select All"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Selection.getIcon());
+	    super(plugInPort, null, "Select All", "Select All",
+		  IconLoader.Selection.getIcon());
 	}
 
 	@Override
@@ -1225,18 +1129,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class GroupAction extends AbstractAction {
+    public static class GroupAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public GroupAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Group Selection");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Group"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Group.getIcon());
+	    super(plugInPort, null, "Group Selection", "Group",
+		  IconLoader.Group.getIcon());
 	}
 
 	@Override
@@ -1246,18 +1145,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class UngroupAction extends AbstractAction {
+    public static class UngroupAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public UngroupAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Ungroup Selection");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Ungroup"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Ungroup.getIcon());
+	    super(plugInPort, null, getMsg("ungroup-selection"), "Ungroup",
+		  IconLoader.Ungroup.getIcon());
 	}
 
 	@Override
@@ -1267,17 +1161,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class EditProjectAction extends AbstractAction {
+    public static class EditProjectAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public EditProjectAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Edit Project Settings");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.DocumentEdit.getIcon());
+	    super(plugInPort, getMsg("edit-project-settings"),
+		  IconLoader.DocumentEdit.getIcon());
 	}
 
 	@Override
@@ -1299,18 +1189,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class NudgeAction extends AbstractAction {
+    public static class NudgeAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public NudgeAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Nudge");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Nudge"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.FitToSize.getIcon());
+	    super(plugInPort, null, getMsg("nudge"), "Nudge",
+		  IconLoader.FitToSize.getIcon());
 	}
 
 	@Override
@@ -1336,18 +1221,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class EditSelectionAction extends AbstractAction {
+    public static class EditSelectionAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public EditSelectionAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Edit Selection");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Edit Selection"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.EditComponent.getIcon());
+	    super(plugInPort, null, getMsg("edit-selection"), "Edit Selection",
+		  IconLoader.EditComponent.getIcon());
 	}
 
 	@Override
@@ -1362,18 +1242,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class DeleteSelectionAction extends AbstractAction {
+    public static class DeleteSelectionAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public DeleteSelectionAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Delete Selection");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Delete"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Delete.getIcon());
+	    super(plugInPort, null, getMsg("delete-selection"), "Delete",
+		  IconLoader.Delete.getIcon());
 	}
 
 	@Override
@@ -1383,79 +1258,68 @@ public class ActionFactory {
 	}
     }
 
-    public static class SaveAsTemplateAction extends AbstractAction {
+    public static class SaveAsTemplateAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public SaveAsTemplateAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Save as Variant");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.BriefcaseAdd.getIcon());
+	    super(plugInPort, getMsg("save-as-variant"),
+		  IconLoader.BriefcaseAdd.getIcon());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info("Save as template triggered");
 	    String templateName =
-		JOptionPane.showInputDialog(null, "Variant name:", "Save as Variant", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showInputDialog(null,
+					    getMsg("variant-name"),
+					    getMsg("save-as-variant"),
+					    JOptionPane.PLAIN_MESSAGE);
 	    if (templateName != null && !templateName.trim().isEmpty()) {
 		plugInPort.saveSelectedComponentAsVariant(templateName);
 	    }
 	}
     }
 
-    public static class SaveAsBlockAction extends AbstractAction {
+    public static class SaveAsBlockAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public SaveAsBlockAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Save as Building Block");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.ComponentAdd.getIcon());
+	    super(plugInPort, getMsg("save-as-building-block"),
+		  IconLoader.ComponentAdd.getIcon());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info("Save as building block triggered");
 	    String templateName =
-		JOptionPane.showInputDialog(null, "Block name:", "Save as Building Block", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showInputDialog(null,
+					    "Block name:",
+					    getMsg("save-as-building-block"),
+					    JOptionPane.PLAIN_MESSAGE);
 	    if (templateName != null && !templateName.trim().isEmpty()) {
 		plugInPort.saveSelectionAsBlock(templateName);
 	    }
 	}
     }
 
-    public static class ExpandSelectionAction extends AbstractAction {
+    public static class ExpandSelectionAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private ExpansionMode expansionMode;
 
 	public ExpandSelectionAction(IPlugInPort plugInPort, ExpansionMode expansionMode) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, (expansionMode == ExpansionMode.ALL
+			       ? getMsg("all-connected")
+			       : (expansionMode == ExpansionMode.IMMEDIATE
+				  ? getMsg("immediate-only")
+				  : (expansionMode == ExpansionMode.SAME_TYPE
+				     ? getMsg("same-type-only")
+				     : "ERROR" // how do we throw an exception here?
+				     ))));
 	    this.expansionMode = expansionMode;
-	    switch (expansionMode) {
-	    case ALL:
-		putValue(AbstractAction.NAME, "All Connected");
-		break;
-	    case IMMEDIATE:
-		putValue(AbstractAction.NAME, "Immediate Only");
-		break;
-	    case SAME_TYPE:
-		putValue(AbstractAction.NAME, "Same Type Only");
-		break;
-
-	    default:
-		break;
-	    }
 	}
 
 	@Override
@@ -1465,26 +1329,20 @@ public class ActionFactory {
 	}
     }
 
-    public static class RotateSelectionAction extends AbstractAction {
+    public static class RotateSelectionAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private int direction;
 
 	public RotateSelectionAction(IPlugInPort plugInPort, int direction) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, null,
+		  getMsg(direction > 0 ? "rotate-clockwise" : "rotate-counterclockwise"),
+		  direction > 0 ? "Rotate Clockwise" : "Rotate Counterclockwise",
+		  direction > 0
+		  ? IconLoader.RotateCW.getIcon()
+		  : IconLoader.RotateCCW.getIcon());
 	    this.direction = direction;
-	    if (direction > 0) {
-		putValue(AbstractAction.NAME, "Rotate Clockwise");
-		putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Rotate Clockwise"));
-		putValue(AbstractAction.SMALL_ICON, IconLoader.RotateCW.getIcon());
-	    } else {
-		putValue(AbstractAction.NAME, "Rotate Counterclockwise");
-		putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Rotate Counterclockwise"));
-		putValue(AbstractAction.SMALL_ICON, IconLoader.RotateCCW.getIcon());
-	    }
 	}
 
 	@Override
@@ -1494,26 +1352,23 @@ public class ActionFactory {
 	}
     }
 
-    public static class MirrorSelectionAction extends AbstractAction {
+    public static class MirrorSelectionAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private int direction;
 
 	public MirrorSelectionAction(IPlugInPort plugInPort, int direction) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.direction = direction;
-	    if (direction == IComponentTransformer.HORIZONTAL) {
-		putValue(AbstractAction.NAME, "Mirror Horizontally");
-		putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Mirror Horizontally"));
-		putValue(AbstractAction.SMALL_ICON, IconLoader.FlipHorizontal.getIcon());
-	    } else {
-		putValue(AbstractAction.NAME, "Mirror Vertically");
-		putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Mirror Vertically"));
-		putValue(AbstractAction.SMALL_ICON, IconLoader.FlipVertical.getIcon());
-	    }
+	    super(plugInPort, null,
+		  getMsg(direction == IComponentTransformer.HORIZONTAL
+			 ? "mirror-horizontally"
+			 : "mirror-vertically"),
+		  direction == IComponentTransformer.HORIZONTAL
+		  ? "Mirror Horizontally"
+		  : "Mirror Vertically",
+		  direction == IComponentTransformer.HORIZONTAL
+		  ? IconLoader.FlipHorizontal.getIcon()
+		  : IconLoader.FlipVertical.getIcon());
 	}
 
 	@Override
@@ -1523,18 +1378,13 @@ public class ActionFactory {
 	}
     }
 
-    public static class SendToBackAction extends AbstractAction {
+    public static class SendToBackAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
-
 	public SendToBackAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Send Backward");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Lower"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Back.getIcon());
+	    super(plugInPort, null, getMsg("send-to-back"), "Send to Back",
+		  IconLoader.Back.getIcon());
 	}
 
 	@Override
@@ -1544,18 +1394,15 @@ public class ActionFactory {
 	}
     }
 
-    public static class BringToFrontAction extends AbstractAction {
+    public static class BringToFrontAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
 	private IPlugInPort plugInPort;
 
 	public BringToFrontAction(IPlugInPort plugInPort) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    putValue(AbstractAction.NAME, "Bring Forward");
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Raise"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Front.getIcon());
+	    super(plugInPort, null, getMsg("bring-to-front"), "Bring to Front",
+		  IconLoader.Front.getIcon());
 	}
 
 	@Override
@@ -1565,21 +1412,18 @@ public class ActionFactory {
 	}
     }
 
-    public static class ConfigAction extends AbstractAction {
+    public static class ConfigAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private String configKey;
 	private String tipKey;
 
 	public ConfigAction(IPlugInPort plugInPort, String title, String configKey,
 			    boolean defaultValue, String tipKey) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, title);
 	    this.configKey = configKey;
 	    this.tipKey = tipKey;
-	    putValue(AbstractAction.NAME, title);
 	    putValue(IView.CHECK_BOX_MENU_ITEM, true);
 	    putValue(AbstractAction.SELECTED_KEY, DIYLC.getBoolean(configKey, defaultValue));
 	}
@@ -1601,20 +1445,18 @@ public class ActionFactory {
 	}
     }
 
-    public static class ThemeAction extends AbstractAction {
+    public static class ThemeAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private Theme theme;
 
 	public ThemeAction(IPlugInPort plugInPort, Theme theme) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, theme.getName());
 	    this.theme = theme;
-	    putValue(AbstractAction.NAME, theme.getName());
 	    putValue(IView.RADIO_BUTTON_GROUP_KEY, "theme");
-	    putValue(AbstractAction.SELECTED_KEY, plugInPort.getSelectedTheme().getName().equals(theme.getName()));
+	    putValue(AbstractAction.SELECTED_KEY,
+		     plugInPort.getSelectedTheme().getName().equals(theme.getName()));
 	}
 
 	@Override
@@ -1624,20 +1466,17 @@ public class ActionFactory {
 	}
     }
 
-    public static class ComponentBrowserAction extends AbstractAction {
+    public static class ComponentBrowserAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
 	private String browserType;
 
 	public ComponentBrowserAction(String browserType) {
-	    super();
+	    super(null, browserType);
 	    this.browserType = browserType;
-	    putValue(AbstractAction.NAME, browserType);
 	    putValue(IView.RADIO_BUTTON_GROUP_KEY, "componentBrowser");
-
-	    putValue(
-		     AbstractAction.SELECTED_KEY,
+	    putValue(AbstractAction.SELECTED_KEY,
 		     browserType.equals(DIYLC.getString(ConfigPlugin.COMPONENT_BROWSER,
 							ConfigPlugin.SEARCHABLE_TREE)));
 	}
@@ -1650,18 +1489,15 @@ public class ActionFactory {
     }
 
 
-    public static class RenumberAction extends AbstractAction {
+    public static class RenumberAction extends ActionFactoryAction {
 
 	private static final long serialVersionUID = 1L;
 
-	private IPlugInPort plugInPort;
 	private boolean xAxisFirst;
 
 	public RenumberAction(IPlugInPort plugInPort, boolean xAxisFirst) {
-	    super();
-	    this.plugInPort = plugInPort;
+	    super(plugInPort, xAxisFirst ? "Top-to-Bottom" : "Left-to-Right");
 	    this.xAxisFirst = xAxisFirst;
-	    putValue(AbstractAction.NAME, xAxisFirst ? "Top-to-Bottom" : "Left-to-Right");
 	}
 
 	@Override
@@ -1671,19 +1507,13 @@ public class ActionFactory {
 	}
     }
   
-    public static class GenerateNetlistAction extends AbstractAction {
+    public static class GenerateNetlistAction extends ActionFactoryAction {
     
 	private static final long serialVersionUID = 1L;
-    
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
 
 	public GenerateNetlistAction(IPlugInPort plugInPort, ISwingUI swingUI) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
-	    putValue(AbstractAction.NAME, "Generate DIYLC Netlist");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Web.getIcon());
+	    super(plugInPort, swingUI, "Generate DIYLC Netlist",
+		  IconLoader.Web.getIcon());
 	}
 
 	@Override
@@ -1723,21 +1553,17 @@ public class ActionFactory {
 	}    
     }
   
-    public static class SummarizeNetlistAction extends AbstractAction {
+    public static class SummarizeNetlistAction extends ActionFactoryAction {
     
 	private static final long serialVersionUID = 1L;
-    
-	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
+
 	private INetlistAnalyzer summarizer;
 
-	public SummarizeNetlistAction(IPlugInPort plugInPort, ISwingUI swingUI, INetlistAnalyzer summarizer) {
-	    super();
-	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
+	public SummarizeNetlistAction(IPlugInPort plugInPort, ISwingUI swingUI,
+				      INetlistAnalyzer summarizer) {
+	    super(plugInPort, swingUI, summarizer.getName(),
+		  Enum.valueOf(IconLoader.class, summarizer.getIconName()).getIcon());
 	    this.summarizer = summarizer;
-	    putValue(AbstractAction.NAME, summarizer.getName());      
-	    putValue(AbstractAction.SMALL_ICON, Enum.valueOf(IconLoader.class, summarizer.getIconName()).getIcon());
 	}
 
 	@Override
@@ -1749,7 +1575,7 @@ public class ActionFactory {
 		    public List<Summary> doInBackground() throws Exception {
 			List<Netlist> netlists = plugInPort.extractNetlists(true);
 			if (netlists == null || netlists.isEmpty()) {
-			    throw new Exception("The generated netlist is empty, nothing to show.");            
+			    throw new Exception(getMsg("empty-netlist"));
 			}
                     
 			return summarizer.summarize(netlists, null);
@@ -1757,13 +1583,17 @@ public class ActionFactory {
 
 		    @Override
 		    public void failed(Exception e) {
-			swingUI.showMessage(e.getMessage(), summarizer.getName(), ISwingUI.INFORMATION_MESSAGE);
+			swingUI.showMessage(e.getMessage(),
+					    summarizer.getName(),
+					    ISwingUI.INFORMATION_MESSAGE);
 		    }
 
 		    @Override
 		    public void complete(List<Summary> res) {
 			if (res == null) {
-			    swingUI.showMessage("The generated summary is empty, nothing to show.", summarizer.getName(), ISwingUI.INFORMATION_MESSAGE);
+			    swingUI.showMessage(getMsg("empty-netlist-summary"),
+						summarizer.getName(),
+						ISwingUI.INFORMATION_MESSAGE);
 			    return;
 			}
 			StringBuilder sb = new StringBuilder("<html>");
@@ -1786,7 +1616,10 @@ public class ActionFactory {
 				sb.append("<hr>");
 			}
 			sb.append("</html>");
-			new TextDialog(swingUI.getOwnerFrame().getRootPane(), sb.toString(), summarizer.getName(), new Dimension(600, 480)).setVisible(true);
+			new TextDialog(swingUI.getOwnerFrame().getRootPane(),
+				       sb.toString(),
+				       summarizer.getName(),
+				       new Dimension(600, 480)).setVisible(true);
 		    }        
 		}, true);
 	}    
