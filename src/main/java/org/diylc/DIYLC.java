@@ -24,7 +24,6 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.SplashScreen;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
