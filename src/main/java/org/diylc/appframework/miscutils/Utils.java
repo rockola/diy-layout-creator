@@ -69,10 +69,6 @@ public class Utils {
 
 	try {
 	    clone = o.getClass().getDeclaredConstructor().newInstance();
-	} catch (InstantiationException e) {
-	    e.printStackTrace();
-	} catch (IllegalAccessException e) {
-	    e.printStackTrace();
 	} catch (ReflectiveOperationException e) {
 	    e.printStackTrace();
 	}
@@ -86,8 +82,8 @@ public class Utils {
 		    // for each class/superclass, copy all fields
 		    // from this object to the clone
 		    fields[i].set(clone, clone(fields[i].get(o)));
-		} catch (IllegalArgumentException e) {
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException
+			 | IllegalAccessException e) {
 		}
 	    }
 	}
@@ -121,7 +117,7 @@ public class Utils {
 
 	ClassPath cp = ClassPath.from(loader);
 	for (ClassPath.ClassInfo ci : cp.getTopLevelClassesRecursive(packageName)) {
-	    
+
 	    LOG.debug("getClasses(loader, '{}') Found class {} in package {} ({})",
 		      packageName,
 		      ci.getSimpleName(),
@@ -141,12 +137,12 @@ public class Utils {
     }
 
     /**
-     * Creates a rectangle which opposite corners are lying in the specified points.
-     * 
-     * @param p1
-     * @param p2
-     * @return
-     */
+       Creates a rectangle with opposite corners in the specified points.
+
+       @param p1
+       @param p2
+       @return new Rectangle
+    */
     public static Rectangle createRectangle(Point p1, Point p2) {
 	int minX = p1.x < p2.x ? p1.x : p2.x;
 	int minY = p1.y < p2.y ? p1.y : p2.y;
