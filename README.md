@@ -12,8 +12,17 @@ Java 10 is the current target.
 or
 
     mvn -B package 2>&1 | tee log/mvn.out
+	
+### Just compile
+
+    mvn compile
+	
+or
+
+    mvn -B compile 2>&1 | tee log/compile.out
 
 ## Run
+(Remember to compile first!)
 
     mvn exec:exec
 
