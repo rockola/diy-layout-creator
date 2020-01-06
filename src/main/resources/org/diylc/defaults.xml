@@ -44,10 +44,32 @@
     <actionFactory>
       <success/>
       <exit/>
-      <cut/>
+      <copy/>
+      <cut/>      
       <paste/>
+      <nudge/>
+      <duplicate/>
+      <edit-selection/>
+      <delete-selection/>
+      <group-selection/>
+      <ungroup-selection/>
       <export-variants/>
       <import-variants/>
+      <edit-project-settings/>
+      <save-as-variant/>
+      <save-as-building-block/>
+      <all-connected/>
+      <immediate-only/>
+      <same-type-only/>
+      <rotate-clockwise/>
+      <rotate-counterclockwise/>
+      <mirror-horizontally/>
+      <mirror-vertically/>
+      <send-to-back/>
+      <bring-to-front/>
+      <raise/>
+      <lower/>
+      <variant-name>Variant name:</variant-name>
       <no-variants>No variants found to export.</no-variants>
       <no-variants-selected>No variants selected for export.</no-variants-selected>
       <variant-export-failed>Could not export variants. Please check the log for details.</variant-export-failed>
@@ -62,6 +84,8 @@
       <building-block-import-failed>Could not import building blocks. Please check the log for details.</building-block-import-failed>
       <building-blocks-exported>Building blocks exported to "%s".</building-blocks-exported>
       <building-blocks-imported>%d building block(s) imported from "%s".</building-blocks-imported>
+      <empty-netlist>The generated netlist is empty, nothing to show.</empty-netlist>
+      <empty-netlist-summary>The generated summary is empty, nothing to show.</empty-netlist-summary>
     </actionFactory>
     <cloud>
       <log-in/>
