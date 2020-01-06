@@ -1,4 +1,4 @@
->package com.diyfever.httpproxy;
+package com.diyfever.httpproxy;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-i
-mport org.codehaus.commons.compiler.ISimpleCompiler;
+
+import org.codehaus.commons.compiler.ISimpleCompiler;
 import org.codehaus.janino.CompilerFactory;
 
 /**
