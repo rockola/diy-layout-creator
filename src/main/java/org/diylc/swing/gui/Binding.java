@@ -59,7 +59,8 @@ public class Binding implements Serializable {
         int i = m.intValue();
         StringBuilder b = new StringBuilder();
         boolean empty = true;
-        if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0) {
+        // if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0) {
+        if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
             b.append("Menu");
             empty = false;
         }

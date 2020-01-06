@@ -134,9 +134,7 @@ public class UndoHandler<T> {
 	public RedoAction() {
 	    super();
 	    putValue(Action.NAME, "Redo");
-	    putValue(AbstractAction.ACCELERATOR_KEY,
-		     KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-					    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Redo"));
 	    putValue(AbstractAction.SMALL_ICON, IconLoader.Redo.getIcon());
 	}
 

@@ -20,10 +20,9 @@
 package org.diylc.swing.gui;
 
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 import java.util.Map;
-import static java.util.Map.entry;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -41,11 +40,12 @@ public class KeyModifierAdapter extends XmlAdapter<String, Integer> {
         int i = 0;
         for (String s : v.split("\\s+")) { // split at whitespace
             if (s.equals("Menu")) {
-                i = i | Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+                // i = i | Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+		i = i | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
             } else if (s.equals("Alt")) {
-                i = i | KeyEvent.ALT_DOWN_MASK;
+                i = i | InputEvent.ALT_DOWN_MASK;
             } else if (s.equals("Shift")) {
-                i = i | KeyEvent.SHIFT_DOWN_MASK;
+                i = i | InputEvent.SHIFT_DOWN_MASK;
             }
         }
         return Integer.valueOf(i);

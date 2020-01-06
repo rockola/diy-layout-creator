@@ -23,7 +23,6 @@ import java.awt.event.KeyEvent;
 
 import java.util.HashMap;
 import java.util.Map;
-import static java.util.Map.entry;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
