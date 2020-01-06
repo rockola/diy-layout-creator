@@ -23,8 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import java.util.Arrays;
+
+import javax.swing.KeyStroke;
 
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -41,6 +42,8 @@ import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.swing.gui.Keymap;
+
 public final class Config {
 
     private Config() { }
@@ -49,6 +52,7 @@ public final class Config {
     
     private static XMLConfiguration config = null;
     private static FileBasedConfigurationBuilder<XMLConfiguration> builder = null;
+    private static Keymap keymap = null;
 
     private static final String defaults = "org/diylc/defaults.xml";
 
@@ -71,6 +75,7 @@ public final class Config {
 	if (config == null) {
 	    try {
 		config = getBuilder().getConfiguration();
+		keymap = Keymap.readDefaultKeymap();
 	    } catch (ConfigurationException e) {
 		LogManager.getLogger(Config.class).error("Could not read " + defaults, e);
 	    }
@@ -114,5 +119,10 @@ public final class Config {
 	    return WordUtils.capitalizeFully(key.substring(beginIndex).replace('-', ' '));
 	}
 	return s;
+    }
+
+    public static KeyStroke getKeyStroke(String action) {
+	initConfig();
+	return keymap.stroke(action);
     }
 }
