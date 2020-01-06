@@ -34,7 +34,11 @@ import com.diyfever.httpproxy.ProxyFactory;
 
 public class AnnouncementProvider {
 
+<<<<<<< HEAD
     private String serviceUrl = Config.getURL("api.announcements").toString();
+=======
+    private String serviceUrl = Config.getURL("announcements").toString();
+>>>>>>> 9b6aab72581a6d28972da20cb0682513d7e6171b
     private String LAST_READ_KEY = "announcement.lastReadDate";
 
     private IAnnouncementService service;
