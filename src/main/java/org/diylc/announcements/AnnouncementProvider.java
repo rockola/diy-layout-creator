@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.plugins.cloud.model.IServiceAPI;
 
@@ -34,11 +34,7 @@ import com.diyfever.httpproxy.ProxyFactory;
 
 public class AnnouncementProvider {
 
-<<<<<<< HEAD
-    private String serviceUrl = Config.getURL("api.announcements").toString();
-=======
-    private String serviceUrl = Config.getURL("announcements").toString();
->>>>>>> 9b6aab72581a6d28972da20cb0682513d7e6171b
+    private String serviceUrl = DIYLC.getURL("api.announcements").toString();
     private String LAST_READ_KEY = "announcement.lastReadDate";
 
     private IAnnouncementService service;
@@ -49,14 +45,13 @@ public class AnnouncementProvider {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public AnnouncementProvider() {
-	String lastDateStr = ConfigurationManager.getInstance().readString(LAST_READ_KEY, null);
+	String lastDateStr = DIYLC.getString(LAST_READ_KEY);
 	try {
-	    this.lastDate = lastDateStr == null ? null : dateFormat.parse(lastDateStr);
+	    this.lastDate = (lastDateStr == null ? null : dateFormat.parse(lastDateStr));
 	} catch (ParseException e) {
 	}
-	serviceUrl =
-	    ConfigurationManager.getString(IServiceAPI.URL_KEY,
-					   Config.getURL("api.base").toString());
+	serviceUrl = DIYLC.getString(IServiceAPI.URL_KEY,
+				     Config.getURL("api.base").toString());
 	ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
 	service = factory.createProxy(IAnnouncementService.class, serviceUrl);
     }
@@ -82,6 +77,6 @@ public class AnnouncementProvider {
 
     public void dismissed() {
 	Date date = new Date();
-	ConfigurationManager.getInstance().writeValue(LAST_READ_KEY, dateFormat.format(date));
+	DIYLC.putValue(LAST_READ_KEY, dateFormat.format(date));
     }
 }

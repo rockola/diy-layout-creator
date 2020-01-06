@@ -1,20 +1,22 @@
 /*
- * 
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
- * This file is part of DIYLC.
- * 
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC). 
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swing.plugins.canvas;
 
 import java.awt.Dimension;
@@ -49,6 +51,8 @@ import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.appframework.miscutils.Utils;
@@ -125,7 +129,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       LOG.error("Could not install canvas plugin", e);
     }
 
-    getScrollPane().setRulerVisible(ConfigurationManager.getInstance().readBoolean(IPlugInPort.SHOW_RULERS_KEY, true));
+    getScrollPane().setRulerVisible(DIYLC.getBoolean(IPlugInPort.SHOW_RULERS_KEY, true));
     
     // revalidate canvas on scrolling when we render visible rect only
     if (CanvasPanel.RENDER_VISIBLE_RECT_ONLY) {    
@@ -148,7 +152,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       });
     }
 
-    ConfigurationManager.getInstance().addConfigListener(IPlugInPort.SHOW_RULERS_KEY, new IConfigListener() {
+    ConfigurationManager.addListener(IPlugInPort.SHOW_RULERS_KEY,
+				     new IConfigListener() {
 
       @Override
       public void valueChanged(String key, Object value) {
@@ -157,7 +162,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       }
     });
 
-    ConfigurationManager.getInstance().addConfigListener(IPlugInPort.HARDWARE_ACCELERATION, new IConfigListener() {
+    ConfigurationManager.addListener(IPlugInPort.HARDWARE_ACCELERATION,
+				     new IConfigListener() {
 
       @Override
       public void valueChanged(String key, Object value) {
@@ -166,7 +172,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       }
     });
     
-    ConfigurationManager.getInstance().addConfigListener(IPlugInPort.METRIC_KEY, new IConfigListener() {
+    ConfigurationManager.addListener(IPlugInPort.METRIC_KEY,
+				     new IConfigListener() {
 
       @Override
       public void valueChanged(String key, Object value) {
@@ -174,7 +181,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       }
     });
 
-    ConfigurationManager.getInstance().addConfigListener(IPlugInPort.EXTRA_SPACE_KEY, new IConfigListener() {
+    ConfigurationManager.addListener(IPlugInPort.EXTRA_SPACE_KEY,
+				     new IConfigListener() {
 
       @Override
       public void valueChanged(String key, Object value) {
@@ -276,8 +284,9 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
           if (scrollPane.isMouseScrollMode())
             return;
           canvasPanel.setCursor(plugInPort.getCursorAt(e.getPoint()));
-          plugInPort.mouseMoved(e.getPoint(), Utils.isMac() ? e.isMetaDown() : e.isControlDown(), e.isShiftDown(),
-              e.isAltDown());
+          plugInPort.mouseMoved(e.getPoint(),
+				Utils.isMac() ? e.isMetaDown() : e.isControlDown(), e.isShiftDown(),
+				e.isAltDown());
         }
       });
     }
@@ -289,10 +298,10 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       scrollPane =
           new RulerScrollPane(getCanvasPanel(), new ProjectDrawingProvider(plugInPort, true, false, true), new Size(1d,
               SizeUnit.cm).convertToPixels(), new Size(1d, SizeUnit.in).convertToPixels());
-      boolean metric = ConfigurationManager.getInstance().readBoolean(Presenter.METRIC_KEY, true);
+      boolean metric = DIYLC.getBoolean(Presenter.METRIC_KEY, true);
 
-      boolean useHardwareAcceleration =
-          ConfigurationManager.getInstance().readBoolean(IPlugInPort.HARDWARE_ACCELERATION, false);
+      boolean useHardwareAcceleration = DIYLC.getBoolean(IPlugInPort.HARDWARE_ACCELERATION,
+							 false);
       scrollPane.setUseHardwareAcceleration(useHardwareAcceleration);
 
       scrollPane.setMetric(metric);
@@ -318,7 +327,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
           final JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
           final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 
-          boolean wheelZoom = ConfigurationManager.getInstance().readBoolean(IPlugInPort.WHEEL_ZOOM_KEY, false);
+          boolean wheelZoom = DIYLC.getBoolean(IPlugInPort.WHEEL_ZOOM_KEY, false);
 
           if (wheelZoom || (Utils.isMac() ? e.isMetaDown() : e.isControlDown())) {
 
@@ -707,7 +716,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
           @Override
           public void run() {
-            if (ConfigurationManager.getInstance().readBoolean(IPlugInPort.SHOW_RULERS_KEY, true))
+            if (DIYLC.getBoolean(IPlugInPort.SHOW_RULERS_KEY, true))
               scrollPane.setSelectionRectangle(plugInPort.getSelectionBounds(true));
           }
         });
@@ -720,21 +729,27 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
   private void refreshSize() {
     Dimension d =
         plugInPort.getCanvasDimensions(true,
-            ConfigurationManager.getInstance().readBoolean(IPlugInPort.EXTRA_SPACE_KEY, true));
+				       DIYLC.getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true));
     canvasPanel.setSize(d);
     canvasPanel.setPreferredSize(d);
     getScrollPane().setZoomLevel(plugInPort.getZoomLevel());
   }
 
   /**
-   * Causes ruler scroll pane to refresh by sending a fake mouse moved message to the canvasPanel.
+     Causes ruler scroll pane to refresh by sending a fake mouse moved
+     message to the canvasPanel.
    */
   public void refresh() {
-    MouseEvent event = new MouseEvent(canvasPanel, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 1, 1,// canvasPanel.getWidth()
-                                                                                                               // /
-        // 2,
-        // canvasPanel.getHeight() / 2,
-        0, false);
+    MouseEvent event = new MouseEvent(canvasPanel,
+				      MouseEvent.MOUSE_MOVED,
+				      System.currentTimeMillis(),
+				      0,
+				      1,
+				      1,// canvasPanel.getWidth()
+				      // /
+				      // 2,
+				      // canvasPanel.getHeight() / 2,
+				      0, false);
     canvasPanel.dispatchEvent(event);
   }
 

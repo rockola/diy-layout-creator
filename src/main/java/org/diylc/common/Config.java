@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2019 held jointly by the individual authors.
+  Copyright (c) 2019-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -109,7 +109,7 @@ public final class Config {
     public static String getString(String key) {
 	initConfig();
 	String s = config.getString(key);
-	if (s.isEmpty()) {
+	if (s != null && s.isEmpty()) {
 	    int beginIndex = key.lastIndexOf('.') > 0 ? key.lastIndexOf('.') + 1 : 0;
 	    return WordUtils.capitalizeFully(key.substring(beginIndex).replace('-', ' '));
 	}

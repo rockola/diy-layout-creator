@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.parsing;
 
@@ -28,7 +26,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.ConfigurationManager;
+
+import org.diylc.DIYLC;
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.boards.AbstractBoard;
@@ -109,18 +108,17 @@ public class V2FileParser implements IOldFileParser {
     parser.addConstant("deg", Double.valueOf(0.017453292519943295D));
     parser.addConstant("px", 1f);
     parser.parseExpression(text);
-    Double value = parser.getValue(); // in pixels
-    if (ConfigurationManager.getInstance().readBoolean(Presenter.METRIC_KEY, true))
-      return new Size(value / Constants.PIXELS_PER_INCH * 25.4f, SizeUnit.mm);
-    else
-      return new Size(value / Constants.PIXELS_PER_INCH, SizeUnit.in);
 
+    Double value = parser.getValue(); // in pixels
+    boolean metric = DIYLC.getBoolean(Presenter.METRIC_KEY, true);
+
+    return new Size(value / Constants.PIXELS_PER_INCH * (metric ? 25.4f : 1.0f),
+		    metric ? SizeUnit.mm : SizeUnit.in);
   }
 
   @Override
   public Project parseFile(Element root, List<String> warnings) {
     Project project = new Project();
-    // warnings.add("V2 file parser is not yet implemented due to lack of interest and short life of DIYLC V2.");
     String projectName = root.getAttribute("projectName");
     String credits = root.getAttribute("credits");
     String width = root.getAttribute("width");

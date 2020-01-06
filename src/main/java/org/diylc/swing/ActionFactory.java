@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC). 
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -49,7 +49,7 @@ import javax.swing.KeyStroke;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.DIYLC;
 import org.diylc.common.BuildingBlockPackage;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
@@ -747,7 +747,7 @@ public class ActionFactory {
       
 	    try {
 		Map<String, List<Template>> variantMap =
-		    (Map<String, List<Template>>) ConfigurationManager.getObject(IPlugInPort.TEMPLATES_KEY);
+		    (Map<String, List<Template>>) DIYLC.getObject(IPlugInPort.TEMPLATES_KEY);
 		if (variantMap == null || variantMap.isEmpty()) {
 		    swingUI.error(getMsg("no-variants"));
 		    return;
@@ -919,7 +919,7 @@ public class ActionFactory {
       
 	    try {
 		Map<String, List<IDIYComponent<?>>> blocks =
-		    (Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(IPlugInPort.BLOCKS_KEY);
+		    (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.BLOCKS_KEY);
 		if (blocks == null || blocks.isEmpty()) {
 		    swingUI.error(getMsg("no-building-blocks"));
 		    return;
@@ -1336,7 +1336,7 @@ public class ActionFactory {
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info("Nudge triggered");
 	    Nudge n = new Nudge();
-	    boolean metric = ConfigurationManager.getInstance().readBoolean(Presenter.METRIC_KEY, true);
+	    boolean metric = DIYLC.getBoolean(Presenter.METRIC_KEY, true);
 	    if (metric) {
 		n.setxOffset(new Size(0d, SizeUnit.mm));
 		n.setyOffset(new Size(0d, SizeUnit.mm));
@@ -1594,26 +1594,28 @@ public class ActionFactory {
 	private String configKey;
 	private String tipKey;
 
-	public ConfigAction(IPlugInPort plugInPort, String title, String configKey, boolean defaultValue, String tipKey) {
+	public ConfigAction(IPlugInPort plugInPort, String title, String configKey,
+			    boolean defaultValue, String tipKey) {
 	    super();
 	    this.plugInPort = plugInPort;
 	    this.configKey = configKey;
 	    this.tipKey = tipKey;
 	    putValue(AbstractAction.NAME, title);
 	    putValue(IView.CHECK_BOX_MENU_ITEM, true);
-	    putValue(AbstractAction.SELECTED_KEY, ConfigurationManager.getInstance().readBoolean(configKey, defaultValue));
+	    putValue(AbstractAction.SELECTED_KEY, DIYLC.getBoolean(configKey, defaultValue));
 	}
 
-	public ConfigAction(IPlugInPort plugInPort, String title, String configKey, boolean defaultValue) {
+	public ConfigAction(IPlugInPort plugInPort, String title, String configKey,
+			    boolean defaultValue) {
 	    this(plugInPort, title, configKey, defaultValue, null);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info(getValue(AbstractAction.NAME) + " triggered");
-	    ConfigurationManager.getInstance().writeValue(configKey, getValue(AbstractAction.SELECTED_KEY));
+	    DIYLC.putValue(configKey, getValue(AbstractAction.SELECTED_KEY));
 	    if ((Boolean) getValue(AbstractAction.SELECTED_KEY) && tipKey != null
-		&& !ConfigurationManager.getInstance().readBoolean(tipKey + ".dismissed", false)) {
+		&& !DIYLC.getBoolean(tipKey + ".dismissed", false)) {
 		DialogFactory.getInstance().createInfoDialog(tipKey).setVisible(true);
 	    }
 	    plugInPort.refresh();
@@ -1657,14 +1659,14 @@ public class ActionFactory {
 
 	    putValue(
 		     AbstractAction.SELECTED_KEY,
-		     browserType.equals(ConfigurationManager.getInstance().readString(ConfigPlugin.COMPONENT_BROWSER,
-										      ConfigPlugin.SEARCHABLE_TREE)));
+		     browserType.equals(DIYLC.getString(ConfigPlugin.COMPONENT_BROWSER,
+							ConfigPlugin.SEARCHABLE_TREE)));
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info(getValue(AbstractAction.NAME) + " triggered");
-	    ConfigurationManager.getInstance().writeValue(ConfigPlugin.COMPONENT_BROWSER, browserType);
+	    DIYLC.putValue(ConfigPlugin.COMPONENT_BROWSER, browserType);
 	}
     }
 

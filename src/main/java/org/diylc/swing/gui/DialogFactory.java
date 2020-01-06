@@ -28,7 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.DIYLC;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.UserEntity;
@@ -70,20 +70,24 @@ public class DialogFactory {
      */
     public void initialize(JFrame mainFrame) {
 	this.mainFrame = mainFrame;
-	String lastDirectoryPath = (String) ConfigurationManager.getInstance().readString(PATH_KEY, null);
+	String lastDirectoryPath = DIYLC.getString(PATH_KEY, null);
 	if (lastDirectoryPath != null) {
 	    lastDirectory = new File(lastDirectoryPath);
 	}
     }
 
-    public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties, String title,
+    public PropertyEditorDialog createPropertyEditorDialog(List<PropertyWrapper> properties,
+							   String title,
 							   boolean saveDefaults) {
 	return createPropertyEditorDialog(mainFrame, properties, title, saveDefaults);
     }
 
-    public PropertyEditorDialog createPropertyEditorDialog(JFrame owner, List<PropertyWrapper> properties, String title,
+    public PropertyEditorDialog createPropertyEditorDialog(JFrame owner,
+							   List<PropertyWrapper> properties,
+							   String title,
 							   boolean saveDefaults) {
-	PropertyEditorDialog editor = new PropertyEditorDialog(owner, properties, title, saveDefaults);
+	PropertyEditorDialog editor = new PropertyEditorDialog(owner, properties,
+							       title, saveDefaults);
 	return editor;
     }
 
@@ -99,7 +103,8 @@ public class DialogFactory {
     public File showOpenDialog(FileFilter fileFilter, File initialFile, String defaultExtension,
 			       IFileChooserAccessory accessory) {
 	JFileChooser openFileChooser = new JFileChooser();
-	initializeFileChooser(openFileChooser, fileFilter, initialFile, defaultExtension, accessory, false);
+	initializeFileChooser(openFileChooser, fileFilter, initialFile,
+			      defaultExtension, accessory, false);
 
 	int result = openFileChooser.showOpenDialog(mainFrame);
 
@@ -109,35 +114,43 @@ public class DialogFactory {
     public File showOpenDialog(FileFilter fileFilter, File initialFile, String defaultExtension,
 			       IFileChooserAccessory accessory, JFrame ownerFrame) {
 	JFileChooser openFileChooser = new JFileChooser();
-	initializeFileChooser(openFileChooser, fileFilter, initialFile, defaultExtension, accessory, false);
+	initializeFileChooser(openFileChooser, fileFilter, initialFile,
+			      defaultExtension, accessory, false);
 
 	int result = openFileChooser.showOpenDialog(ownerFrame);
 
 	return processFileChooserResult(result, openFileChooser, defaultExtension);
     }
 
-    public File[] showOpenMultiDialog(FileFilter fileFilter, File initialFile, String defaultExtension,
+    public File[] showOpenMultiDialog(FileFilter fileFilter, File initialFile,
+				      String defaultExtension,
 				      IFileChooserAccessory accessory, JFrame ownerFrame) {
 	JFileChooser openFileChooser = new JFileChooser();
-	initializeFileChooser(openFileChooser, fileFilter, initialFile, defaultExtension, accessory, true);
+	initializeFileChooser(openFileChooser, fileFilter, initialFile,
+			      defaultExtension, accessory, true);
 
 	int result = openFileChooser.showOpenDialog(ownerFrame);
 
 	return processFileMultiChooserResult(result, openFileChooser, defaultExtension);
     }
 
-    public File showSaveDialog(Window owner, FileFilter fileFilter, File initialFile, String defaultExtension,
+    public File showSaveDialog(Window owner, FileFilter fileFilter, File initialFile,
+			       String defaultExtension,
 			       IFileChooserAccessory accessory) {
 	JFileChooser saveFileChooser = new OverwritePromptFileChooser();
-	initializeFileChooser(saveFileChooser, fileFilter, initialFile, defaultExtension, accessory, false);
+	initializeFileChooser(saveFileChooser, fileFilter, initialFile,
+			      defaultExtension, accessory, false);
 
 	int result = saveFileChooser.showSaveDialog(owner);
 
 	return processFileChooserResult(result, saveFileChooser, defaultExtension);
     }
 
-    private void initializeFileChooser(JFileChooser fileChooser, FileFilter fileFilter, File initialFile,
-				       String defaultExtension, IFileChooserAccessory accessory, boolean allowMultiSelect) {
+    private void initializeFileChooser(JFileChooser fileChooser, FileFilter fileFilter,
+				       File initialFile,
+				       String defaultExtension,
+				       IFileChooserAccessory accessory,
+				       boolean allowMultiSelect) {
 	if (accessory != null) {
 	    accessory.install(fileChooser);
 	}
@@ -145,7 +158,8 @@ public class DialogFactory {
 	    fileChooser.removeChoosableFileFilter(filter);
 	}
 	if (fileChooser instanceof OverwritePromptFileChooser) {
-	    ((OverwritePromptFileChooser) fileChooser).setFileFilter(fileFilter, defaultExtension);
+	    ((OverwritePromptFileChooser) fileChooser).setFileFilter(fileFilter,
+								     defaultExtension);
 	} else {
 	    fileChooser.setFileFilter(fileFilter);
 	}
@@ -157,11 +171,12 @@ public class DialogFactory {
 	    fileChooser.setMultiSelectionEnabled(true);
     }
 
-    private File processFileChooserResult(int result, JFileChooser fileChooser, String defaultExtension) {
+    private File processFileChooserResult(int result, JFileChooser fileChooser,
+					  String defaultExtension) {
 	fileChooser.setAccessory(null);
 	if (result == JFileChooser.APPROVE_OPTION) {
 	    lastDirectory = fileChooser.getCurrentDirectory();
-	    ConfigurationManager.getInstance().writeValue(PATH_KEY, lastDirectory.getAbsolutePath());
+	    DIYLC.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
 	    if (fileChooser.getSelectedFile().getName().contains(".")) {
 		return fileChooser.getSelectedFile();
 	    } else {
@@ -172,21 +187,26 @@ public class DialogFactory {
 	}
     }
 
-    private File[] processFileMultiChooserResult(int result, JFileChooser fileChooser, String defaultExtension) {
+    private File[] processFileMultiChooserResult(int result, JFileChooser fileChooser,
+						 String defaultExtension) {
 	fileChooser.setAccessory(null);
 	if (result == JFileChooser.APPROVE_OPTION) {
 	    lastDirectory = fileChooser.getCurrentDirectory();
-	    ConfigurationManager.getInstance().writeValue(PATH_KEY, lastDirectory.getAbsolutePath());
+	    DIYLC.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
 	    return fileChooser.getSelectedFiles();
 	} else {
 	    return null;
 	}
     }
 
-    public AboutDialog createAboutDialog(String appName, Icon icon, String version, String author,
+    public AboutDialog createAboutDialog(String appName,
+					 Icon icon,
+					 String version,
+					 String author,
 					 URL url,
 					 String htmlContent) {
-	AboutDialog dialog = new AboutDialog(mainFrame, appName, icon, version, author, url, htmlContent);
+	AboutDialog dialog = new AboutDialog(mainFrame, appName, icon, version, author,
+					     url, htmlContent);
 	return dialog;
     }
 
@@ -200,7 +220,8 @@ public class DialogFactory {
 	return dialog;
     }
 
-    public UploadDialog createUploadDialog(JFrame ownerFrame, IPlugInPort plugInPort, String[] categories,
+    public UploadDialog createUploadDialog(JFrame ownerFrame, IPlugInPort plugInPort,
+					   String[] categories,
 					   boolean isUpdate) {
 	UploadDialog dialog = new UploadDialog(ownerFrame, plugInPort, categories, isUpdate);
 	return dialog;
@@ -211,9 +232,11 @@ public class DialogFactory {
 	return dialog;
     }
 
-    public ProgressDialog createProgressDialog(String title, String[] buttonCaptions, String description,
+    public ProgressDialog createProgressDialog(String title, String[] buttonCaptions,
+					       String description,
 					       boolean useProgress) {
-	ProgressDialog dialog = new ProgressDialog(mainFrame, title, buttonCaptions, description, useProgress);
+	ProgressDialog dialog = new ProgressDialog(mainFrame, title, buttonCaptions,
+						   description, useProgress);
 	return dialog;
     }
 }

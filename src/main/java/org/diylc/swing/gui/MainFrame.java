@@ -57,7 +57,7 @@ import javax.swing.event.MenuListener;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.DIYLC;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 		@Override
 		public void windowClosed(WindowEvent e) {
 		    if (presenter.allowFileAction()) {
-			ConfigurationManager.getInstance().writeValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+			DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
 			dispose();
 			presenter.dispose();
 			System.exit(0);
@@ -158,7 +158,7 @@ public class MainFrame extends JFrame implements ISwingUI {
 		@Override
 		public void windowClosing(WindowEvent e) {
 		    if (presenter.allowFileAction()) {
-			ConfigurationManager.getInstance().writeValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+			DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
 			dispose();
 			presenter.dispose();
 			System.exit(0);

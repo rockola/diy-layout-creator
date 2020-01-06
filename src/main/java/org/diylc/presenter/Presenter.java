@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -54,6 +54,7 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.DIYLC;
 import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.JarScanner;
@@ -61,7 +62,6 @@ import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
-
 import org.diylc.common.BuildingBlockPackage;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
@@ -105,6 +105,9 @@ public class Presenter implements IPlugInPort {
 
     public static VersionNumber CURRENT_VERSION = new VersionNumber(3, 0, 0);
     public static List<Version> RECENT_VERSIONS = null;
+
+    private String getMsg(String key) { return DIYLC.getString("message.presenter." + key); }
+    
     // Read the latest version from the local update.xml file
     static {
 	try {
@@ -253,8 +256,9 @@ public class Presenter implements IPlugInPort {
     @Override
     public Cursor getCursorAt(Point point) {
 	// Only change the cursor if we're not making a new component.
-	if (ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false))
+	if (DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false))
 	    return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+
 	if (instantiationManager.getComponentTypeSlot() == null) {
 	    // Scale point to remove zoom factor.
 	    Point2D scaledPoint = scalePoint(point);
@@ -263,9 +267,13 @@ public class Presenter implements IPlugInPort {
 	    }
 	    for (IDIYComponent<?> component : currentProject.getComponents()) {
 		if (!isComponentLocked(component) && isComponentVisible(component)
-		    && !ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
+		    && !DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
+
 		    ComponentArea area = drawingManager.getComponentArea(component);
-		    if (area != null && area.getOutlineArea() != null && area.getOutlineArea().contains(scaledPoint)) {
+		    if (area != null
+			&& area.getOutlineArea() != null
+			&& area.getOutlineArea().contains(scaledPoint)) {
+			
 			return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		    }
 		}
@@ -351,22 +359,22 @@ public class Presenter implements IPlugInPort {
 
     @SuppressWarnings("unchecked")
     private void addToRecentFiles(String fileName) {
-	List<String> recentFiles = (List<String>) ConfigurationManager.getObject(RECENT_FILES_KEY);
+	List<String> recentFiles = (List<String>) DIYLC.getObject(RECENT_FILES_KEY);
 	if (recentFiles == null)
 	    recentFiles = new ArrayList<String>();
 	recentFiles.remove(fileName);
 	recentFiles.add(0, fileName);
 	while (recentFiles.size() > MAX_RECENT_FILES)
 	    recentFiles.remove(recentFiles.size() - 1);
-	ConfigurationManager.getInstance().writeValue(RECENT_FILES_KEY, recentFiles);
+	DIYLC.putValue(RECENT_FILES_KEY, recentFiles);
     }
 
     @Override
     public boolean allowFileAction() {
 	if (projectFileManager.isModified()) {
 	    int response =
-		view.showConfirmDialog("There are unsaved changes. Would you like to save them?",
-				       "Warning",
+		view.showConfirmDialog(getMsg("unsaved-changes"),
+				       DIYLC.getString("message.warn"),
 				       IView.YES_NO_CANCEL_OPTION,
 				       IView.WARNING_MESSAGE);
 	    if (response == IView.YES_OPTION) {
@@ -396,9 +404,8 @@ public class Presenter implements IPlugInPort {
 	} catch (Exception ex) {
 	    LOG.error("Could not save file", ex);
 	    if (!isBackup) {
-		view.showMessage("Could not save file " + fileName + ". "
-				 + "Check the log for details.",
-				 "Error",
+		view.showMessage(String.format(getMsg("could-not-save"), fileName),
+				 DIYLC.getString("message.error"),
 				 IView.ERROR_MESSAGE);
 	    }
 	}
@@ -629,10 +636,10 @@ public class Presenter implements IPlugInPort {
 		    }
 
 		    if (componentTypeSlot.isAutoEdit()
-			&& ConfigurationManager.getInstance().readBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
+			&& DIYLC.getBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
 			editSelection();
 		    }
-		    if (ConfigurationManager.getInstance().readBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+		    if (DIYLC.getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
 			setNewComponentTypeSlot(componentTypeSlot, template, false);
 		    } else {
 			setNewComponentTypeSlot(null, null, false);
@@ -652,7 +659,8 @@ public class Presenter implements IPlugInPort {
 			    view.showMessage("Could not create component. Check log for details.", "Error", IView.ERROR_MESSAGE);
 			    LOG.error("Could not create component", e);
 			}
-			messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED, componentTypeSlot,
+			messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED,
+							  componentTypeSlot,
 							  instantiationManager.getFirstControlPoint());
 			messageDispatcher.dispatchMessage(EventType.REPAINT);
 		    } else {
@@ -666,12 +674,14 @@ public class Presenter implements IPlugInPort {
 		}
 		// Notify the listeners.
 		if (!oldProject.equals(currentProject)) {
-		    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Add "
-						      + componentTypeSlot.getName());
+		    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED,
+						      oldProject,
+						      currentProject.clone(),
+						      "Add " + componentTypeSlot.getName());
 		    drawingManager.clearContinuityArea();
 		    projectFileManager.notifyFileChange();
 		}
-	    } else if (ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
+	    } else if (DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
 		drawingManager.findContinuityAreaAtPoint(currentProject, scaledPoint);
 		messageDispatcher.dispatchMessage(EventType.REPAINT);
 	    } else {
@@ -733,10 +743,10 @@ public class Presenter implements IPlugInPort {
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
 
 	if (componentTypeSlot.isAutoEdit()
-	    && ConfigurationManager.getInstance().readBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
+	    && DIYLC.getBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
 	    editSelection();
 	}
-	if (ConfigurationManager.getInstance().readBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+	if (DIYLC.getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
 	    setNewComponentTypeSlot(componentTypeSlot, template, false);
 	} else {
 	    setNewComponentTypeSlot(null, null, false);
@@ -768,7 +778,7 @@ public class Presenter implements IPlugInPort {
 	    return false;
 	}
 
-	boolean snapToGrid = ConfigurationManager.getInstance().readBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
+	boolean snapToGrid = DIYLC.getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
 	if (shiftDown) {
 	    snapToGrid = !snapToGrid;
 	}
@@ -797,7 +807,7 @@ public class Presenter implements IPlugInPort {
 	}
 
 	// Expand control points to include all stuck components.
-	boolean sticky = ConfigurationManager.getInstance().readBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+	boolean sticky = DIYLC.getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
 	if (ctrlDown) {
 	    sticky = !sticky;
 	}
@@ -990,7 +1000,7 @@ public class Presenter implements IPlugInPort {
 		LOG.debug("Area is null for " + c.getName() + " of type " + c.getClass().getName());
 	}
 
-	if (ConfigurationManager.getInstance().readBoolean(EXTRA_SPACE_KEY, true)) {
+	if (DIYLC.getBoolean(EXTRA_SPACE_KEY, true)) {
 	    double extraSpace = drawingManager.getExtraSpace(currentProject);
 	    minX += extraSpace;
 	    maxX += extraSpace;
@@ -1069,8 +1079,8 @@ public class Presenter implements IPlugInPort {
 			 dragAction == DnDConstants.ACTION_MOVE, 1);
 	    return;
 	}
-	if (ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
-	    LOG.debug("Cannot start drag in hightlight continuity mode.");
+	if (DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
+	    LOG.debug("Cannot start drag in highlight continuity mode.");
 	    return;
 	}
 	this.dragInProgress = true;
@@ -1078,7 +1088,9 @@ public class Presenter implements IPlugInPort {
 	this.preDragProject = currentProject.clone();
 	Point scaledPoint = scalePoint(point);
 	this.previousDragPoint = scaledPoint;
-	List<IDIYComponent<?>> components = forceSelectionRect ? null : findComponentsAtScaled(scaledPoint);
+	List<IDIYComponent<?>> components = (forceSelectionRect
+					     ? null
+					     : findComponentsAtScaled(scaledPoint));
 	if (!this.controlPointMap.isEmpty()) {
 	    // If we're dragging control points reset selection.
 	    updateSelection(new ArrayList<IDIYComponent<?>>(this.controlPointMap.keySet()));
@@ -1121,7 +1133,7 @@ public class Presenter implements IPlugInPort {
 		}
 	    }
 	    // Expand control points to include all stuck components.
-	    boolean sticky = ConfigurationManager.getInstance().readBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+	    boolean sticky = DIYLC.getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
 	    if (this.dragAction == IPlugInPort.DND_TOGGLE_STICKY) {
 		sticky = !sticky;
 	    }
@@ -1206,7 +1218,7 @@ public class Presenter implements IPlugInPort {
     }
 
     private boolean isSnapToGrid() {
-	boolean snapToGrid = ConfigurationManager.getInstance().readBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
+	boolean snapToGrid = DIYLC.getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
 	if (this.dragAction == IPlugInPort.DND_TOGGLE_SNAP)
 	    snapToGrid = !snapToGrid;
 	return snapToGrid;
@@ -1214,7 +1226,7 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public boolean dragOver(Point point) {
-	if (point == null || ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
+	if (point == null || DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false)) {
 	    return false;
 	}
 	Point scaledPoint = scalePoint(point);
@@ -1247,7 +1259,9 @@ public class Presenter implements IPlugInPort {
 	return true;
     }
 
-    private Point moveComponents(Map<IDIYComponent<?>, Set<Integer>> controlPointMap, int dx, int dy, boolean snapToGrid) {
+    private Point moveComponents(Map<IDIYComponent<?>, Set<Integer>> controlPointMap,
+				 int dx, int dy,
+				 boolean snapToGrid) {
 	// After we make the transfer and snap to grid, calculate actual dx
 	// and dy. We'll use them to translate the previous drag point.
 	int actualDx = 0;
@@ -1255,7 +1269,7 @@ public class Presenter implements IPlugInPort {
 	// For each component, do a simulation of the move to see if any of
 	// them will overlap or go out of bounds.
 
-	boolean useExtraSpace = ConfigurationManager.getInstance().readBoolean(EXTRA_SPACE_KEY, true);
+	boolean useExtraSpace = DIYLC.getBoolean(EXTRA_SPACE_KEY, true);
 	Dimension d = drawingManager.getCanvasDimensions(currentProject, 1d, useExtraSpace);
 	double extraSpace = useExtraSpace ? drawingManager.getExtraSpace(currentProject) : 0;
 
@@ -1547,7 +1561,7 @@ public class Presenter implements IPlugInPort {
 		this.selectionRect = Utils.createRectangle(scaledPoint, previousDragPoint);
 	    }
 	    List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-	    if (!ConfigurationManager.getInstance().readBoolean(HIGHLIGHT_CONTINUITY_AREA, false))
+	    if (!DIYLC.getBoolean(HIGHLIGHT_CONTINUITY_AREA, false))
 		for (IDIYComponent<?> component : currentProject.getComponents()) {
 		    if (!isComponentLocked(component) && isComponentVisible(component)) {
 			ComponentArea area = drawingManager.getComponentArea(component);
@@ -1657,8 +1671,8 @@ public class Presenter implements IPlugInPort {
 	for (IDIYComponent<?> component : selectedComponents) {
 	    String className = component.getClass().getName();
 	    LOG.debug("Default property value set for {}:{}", className, propertyName);
-	    ConfigurationManager.getInstance().writeValue(DEFAULTS_KEY_PREFIX + className + ":" + propertyName,
-							  value);
+	    DIYLC.putValue(DEFAULTS_KEY_PREFIX + className + ":" + propertyName,
+			   value);
 	}
     }
 
@@ -1667,8 +1681,8 @@ public class Presenter implements IPlugInPort {
 	LOG.trace("setDefaultPropertyValue({}, {}, {}) default set for {}:{}",
 		  clazz.getName(), propertyName, value,
 		  Project.class.getName(), propertyName);
-	ConfigurationManager.getInstance().writeValue(DEFAULTS_KEY_PREFIX + clazz.getName() + ":" + propertyName,
-						      value);
+	DIYLC.putValue(DEFAULTS_KEY_PREFIX + clazz.getName() + ":" + propertyName,
+		       value);
     }
 
     @Override

@@ -50,7 +50,8 @@ import javax.swing.KeyStroke;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.ConfigurationManager;
+
+import org.diylc.DIYLC;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IBlockProcessor.InvalidBlockException;
@@ -75,7 +76,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
     private Image bufferImage;
     private GraphicsConfiguration screenGraphicsConfiguration;
 
-    public boolean useHardwareAcceleration = ConfigurationManager.getBoolean(IPlugInPort.HARDWARE_ACCELERATION);
+    public boolean useHardwareAcceleration = DIYLC.getBoolean(IPlugInPort.HARDWARE_ACCELERATION);
 
     // static final EnumSet<DrawOption> DRAW_OPTIONS =
     // EnumSet.of(DrawOption.GRID,
@@ -161,7 +162,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    List<String> recent =
-			(List<String>) ConfigurationManager.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
+			(List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
 		    if (recent != null && !recent.isEmpty()) {
 			String clazz = recent.get(0);
 			Map<String, List<ComponentType>> componentTypes = CanvasPanel.this.plugInPort.getComponentTypes();
@@ -183,7 +184,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
     @SuppressWarnings("unchecked")
     protected void functionKeyPressed(int i) {
 	HashMap<String, String> shortcutMap =
-	    (HashMap<String, String>) ConfigurationManager.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
+	    (HashMap<String, String>) DIYLC.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
 	if (shortcutMap == null)
 	    return;
 	String typeName = shortcutMap.get("F" + i);
@@ -255,16 +256,16 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 	Set<DrawOption> drawOptions = EnumSet.of(DrawOption.SELECTION,
 						 DrawOption.ZOOM,
 						 DrawOption.CONTROL_POINTS);
-	if (ConfigurationManager.getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true)) {
+	if (DIYLC.getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true)) {
 	    drawOptions.add(DrawOption.ANTIALIASING);
 	}
-	if (ConfigurationManager.getBoolean(IPlugInPort.OUTLINE_KEY, false)) {
+	if (DIYLC.getBoolean(IPlugInPort.OUTLINE_KEY, false)) {
 	    drawOptions.add(DrawOption.OUTLINE_MODE);
 	}
-	if (ConfigurationManager.getBoolean(IPlugInPort.SHOW_GRID_KEY, true)) {
+	if (DIYLC.getBoolean(IPlugInPort.SHOW_GRID_KEY, true)) {
 	    drawOptions.add(DrawOption.GRID);
 	}
-	if (ConfigurationManager.getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true)) {
+	if (DIYLC.getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true)) {
 	    drawOptions.add(DrawOption.EXTRA_SPACE);
 	}
 

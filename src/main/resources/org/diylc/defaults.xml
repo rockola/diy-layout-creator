@@ -34,6 +34,13 @@
       <failed-announcements>Could not fetch public announcements available.</failed-announcements>            
       <zoom>Zoom: </zoom>
     </statusbar>
+    <presenter>
+      <could-not-save>Could not save file %s. Check the log for details.</could-not-save>
+      <unsaved-changes>There are unsaved changes. Would you like to save them?</unsaved-changes>
+    </presenter>
+    <infoDialog>
+      <highlight-continuity>Click on a component to highlight continuity area directly or indirectly connected to it. In this mode components cannot be moved or edited. In order to continue editing, this mode needs to be switched OFF.</highlight-continuity>
+    </infoDialog>
     <actionFactory>
       <success/>
       <exit/>

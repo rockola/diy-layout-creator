@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -77,6 +77,8 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 //import org.apache.log4j.lf5.viewer.categoryexplorer.TreeModelAdapter;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
@@ -141,7 +143,8 @@ public class TreePanel extends JPanel {
 
 	setPreferredSize(new Dimension(240, 200));
 
-	ConfigurationManager.addListener(IPlugInPort.RECENT_COMPONENTS_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.RECENT_COMPONENTS_KEY,
+					 new IConfigListener() {
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -157,7 +160,8 @@ public class TreePanel extends JPanel {
 		}
 	    });
 
-	ConfigurationManager.addListener(IPlugInPort.BLOCKS_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.BLOCKS_KEY,
+					 new IConfigListener() {
 
 		@SuppressWarnings("unchecked")
 		@Override
@@ -176,7 +180,8 @@ public class TreePanel extends JPanel {
 		}
 	    });
 
-	ConfigurationManager.addListener(IPlugInPort.TEMPLATES_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.TEMPLATES_KEY,
+					 new IConfigListener() {
 		@Override
 		public void valueChanged(String key, Object value) {
 		    LOG.info("Detected variants change, repainting the tree");
@@ -184,7 +189,8 @@ public class TreePanel extends JPanel {
 		}
 	    });
     
-	ConfigurationManager.addListener(IPlugInPort.FAVORITES_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.FAVORITES_KEY,
+					 new IConfigListener() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void valueChanged(String key, Object value) {
@@ -225,7 +231,7 @@ public class TreePanel extends JPanel {
       
 	    @SuppressWarnings("unchecked")
 		List<String> recent =
-		(List<String>) ConfigurationManager.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
+		(List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
 	    if (recent != null) {
 		this.recentComponents = new ArrayList<String>(recent);
 		refreshRecentComponents(recent);
@@ -242,7 +248,7 @@ public class TreePanel extends JPanel {
       
 	    @SuppressWarnings("unchecked")
 		Map<String, List<IDIYComponent<?>>> newBlocks =
-		(Map<String, List<IDIYComponent<?>>>) ConfigurationManager.getObject(IPlugInPort.BLOCKS_KEY);
+		(Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.BLOCKS_KEY);
 	    if (newBlocks != null) {
 		List<String> blockNames = new ArrayList<String>(newBlocks.keySet());
 		Collections.sort(blockNames);
@@ -259,7 +265,7 @@ public class TreePanel extends JPanel {
 	    this.favoritesNode = new DefaultMutableTreeNode(new Payload("(Favorites)", null), true);
       
 	    @SuppressWarnings("unchecked")
-		List<Favorite> favorites = (List<Favorite>) ConfigurationManager.getObject(IPlugInPort.FAVORITES_KEY);
+		List<Favorite> favorites = (List<Favorite>) DIYLC.getObject(IPlugInPort.FAVORITES_KEY);
 	    if (favorites != null) {        
 		refreshFavorites(favorites);
 	    } else {
@@ -519,7 +525,7 @@ public class TreePanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 				    HashMap<String, String> map =
-					(HashMap<String, String>) ConfigurationManager.getObject(COMPONENT_SHORTCUT_KEY);
+					(HashMap<String, String>) DIYLC.getObject(COMPONENT_SHORTCUT_KEY);
 				    if (map == null)
 					map = new HashMap<String, String>();
 
@@ -530,7 +536,7 @@ public class TreePanel extends JPanel {
 					    it.remove();
 				    }
 
-				    ConfigurationManager.getInstance().writeValue(COMPONENT_SHORTCUT_KEY, map);
+				    DIYLC.putValue(COMPONENT_SHORTCUT_KEY, map);
 
 				    TreePanel.this.invalidate();
 				    TreePanel.this.repaint();
@@ -548,7 +554,7 @@ public class TreePanel extends JPanel {
 				    @Override
 				    public void actionPerformed(ActionEvent e) {
 					HashMap<String, String> map =
-					    (HashMap<String, String>) ConfigurationManager.getObject(COMPONENT_SHORTCUT_KEY);
+					    (HashMap<String, String>) DIYLC.getObject(COMPONENT_SHORTCUT_KEY);
 					if (map == null)
 					    map = new HashMap<String, String>();
 
@@ -564,7 +570,7 @@ public class TreePanel extends JPanel {
 
 					map.put(item.getText(), identifier);
 
-					ConfigurationManager.getInstance().writeValue(COMPONENT_SHORTCUT_KEY, map);
+					DIYLC.putValue(COMPONENT_SHORTCUT_KEY, map);
 
 					TreePanel.this.invalidate();
 					TreePanel.this.repaint();
@@ -592,7 +598,8 @@ public class TreePanel extends JPanel {
 					    favorites.add(fav);
 					    Collections.sort(favorites);
 					}
-					ConfigurationManager.getInstance().writeValue(IPlugInPort.FAVORITES_KEY, favorites);
+					DIYLC.putValue(IPlugInPort.FAVORITES_KEY,
+						       favorites);
 				    }
 				});
 			    popup.add(favoritesItem);
@@ -774,7 +781,7 @@ public class TreePanel extends JPanel {
 
 		if (payload.isVisible()) {
 		    HashMap<String, String> shortcutMap =
-			(HashMap<String, String>) ConfigurationManager.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
+			(HashMap<String, String>) DIYLC.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
 		    String identifier =
 			payload.getComponentType() == null ? "block:" + payload.toString() : payload.getComponentType()
 			.getInstanceClass().getCanonicalName();

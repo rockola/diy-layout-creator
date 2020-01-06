@@ -33,8 +33,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.Config;
+
+import org.diylc.DIYLC;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.CommentEntity;
 import org.diylc.plugins.cloud.model.IServiceAPI;
@@ -63,7 +63,7 @@ public class CloudPresenter {
     private static String LOGIN_FAILED = getMsg("login-failed");
 
     private final static Logger LOG = LogManager.getLogger(CloudPresenter.class);
-    private static final Object SUCCESS = Config.getString("message.success");
+    private static final Object SUCCESS = DIYLC.getString("message.success");
 
     private IServiceAPI service;
     private String serviceUrl;
@@ -74,13 +74,15 @@ public class CloudPresenter {
   
     private CloudPresenter() {}
 
-    private static String getMsg(String key) { return Config.getString("message.cloud." + key); }
+    private static String getMsg(String key) {
+	return DIYLC.getString("message.cloud." + key);
+    }
 
     private IServiceAPI getService() {
 	if (service == null) {
 	    serviceUrl =
-		ConfigurationManager.getString(IServiceAPI.URL_KEY,
-					       Config.getURL("api.base").toString());
+		DIYLC.getString(IServiceAPI.URL_KEY,
+				DIYLC.getURL("api.base").toString());
 	    ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
 	    service = factory.createProxy(IServiceAPI.class, serviceUrl);
 	}
@@ -102,19 +104,15 @@ public class CloudPresenter {
 	    return false;
 	} else {
 	    LOG.info("Login success");
-	    ConfigurationManager.putValue(USERNAME_KEY, username);
-	    ConfigurationManager.putValue(TOKEN_KEY, res);
+	    DIYLC.putValue(USERNAME_KEY, username);
+	    DIYLC.putValue(TOKEN_KEY, res);
 	    this.loggedIn = true;
 	    return true;
 	}
     }
 
-    public String currentUsername() {
-	return ConfigurationManager.getString(USERNAME_KEY);
-    }
-    private String currentToken() {
-	return ConfigurationManager.getString(TOKEN_KEY);
-    }
+    public String currentUsername() { return DIYLC.getString(USERNAME_KEY); }
+    private String currentToken() { return DIYLC.getString(TOKEN_KEY); }
 
     String attemptLogin() {
 	return getService().loginWithToken(currentUsername(),
@@ -145,7 +143,7 @@ public class CloudPresenter {
 
     public void logOut() {
 	LOG.info("Logged out");
-	ConfigurationManager.putValue(TOKEN_KEY, null);
+	DIYLC.putValue(TOKEN_KEY, null);
 	this.loggedIn = false;
     }
 

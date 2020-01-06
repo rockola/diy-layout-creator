@@ -32,7 +32,8 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.ConfigurationManager;
+
+import org.diylc.DIYLC;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
@@ -295,10 +296,12 @@ public class InstantiationManager {
 
 	// Write to recent components
 	List<String> recentComponentTypes =
-	    (List<String>) ConfigurationManager.getInstance().readObject(IPlugInPort.RECENT_COMPONENTS_KEY,
-									 new ArrayList<ComponentType>());
+	    (List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY,
+					   (Object) new ArrayList<ComponentType>());
 	String className = componentType.getInstanceClass().getName();
-	if (recentComponentTypes.size() == 0 || !recentComponentTypes.get(0).equals(className)) {
+	if (recentComponentTypes.size() == 0
+	    || !recentComponentTypes.get(0).equals(className)) {
+
 	    // Remove if it's already somewhere in the list.
 	    recentComponentTypes.remove(className);
 	    // Add to the end of the list.
@@ -307,7 +310,8 @@ public class InstantiationManager {
 	    if (recentComponentTypes.size() > MAX_RECENT_COMPONENTS) {
 		recentComponentTypes.remove(recentComponentTypes.size() - 1);
 	    }
-	    ConfigurationManager.getInstance().writeValue(IPlugInPort.RECENT_COMPONENTS_KEY, recentComponentTypes);
+	    DIYLC.putValue(IPlugInPort.RECENT_COMPONENTS_KEY,
+			   recentComponentTypes);
 	}
 
 	List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
@@ -364,8 +368,11 @@ public class InstantiationManager {
 	for (PropertyWrapper property : properties) {
 	    propertyCache.put(property.getName(), property);
 	    Object defaultValue =
-		ConfigurationManager.getInstance().readObject(
-							      Presenter.DEFAULTS_KEY_PREFIX + object.getClass().getName() + ":" + property.getName(), null);
+		DIYLC.getObject(String.format("%s%s:%s",
+					      Presenter.DEFAULTS_KEY_PREFIX,
+					      object.getClass().getName(),
+					      property.getName()),
+				null);
 	    if (defaultValue != null) {
 		property.setValue(defaultValue);
 		try {

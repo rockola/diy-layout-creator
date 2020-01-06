@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -53,6 +53,8 @@ import net.java.balloontip.styles.EdgedBalloonStyle;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.announcements.AnnouncementProvider;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -98,7 +100,7 @@ public class StatusBar extends JPanel implements IPlugIn {
     // State variables
     private ComponentType componentSlot;
     private Point controlPointSlot;
-    private Boolean forceInstatiate;
+    private Boolean forceInstantiate;
     private List<String> componentNamesUnderCursor;
     private List<String> selectedComponentNames;
     private List<String> stuckComponentNames;
@@ -166,7 +168,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
 	    }, false);
 
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.METRIC_KEY, new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.METRIC_KEY, new IConfigListener() {
 
 		@Override
 		public void valueChanged(String key, Object value) {
@@ -174,8 +176,8 @@ public class StatusBar extends JPanel implements IPlugIn {
 		}
 	    });
 
-	ConfigurationManager.getInstance().addConfigListener(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
-							     new IConfigListener() {
+	ConfigurationManager.addListener(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
+					       new IConfigListener() {
 
 		@Override
 		public void valueChanged(String key, Object value) {
@@ -472,7 +474,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 	case SLOT_CHANGED:
 	    componentSlot = (ComponentType) params[0];
 	    controlPointSlot = (Point) params[1];
-	    forceInstatiate = params.length > 2 ? (Boolean)params[2] : null;
+	    forceInstantiate = params.length > 2 ? (Boolean)params[2] : null;
 	    refreshStatusText();
 	    break;
 	case AVAILABLE_CTRL_POINTS_CHANGED:
@@ -490,7 +492,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 	case MOUSE_MOVED:
 	    mousePositionIn = (Point2D) params[1];
 	    mousePositionMm = (Point2D) params[2];
-	    refreshPosition(ConfigurationManager.getInstance().readBoolean(Presenter.METRIC_KEY, true));
+	    refreshPosition(DIYLC.getBoolean(Presenter.METRIC_KEY, true));
 	    break;
 	}
     }
@@ -531,7 +533,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 		statusText = "<html>Selection: " + builder.toString() + "</html>";
 	    }
 	} else {
-	    if (forceInstatiate != null && forceInstatiate)
+	    if (forceInstantiate != null && forceInstantiate)
 		statusText =  "<html>Drag the mouse over the canvas to place a new <font color='blue'>"
 		    + componentSlot.getName()
 		    + "</font></html>";
@@ -561,8 +563,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 	// override any other status with this when in highlight mode,
 	// as we cannot do anything else
 	Boolean highlightConnectedAreasMode =
-	    ConfigurationManager.getInstance().readBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
-							   false);
+	    DIYLC.getBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, false);
 	if (highlightConnectedAreasMode)
 	    statusText = getMsg("highlight-connected");
 
