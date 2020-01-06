@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC). 
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swingframework;
 
 import java.awt.BorderLayout;
@@ -16,7 +35,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
+
+import org.diylc.DIYLC;
 
 public abstract class ButtonDialog extends JDialog {
 
@@ -34,8 +54,8 @@ public abstract class ButtonDialog extends JDialog {
 
   private String selectedButtonCaption;
 
-  private static final KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-  public static final String dispatchWindowClosingActionMapKey = "org.diylc.swingframework.dispatch:WINDOW_CLOSING";
+  public static final String windowClosingKey
+      = "org.diylc.swingframework.dispatch:WINDOW_CLOSING";
 
   public static void installEscapeCloseOperation(final JDialog dialog) {
     Action dispatchClosing = new AbstractAction() {
@@ -47,8 +67,9 @@ public abstract class ButtonDialog extends JDialog {
       }
     };
     JRootPane root = dialog.getRootPane();
-    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, dispatchWindowClosingActionMapKey);
-    root.getActionMap().put(dispatchWindowClosingActionMapKey, dispatchClosing);
+    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(DIYLC.getKeyStroke("Escape"),
+							    windowClosingKey);
+    root.getActionMap().put(windowClosingKey, dispatchClosing);
   }
 
   public ButtonDialog(JFrame owner, String title, String[] buttonCaptions) {
