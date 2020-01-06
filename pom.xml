@@ -14,7 +14,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>10</maven.compiler.release>
+    <!-- java.awt.Toolkit.getMenuShortcutKeyMaskEx() requires Java 10+ -->
+    <!-- Java 11 is a LTS version -->
+    <maven.compiler.release>11</maven.compiler.release>
     <!-- dependency properties -->
     <itext.version>RELEASE</itext.version>
   </properties>
@@ -66,11 +68,11 @@
       <version>2.3.2</version>
     </dependency>
     <!-- JAXB-core - XML (un)marshal -->
-    <!-- <dependency>
+    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-core</artifactId>
       <version>2.3.0.1</version>
-    </dependency> -->
+    </dependency>
     <!-- EventBus - simple event publish/subscribe framework -->
     <dependency>
       <groupId>org.greenrobot</groupId>
