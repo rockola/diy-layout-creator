@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swingframework.ruler;
 
 import java.awt.Color;
@@ -73,8 +92,10 @@ public class RulerScrollPane extends JScrollPane {
 	this(view, provider, 0, 0);
     }
 
-    public RulerScrollPane(final Component view, final IDrawingProvider provider,
-			   double cmSpacing, double inSpacing) {
+    public RulerScrollPane(final Component view,
+			   final IDrawingProvider provider,
+			   double cmSpacing,
+			   double inSpacing) {
 	super(view);
 
 	horizontalRuler = new Ruler(Ruler.HORIZONTAL, true, cmSpacing, inSpacing);
@@ -141,7 +162,8 @@ public class RulerScrollPane extends JScrollPane {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-		    updateRulerSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+		    updateRulerSize(e.getComponent().getWidth(),
+				    e.getComponent().getHeight());
 		}
 	    });
 	updateRulerSize(view.getWidth(), view.getHeight());
@@ -178,7 +200,8 @@ public class RulerScrollPane extends JScrollPane {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    NavigateDialog navigateDialog = new NavigateDialog(RulerScrollPane.this, provider);
+		    NavigateDialog navigateDialog = new NavigateDialog(RulerScrollPane.this,
+								       provider);
 		    navigateDialog.setVisible(true);
 		    navigateDialog.setLocationRelativeTo(navigateButton);
 		}
@@ -283,15 +306,10 @@ public class RulerScrollPane extends JScrollPane {
     }
 
     public void setMetric(boolean isMetric) {
-	if (isMetric) {
-	    horizontalRuler.setIsMetric(true);
-	    verticalRuler.setIsMetric(true);
-	    unitButton.setText("cm");
-	} else {
-	    horizontalRuler.setIsMetric(false);
-	    verticalRuler.setIsMetric(false);
-	    unitButton.setText("in");
-	}
+	horizontalRuler.setIsMetric(isMetric);
+	verticalRuler.setIsMetric(isMetric);
+	unitButton.setText(isMetric ? "cm" : "in");
+
 	for (IRulerListener listener : listeners) {
 	    listener.unitsChanged(isMetric);
 	}
@@ -322,9 +340,15 @@ public class RulerScrollPane extends JScrollPane {
 	    g.fillRect(0, 0, getWidth(), getHeight());
 	    g.setColor(Color.black);
 	    if (orientation == Ruler.HORIZONTAL) {
-		g.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+		g.drawLine(0,
+			   getHeight() - 1,
+			   getWidth() - 1,
+			   getHeight() - 1);
 	    } else if (orientation == Ruler.VERTICAL) {
-		g.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
+		g.drawLine(getWidth() - 1,
+			   0,
+			   getWidth() - 1,
+			   getHeight() - 1);
 	    }
 	}
     }
