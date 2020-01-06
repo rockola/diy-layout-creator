@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<keymap>
+  <!-- function & navigation keys -->
+  <binding>
+    <keycode>ESCAPE</keycode>
+    <modifier></modifier>
+    <action>Escape</action>
+  </binding>
+  <binding>
+    <keycode>DELETE</keycode>
+    <modifier></modifier>
+    <action>Delete</action>
+  </binding>
+  <binding>
+    <keycode>LEFT</keycode>
+    <modifier>Alt</modifier>
+    <action>Rotate Counterclockwise</action>
+  </binding>
+  <binding>
+    <keycode>RIGHT</keycode>
+    <modifier>Alt</modifier>
+    <action>Rotate Clockwise</action>
+  </binding>
+  <binding>
+    <keycode>UP</keycode>
+    <modifier>Alt</modifier>
+    <action>Raise</action>
+  </binding>
+  <binding>
+    <keycode>UP</keycode>
+    <modifier>Menu</modifier>
+    <action>Bring to Front</action>
+  </binding>
+  <binding>
+    <keycode>DOWN</keycode>
+    <modifier>Alt</modifier>
+    <action>Lower</action>
+  </binding>
+  <binding>
+    <keycode>DOWN</keycode>
+    <modifier>Menu</modifier>
+    <action>Send to Back</action>
+  </binding>
+  <!-- number row -->
+  <!-- upper row -->
+  <binding>
+    <keycode>W</keycode>
+    <modifier>Menu</modifier>
+    <action>Close</action>
+  </binding>
+  <binding>
+    <keycode>E</keycode>
+    <modifier>Menu</modifier>
+    <action>Edit Selection</action>
+  </binding>
+  <binding>
+    <keycode>Y</keycode>
+    <modifier>Menu</modifier>
+    <action>Redo</action>
+  </binding>
+  <binding>
+    <keycode>U</keycode>
+    <modifier>Menu</modifier>
+    <action>Ungroup</action>
+  </binding>
+  <binding>
+    <keycode>I</keycode>
+    <modifier>Menu</modifier>
+    <action>Import</action>
+  </binding>
+  <binding>
+    <keycode>O</keycode>
+    <modifier>Menu</modifier>
+    <action>Open</action>
+  </binding>
+  <binding>
+    <keycode>P</keycode>
+    <modifier>Menu</modifier>
+    <action>Print</action>
+  </binding>
+  <binding>
+    <keycode>P</keycode>
+    <modifier>Menu Shift</modifier>
+    <action>Print Trace Mask</action>
+  </binding>
+  <!-- middle row -->
+  <binding>
+    <keycode>A</keycode>
+    <modifier>Menu</modifier>
+    <action>Select All</action>
+  </binding>
+  <binding>
+    <keycode>S</keycode>
+    <modifier>Menu</modifier>
+    <action>Save</action>
+  </binding>
+  <binding>
+    <keycode>S</keycode>
+    <modifier>Menu Shift</modifier>
+    <action>Save As</action>
+  </binding>
+  <binding>
+    <keycode>D</keycode>
+    <modifier>Menu</modifier>
+    <action>Duplicate</action>
+  </binding>
+  <binding>
+    <keycode>F</keycode>
+    <modifier>Menu</modifier>
+    <action>Find Component</action>
+  </binding>
+  <binding>
+    <keycode>G</keycode>
+    <modifier>Menu</modifier>
+    <action>Group</action>
+  </binding>
+  <binding>
+    <keycode>H</keycode>
+    <modifier>Alt</modifier>
+    <action>Mirror Horizontally</action>
+  </binding>
+  <!-- lower row -->
+  <binding>
+    <keycode>Z</keycode>
+    <modifier>Menu</modifier>
+    <action>Undo</action>
+  </binding>
+  <binding>
+    <keycode>X</keycode>
+    <modifier>Menu</modifier>
+    <action>Cut</action>
+  </binding>
+  <binding>
+    <keycode>C</keycode>
+    <modifier>Menu</modifier>
+    <action>Copy</action>
+  </binding>
+  <binding>
+    <keycode>V</keycode>
+    <modifier>Menu</modifier>
+    <action>Paste</action>
+  </binding>
+  <binding>
+    <keycode>V</keycode>
+    <modifier>Alt</modifier>
+    <action>Mirror Vertically</action>
+  </binding>
+  <binding>
+    <keycode>N</keycode>
+    <modifier>Menu</modifier>
+    <action>New</action>
+  </binding>
+  <binding>
+    <keycode>N</keycode>
+    <modifier>Menu Shift</modifier>
+    <action>Nudge</action>
+  </binding>
+  <!-- -->
+  <binding>
+    <keycode>BACK_QUOTE</keycode>
+    <modifier/>
+    <action>Repeat Last</action>
+  </binding>
+</keymap>
