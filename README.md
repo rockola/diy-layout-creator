@@ -3,7 +3,7 @@ DIY Layout Creator
 
 This version is self-contained (no jar files except those fetched by
 Maven) and can be compiled in a modern Java environment (e.g. OpenJDK 11).
-Java 10 is the current target.
+Java 11 is the current target.
 
 ## Build
 
