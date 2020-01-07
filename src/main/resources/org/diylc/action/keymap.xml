@@ -44,6 +44,11 @@
   <!-- number row -->
   <!-- upper row -->
   <binding>
+    <keycode>Q</keycode>
+    <modifier>Menu</modifier>
+    <action>Quit</action>
+  </binding>
+  <binding>
     <keycode>W</keycode>
     <modifier>Menu</modifier>
     <action>Close</action>
