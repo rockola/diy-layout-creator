@@ -19,6 +19,17 @@
 */
 package org.diylc.images;
 
+import java.awt.Image;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
+
 public enum Icons {
     ApplicationEdit,
     Arrow,
@@ -44,7 +55,9 @@ public enum Icons {
     Garbage,
     Guitar,
     History,
+    IconSmall,
     IconMedium,
+    IconLarge,
     IdCard,
     KeyEdit,
     LightBulbOff,
@@ -106,8 +119,6 @@ public enum Icons {
     HTML,
     Hammer,
     Help,
-    IconLarge,
-    IconSmall,
     IdCardAdd,
     IdCardEdit,
     Image,
@@ -139,5 +150,27 @@ public enum Icons {
     Web,
     WindowGear,
     Wrench,
-    ZoomSmall
+    ZoomSmall;
+
+    private String resourcePNG() {
+	return DIYLC.getString("icon." + this.toString()) + ".png";
+    }
+
+    public ImageIcon imageIcon() {
+	return new ImageIcon(Icons.class.getResource(resourcePNG()));
+    }
+
+    public Icon icon() {
+	return imageIcon();
+    }
+
+    public Image image() {
+	Image r = null;
+	try {
+	    r = ImageIO.read(Icons.class.getResourceAsStream(resourcePNG()));
+	} catch (IOException e) {
+	    LogManager.getLogger(Icons.class).error(this.toString() + ".image() failed", e);
+	}
+	return r;
+    }
 };
