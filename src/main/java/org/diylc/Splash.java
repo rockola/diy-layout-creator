@@ -20,6 +20,8 @@
 package org.diylc;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.SplashScreen;
@@ -27,7 +29,9 @@ import java.awt.SplashScreen;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import org.diylc.common.Config;
 import org.diylc.images.Icon;
+import org.diylc.images.FontLoader;
 
 public class Splash {
 
@@ -38,6 +42,9 @@ public class Splash {
     private ImageIcon ceramic = null;
     private ImageIcon electrolytic = null;
     private ImageIcon splash = null;
+
+    private Font font = null;
+    private String appVersion = null;
 
     public Splash(final SplashScreen splashScreen) {
 	if (splashScreen == null)
@@ -51,7 +58,9 @@ public class Splash {
 	ceramic = Icon.SplashCeramic.imageIcon();
 	electrolytic = Icon.SplashElectrolytic.imageIcon();
 	splash = Icon.Splash.imageIcon();
-    
+	font = FontLoader.getFont("Jura", Font.BOLD, 24);
+	appVersion = Config.getString("app.version");
+
 	t = new Thread(new Runnable() {
 
 		@Override
@@ -88,7 +97,10 @@ public class Splash {
     private Point electrolyticTarget = new Point(261, 23);
     private Point ceramicTarget = new Point(352, 22);
 
+    private Point textTarget = new Point(25, 82);
+
     private int pxPerFrame = 3;
+    private int textPxPerFrame = 2;
 
     public void renderSplashFrame(SplashScreen splashScreen,
 				  Graphics2D g2d,
@@ -110,6 +122,12 @@ public class Splash {
 	ceramic.paintIcon(null, g,
 			  ceramicTarget.x + pxPerFrame * frame,
 			  ceramicTarget.y);
+	g.setComposite(AlphaComposite.Src);
+	g.setFont(font);
+	g.setColor(Color.RED);
+	g.drawString(appVersion,
+		     textTarget.x - textPxPerFrame * frame,
+		     textTarget.y - textPxPerFrame * frame);
 	g.dispose();
     }
 }
