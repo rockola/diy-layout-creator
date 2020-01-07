@@ -9,7 +9,7 @@
   <version>4.0.0-rockola</version>
   <packaging>jar</packaging>
 
-  <name>diy-layout-creator</name>
+  <name>DIY Layout Creator</name>
   <url>https://github.com/rockola/diy-layout-creator</url>
 
   <properties>
@@ -161,6 +161,11 @@
       <groupId>com.orsonpdf</groupId>
       <artifactId>orsonpdf</artifactId>
       <version>1.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.3.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -349,10 +354,12 @@
     </plugins>
     <resources>
       <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
+        <directory>src/main/resources-filtered</directory>
+	<filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+	<filtering>false</filtering>
       </resource>
     </resources>
   </build>
