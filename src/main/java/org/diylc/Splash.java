@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc;
 
 import java.awt.AlphaComposite;
@@ -9,7 +28,6 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.diylc.images.Icon;
-import org.diylc.images.Icons;
 
 public class Splash {
 
@@ -28,11 +46,11 @@ public class Splash {
 	if (g == null)
 	    return; // when would this happen?
 
-	resistor = Icon.imageIcon(Icons.SplashResistor);
-	film = Icon.imageIcon(Icons.SplashFilm);
-	ceramic = Icon.imageIcon(Icons.SplashCeramic);
-	electrolytic = Icon.imageIcon(Icons.SplashElectrolytic);
-	splash = Icon.imageIcon(Icons.Splash);
+	resistor = Icon.SplashResistor.imageIcon();
+	film = Icon.SplashFilm.imageIcon();
+	ceramic = Icon.SplashCeramic.imageIcon();
+	electrolytic = Icon.SplashElectrolytic.imageIcon();
+	splash = Icon.Splash.imageIcon();
     
 	t = new Thread(new Runnable() {
 
