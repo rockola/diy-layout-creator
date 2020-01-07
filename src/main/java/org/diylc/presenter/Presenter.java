@@ -30,6 +30,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.JarScanner;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
+import org.diylc.appframework.update.Change;
+import org.diylc.appframework.update.ChangeType;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.BuildingBlockPackage;
@@ -107,8 +110,8 @@ public class Presenter implements IPlugInPort {
     // Read the latest version from the local update.xml file
     static {
 	try {
-	    @SuppressWarnings("unchecked")
-		List<Version> allVersions =
+	    //@SuppressWarnings("unchecked")
+	    List<Version> allVersions =
 		(List<Version>) Serializer.fromResource("/org/diylc/update.xml");
 	    CURRENT_VERSION = allVersions.get(allVersions.size() - 1).getVersionNumber();
 	    LOG.info("Current DIYLC version: " + CURRENT_VERSION);
@@ -120,6 +123,24 @@ public class Presenter implements IPlugInPort {
 			return -o1.getVersionNumber().compareTo(o2.getVersionNumber());
 		    }
 		});
+
+	    // REMOVE THIS when done --ola 20200107
+	    Collections.sort(allVersions); //, Collections.reverseOrder());
+	    Serializer.toFile("/tmp/reversed.xml", allVersions);
+	    try (FileWriter w = new FileWriter("/tmp/update.md")) {
+		for (Version v : allVersions) {
+		    w.write(String.format("## %s\n### %s\n(%s)\n",
+					  v.getVersionNumber(),
+					  v.getReleaseDate(),
+					  v.getUrl()));
+		    for (Change c : v.getChanges()) {
+			w.write(String.format("#### %s\n%s\n",
+					      c.getChangeType(),
+					      c.getDescription()));
+		    }
+		}
+	    }
+	    // end of REMOVE THIS
 	} catch (IOException e) {
 	    LOG.error("Could not find version number, using default", e);
 	}
@@ -136,10 +157,8 @@ public class Presenter implements IPlugInPort {
 	    defaultVariantMap =
 		new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
 	    defaultVariantMap.putAll(map);
-	    LOG.info(String.format("Loaded default variants for %d components",
-				   (defaultVariantMap == null
-				    ? 0
-				    : defaultVariantMap.size())));
+	    LOG.info("Loaded default variants for {} components",
+		     (defaultVariantMap == null ? 0 : defaultVariantMap.size()));
 	} catch (IOException e) {
 	    LOG.error("Could not load default variants", e);
 	}
@@ -318,8 +337,9 @@ public class Presenter implements IPlugInPort {
 	    projectFileManager.startNewFile();
 	} catch (Exception e) {
 	    LOG.error("Could not create new file", e);
-	    view.showMessage("Could not create a new file. Check the log for details.",
-			     "Error", IView.ERROR_MESSAGE);
+	    view.showMessage(getMsg("could-not-create"),
+			     "Error",
+			     IView.ERROR_MESSAGE);
 	}
     }
 
@@ -335,26 +355,27 @@ public class Presenter implements IPlugInPort {
 	    projectFileManager.fireFileStatusChanged();
 	    if (!warnings.isEmpty()) {
 		StringBuilder builder =
-		    new StringBuilder("<html>File was opened, but there were some issues with it:<br><br>");
+		    new StringBuilder(getMsg("issues-with-file"));
 		for (String warning : warnings) {
 		    builder.append(warning);
-		    builder.append("<br>");
 		}
-		builder.append("</html");
 		view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
 	    }
 	    addToRecentFiles(fileName);
 	} catch (Exception ex) {
 	    LOG.error("Could not load file", ex);
-	    String errorMessage = "Could not open file " + fileName + ". Check the log for details.";
+	    String errorMessage = getMsg("could-not-open");
 	    if (warnings != null && !warnings.isEmpty()) {
-		errorMessage += " Possible reasons are:\n\n";
+		errorMessage += " ";
+		errorMessage += getMsg("possible-reasons");
 		for (String warn : warnings) {
 		    errorMessage += warn;
 		    errorMessage += "\n";
 		}
 	    }
-	    view.showMessage(errorMessage, "Error", IView.ERROR_MESSAGE);
+	    view.showMessage(String.format(errorMessage, fileName),
+			     "Error",
+			     IView.ERROR_MESSAGE);
 	}
     }
 
@@ -467,7 +488,7 @@ public class Presenter implements IPlugInPort {
 		}
 
 		for (Map.Entry<String, List<ComponentType>> e : componentTypes.entrySet()) {
-		    LOG.debug(e.getKey() + ": " + e.getValue());
+		    LOG.debug("{}: {}", e.getKey(), e.getValue());
 		}
 	    } catch (Exception e) {
 		LOG.error("Error loading component types", e);
@@ -504,7 +525,8 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public void draw(Graphics2D g2d, Set<DrawOption> drawOptions, final IComponentFiler filter, Double externalZoom) {
+    public void draw(Graphics2D g2d, Set<DrawOption> drawOptions,
+		     final IComponentFiler filter, Double externalZoom) {
 	if (currentProject == null) {
 	    return;
 	}
@@ -521,15 +543,18 @@ public class Presenter implements IPlugInPort {
 
 		@Override
 		public boolean testComponent(IDIYComponent<?> component) {
-		    return (filter == null || filter.testComponent(component)) && isComponentVisible(component);
+		    return ((filter == null || filter.testComponent(component))
+			    && isComponentVisible(component));
 		}
 	    };
 
 	// Don't draw the component in the slot if both control points
 	// match.
 	List<IDIYComponent<?>> componentSlotToDraw;
-	if (instantiationManager.getFirstControlPoint() != null && instantiationManager.getPotentialControlPoint() != null
+	if (instantiationManager.getFirstControlPoint() != null
+	    && instantiationManager.getPotentialControlPoint() != null
 	    && instantiationManager.getFirstControlPoint().equals(instantiationManager.getPotentialControlPoint())) {
+
 	    componentSlotToDraw = null;
 	} else {
 	    componentSlotToDraw = instantiationManager.getComponentSlot();
@@ -563,10 +588,11 @@ public class Presenter implements IPlugInPort {
     }
 
     /**
-     * Finds all components whose areas include the specified {@link Point}. Point is <b>not</b>
-     * scaled by the zoom factor. Components that belong to locked layers are ignored.
-     * 
-     * @return
+      Finds all components whose areas include the specified {@link
+      Point}. Point is <b>not</b> scaled by the zoom
+      factor. Components that belong to locked layers are ignored.
+
+      @return
      */
     public List<IDIYComponent<?>> findComponentsAtScaled(Point point) {
 	List<IDIYComponent<?>> components = drawingManager.findComponentsAt(point, currentProject);
@@ -620,9 +646,12 @@ public class Presenter implements IPlugInPort {
 			    currentProject.getComponents().add(component);
 			    newSelection.add(component);
 			}
-			// group components if there's more than one, e.g. building blocks, but not clipboard
+			// group components if there's more than one,
+			// e.g. building blocks, but not clipboard
 			// contents
-			if (componentSlot.size() > 1 && !componentTypeSlot.getName().toLowerCase().contains("clipboard")) {
+			if (componentSlot.size() > 1
+			    && !componentTypeSlot.getName().toLowerCase().contains("clipboard")) {
+
 			    this.currentProject.getGroups().add(new HashSet<IDIYComponent<?>>(componentSlot));
 			}
 			// Select the new component
@@ -633,14 +662,13 @@ public class Presenter implements IPlugInPort {
 			messageDispatcher.dispatchMessage(EventType.REPAINT);
 			updateSelection(newSelection);
 		    } catch (Exception e) {
-			LOG.error("Error instatiating component of type: " + componentTypeSlot.getInstanceClass().getName(), e);
+			LOG.error("Error instantiating component of type: " + componentTypeSlot.getInstanceClass().getName(), e);
 		    }
 
-		    if (componentTypeSlot.isAutoEdit()
-			&& DIYLC.getBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
+		    if (componentTypeSlot.isAutoEdit() && DIYLC.autoEdit()) {
 			editSelection();
 		    }
-		    if (DIYLC.getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+		    if (DIYLC.continuousCreation()) {
 			setNewComponentTypeSlot(componentTypeSlot, template, false);
 		    } else {
 			setNewComponentTypeSlot(null, null, false);
@@ -657,7 +685,9 @@ public class Presenter implements IPlugInPort {
 			    instantiationManager.instantiatePointByPoint(scaledPoint,
 									 currentProject);
 			} catch (Exception e) {
-			    view.showMessage("Could not create component. Check log for details.", "Error", IView.ERROR_MESSAGE);
+			    view.showMessage("Could not create component. Check log for details.",
+					     "Error",
+					     IView.ERROR_MESSAGE);
 			    LOG.error("Could not create component", e);
 			}
 			messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED,
@@ -724,7 +754,9 @@ public class Presenter implements IPlugInPort {
 	}
     }
 
-    private void addPendingComponentsToProject(Point scaledPoint, ComponentType componentTypeSlot, Template template) {
+    private void addPendingComponentsToProject(Point scaledPoint,
+					       ComponentType componentTypeSlot,
+					       Template template) {
 	List<IDIYComponent<?>> componentSlot = instantiationManager.getComponentSlot();
 	Point firstPoint = componentSlot.get(0).getControlPoint(0);
 	// don't allow to create component with the same points
@@ -743,11 +775,10 @@ public class Presenter implements IPlugInPort {
 	updateSelection(newSelection);
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
 
-	if (componentTypeSlot.isAutoEdit()
-	    && DIYLC.getBoolean(IPlugInPort.AUTO_EDIT_KEY, false)) {
+	if (componentTypeSlot.isAutoEdit() && DIYLC.autoEdit()) {
 	    editSelection();
 	}
-	if (DIYLC.getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY, false)) {
+	if (DIYLC.continuousCreation()) {
 	    setNewComponentTypeSlot(componentTypeSlot, template, false);
 	} else {
 	    setNewComponentTypeSlot(null, null, false);
@@ -756,7 +787,11 @@ public class Presenter implements IPlugInPort {
 
     @Override
     public boolean keyPressed(int key, boolean ctrlDown, boolean shiftDown, boolean altDown) {
-	if (key != VK_DOWN && key != VK_LEFT && key != VK_UP && key != VK_RIGHT && key != IKeyProcessor.VK_H
+	if (key != VK_DOWN
+	    && key != VK_LEFT
+	    && key != VK_UP
+	    && key != VK_RIGHT
+	    && key != IKeyProcessor.VK_H
 	    && key != IKeyProcessor.VK_V) {
 	    return false;
 	}
@@ -779,7 +814,7 @@ public class Presenter implements IPlugInPort {
 	    return false;
 	}
 
-	boolean snapToGrid = DIYLC.getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
+	boolean snapToGrid = DIYLC.snapToGrid();
 	if (shiftDown) {
 	    snapToGrid = !snapToGrid;
 	}
@@ -794,13 +829,17 @@ public class Presenter implements IPlugInPort {
 		rotateComponents(this.selectedComponents, -1, snapToGrid);
 	    } else if (key == IKeyProcessor.VK_H) {
 		oldProject = currentProject.clone();
-		mirrorComponents(this.selectedComponents, IComponentTransformer.HORIZONTAL, snapToGrid);
+		mirrorComponents(this.selectedComponents,
+				 IComponentTransformer.HORIZONTAL, snapToGrid);
 	    } else if (key == IKeyProcessor.VK_V) {
 		oldProject = currentProject.clone();
-		mirrorComponents(this.selectedComponents, IComponentTransformer.VERTICAL, snapToGrid);
+		mirrorComponents(this.selectedComponents,
+				 IComponentTransformer.VERTICAL, snapToGrid);
 	    } else
 		return false;
-	    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(),
+	    messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED,
+					      oldProject,
+					      currentProject.clone(),
 					      "Rotate Selection");
 	    messageDispatcher.dispatchMessage(EventType.REPAINT);
 	    drawingManager.clearContinuityArea();
@@ -808,7 +847,7 @@ public class Presenter implements IPlugInPort {
 	}
 
 	// Expand control points to include all stuck components.
-	boolean sticky = DIYLC.getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+	boolean sticky = DIYLC.stickyPoints();
 	if (ctrlDown) {
 	    sticky = !sticky;
 	}
@@ -844,7 +883,10 @@ public class Presenter implements IPlugInPort {
 
 	Project oldProject = currentProject.clone();
 	moveComponents(controlPointMap, dx, dy, snapToGrid);
-	messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Move Selection");
+	messageDispatcher.dispatchMessage(EventType.PROJECT_MODIFIED,
+					  oldProject,
+					  currentProject.clone(),
+					  "Move Selection");
 	messageDispatcher.dispatchMessage(EventType.REPAINT);
 	return true;
     }
@@ -859,7 +901,8 @@ public class Presenter implements IPlugInPort {
 		try {
 		    applyPropertiesToSelection(properties);
 		} catch (Exception e1) {
-		    view.showMessage("Error occured while editing selection. Check the log for details.", "Error",
+		    view.showMessage("Error occured while editing selection. Check the log for details.",
+				     "Error",
 				     JOptionPane.ERROR_MESSAGE);
 		    LOG.error("Error applying properties", e1);
 		}
@@ -878,17 +921,15 @@ public class Presenter implements IPlugInPort {
 	if (point == null)
 	    return;
 
-	if (shiftDown) {
-	    dragAction = IPlugInPort.DND_TOGGLE_SNAP;
-	} else {
-	    dragAction = 0;
-	}
+	dragAction = shiftDown ? IPlugInPort.DND_TOGGLE_SNAP : 0;
 
-	Map<IDIYComponent<?>, Set<Integer>> components = new HashMap<IDIYComponent<?>, Set<Integer>>();
+	Map<IDIYComponent<?>, Set<Integer>> components =
+	    new HashMap<IDIYComponent<?>, Set<Integer>>();
 	this.previousScaledPoint = scalePoint(point);
 	if (instantiationManager.getComponentTypeSlot() != null) {
 	    if (isSnapToGrid()) {
-		CalcUtils.snapPointToGrid(previousScaledPoint, currentProject.getGridSpacing());
+		CalcUtils.snapPointToGrid(previousScaledPoint,
+					  currentProject.getGridSpacing());
 	    }
 	    boolean refresh = false;
 	    switch (instantiationManager.getComponentTypeSlot().getCreationMethod()) {
@@ -897,7 +938,8 @@ public class Presenter implements IPlugInPort {
 		break;
 	    case SINGLE_CLICK:
 		refresh =
-		    instantiationManager.updateSingleClick(previousScaledPoint, isSnapToGrid(),
+		    instantiationManager.updateSingleClick(previousScaledPoint,
+							   isSnapToGrid(),
 							   currentProject.getGridSpacing());
 		break;
 	    }
@@ -908,11 +950,16 @@ public class Presenter implements IPlugInPort {
 	    // Go backwards so we take the highest z-order components first.
 	    for (int i = currentProject.getComponents().size() - 1; i >= 0; i--) {
 		IDIYComponent<?> component = currentProject.getComponents().get(i);
-		for (int pointIndex = 0; pointIndex < component.getControlPointCount(); pointIndex++) {
+		for (int pointIndex = 0;
+		     pointIndex < component.getControlPointCount();
+		     pointIndex++) {
+
 		    Point controlPoint = component.getControlPoint(pointIndex);
 		    // Only consider selected components that are not grouped.
-		    if (selectedComponents.contains(component) && component.canPointMoveFreely(pointIndex)
+		    if (selectedComponents.contains(component)
+			&& component.canPointMoveFreely(pointIndex)
 			&& findAllGroupedComponents(component).size() == 1) {
+
 			try {
 			    if (previousScaledPoint.distance(controlPoint) < DrawingManager.CONTROL_POINT_SIZE) {
 				Set<Integer> indices = new HashSet<Integer>();
@@ -930,11 +977,11 @@ public class Presenter implements IPlugInPort {
 	}
 
 	Point2D inPoint =
-	    new Point2D.Double(1.0d * previousScaledPoint.x / Constants.PIXELS_PER_INCH, 1.0d * previousScaledPoint.y
-			       / Constants.PIXELS_PER_INCH);
+	    new Point2D.Double(1.0d * previousScaledPoint.x / Constants.PIXELS_PER_INCH,
+			       1.0d * previousScaledPoint.y / Constants.PIXELS_PER_INCH);
 	Point2D mmPoint =
-	    new Point2D.Double(inPoint.getX() * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d, inPoint.getY()
-			       * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d);
+	    new Point2D.Double(inPoint.getX() * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d,
+			       inPoint.getY() * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d);
 
 	messageDispatcher.dispatchMessage(EventType.MOUSE_MOVED, previousScaledPoint, inPoint, mmPoint);
 
@@ -1134,7 +1181,7 @@ public class Presenter implements IPlugInPort {
 		}
 	    }
 	    // Expand control points to include all stuck components.
-	    boolean sticky = DIYLC.getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+	    boolean sticky = DIYLC.stickyPoints();
 	    if (this.dragAction == IPlugInPort.DND_TOGGLE_STICKY) {
 		sticky = !sticky;
 	    }
@@ -1219,7 +1266,7 @@ public class Presenter implements IPlugInPort {
     }
 
     private boolean isSnapToGrid() {
-	boolean snapToGrid = DIYLC.getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
+	boolean snapToGrid = DIYLC.snapToGrid();
 	if (this.dragAction == IPlugInPort.DND_TOGGLE_SNAP)
 	    snapToGrid = !snapToGrid;
 	return snapToGrid;
@@ -1968,10 +2015,12 @@ public class Presenter implements IPlugInPort {
 	    }
 	    controlPointMap.put(component, indices);
 	}
-	if (ConfigurationManager.getInstance().readBoolean(IPlugInPort.STICKY_POINTS_KEY, true)) {
+	if (DIYLC.stickyPoints()) {
 	    includeStuckComponents(controlPointMap);
 	}
-	messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED, selectedComponents, controlPointMap.keySet());
+	messageDispatcher.dispatchMessage(EventType.SELECTION_CHANGED,
+					  selectedComponents,
+					  controlPointMap.keySet());
     }
 
     @SuppressWarnings("unchecked")
