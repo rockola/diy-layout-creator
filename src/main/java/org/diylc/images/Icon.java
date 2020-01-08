@@ -21,8 +21,9 @@ package org.diylc.images;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.Logger;
@@ -30,7 +31,10 @@ import org.apache.logging.log4j.LogManager;
 
 import org.diylc.DIYLC;
 
-public enum Icons {
+public enum Icon {
+    App,
+    AppMedium,
+    AppSmall,
     ApplicationEdit,
     Arrow,
     BranchAdd,
@@ -51,7 +55,8 @@ public enum Icons {
     Exit,
     FitToSize,
     FlipHorizontal,
-    FormGreen,
+    Form,
+    FormAdd,
     Garbage,
     Guitar,
     History,
@@ -152,24 +157,43 @@ public enum Icons {
     Wrench,
     ZoomSmall;
 
+    private static final Logger LOG = LogManager.getLogger(Icon.class);
+
+    private static HashMap<Icon, ImageIcon> icons = new HashMap<>();
+
     private String resourcePNG() {
-	return DIYLC.getString("icon." + this.toString()) + ".png";
+	String r = DIYLC.getString("icon." + this.toString()) + ".png";
+	if (r == null)
+	    LOG.error("{} not found in icons!", this);
+	return r;
     }
 
     public ImageIcon imageIcon() {
-	return new ImageIcon(Icons.class.getResource(resourcePNG()));
+	ImageIcon i = icons.get(this);
+	if (i == null) {
+	    // this icon hasn't been requested yet, let's load it from
+	    // resources
+	    i = new ImageIcon(Icon.class.getResource(resourcePNG()));
+	    // let's store it for future reference IFF it was found
+	    if (i != null) {
+		icons.put(this, i);
+	    } else {
+		LOG.error("Could not retrieve icon {}", this);
+	    }
+	}
+	return i;
     }
 
-    public Icon icon() {
+    public javax.swing.Icon icon() {
 	return imageIcon();
     }
 
     public Image image() {
 	Image r = null;
 	try {
-	    r = ImageIO.read(Icons.class.getResourceAsStream(resourcePNG()));
+	    r = ImageIO.read(Icon.class.getResourceAsStream(resourcePNG()));
 	} catch (IOException e) {
-	    LogManager.getLogger(Icons.class).error(this.toString() + ".image() failed", e);
+	    LOG.error(this.toString() + ".image() failed", e);
 	}
 	return r;
     }
