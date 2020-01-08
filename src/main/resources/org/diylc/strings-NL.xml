@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <menu>
+    <file/>
+    <file/>
+    <help>
+      <title>Hulp</title>
+      <user-manual>Gebruikershandleiding</user-manual>
+      <faq>Veel gestelde vragen</faq>
+      <component-api>Component API</component-api>
+      <plugin-api>Invoegtoepassing API</plugin-api>
+      <bug-report>Bug rapporteren</bug-report>
+      <donate>Doneren</donate>
+      <about>Over</about>
+    </help>
+  </menu>
+</configuration>
