@@ -19,60 +19,77 @@
 */
 package org.diylc.announcements;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.plugins.cloud.model.IServiceAPI;
 
-import com.diyfever.httpproxy.PhpFlatProxy;
-import com.diyfever.httpproxy.ProxyFactory;
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 public class AnnouncementProvider {
+
+    private Logger LOG = LogManager.getLogger(AnnouncementProvider.class);
 
     private String serviceUrl = DIYLC.getURL("api.announcements").toString();
     private String LAST_READ_KEY = "announcement.lastReadDate";
 
-    private IAnnouncementService service;
+    // private IAnnouncementService service;
 
     private Date lastDate;
-    private List<Announcement> announcements;
+    // private List<Announcement> announcements;
 
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    private Parser parser;
+    private HtmlRenderer renderer;
+
+    private OkHttpClient httpClient = new OkHttpClient();
+
     public AnnouncementProvider() {
+	parser = Parser.builder().build();
+	renderer = HtmlRenderer.builder().build();
 	String lastDateStr = DIYLC.getString(LAST_READ_KEY);
 	try {
 	    this.lastDate = (lastDateStr == null ? null : dateFormat.parse(lastDateStr));
 	} catch (ParseException e) {
+	    // nothing here, why is this not a problem? //ola 20200107
 	}
-	serviceUrl = DIYLC.getString(IServiceAPI.URL_KEY,
-				     Config.getURL("api.base").toString());
-	ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
-	service = factory.createProxy(IAnnouncementService.class, serviceUrl);
     }
 
-    public String getCurrentAnnouncements(boolean forceLast) throws ParseException {
-	announcements = service.getAnnouncements();
-	boolean hasUnread = false;
-	StringBuilder sb = new StringBuilder("<html>");
-	for (int i = 0; i < announcements.size(); i++) {
-	    Date date = dateFormat.parse(announcements.get(i).getDate());
-	    if (lastDate == null || lastDate.before(date) || lastDate.equals(date) || (forceLast && i == announcements.size() - 1)) {
-		sb.append("<font size='4'><b>").append(announcements.get(i).getTitle()).append("</b> on ")
-		    .append(announcements.get(i).getDate()).append("</font>").append("<p>")
-		    .append(announcements.get(i).getText()).append("</p>");
-		hasUnread = true;
-	    }
+    public String getCurrentAnnouncements(boolean forceLast) throws IOException {
+	Request request = new Request.Builder().url(serviceUrl).build();
+	try (Response response = httpClient.newCall(request).execute()) {
+
+	    Node document = parser.parse(response.body().string());
+	    // render replacing newlines with spaces
+	    // (JOptionPane wants the HTML in one line...)
+	    //
+	    // Can't use HtmlRenderer.builder().softbreak(" ") here
+	    // as that will not get rid of newlines between tags
+	    String txt = renderer.render(document).replace("\n", " ");
+
+	    // TODO: only show announcements newer than LAST_READ_KEY
+
+	    LOG.debug("Announcements [{}]", txt);
+
+	    // wrap in HTML tags for JOptionPane
+	    return String.format("<html>%s</html>", txt);
 	}
-	if (!hasUnread)
-	    return "";    
-	sb.append("</html>");
-	return sb.toString();
     }
 
     public void dismissed() {
