@@ -103,6 +103,8 @@ public class DIYLC {
 	ConfigurationManager.putValue(key, value);
     }
 
+    public static String getHTML(String key) { return Message.getHTML(key); }
+
     public static URI getURI(String key) { return Config.getURI(key); }
     public static URL getURL(String key) { return Config.getURL(key); }
     public static KeyStroke getKeyStroke(String key) { return Config.getKeyStroke(key); }
