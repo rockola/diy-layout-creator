@@ -127,7 +127,7 @@ public class ProjectFileManager {
 	xStream.addImmutableType(org.diylc.core.measures.Inductance.class);
 	xStream.addImmutableType(org.diylc.core.measures.Size.class);
 
-	this.xStreamOld = new XStream(new DomDriver());
+	xStreamOld = new XStream(new DomDriver());
 	xStreamOld.autodetectAnnotations(true);
 	XStream.setupDefaultSecurity(xStreamOld);
 	xStreamOld.allowTypesByWildcard(allowTypes);
