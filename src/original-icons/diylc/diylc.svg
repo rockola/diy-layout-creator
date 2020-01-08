@@ -12,8 +12,8 @@
    inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 210 297"
-   height="297mm"
+   viewBox="0 0 210 210"
+   height="210mm"
    width="210mm">
   <defs
      id="defs2" />
@@ -28,9 +28,9 @@
      showgrid="false"
      inkscape:current-layer="layer2"
      inkscape:document-units="mm"
-     inkscape:cy="560"
-     inkscape:cx="396.85039"
-     inkscape:zoom="0.66271825"
+     inkscape:cy="516.37017"
+     inkscape:cx="363.7132"
+     inkscape:zoom="0.46861257"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
