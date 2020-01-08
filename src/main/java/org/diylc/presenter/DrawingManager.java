@@ -175,7 +175,7 @@ public class DrawingManager {
 			     ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
 			     : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-	boolean hiQuality = DIYLC.getBoolean(IPlugInPort.HI_QUALITY_RENDER_KEY, false);
+	boolean hiQuality = DIYLC.highQualityRendering();
 
 	g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 			     hiQuality
@@ -463,8 +463,7 @@ public class DrawingManager {
 	    }
 	}
 
-	if (continuityArea != null
-	    && (DIYLC.getBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, false))) {
+	if (continuityArea != null && DIYLC.highlightContinuityArea()) {
 	    Composite oldComposite = g2d.getComposite();
 	    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 	    g2d.setColor(Color.green);
@@ -526,16 +525,16 @@ public class DrawingManager {
 	return components;
     }
 
-    public double getExtraSpace(Project project) {
+    public static double getExtraSpace(Project project) {
 	double width = project.getWidth().convertToPixels();
 	double height = project.getHeight().convertToPixels();
 	double targetExtraSpace = EXTRA_SPACE * Math.max(width, height);
 	return CalcUtils.roundToGrid(targetExtraSpace, project.getGridSpacing());
     }
 
-    public Dimension getCanvasDimensions(Project project,
-					 Double zoomLevel,
-					 boolean includeExtraSpace) {
+    public static Dimension getCanvasDimensions(Project project,
+						Double zoomLevel,
+						boolean includeExtraSpace) {
 	double width = project.getWidth().convertToPixels();
 	double height = project.getHeight().convertToPixels();
 
@@ -552,8 +551,10 @@ public class DrawingManager {
     }
 
     public void fireZoomChanged() {
-	messageDispatcher.dispatchMessage(EventType.ZOOM_CHANGED, zoomLevel);
-	messageDispatcher.dispatchMessage(EventType.REPAINT);
+	if (messageDispatcher != null) {
+	    messageDispatcher.dispatchMessage(EventType.ZOOM_CHANGED, zoomLevel);
+	    messageDispatcher.dispatchMessage(EventType.REPAINT);
+	}
     }
 
     public Theme getTheme() {
@@ -563,7 +564,8 @@ public class DrawingManager {
     public void setTheme(Theme theme) {
 	this.theme = theme;
 	DIYLC.putValue(IPlugInPort.THEME_KEY, theme);
-	messageDispatcher.dispatchMessage(EventType.REPAINT);
+	if (messageDispatcher != null)
+	    messageDispatcher.dispatchMessage(EventType.REPAINT);
     }
 
     public void findContinuityAreaAtPoint(Project project, Point p) {
