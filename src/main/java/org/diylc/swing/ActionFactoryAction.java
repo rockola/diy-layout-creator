@@ -28,66 +28,35 @@ import org.diylc.common.IPlugInPort;
 public abstract class ActionFactoryAction extends AbstractAction {
 
     protected IPlugInPort plugInPort;
-    protected ISwingUI swingUI;
 
-    private void initMe(IPlugInPort plugInPort,
-			ISwingUI swingUI,
-			String name,
-			Object icon) {
+    protected ActionFactoryAction(IPlugInPort plugInPort,
+				  String name,
+				  KeyStroke actionKeyStroke,
+				  Object icon) {
+	super();
 	this.plugInPort = plugInPort;
-	this.swingUI = swingUI;
 	putValue(AbstractAction.NAME, name);
+	if (actionKeyStroke != null)
+	    putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
 	if (icon != null)
 	    putValue(AbstractAction.SMALL_ICON, icon);
     }
 
     protected ActionFactoryAction(IPlugInPort plugInPort,
-				  ISwingUI swingUI,
 				  String name,
 				  String actionName,
 				  Object icon) {
-	super();
-	initMe(plugInPort, swingUI, name, icon);
-	if (actionName != null)
-	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke(actionName));
-    }
-
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  ISwingUI swingUI,
-				  String name,
-				  KeyStroke actionKeyStroke,
-				  Object icon) {
-	super();
-	initMe(plugInPort, swingUI, name, icon);
-	putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
-    }
-
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  ISwingUI swingUI,
-				  String name,
-				  Object icon) {
-	super();
-	initMe(plugInPort, swingUI, name, icon);
-    }
-
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  ISwingUI swingUI,
-				  String name) {
-	super();
-	initMe(plugInPort, swingUI, name, null);
+	this(plugInPort, name, DIYLC.getKeyStroke(actionName), icon);
     }
 
     protected ActionFactoryAction(IPlugInPort plugInPort,
 				  String name,
 				  Object icon) {
-	super();
-	initMe(plugInPort, null, name, icon);
+	this(plugInPort, name, (KeyStroke) null, icon);
     }
 
     protected ActionFactoryAction(IPlugInPort plugInPort,
 				  String name) {
-	super();
-	initMe(plugInPort, null, name, null);
+	this(plugInPort, name, (KeyStroke) null, null);
     }
 }
-
