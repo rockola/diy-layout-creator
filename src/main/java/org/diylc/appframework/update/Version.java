@@ -1,19 +1,57 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.appframework.update;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 public class Version implements Serializable, Comparable<Version> {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger LOG = LogManager.getLogger(Version.class);
+
+    private static Parser parser = Parser.builder().build();
+    private static HtmlRenderer renderer = HtmlRenderer.builder().softbreak(" ").build();
 
     private VersionNumber versionNumber;
     private Date releaseDate;
     private String name;
     private List<Change> changes;
     private String url;
+
+    private static String UPDATE_MD = "org/diylc/update.md";
 
     public Version(VersionNumber versionNumber, Date releaseDate, String name, String url) {
 	super();
@@ -22,6 +60,10 @@ public class Version implements Serializable, Comparable<Version> {
 	this.name = name;
 	this.url = url;
 	this.changes = new ArrayList<Change>();
+    }
+
+    public Version(VersionNumber versionNumber) {
+	this(versionNumber, null, null, null);
     }
 
     public VersionNumber getVersionNumber() {
@@ -54,6 +96,11 @@ public class Version implements Serializable, Comparable<Version> {
 
     public void setChanges(List<Change> changes) {
 	this.changes = changes;
+    }
+
+    public Change addChange(Change change) {
+	changes.add(change);
+	return change;
     }
 
     public String getUrl() {
@@ -107,13 +154,48 @@ public class Version implements Serializable, Comparable<Version> {
 	return true;
     }
 
+    private String releaseNameToString(boolean withSpace) {
+	if (name == null || name.isEmpty())
+	    return "";
+	return (name + (withSpace ? " " : ""));
+    }
+
+    private String releaseDateToString(boolean withText) {
+	if (releaseDate == null)
+	    return "";
+	return ((withText ? "released on " : "")
+		+ new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
+    }
+
+    private String versionNumberToString(boolean withSpace) {
+	return versionNumber.toString() + (withSpace ? " " : "");
+    }
+
     @Override
     public String toString() {
-	return name;
+	return String.format("<Version %s%s%s />",
+			     releaseNameToString(true),
+			     versionNumberToString(true),
+			     releaseDateToString(true));
     }
 
     @Override
     public int compareTo(Version o) {
 	return -versionNumber.compareTo(o.versionNumber);
+    }
+
+    public static List<Version> getRecentUpdates() {
+	ClassLoader loader = Version.class.getClassLoader();
+	try {
+	    BufferedReader reader =
+		new BufferedReader(new InputStreamReader(loader.getResourceAsStream(UPDATE_MD)));
+	    Node document = parser.parse(reader.lines().collect(Collectors.joining("\n")));
+	    UpdateVisitor v = new UpdateVisitor();
+	    document.accept(v);
+	    return v.getVersions();
+	} catch (Exception e) {
+	    LOG.error("getRecentUpdates() failed", e);
+	    throw e;
+	}
     }
 }
