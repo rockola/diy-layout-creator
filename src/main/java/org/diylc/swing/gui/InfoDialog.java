@@ -14,8 +14,8 @@
   or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
   License for more details.
 
- You should have received a copy of the GNU General Public License
- along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.swing.gui;
 
@@ -30,7 +30,7 @@ import javax.swing.JLabel;
 
 import org.diylc.DIYLC;
 import org.diylc.common.IPlugInPort;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.swingframework.ButtonDialog;
 
 public class InfoDialog extends ButtonDialog {
@@ -55,10 +55,11 @@ public class InfoDialog extends ButtonDialog {
     @Override
     protected JComponent getMainComponent() {
 	JLabel label = new JLabel("<html>" + message + "</html>");
-	label.setIcon(IconLoader.Help.getIcon());
+	label.setIcon(Icon.Help.icon());
 	label.setBackground(Color.white);
 	label.setOpaque(true);
-	label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray), BorderFactory.createEmptyBorder(16, 16, 16, 16)));
+	label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
+							   BorderFactory.createEmptyBorder(16, 16, 16, 16)));
 	label.setIconTextGap(8);
 	return label;
     }
