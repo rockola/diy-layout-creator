@@ -33,7 +33,6 @@ import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.config.ConfigPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
 
@@ -42,20 +41,16 @@ public class ToolBox implements IPlugIn {
 
     private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
-    private ISwingUI swingUI;
     private IPlugInPort plugInPort;
-
     private ComponentTabbedPane componentTabbedPane;
 
-    public ToolBox(ISwingUI swingUI) {
-	this.swingUI = swingUI;
-    }
+    public ToolBox() { }
 
     @Override
     public void connect(IPlugInPort plugInPort) {
 	this.plugInPort = plugInPort;
 	try {
-	    swingUI.injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
+	    DIYLC.ui().injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
 	} catch (BadPositionException e) {
 	    LOG.error("Could not install the toolbox", e);
 	}
