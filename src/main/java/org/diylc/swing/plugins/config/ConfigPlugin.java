@@ -1,22 +1,22 @@
 /*
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by
- * the individual authors.
- * 
- * This file is part of DIYLC.
- * 
- * DIYLC is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * DIYLC is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by
+  the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swing.plugins.config;
 
 import java.io.File;
@@ -26,14 +26,16 @@ import java.util.EnumSet;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.components.autocreate.SolderPadAutoCreator;
 import org.diylc.core.Theme;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.swing.ActionFactory;
-import org.diylc.swing.ISwingUI;
+import org.diylc.swing.gui.MainFrame;
 
 import org.diylc.appframework.Serializer;
 
@@ -53,73 +55,41 @@ public class ConfigPlugin implements IPlugIn {
     public static final String SEARCHABLE_TREE = "Searchable Tree";
     public static final String TABBED_TOOLBAR = "Tabbed Toolbar";
 
-    private ISwingUI swingUI;
-
-    public ConfigPlugin(ISwingUI swingUI) {
-	super();
-	this.swingUI = swingUI;
-    }
+    public ConfigPlugin() { super(); }
 
     @Override
     public void connect(IPlugInPort plugInPort) {
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance()
-				 .createConfigAction(plugInPort, "Anti-Aliasing", IPlugInPort.ANTI_ALIASING_KEY, true), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Auto-Create Pads",
-										SolderPadAutoCreator.AUTO_PADS_KEY, false), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Auto-Edit Mode", IPlugInPort.AUTO_EDIT_KEY, true),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Continuous Creation",
-										IPlugInPort.CONTINUOUS_CREATION_KEY, false), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Export Grid", IPlugInPort.EXPORT_GRID_KEY, false),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Extra Working Area", IPlugInPort.EXTRA_SPACE_KEY, true),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Hardware Acceleration", IPlugInPort.HARDWARE_ACCELERATION, false),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Hi-Quality Rendering",
-										IPlugInPort.HI_QUALITY_RENDER_KEY, false), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Highlight Connected Areas", IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, 
-										false), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Mouse Wheel Zoom", IPlugInPort.WHEEL_ZOOM_KEY,
-										false), CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Outline Mode", IPlugInPort.OUTLINE_KEY, false),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Show Rulers", IPlugInPort.SHOW_RULERS_KEY, true),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Show Grid", IPlugInPort.SHOW_GRID_KEY, true),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance().createConfigAction(plugInPort, "Snap to Grid", IPlugInPort.SNAP_TO_GRID_KEY, true),
-				 CONFIG_MENU);
-	swingUI.injectMenuAction(
-				 ActionFactory.getInstance()
-				 .createConfigAction(plugInPort, "Sticky Points", IPlugInPort.STICKY_POINTS_KEY, true), CONFIG_MENU);
+	final ConfigActions actions = new ConfigActions();
+
+	actions.add("Anti-Aliasing", IPlugInPort.ANTI_ALIASING_KEY, true);
+	actions.add("Auto-Create Pads", SolderPadAutoCreator.AUTO_PADS_KEY, false);
+	actions.add("Auto-Edit Mode", IPlugInPort.AUTO_EDIT_KEY, true);
+	actions.add("Continuous Creation", IPlugInPort.CONTINUOUS_CREATION_KEY, false);
+	actions.add("Export Grid", IPlugInPort.EXPORT_GRID_KEY, false);
+	actions.add("Extra Working Area", IPlugInPort.EXTRA_SPACE_KEY, true);
+	actions.add("Hardware Acceleration", IPlugInPort.HARDWARE_ACCELERATION, false);
+	actions.add("Hi-Quality Rendering", IPlugInPort.HI_QUALITY_RENDER_KEY, false);
+	actions.add("Highlight Connected Areas", IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, false);
+	actions.add("Mouse Wheel Zoom", IPlugInPort.WHEEL_ZOOM_KEY, false);
+	actions.add("Outline Mode", IPlugInPort.OUTLINE_KEY, false);
+	actions.add("Show Rulers", IPlugInPort.SHOW_RULERS_KEY, true);
+	actions.add("Show Grid", IPlugInPort.SHOW_GRID_KEY, true);
+	actions.add("Snap to Grid", IPlugInPort.SNAP_TO_GRID_KEY, true);
+	actions.add("Sticky Points", IPlugInPort.STICKY_POINTS_KEY, true);
+
+	actions.injectActions(plugInPort, CONFIG_MENU);
 
 	File themeDir = new File("themes");
 	if (themeDir.exists()) {
-	    swingUI.injectSubmenu(THEME_MENU,
-				  IconLoader.Pens.getIcon(),
-				  CONFIG_MENU);
+	    DIYLC.ui().injectSubmenu(THEME_MENU, Icon.Pens, CONFIG_MENU);
 	    for (File file : themeDir.listFiles()) {
 		if (file.getName().toLowerCase().endsWith(".xml")) {
 		    try {
 			Theme theme = (Theme) Serializer.fromFile(file);
 			LOG.debug("Found theme: " + theme.getName());
-			swingUI.injectMenuAction(ActionFactory.getInstance().createThemeAction(plugInPort, theme),
-						 THEME_MENU);
+			DIYLC.ui().injectMenuAction(ActionFactory.createThemeAction(plugInPort,
+										    theme),
+						    THEME_MENU);
 		    } catch (Exception e) {
 			LOG.error("Could not load theme file " + file.getName(), e);
 		    }
@@ -127,14 +97,12 @@ public class ConfigPlugin implements IPlugIn {
 	    }
 	}
 
-	swingUI.injectSubmenu(COMPONENT_BROWSER_MENU,
-			      IconLoader.Hammer.getIcon(),
-			      CONFIG_MENU);
+	DIYLC.ui().injectSubmenu(COMPONENT_BROWSER_MENU, Icon.Hammer, CONFIG_MENU);
 
-	swingUI.injectMenuAction(ActionFactory.getInstance().createComponentBrowserAction(SEARCHABLE_TREE),
-				 COMPONENT_BROWSER_MENU);
-	swingUI.injectMenuAction(ActionFactory.getInstance().createComponentBrowserAction(TABBED_TOOLBAR),
-				 COMPONENT_BROWSER_MENU);
+	DIYLC.ui().injectMenuAction(ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE),
+				    COMPONENT_BROWSER_MENU);
+	DIYLC.ui().injectMenuAction(ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR),
+				    COMPONENT_BROWSER_MENU);
     }
 
     @Override
