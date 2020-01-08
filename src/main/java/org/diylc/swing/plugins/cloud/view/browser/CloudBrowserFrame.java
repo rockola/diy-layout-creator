@@ -43,23 +43,23 @@ import javax.swing.event.ChangeListener;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.model.ProjectEntity;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.plugins.cloud.presenter.SearchSession;
 import org.diylc.swing.ISimpleView;
-import org.diylc.swing.ISwingUI;
 import org.diylc.utils.Pair;
 
 /**
- * {@link JFrame} for searching the projects on the cloud.
- * 
- * @author Branislav Stojkovic
- */
+   {@link JFrame} for searching the projects on the cloud.
+
+   @author Branislav Stojkovic
+*/
 public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
     private static final String TITLE = "Search The Cloud";
@@ -79,19 +79,16 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
     private IPlugInPort plugInPort;
     private SearchSession searchSession;
 
-    private ISwingUI swingUI;
-
-    public CloudBrowserFrame(ISwingUI swingUI, IPlugInPort plugInPort) {
+    public CloudBrowserFrame(IPlugInPort plugInPort) {
 	super(TITLE);
-	this.swingUI = swingUI;
-	this.setIconImage(IconLoader.Cloud.getImage());
+	this.setIconImage(Icon.Cloud.image());
 	this.setPreferredSize(new Dimension(700, 640));
 	this.plugInPort = plugInPort;
 	this.searchSession = new SearchSession();
 
 	setContentPane(getSearchPanel());
 	this.pack();
-	this.setLocationRelativeTo(swingUI.getOwnerFrame());
+	this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
 	this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
 	JRootPane rootPane = SwingUtilities.getRootPane(getSearchHeaderPanel().getGoButton());
@@ -143,8 +140,8 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
     private JTabbedPane getTabbedPane() {
 	if (tabbedPane == null) {
 	    tabbedPane = new JTabbedPane();
-	    tabbedPane.addTab("Dashboard", IconLoader.Dashboard.getIcon(), getDashboardPanel());
-	    tabbedPane.addTab("Search For Projects", IconLoader.Find.getIcon(), getSearchPanel());
+	    tabbedPane.addTab("Dashboard", Icon.Dashboard.icon(), getDashboardPanel());
+	    tabbedPane.addTab("Search For Projects", Icon.Find.icon(), getSearchPanel());
 	    tabbedPane.setSelectedIndex(1);
 	    tabbedPane.addChangeListener(new ChangeListener() {
 
@@ -202,7 +199,10 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
     private ResultsScrollPanel getResultsScrollPane() {
 	if (resultsScrollPane == null) {
-	    resultsScrollPane = new ResultsScrollPanel(swingUI, this, plugInPort, searchSession, false);
+	    resultsScrollPane = new ResultsScrollPanel(this,
+						       plugInPort,
+						       searchSession,
+						       false);
 	}
 	return resultsScrollPane;
     }
