@@ -38,7 +38,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -55,19 +55,19 @@ import javax.swing.text.DefaultCaret;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.model.CommentEntity;
 import org.diylc.plugins.cloud.model.ProjectEntity;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.plugins.cloud.presenter.SearchSession;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.ISimpleView;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.gui.components.HTMLTextArea;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
@@ -96,14 +96,9 @@ public class ResultsScrollPanel extends JScrollPane {
      * another page.
      */
     private JLabel loadMoreLabel;
-
     private JLabel topLabel;
-
-    private ISwingUI mainUI;
     private ISimpleView cloudUI;
-
     private IPlugInPort plugInPort;
-
     private int currentLocation;
     /**
      * This flag tells us whether the loadMoreLabel should invoke a new data pull or not.
@@ -111,14 +106,15 @@ public class ResultsScrollPanel extends JScrollPane {
     private boolean armed;
     private SearchSession searchSession;
 
-    private Icon spinnerIcon = IconLoader.Spinning.getIcon();
+    private javax.swing.Icon spinnerIcon = Icon.Spinning.icon();
 
     private boolean showEditControls;
 
-    public ResultsScrollPanel(ISwingUI mainUI, ISimpleView cloudUI, IPlugInPort plugInPort, SearchSession searchSession,
+    public ResultsScrollPanel(ISimpleView cloudUI,
+			      IPlugInPort plugInPort,
+			      SearchSession searchSession,
 			      boolean showEditControls) {
 	super();
-	this.mainUI = mainUI;
 	this.cloudUI = cloudUI;
 	this.plugInPort = plugInPort;
 	this.searchSession = searchSession;
@@ -226,7 +222,9 @@ public class ResultsScrollPanel extends JScrollPane {
 	descriptionArea.setEnabled(false);
 
 	final JLabel commentLabel =
-	    new JLabel(Integer.toString(project.getCommentCount()), IconLoader.Messages.getIcon(), SwingConstants.LEFT);
+	    new JLabel(Integer.toString(project.getCommentCount()),
+		       Icon.Messages.icon(),
+		       SwingConstants.LEFT);
 	commentLabel.setToolTipText("Click to see and add public comments");
 	commentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	commentLabel.addMouseListener(new MouseAdapter() {
@@ -256,18 +254,22 @@ public class ResultsScrollPanel extends JScrollPane {
 	    });
 
 	final JLabel viewLabel =
-	    new JLabel(Integer.toString(project.getViewCount()), IconLoader.Eye.getIcon(), SwingConstants.LEFT);
+	    new JLabel(Integer.toString(project.getViewCount()),
+		       Icon.Eye.icon(),
+		       SwingConstants.LEFT);
 	viewLabel.setToolTipText("View count");
 
 	final JLabel downloadLabel =
-	    new JLabel(Integer.toString(project.getDownloadCount()), IconLoader.Download.getIcon(), SwingConstants.LEFT);
+	    new JLabel(Integer.toString(project.getDownloadCount()),
+		       Icon.Download.icon(),
+		       SwingConstants.LEFT);
 	downloadLabel.setToolTipText("Download count");
 
 	final JLabel categoryLabel = new JLabel("<html>Category: <b>" + project.getCategory() + "</b></html>");
 	final JLabel authorLabel = new JLabel("<html>Author: <b>" + project.getOwner() + "</b></html>");
 	final JLabel updatedLabel = new JLabel("<html>Last updated: <b>" + project.getUpdated() + "</b></html>");
 
-	final JLabel downloadButton = new JLabel(IconLoader.CloudDownload.getIcon());
+	final JLabel downloadButton = new JLabel(Icon.CloudDownload.icon());
 	downloadButton.setFocusable(true);
 	downloadButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	downloadButton.setToolTipText("Download to local drive");
@@ -294,13 +296,17 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				@Override
 				public void complete(Void result) {
-				    if (cloudUI.showConfirmDialog("Project downloaded to " + file.getAbsolutePath()
-								  + ".\nDo you want to open it?", "Cloud", ISwingUI.YES_NO_OPTION, ISwingUI.INFORMATION_MESSAGE) == IView.YES_OPTION) {
+				    if (cloudUI.showConfirmDialog("Project downloaded to "
+								  + file.getAbsolutePath()
+								  + ".\nDo you want to open it?",
+								  "Cloud",
+								  IView.YES_NO_OPTION,
+								  IView.INFORMATION_MESSAGE) == IView.YES_OPTION) {
 					if (!plugInPort.allowFileAction()) {
 					    return;
 					}
 
-					mainUI.executeBackgroundTask(new ITask<Void>() {
+					DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
 
 						@Override
 						public Void doInBackground() throws Exception {
@@ -311,13 +317,12 @@ public class ResultsScrollPanel extends JScrollPane {
 
 						@Override
 						public void complete(Void result) {
-						    mainUI.bringToFocus();
+						    DIYLC.ui().bringToFocus();
 						}
 
 						@Override
 						public void failed(Exception e) {
-						    mainUI.showMessage("Could not open file. Detailed message is in the logs.", "Error",
-								       ISwingUI.ERROR_MESSAGE);
+						    DIYLC.ui().error("Could not open file. Detailed message is in the logs.", e);
 						}
 					    }, true);
 				    }
@@ -325,8 +330,9 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				@Override
 				public void failed(Exception e) {
-				    cloudUI.showMessage("Could not save to file. Detailed message is in the logs.", "Error",
-							ISwingUI.ERROR_MESSAGE);
+				    cloudUI.showMessage("Could not save to file. Detailed message is in the logs.",
+							"Error",
+							IView.ERROR_MESSAGE);
 				}
 			    });
 		    }
@@ -338,7 +344,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
 	final JPanel buttonPanel = new JPanel(new FlowLayout());
 
-	final JLabel editButton = new JLabel(IconLoader.CloudEdit.getIcon());
+	final JLabel editButton = new JLabel(Icon.CloudEdit.icon());
 	editButton.setFocusable(true);
 	editButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	editButton.setToolTipText("Edit details without changing the project file");
@@ -357,8 +363,9 @@ public class ResultsScrollPanel extends JScrollPane {
 				property.writeTo(project);
 			    } catch (Exception ex) {
 				LOG.error("Could not update the project", ex);
-				cloudUI.showMessage("Could not update the project. Detailed message is in the logs.", "Error",
-						    ISwingUI.ERROR_MESSAGE);
+				cloudUI.showMessage("Could not update the project. Detailed message is in the logs.",
+						    "Error",
+						    IView.ERROR_MESSAGE);
 				return;
 			    }
 			}
@@ -366,14 +373,15 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				@Override
 				public ProjectEntity doInBackground() throws Exception {
-				    CloudPresenter.Instance.updateProjectDetails(project, plugInPort.getCurrentVersionNumber().toString());
+				    CloudPresenter.Instance.updateProjectDetails(project, DIYLC.getVersionNumber().toString());
 				    return CloudPresenter.Instance.fetchUserUploads(project.getId()).get(0);
 				}
 
 				@Override
 				public void failed(Exception e) {
-				    cloudUI.showMessage("Could not update the project. Detailed message is in the logs.", "Error",
-							ISwingUI.ERROR_MESSAGE);
+				    cloudUI.showMessage("Could not update the project. Detailed message is in the logs.",
+							"Error",
+							IView.ERROR_MESSAGE);
 				}
 
 				@Override
@@ -390,7 +398,7 @@ public class ResultsScrollPanel extends JScrollPane {
 		}
 	    });
 
-	final JLabel replaceButton = new JLabel(IconLoader.CloudUpload.getIcon());
+	final JLabel replaceButton = new JLabel(Icon.CloudUpload.icon());
 	replaceButton.setFocusable(true);
 	replaceButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	replaceButton.setToolTipText("Replace project with a new version");
@@ -432,7 +440,8 @@ public class ResultsScrollPanel extends JScrollPane {
 							    @Override
 							    public ProjectEntity doInBackground() throws Exception {
 								CloudPresenter.Instance.uploadProject(dialog.getName(), dialog.getCategory(), dialog
-												      .getDescription(), dialog.getKeywords(), plugInPort.getCurrentVersionNumber().toString(),
+												      .getDescription(), dialog.getKeywords(),
+												      DIYLC.getVersionNumber().toString(),
 												      thumbnailFile, file, project.getId());
 								return CloudPresenter.Instance.fetchUserUploads(project.getId()).get(0);
 							    }
@@ -465,7 +474,9 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				    @Override
 				    public void failed(Exception e) {
-					cloudUI.showMessage("Could not open file. " + e.getMessage(), "Error", ISwingUI.ERROR_MESSAGE);
+					cloudUI.showMessage("Could not open file. " + e.getMessage(),
+							    "Error",
+							    IView.ERROR_MESSAGE);
 				    }
 				});
 			}
@@ -473,7 +484,7 @@ public class ResultsScrollPanel extends JScrollPane {
 		}
 	    });
 
-	final JLabel deleteButton = new JLabel(IconLoader.CloudDelete.getIcon());
+	final JLabel deleteButton = new JLabel(Icon.CloudDelete.icon());
 	deleteButton.setFocusable(true);
 	deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	deleteButton.setToolTipText("Delete from the cloud");
@@ -494,8 +505,9 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				@Override
 				public void failed(Exception e) {
-				    cloudUI.showMessage("Could not delete the project. Detailed message is in the logs.", "Error",
-							ISwingUI.ERROR_MESSAGE);
+				    cloudUI.showMessage("Could not delete the project. Detailed message is in the logs.",
+							"Error",
+							IView.ERROR_MESSAGE);
 				}
 
 				@Override
@@ -666,12 +678,12 @@ public class ResultsScrollPanel extends JScrollPane {
 	return resultsPanel;
     }
 
-    private Icon loadImage(String imageFile) {
+    private javax.swing.Icon loadImage(String imageFile) {
 	try {
 	    BufferedImage img = ImageIO.read(new File(imageFile));
 	    return new ImageIcon(img);
 	} catch (Exception e) {
-	    return IconLoader.MissingImage.getIcon();
+	    return Icon.MissingImage.icon();
 	}
     }
 }
