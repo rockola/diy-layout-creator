@@ -1,7 +1,6 @@
 /*
-
   DIY Layout Creator (DIYLC).
-  Copyright (c) 2009-2018 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
@@ -17,7 +16,6 @@
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 package org.diylc.swing.plugins.cloud.view.browser;
 
@@ -31,40 +29,35 @@ import javax.swing.SwingWorker;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.model.ProjectEntity;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.swing.ISimpleView;
-import org.diylc.swing.ISwingUI;
 
 public class UploadManagerFrame extends JFrame implements ISimpleView {
 
-    private static final String TITLE = "Manage My Uploads";
-
     private static final long serialVersionUID = 1L;
-
     private static final Logger LOG = LogManager.getLogger(UploadManagerFrame.class);
 
+    private static final String TITLE = "Manage My Uploads";
     private ResultsScrollPanel resultsScrollPane;
-
     private IPlugInPort plugInPort;
 
-    private ISwingUI swingUI;
-
-    public UploadManagerFrame(ISwingUI swingUI, IPlugInPort plugInPort) {
+    public UploadManagerFrame(IPlugInPort plugInPort) {
 	super(TITLE);
-	this.swingUI = swingUI;
-	this.setIconImage(IconLoader.CloudGear.getImage());
+	this.setIconImage(Icon.CloudGear.image());
 	this.setPreferredSize(new Dimension(700, 640));
 	this.plugInPort = plugInPort;
 
 	setContentPane(getResultsScrollPane());
 	this.pack();
-	this.setLocationRelativeTo(swingUI.getOwnerFrame());
+	this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
 	this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
 	search();
@@ -72,7 +65,7 @@ public class UploadManagerFrame extends JFrame implements ISimpleView {
 
     private ResultsScrollPanel getResultsScrollPane() {
 	if (resultsScrollPane == null) {
-	    resultsScrollPane = new ResultsScrollPanel(swingUI, this, plugInPort, null, true);
+	    resultsScrollPane = new ResultsScrollPanel(this, plugInPort, null, true);
 	}
 	return resultsScrollPane;
     }
