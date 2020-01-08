@@ -1,5 +1,10 @@
 ### General advice ###
-**When making a new plugins make sure to look around and be consistent with what's already there. This applies to visual appearance, behavior but also the code. It is important to keep the visual identity and user experience consistent across the board and to have a maintainable code base that follows the same coding standards and patterns. Good luck.**
+**When making a new plugins make sure to look around and be consistent
+with what's already there. This applies to visual appearance, behavior
+but also the code. It is important to keep the visual identity and
+user experience consistent across the board and to have a maintainable
+code base that follows the same coding standards and patterns. Good
+luck.**
 
 # Introduction #
 
