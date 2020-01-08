@@ -13,16 +13,15 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 
 /**
- * <p>
- * Title: Client HTTP Request class
- * </p>
- * Description: this class helps to send POST HTTP requests with
- * various form data, including files.  Cookies can be added to be
- * included in the request.
- *
- * @author Vlad Patryshev
- * @version 1.0
- */
+   Client HTTP Request class
+
+   This class helps to send POST HTTP requests with various form data,
+   including files.  Cookies can be added to be included in the
+   request.
+
+  @author Vlad Patryshev
+  @version 1.0
+*/
 public class ClientHttpRequest {
     URLConnection connection;
     OutputStream os = null;
