@@ -35,10 +35,9 @@ import org.diylc.common.EventType;
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.swing.ActionFactory;
 import org.diylc.swing.IDynamicSubmenuHandler;
-import org.diylc.swing.ISwingUI;
 
 /**
  * Entry point class for File management utilities.
@@ -56,17 +55,15 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
 
     private ProjectDrawingProvider drawingProvider;
     private TraceMaskDrawingProvider traceMaskDrawingProvider;
-
-    private ISwingUI swingUI;
     private IPlugInPort plugInPort;
 
-    public FileMenuPlugin(ISwingUI swingUI) {
-	super();
-	this.swingUI = swingUI;
-    }
+    public FileMenuPlugin() { super(); }
 
+    private void addAction(AbstractAction action, String submenuTitle) {
+	DIYLC.ui().injectMenuAction(action, submenuTitle);
+    }
     private void addAction(AbstractAction action) {
-	swingUI.injectMenuAction(action, FILE_TITLE);
+	DIYLC.ui().injectMenuAction(action, FILE_TITLE);
     }
 
     @Override
@@ -75,63 +72,67 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
 	this.drawingProvider = new ProjectDrawingProvider(plugInPort, false, true, false);
 	this.traceMaskDrawingProvider = new TraceMaskDrawingProvider(plugInPort);
 
-	ActionFactory actionFactory = ActionFactory.getInstance();
-	addAction(actionFactory.createNewAction(plugInPort));
-	addAction(actionFactory.createOpenAction(plugInPort, swingUI));
-	addAction(actionFactory.createImportAction(plugInPort, swingUI));
-	addAction(actionFactory.createSaveAction(plugInPort, swingUI));
-	addAction(actionFactory.createSaveAsAction(plugInPort, swingUI));
-	swingUI.injectDynamicSubmenu("Recent Files", IconLoader.History.getIcon(), FILE_TITLE, this);
+	addAction(ActionFactory.createNewAction(plugInPort));
+	addAction(ActionFactory.createOpenAction(plugInPort));
+	addAction(ActionFactory.createImportAction(plugInPort));
+	addAction(ActionFactory.createSaveAction(plugInPort));
+	addAction(ActionFactory.createSaveAsAction(plugInPort));
+	DIYLC.ui().injectDynamicSubmenu("Recent Files",
+					Icon.History,
+					FILE_TITLE,
+					this);
 	addAction(null);
-	addAction(actionFactory.createExportPDFAction(plugInPort,
+
+	// Export / Print
+	addAction(ActionFactory.createExportPDFAction(plugInPort,
 						      drawingProvider,
-						      swingUI,
 						      ""));
-	addAction(actionFactory.createExportPNGAction(plugInPort,
+	addAction(ActionFactory.createExportPNGAction(plugInPort,
 						      drawingProvider,
-						      swingUI,
 						      ""));
-	addAction(actionFactory.createPrintAction(drawingProvider,
+	addAction(ActionFactory.createPrintAction(drawingProvider,
 						  DIYLC.getKeyStroke("Print")));
-	swingUI.injectSubmenu(TRACE_MASK_TITLE, IconLoader.TraceMask.getIcon(), FILE_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportPDFAction(plugInPort,
-								     traceMaskDrawingProvider,
-								     swingUI, " (mask)"),
-				 TRACE_MASK_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportPNGAction(plugInPort,
-								     traceMaskDrawingProvider,
-								     swingUI, " (mask)"),
-				 TRACE_MASK_TITLE);
-	swingUI.injectMenuAction(actionFactory.createPrintAction(traceMaskDrawingProvider,
-								 DIYLC.getKeyStroke("Print Trace Mask")),
-				 TRACE_MASK_TITLE);
-	swingUI.injectSubmenu(ANALYZE_TITLE, IconLoader.Scientist.getIcon(), FILE_TITLE);
-	swingUI.injectMenuAction(actionFactory.createBomAction(plugInPort), ANALYZE_TITLE);
-	swingUI.injectMenuAction(actionFactory.createGenerateNetlistAction(plugInPort, swingUI),
-				 ANALYZE_TITLE);
+
+	// Trace mask
+	DIYLC.ui().injectSubmenu(TRACE_MASK_TITLE, Icon.TraceMask, FILE_TITLE);
+	addAction(ActionFactory.createExportPDFAction(plugInPort,
+						      traceMaskDrawingProvider,
+						      " (mask)"),
+		  TRACE_MASK_TITLE);
+	addAction(ActionFactory.createExportPNGAction(plugInPort,
+						      traceMaskDrawingProvider,
+						      " (mask)"),
+		  TRACE_MASK_TITLE);
+	addAction(ActionFactory.createPrintAction(traceMaskDrawingProvider,
+						  DIYLC.getKeyStroke("Print Trace Mask")),
+		  TRACE_MASK_TITLE);
+
+	// Analyze
+	DIYLC.ui().injectSubmenu(ANALYZE_TITLE, Icon.Scientist, FILE_TITLE);
+	addAction(ActionFactory.createBomAction(plugInPort), ANALYZE_TITLE);
+	addAction(ActionFactory.createGenerateNetlistAction(plugInPort), ANALYZE_TITLE);
     
 	List<INetlistAnalyzer> summarizers = plugInPort.getNetlistAnalyzers();
 	if (summarizers != null) {
 	    for(INetlistAnalyzer summarizer : summarizers)
-		swingUI.injectMenuAction(actionFactory.createSummarizeNetlistAction(plugInPort,
-										    swingUI,
-										    summarizer),
-					 ANALYZE_TITLE);
+		addAction(ActionFactory.createSummarizeNetlistAction(plugInPort, summarizer),
+			  ANALYZE_TITLE);
 	}
-    
 	addAction(null);
-	swingUI.injectSubmenu(INTEGRATION_TITLE, IconLoader.Node.getIcon(), FILE_TITLE);
-	swingUI.injectMenuAction(actionFactory.createImportBlocksAction(swingUI, plugInPort),
-				 INTEGRATION_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportBlocksAction(swingUI),
-				 INTEGRATION_TITLE);
-	swingUI.injectMenuAction(null, INTEGRATION_TITLE);
-	swingUI.injectMenuAction(actionFactory.createImportVariantsAction(swingUI, plugInPort),
-				 INTEGRATION_TITLE);
-	swingUI.injectMenuAction(actionFactory.createExportVariantsAction(swingUI, plugInPort),
-				 INTEGRATION_TITLE);    
+
+	// Integration
+	DIYLC.ui().injectSubmenu(INTEGRATION_TITLE, Icon.Node, FILE_TITLE);
+	addAction(ActionFactory.createImportBlocksAction(plugInPort), INTEGRATION_TITLE);
+	addAction(ActionFactory.createExportBlocksAction(), INTEGRATION_TITLE);
+	addAction(null, INTEGRATION_TITLE);
+	addAction(ActionFactory.createImportVariantsAction(plugInPort), INTEGRATION_TITLE);
+	addAction(ActionFactory.createExportVariantsAction(plugInPort), INTEGRATION_TITLE);
+	//
+	addAction(ActionFactory.createTemplateDialogAction());
 	addAction(null);
-	addAction(actionFactory.createExitAction(plugInPort));
+
+	// Quit
+	addAction(ActionFactory.createExitAction(plugInPort));
     }
 
     @Override
