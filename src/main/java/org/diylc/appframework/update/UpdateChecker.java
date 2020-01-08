@@ -64,6 +64,7 @@ public class UpdateChecker {
 
 	String bodyHtml = "";
 	for (Version version : versions) {
+	    LOG.debug("Version = {}", version);
 	    String changeStr = "";
 	    for (Change change : version.getChanges()) {
 		changeStr +=
@@ -71,6 +72,7 @@ public class UpdateChecker {
 				  convertChangeTypeToHTML(change.getChangeType()),
 				  change.getDescription());
 	    }
+
 	    bodyHtml +=
 		String.format(VERSION_HTML,
 			      version.getVersionNumber().getMajor(),
