@@ -39,7 +39,9 @@ import org.apache.logging.log4j.LogManager;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.PropertyInjector;
+import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
+import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
@@ -56,12 +58,17 @@ import org.diylc.swingframework.FontChooserComboBox;
  */
 public class DIYLC {
 
-    private static final Logger LOG = LogManager.getLogger(DIYLC.class);
+    private static TemplateDialog templateDialog;
 
+    private static final Logger LOG = LogManager.getLogger(DIYLC.class);
     private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
     public static boolean getBoolean(String key, boolean defaultValue) {
-	return ConfigurationManager.getBoolean(key, defaultValue);
+	// First look in Config, then in ConfigurationManager
+	Boolean b = Config.getBoolean(key);
+	return b != null
+	    ? b.booleanValue()
+	    : ConfigurationManager.getBoolean(key, defaultValue);
     }
     public static boolean getBoolean(String key) { return getBoolean(key, false); }
 
@@ -79,7 +86,6 @@ public class DIYLC {
     // public static double getDouble(String key) { return getDouble(key, (double) 0.0); }
 
     public static String getString(String key, String defaultValue) {
-	// TODO: handle defaultValue for strings in Config?
 	String s = Config.getString(key);
 	if (s == null) {
 	    s = ConfigurationManager.getString(key, defaultValue);
@@ -101,6 +107,74 @@ public class DIYLC {
     public static URL getURL(String key) { return Config.getURL(key); }
     public static KeyStroke getKeyStroke(String key) { return Config.getKeyStroke(key); }
 
+    // ****************************************************************
+    public static String getFullVersionString() { return getString("app.version"); }
+    public static String getVersionString() {
+	String v = getFullVersionString();
+	int hyphen = v.indexOf("-");
+	return (hyphen > -1 ? v.substring(0, hyphen) : v);
+    }
+    public static VersionNumber getVersionNumber() {
+	return new VersionNumber(getVersionString());
+    }
+
+
+    // ****************************************************************
+    public static boolean snapToGrid() { return getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true); }
+    public static boolean autoEdit() { return getBoolean(IPlugInPort.AUTO_EDIT_KEY); }
+    public static boolean continuousCreation() {
+	return getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY);
+    }
+    public static boolean stickyPoints() {
+	return getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+    }
+    public static boolean highQualityRendering() {
+	return getBoolean(IPlugInPort.HI_QUALITY_RENDER_KEY);
+    }
+    public static boolean highlightContinuityArea() {
+	return getBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA);
+    }
+    public static boolean hardwareAcceleration() {
+	return getBoolean(IPlugInPort.HARDWARE_ACCELERATION);
+    }
+    public static boolean antiAliasing() {
+	return getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true);
+    }
+    public static boolean outlineMode() {
+	return getBoolean(IPlugInPort.OUTLINE_KEY, false);
+    }
+    public static boolean showGrid() {
+	return getBoolean(IPlugInPort.SHOW_GRID_KEY, true);
+    }
+    public static boolean exportGrid() {
+	return getBoolean(IPlugInPort.EXPORT_GRID_KEY);
+    }
+    public static boolean extraSpace() {
+	return getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true);
+    }
+    public static boolean showRulers() {
+	return getBoolean(IPlugInPort.SHOW_RULERS_KEY, true);
+    }
+    public static boolean metric() {
+	return getBoolean(Presenter.METRIC_KEY, true);
+    }
+    public static boolean wheelZoom() {
+	return getBoolean(IPlugInPort.WHEEL_ZOOM_KEY);
+    }
+
+    // ****************************************************************
+
+    private static MainFrame mainFrame;
+    public static MainFrame ui() { return mainFrame; }
+
+    public static void showTemplateDialog() {
+	if (templateDialog == null)
+	    templateDialog = new TemplateDialog(mainFrame);
+	templateDialog.setVisible(true);
+    }
+
+    // ****************************************************************
+
     /**
      * @param args
      */
@@ -117,11 +191,9 @@ public class DIYLC {
 	}
 
 	ClassLoader loader = DIYLC.class.getClassLoader();
-	LOG.debug("DIYLC.class coming from {}",
-		  loader.getResource("org/diylc/DIYLC.class"));
-	LOG.debug("log4j2.xml coming from {}",
-		  loader.getResource("log4j2.xml"));
-	LOG.debug("java.class.path is {}", System.getProperty("java.class.path"));
+	LOG.trace("DIYLC.class coming from {}", loader.getResource("org/diylc/DIYLC.class"));
+	LOG.trace("log4j2.xml coming from {}", loader.getResource("log4j2.xml"));
+	LOG.trace("java.class.path is {}", System.getProperty("java.class.path"));
 
 	// Initialize splash screen
 	final SplashScreen splash = SplashScreen.getSplashScreen();
@@ -130,7 +202,7 @@ public class DIYLC {
 	ConfigurationManager.initialize("diylc");
 
 	Package p = DIYLC.class.getPackage();
-	LOG.debug("DIYLC package: {}", p.getName());
+	LOG.trace("DIYLC package: {}", p.getName());
 	LOG.debug("Implementation: version [{}] title [{}] vendor [{}]",
 		  p.getImplementationVersion(),
 		  p.getImplementationTitle(),
@@ -161,19 +233,27 @@ public class DIYLC {
 	    }
 	}
 
-	MainFrame mainFrame = new MainFrame();
+	mainFrame = new MainFrame();
+	mainFrame.installPlugins();
 	mainFrame.setLocationRelativeTo(null);
 	mainFrame.setVisible(true);
 	if (args.length > 0) {
 	    mainFrame.getPresenter().loadProjectFromFile(args[0]);
 	} else {
+	    // show template dialog at startup iff project not loaded
+	    // from command line and SHOW_TEMPLATES_KEY is true in
+	    // config, user can always bring it up from UI
 	    boolean showTemplates = DIYLC.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
 	    if (showTemplates) {
-		TemplateDialog templateDialog = new TemplateDialog(mainFrame,
-								   mainFrame.getPresenter());
+		templateDialog = new TemplateDialog(mainFrame);
 		if (!templateDialog.getFiles().isEmpty()) {
+		    LOG.debug("Showing templates");
 		    templateDialog.setVisible(true);
+		} else {
+		    LOG.debug("Would have shown templates but there aren't any");
 		}
+	    } else {
+		LOG.debug("Not showing templates");
 	    }
 	}
 
