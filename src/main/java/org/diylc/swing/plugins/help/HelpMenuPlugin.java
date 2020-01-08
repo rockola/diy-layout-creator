@@ -24,10 +24,12 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
@@ -37,8 +39,7 @@ import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
-import org.diylc.swing.ISwingUI;
+import org.diylc.images.Icon;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.AboutDialog;
 import org.diylc.swingframework.update.UpdateDialog;
@@ -54,31 +55,30 @@ public class HelpMenuPlugin implements IPlugIn {
 
     private IPlugInPort plugInPort;
     private AboutDialog aboutDialog;
-    private ISwingUI swingUI;
 
     private void navigateURL(String menuEntry, Icon icon, String key) {
-	this.swingUI.injectMenuAction(new NavigateURLAction(Config.getString("menu.help." + menuEntry),
-							    icon,
-							    Config.getURL(key).toString()),
-				      HELP_TITLE);
+	DIYLC.ui().injectMenuAction(new NavigateURLAction(Config.getString("menu.help."
+									   + menuEntry),
+							  icon,
+							  Config.getURL(key).toString()),
+				    HELP_TITLE);
     }
 
     private void separator() {
-	this.swingUI.injectMenuAction(null, HELP_TITLE);
+	DIYLC.ui().injectMenuAction(null, HELP_TITLE);
     }
 
-    public HelpMenuPlugin(ISwingUI swingUI) {
-	this.swingUI = swingUI;
-	navigateURL("user-manual", IconLoader.Manual.getIcon(), "manual");
-	navigateURL("faq", IconLoader.Faq.getIcon(), "faq");
-	navigateURL("component-api", IconLoader.CoffeebeanEdit.getIcon(), "component");
-	navigateURL("plugin-api", IconLoader.ApplicationEdit.getIcon(), "plugin");
-	navigateURL("bug-report", IconLoader.Bug.getIcon(), "bug");
+    public HelpMenuPlugin() {
+	navigateURL("user-manual", Icon.Manual, "manual");
+	navigateURL("faq", Icon.Faq, "faq");
+	navigateURL("component-api", Icon.CoffeebeanEdit, "component");
+	navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
+	navigateURL("bug-report", Icon.Bug, "bug");
 	separator();
-	swingUI.injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
+	DIYLC.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
 	separator();
-	navigateURL("donate", IconLoader.Donate.getIcon(), "donate");
-	swingUI.injectMenuAction(new AboutAction(), HELP_TITLE);
+	navigateURL("donate", Icon.Donate, "donate");
+	DIYLC.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
     }
 
     @Override
@@ -109,17 +109,22 @@ public class HelpMenuPlugin implements IPlugIn {
 	}
     }
 
+    private String defaultAboutText() {
+	return Message.getHTML("interactive-license");
+    }
+
     private AboutDialog getAboutDialog() {
 	if (aboutDialog == null) {
 	    aboutDialog =
 		DialogFactory.getInstance().createAboutDialog(Config.getString("app.title"),
-							      IconLoader.IconLarge.getIcon(),
-							      plugInPort.getCurrentVersionNumber().toString(),
+							      Icon.App.icon(),
+							      Config.getString("app.version"),
 							      Config.getString("app.author"),
 							      Config.getURL("website"),
-							      Message.getHTML("interactive-license"));
-	    aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
+							      defaultAboutText());
 
+	    aboutDialog.setSize(aboutDialog.getSize().width + 30,
+				aboutDialog.getSize().height + 200);
 	    aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));
 	    aboutDialog.addAction("C", "conditions", new AboutTextAction(aboutDialog, "conditions"));
 	}
@@ -133,11 +138,13 @@ public class HelpMenuPlugin implements IPlugIn {
 	public AboutAction() {
 	    super();
 	    putValue(AbstractAction.NAME, "About");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.About.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.About.icon());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+	    // reset About dialog text when making visible
+	    getAboutDialog().setEditorText(defaultAboutText());
 	    getAboutDialog().setVisible(true);
 	}
     }
@@ -149,19 +156,17 @@ public class HelpMenuPlugin implements IPlugIn {
 	public RecentUpdatesAction() {
 	    super();
 	    putValue(AbstractAction.NAME, "Recent Updates");
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.ScrollInformation.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.ScrollInformation.icon());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    List<Version> updates = plugInPort.getRecentUpdates();
+	    List<Version> updates = Version.getRecentUpdates();
 	    if (updates == null)
-		swingUI.showMessage("Version history is not available.",
-				    "Information",
-				    IView.INFORMATION_MESSAGE);
+		DIYLC.ui().info("Version history is not available.");
 	    else {
 		String html = UpdateChecker.createUpdateHTML(updates);
-		UpdateDialog updateDialog = new UpdateDialog(swingUI.getOwnerFrame().getRootPane(),
+		UpdateDialog updateDialog = new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(),
 							     html,
 							     (String) null);
 		updateDialog.setVisible(true);
@@ -179,7 +184,7 @@ public class HelpMenuPlugin implements IPlugIn {
 	    super();
 	    this.url = url;
 	    putValue(AbstractAction.NAME, name);
-	    putValue(AbstractAction.SMALL_ICON, icon);
+	    putValue(AbstractAction.SMALL_ICON, icon.icon());
 	}
 
 	@Override
