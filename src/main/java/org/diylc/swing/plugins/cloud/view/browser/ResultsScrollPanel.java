@@ -77,13 +77,14 @@ import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.ButtonDialog;
 
 /**
- * Component that is capable of showing a list of {@link ProjectEntity} objects. Can work in paging
- * mode and pull one page of data at a time.
- * 
- * @see {@link SearchSession}
- * 
- * @author Branislav Stojkovic
- */
+   Component that is capable of showing a list of {@link
+   ProjectEntity} objects. Can work in paging mode and pull one page
+   of data at a time.
+
+   @see {@link SearchSession}
+
+   @author Branislav Stojkovic
+*/
 public class ResultsScrollPanel extends JScrollPane {
 
     private static final long serialVersionUID = 1L;
@@ -92,21 +93,20 @@ public class ResultsScrollPanel extends JScrollPane {
 
     private JPanel resultsPanel;
     /**
-     * This label goes at the end of the page. When it gets rendered we know that we need to request
-     * another page.
-     */
+       This label goes at the end of the page. When it gets rendered
+       we know that we need to request another page.
+    */
     private JLabel loadMoreLabel;
     private JLabel topLabel;
     private ISimpleView cloudUI;
     private IPlugInPort plugInPort;
     private int currentLocation;
     /**
-     * This flag tells us whether the loadMoreLabel should invoke a new data pull or not.
-     */
+       This flag tells us whether the loadMoreLabel should invoke a
+       new data pull or not.
+    */
     private boolean armed;
     private SearchSession searchSession;
-
-    private javax.swing.Icon spinnerIcon = Icon.Spinning.icon();
 
     private boolean showEditControls;
 
@@ -197,7 +197,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
 	    if (searchSession != null && searchSession.hasMoreData()) {
 		getLoadMoreLabel().setText("Querying the cloud for more results...");
-		getLoadMoreLabel().setIcon(spinnerIcon);
+		getLoadMoreLabel().setIcon(Icon.Spinning.icon());
 	    } else {
 		getLoadMoreLabel().setText("No more results.");
 		getLoadMoreLabel().setIcon(null);
