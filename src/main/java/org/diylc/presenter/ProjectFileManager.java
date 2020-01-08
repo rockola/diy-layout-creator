@@ -41,12 +41,15 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.EventType;
 import org.diylc.core.Project;
 import org.diylc.parsing.IOldFileParser;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,24 +64,24 @@ public class ProjectFileManager {
 
     private static final Logger LOG = LogManager.getLogger(ProjectFileManager.class);
 
-    private XStream xStream;
+    // Deserializer for 3.0.7 < DIYLC version < 3.x.y
+    private static XStream xStream;
     // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in
     // pixels.
-    private XStream xStreamOld;
+    private static XStream xStreamOld;
 
     private String currentFileName = null;
     private boolean modified = false;
 
     private MessageDispatcher<EventType> messageDispatcher;
 
-    private List<IOldFileParser> parsers;
+    private static List<IOldFileParser> parsers;
   
-    private Set<String> missingFields = new HashSet<String>();
+    private static Set<String> missingFields = new HashSet<String>();
 
-    public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
-	super();
-	this.xStream = new XStream(new DomDriver("UTF-8")) {
-      
+    static {
+	xStream = new XStream(new DomDriver("UTF-8")) {
+
 		@Override
 		protected MapperWrapper wrapMapper(MapperWrapper next) {
 		    return new MapperWrapper(next) {
@@ -107,7 +110,7 @@ public class ProjectFileManager {
 	xStream.alias("font", java.awt.Font.class);
 	xStream.alias("project", Project.class);
 	xStream.aliasPackage("diylc", "org.diylc.components");
-	xStream.registerConverter(new PointConverter());        
+	xStream.registerConverter(new PointConverter());
 	xStream.registerConverter(new ColorConverter());
 	xStream.registerConverter(new FontConverter());
 	xStream.registerConverter(new MeasureConverter());
@@ -128,7 +131,11 @@ public class ProjectFileManager {
 	xStreamOld.autodetectAnnotations(true);
 	XStream.setupDefaultSecurity(xStreamOld);
 	xStreamOld.allowTypesByWildcard(allowTypes);
+    }
 
+
+    public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
+	super();
 	this.messageDispatcher = messageDispatcher;
     }
 
@@ -138,7 +145,7 @@ public class ProjectFileManager {
 	fireFileStatusChanged();
     }
 
-    public List<IOldFileParser> getParsers() {
+    public static List<IOldFileParser> getParsers() {
 	if (parsers == null) {
 	    parsers = new ArrayList<IOldFileParser>();
 	    Set<Class<?>> componentTypeClasses = null;
@@ -160,10 +167,12 @@ public class ProjectFileManager {
 	return parsers;
     }
 
-    public synchronized void serializeProjectToFile(Project project, String fileName, boolean isBackup)
+    public synchronized void serializeProjectToFile(Project project,
+						    String fileName,
+						    boolean isBackup)
 	throws IOException {
 	if (!isBackup) {
-	    LOG.info(String.format("saveProjectToFile(%s)", fileName));
+	    LOG.info(String.format("serializeProjectToFile(%s)", fileName));
 	}
 	FileOutputStream fos;
 	fos = new FileOutputStream(fileName);
@@ -178,8 +187,38 @@ public class ProjectFileManager {
 	}
     }
 
-    public Project deserializeProjectFromFile(String fileName, List<String> warnings) throws SAXException, IOException,
-											     ParserConfigurationException {
+    public static Project getProjectFromFile(String fileName) {
+	LOG.trace("getProjectFromFile({})", fileName);
+	Project project = null;
+	List<String> warnings = new ArrayList<String>();
+	try {
+	    project = (Project) deserializeProjectFromFileInternal(fileName, warnings);
+	} catch (Exception e) {
+	    for (String w : warnings) {
+		LOG.warn(w);
+	    }
+	    DIYLC.ui().error(String.format(DIYLC.getString("message.presenter.could-not-open"),
+					   fileName), e);
+	}
+	return project;
+    }
+
+    public Project deserializeProjectFromFile(String fileName,
+					      List<String> warnings)
+	throws SAXException,
+	       IOException,
+	       ParserConfigurationException {
+	Project p = deserializeProjectFromFileInternal(fileName, warnings);
+	this.currentFileName = fileName;
+	this.modified = false;
+	return p;
+    }
+
+    private static Project deserializeProjectFromFileInternal(String fileName,
+							      List<String> warnings)
+	throws SAXException,
+	       IOException,
+	       ParserConfigurationException {
 	LOG.info(String.format("loadProjectFromFile(%s)", fileName));
 	Project project = null;
 	File file = new File(fileName);
@@ -187,7 +226,8 @@ public class ProjectFileManager {
 	DocumentBuilder db = dbf.newDocumentBuilder();
 	Document doc = db.parse(new InputSource(new InputStreamReader(new FileInputStream(file))));
 	doc.getDocumentElement().normalize();
-	if (doc.getDocumentElement().getNodeName().equals(Project.class.getName()) || doc.getDocumentElement().getNodeName().equals("project")) {
+	if (doc.getDocumentElement().getNodeName().equals(Project.class.getName())
+	    || doc.getDocumentElement().getNodeName().equals("project")) {
 	    project = parseV3File(fileName, warnings);
 	} else {
 	    if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase("layout")) {
@@ -206,8 +246,6 @@ public class ProjectFileManager {
 		throw new IllegalArgumentException("Unknown file format version: " + formatVersion);
 	}
 	Collections.sort(warnings);
-	this.currentFileName = fileName;
-	this.modified = false;
 	return project;
     }
 
@@ -225,15 +263,19 @@ public class ProjectFileManager {
     }
 
     public void fireFileStatusChanged() {
-	messageDispatcher.dispatchMessage(EventType.FILE_STATUS_CHANGED, getCurrentFileName(), isModified());
+	messageDispatcher.dispatchMessage(EventType.FILE_STATUS_CHANGED,
+					  getCurrentFileName(),
+					  isModified());
     }
 
-    private Project parseV3File(String fileName, List<String> warnings) throws IOException {
+    private static Project parseV3File(String fileName, List<String> warnings)
+	throws IOException {
+
 	Project project;
 	VersionNumber fileVersion;
 	try { 
 	    fileVersion = readV3Version(fileName);
-	    if (fileVersion.compareTo(Presenter.CURRENT_VERSION) > 0)
+	    if (fileVersion.compareTo(DIYLC.getVersionNumber()) > 0)
 		warnings.add("The file is created with a newer version of DIYLC and may contain features that are not supported by your version of DIYLC. Please update.");
 	} catch (Exception e) {
 	    warnings.add("Could not read file version number, the file may be corrupted.");
@@ -256,7 +298,7 @@ public class ProjectFileManager {
 	return project;
     }
   
-    private VersionNumber readV3Version(String fileName) throws Exception {
+    private static VersionNumber readV3Version(String fileName) throws Exception {
 	File fXmlFile = new File(fileName);
 	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -280,6 +322,5 @@ public class ProjectFileManager {
 	int build = Integer.parseInt(n.getFirstChild().getNodeValue());
     
 	return new VersionNumber(major, minor, build);
-
     }
 }
