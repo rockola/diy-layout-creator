@@ -69,9 +69,8 @@ import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IDIYComponent;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.presenter.Presenter;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swingframework.MemoryBar;
 import org.diylc.swingframework.miscutils.PercentageListCellRenderer;
 import org.diylc.swingframework.update.UpdateDialog;
@@ -95,7 +94,6 @@ public class StatusBar extends JPanel implements IPlugIn {
     private JLabel sizeLabel;
 
     private IPlugInPort plugInPort;
-    private ISwingUI swingUI;
 
     // State variables
     private ComponentType componentSlot;
@@ -114,21 +112,20 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     private String getMsg(String name) { return Config.getString("message.statusbar." + name); }
 
-    public StatusBar(ISwingUI swingUI) {
+    public StatusBar() {
 	super();
-	this.swingUI = swingUI;
 
 	this.announcementProvider = new AnnouncementProvider();
 
 	setLayout(new GridBagLayout());
 
 	try {
-	    swingUI.injectGUIComponent(this, SwingUtilities.BOTTOM);
+	    DIYLC.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
 	} catch (BadPositionException e) {
 	    LOG.error("Could not install status bar", e);
 	}
 
-	swingUI.executeBackgroundTask(new ITask<String>() {
+	DIYLC.ui().executeBackgroundTask(new ITask<String>() {
 
 		@Override
 		public String doInBackground() throws Exception {
@@ -177,7 +174,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 	    });
 
 	ConfigurationManager.addListener(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
-					       new IConfigListener() {
+					 new IConfigListener() {
 
 		@Override
 		public void valueChanged(String key, Object value) {
@@ -205,7 +202,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     private UpdateLabel getUpdateLabel() {
 	if (updateLabel == null) {
-	    updateLabel = new UpdateLabel(plugInPort.getCurrentVersionNumber(),
+	    updateLabel = new UpdateLabel(DIYLC.getVersionNumber(),
 					  Config.getURL("update").toString()) {
 
 		    private static final long serialVersionUID = 1L;
@@ -222,7 +219,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     public JLabel getAnnouncementLabel() {
 	if (announcementLabel == null) {
-	    announcementLabel = new JLabel(IconLoader.Megaphone.getIcon()) {
+	    announcementLabel = new JLabel(Icon.Megaphone.icon()) {
 
 		    private static final long serialVersionUID = 1L;
 
@@ -237,7 +234,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
-			swingUI.executeBackgroundTask(new ITask<String>() {
+			DIYLC.ui().executeBackgroundTask(new ITask<String>() {
 
 				@Override
 				public String doInBackground() throws Exception {
@@ -247,17 +244,17 @@ public class StatusBar extends JPanel implements IPlugIn {
 				@Override
 				public void failed(Exception e) {
 				    LOG.error("Error while fetching announcements", e);
-				    swingUI.error(getMsg("failed-announcements"));
+				    DIYLC.ui().error(getMsg("failed-announcements"));
 				}
 
 				@Override
 				public void complete(String result) {
 				    final String pa = getMsg("public-announcement");
 				    if (result != null && result.length() > 0) {
-					swingUI.info(pa, result);
+					DIYLC.ui().info(pa, result);
 					announcementProvider.dismissed();
 				    } else
-					swingUI.info(pa, getMsg("no-announcements"));
+					DIYLC.ui().info(pa, getMsg("no-announcements"));
 				}
 
 			    }, true);
@@ -269,7 +266,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     public JLabel getRecentChangesLabel() {
 	if (recentChangesLabel == null) {
-	    recentChangesLabel = new JLabel(IconLoader.ScrollInformation.getIcon()){
+	    recentChangesLabel = new JLabel(Icon.ScrollInformation.icon()){
 
 		    private static final long serialVersionUID = 1L;
 
@@ -285,12 +282,12 @@ public class StatusBar extends JPanel implements IPlugIn {
 
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
-			List<Version> updates = plugInPort.getRecentUpdates();
+			List<Version> updates = Version.getRecentUpdates();
 			if (updates == null)
-			    swingUI.info(getMsg("no-version-history"));
+			    DIYLC.ui().info(getMsg("no-version-history"));
 			else {
 			    String html = UpdateChecker.createUpdateHTML(updates);
-			    UpdateDialog updateDialog = new UpdateDialog(swingUI.getOwnerFrame().getRootPane(),
+			    UpdateDialog updateDialog = new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(),
 									 html,
 									 null);
 			    updateDialog.setVisible(true);
@@ -334,7 +331,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     public JLabel getSizeLabel() {
 	if (sizeLabel == null) {
-	    sizeLabel = new JLabel(IconLoader.Size.getIcon()) {
+	    sizeLabel = new JLabel(Icon.Size.icon()) {
 
 		    private static final long serialVersionUID = 1L;
 
@@ -501,12 +498,11 @@ public class StatusBar extends JPanel implements IPlugIn {
 	Point2D mousePosition = metric ? mousePositionMm : mousePositionIn;
 	String unit = metric ? "mm" : "in";
 
-	if (mousePosition == null)
-	    getPositionLabel().setText(null);
-	else
-	    getPositionLabel().setText(String.format("x:%.2f%s y:%.2f%s",
-						     mousePosition.getX(), unit,
-						     mousePosition.getY(), unit));
+	getPositionLabel().setText(mousePosition == null
+				   ? null
+				   : String.format("x:%.2f%s y:%.2f%s",
+						   mousePosition.getX(), unit,
+						   mousePosition.getY(), unit));
     }
 
     private void refreshStatusText() {
@@ -562,9 +558,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
 	// override any other status with this when in highlight mode,
 	// as we cannot do anything else
-	Boolean highlightConnectedAreasMode =
-	    DIYLC.getBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, false);
-	if (highlightConnectedAreasMode)
+	if (DIYLC.highlightContinuityArea())
 	    statusText = getMsg("highlight-connected");
 
 	final String finalStatus = statusText;
