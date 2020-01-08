@@ -64,10 +64,10 @@ public class ProjectDrawingProvider implements IDrawingProvider {
 	if (useZoom) {
 	    drawOptions.add(DrawOption.ZOOM);
 	}
-	if (showGridWhenNeeded && DIYLC.getBoolean(IPlugInPort.EXPORT_GRID_KEY, false)) {
+	if (showGridWhenNeeded && DIYLC.exportGrid()) {
 	    drawOptions.add(DrawOption.GRID);
 	}
-	if (DIYLC.getBoolean(IPlugInPort.OUTLINE_KEY, false)) {
+	if (DIYLC.outlineMode()) {
 	    drawOptions.add(DrawOption.OUTLINE_MODE);
 	}
 	if (includeExtraSpace) {
