@@ -38,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -66,10 +66,9 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.IDynamicSubmenuHandler;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.actionbar.ActionBarPlugin;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.autosave.AutoSavePlugin;
@@ -86,7 +85,7 @@ import org.diylc.swing.plugins.toolbox.ToolBox;
 import org.diylc.swing.plugins.tree.ComponentTree;
 import org.diylc.swingframework.ButtonDialog;
 
-public class MainFrame extends JFrame implements ISwingUI {
+public class MainFrame extends JFrame {
 
     private static final Logger LOG = LogManager.getLogger(MainFrame.class);
 
@@ -107,67 +106,77 @@ public class MainFrame extends JFrame implements ISwingUI {
     private CanvasPlugin canvasPlugin;
 
     public MainFrame() {
-	super("DIYLC 3");
+	super(Config.getString("app.title"));
 
 	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	setPreferredSize(new Dimension(1024, 700));
 	createBasePanels();
 	menuMap = new HashMap<String, JMenu>();
 	buttonGroupMap = new HashMap<String, ButtonGroup>();
-	setIconImages(Arrays.asList(IconLoader.IconSmall.getImage(),
-				    IconLoader.IconMedium.getImage(),
-				    IconLoader.IconLarge.getImage()));
+	/*
+	setIconImages(Arrays.asList(Icon.IconSmall.image(),
+				    Icon.IconMedium.image(),
+				    Icon.IconLarge.image()));
+	*/
+	setIconImages(Arrays.asList(Icon.AppSmall.image(),
+				    Icon.AppMedium.image(),
+				    Icon.App.image()));
 	DialogFactory.getInstance().initialize(this);
+    }
 
-	this.presenter = new Presenter(this);
+    public void installPlugins() {
 
-	canvasPlugin = new CanvasPlugin(this);
+	if (presenter == null) {
+	    this.presenter = new Presenter();
 
-	presenter.installPlugin(new ToolBox(this));
-	presenter.installPlugin(new FileMenuPlugin(this));
-	presenter.installPlugin(new EditMenuPlugin(this));
-	presenter.installPlugin(new ConfigPlugin(this));
-	presenter.installPlugin(new LayersMenuPlugin(this));
-	presenter.installPlugin(new CloudPlugIn(this));
-	presenter.installPlugin(new HelpMenuPlugin(this));
-	presenter.installPlugin(new ActionBarPlugin(this));
+	    canvasPlugin = new CanvasPlugin();
 
-	presenter.installPlugin(new StatusBar(this));
+	    presenter.installPlugin(new ToolBox());
+	    presenter.installPlugin(new FileMenuPlugin());
+	    presenter.installPlugin(new EditMenuPlugin());
+	    presenter.installPlugin(new ConfigPlugin());
+	    presenter.installPlugin(new LayersMenuPlugin());
+	    presenter.installPlugin(new CloudPlugIn());
+	    presenter.installPlugin(new HelpMenuPlugin());
+	    presenter.installPlugin(new ActionBarPlugin());
 
-	presenter.installPlugin(canvasPlugin);
+	    presenter.installPlugin(new StatusBar());
 
-	presenter.installPlugin(new ComponentTree(this, canvasPlugin.getCanvasPanel()));
-	presenter.installPlugin(new FramePlugin());
+	    presenter.installPlugin(canvasPlugin);
 
-	presenter.installPlugin(new AutoSavePlugin(this));
+	    presenter.installPlugin(new ComponentTree(canvasPlugin.getCanvasPanel()));
+	    presenter.installPlugin(new FramePlugin());
 
-	presenter.createNewProject();
+	    presenter.installPlugin(new AutoSavePlugin());
 
-	addWindowListener(new WindowAdapter() {
+	    presenter.createNewProject();
 
-		@Override
-		public void windowClosed(WindowEvent e) {
-		    if (presenter.allowFileAction()) {
-			DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
-			dispose();
-			presenter.dispose();
-			System.exit(0);
+	    addWindowListener(new WindowAdapter() {
+
+		    @Override
+		    public void windowClosed(WindowEvent e) {
+			if (presenter.allowFileAction()) {
+			    DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+			    dispose();
+			    presenter.dispose();
+			    System.exit(0);
+			}
 		    }
-		}
 
-		@Override
-		public void windowClosing(WindowEvent e) {
-		    if (presenter.allowFileAction()) {
-			DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
-			dispose();
-			presenter.dispose();
-			System.exit(0);
+		    @Override
+		    public void windowClosing(WindowEvent e) {
+			if (presenter.allowFileAction()) {
+			    DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+			    dispose();
+			    presenter.dispose();
+			    System.exit(0);
+			}
 		    }
-		}
-	    });
+		});
 
-	setGlassPane(new CustomGlassPane());
-	// getGlassPane().setVisible(true);
+	    setGlassPane(new CustomGlassPane());
+	    // getGlassPane().setVisible(true);
+	}
     }
 
     public Presenter getPresenter() {
@@ -233,13 +242,10 @@ public class MainFrame extends JFrame implements ISwingUI {
 	return mainMenuBar;
     }
 
-    // IView
-
-    @Override
     public void showMessage(String message, String title, int messageType) {
+	LOG.debug("showMessage('{}', '{}', {})", message, title, messageType);
 	JOptionPane.showMessageDialog(this, message, title, messageType);
     }
-
 
     public void info(String title, String text) {
 	showMessage(text, title, IView.INFORMATION_MESSAGE);
@@ -247,11 +253,19 @@ public class MainFrame extends JFrame implements ISwingUI {
     public void info(String text) {
 	info(Config.getString("message.info"), text);
     }
+    public void info(String text, Exception e) {
+	error(Config.getString("message.info"),
+	      String.format("%s %s", text, e.getMessage()));
+    }
     public void error(String title, String text) {
 	showMessage(text, title, IView.ERROR_MESSAGE);
     }
     public void error(String text) {
 	error(Config.getString("message.error"), text);
+    }
+    public void error(String text, Exception e) {
+	error(Config.getString("message.error"),
+	      String.format("%s %s", text, e.getMessage()));
     }
     public void warn(String title, String text) {
 	showMessage(text, title, IView.WARNING_MESSAGE);
@@ -260,12 +274,10 @@ public class MainFrame extends JFrame implements ISwingUI {
 	warn(Config.getString("message.warn"), text);
     }
 
-    @Override
     public int showConfirmDialog(String message, String title, int optionType, int messageType) {
 	return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
     }
 
-    @Override
     public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
 	PropertyEditorDialog editor =
 	    DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Selection", true);
@@ -286,8 +298,26 @@ public class MainFrame extends JFrame implements ISwingUI {
 	return menu;
     }
 
-    @Override
-    public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
+    /**
+       Injects a custom GUI panels provided by the plug-in and desired position in the window.
+       Application will layout plug-in panels accordingly. <br>
+       Valid positions are:
+       <ul>
+       <li> {@link SwingConstants#TOP}</li>
+       <li> {@link SwingConstants#BOTTOM}</li>
+       <li> {@link SwingConstants#LEFT}</li>
+       <li> {@link SwingConstants#RIGHT}</li>
+       </ul>
+
+       Center position is reserved for the main canvas panel and cannot be used.
+
+       @param component
+       @param position
+       @throws BadPositionException in case invalid position is specified
+    */
+    public void injectGUIComponent(JComponent component, int position)
+	throws BadPositionException {
+
 	LOG.trace("injectGUIComponent(%s, %s)", component.getClass().getName(), position);
 	switch (position) {
 	case SwingConstants.TOP:
@@ -311,7 +341,15 @@ public class MainFrame extends JFrame implements ISwingUI {
 	pack();
     }
 
-    @Override
+    /**
+       Injects a custom menu action into application's main menu. If
+       <code>action</code> is set to null {@link Separator} will be
+       added. If the specified menu does not exist it will be
+       automatically created.
+
+       @param action {@link Action} to insert
+       @param menuName name of the menu to insert into
+    */
     public void injectMenuAction(Action action, String menuName) {
 	LOG.trace("injectMenuAction(%s, %s)",
 		  action == null ? "Separator" : action.getValue(Action.NAME),
@@ -341,29 +379,45 @@ public class MainFrame extends JFrame implements ISwingUI {
 	}
     }  
 
-    @Override
+    /**
+       Injects a custom submenu into application's main menu. If the
+       specified menu does not exist it will be automatically created.
+
+       @param name
+       @param icon
+       @param parentMenuName
+    */
     public void injectSubmenu(String name, Icon icon, String parentMenuName) {
 	LOG.trace("injectSubmenu(%s, icon, %s)", name, parentMenuName);
 	JMenu menu = findOrCreateMenu(parentMenuName);
 	JMenu submenu = new JMenu(name);
-	submenu.setIcon(icon);
+	if (icon != null)
+	    submenu.setIcon(icon.icon());
 	menu.add(submenu);
 	menuMap.put(name, submenu);
     }
   
-    @Override
     public void injectMenuComponent(JComponent component) {
 	getMainMenuBar().add(component);
     }
 
-    @Override
+    /**
+       Injects a dynamic submenu into application's main menu. Items
+       are read from the <code>handler</code> and notifications are
+       sent to the <code>handler</code> when an item is clicked on.
+
+       @param name
+       @param icon
+       @param parentMenuName
+       @param handler
+     */
     public void injectDynamicSubmenu(String name, Icon icon, String parentMenuName,
 				     final IDynamicSubmenuHandler handler) {
 
 	LOG.trace("injectDynamicSubmenu(%s, icon, %s)", name, parentMenuName);
 	final JMenu menu = findOrCreateMenu(parentMenuName);
 	final JMenu submenu = new JMenu(name);
-	submenu.setIcon(icon);
+	submenu.setIcon(icon.icon());
 	menu.add(submenu);
 	menuMap.put(name, submenu);
 
@@ -404,7 +458,13 @@ public class MainFrame extends JFrame implements ISwingUI {
 	    });
     }
 
-    @Override
+
+    /**
+     * Runs a task in background while showing busy cursor and a glass pane if needed.
+     *
+     * @param task
+     * @param blockUI
+     */
     public <T extends Object> void executeBackgroundTask(final ITask<T> task, boolean blockUI) {
 
 	if (blockUI)
@@ -436,15 +496,19 @@ public class MainFrame extends JFrame implements ISwingUI {
 	worker.execute();
     }
 
-    @Override
+    /**
+       @return {@link JFrame} that can be used to reference secondary dialogs and frames
+     */
     public JFrame getOwnerFrame() {
 	return this;
     }
 
-    @Override
     public File promptFileSave() {
-	return DialogFactory.getInstance().showSaveDialog(this, FileFilterEnum.DIY.getFilter(), null,
-							  FileFilterEnum.DIY.getExtensions()[0], null);
+	return DialogFactory.getInstance().showSaveDialog(this,
+							  FileFilterEnum.DIY.getFilter(),
+							  null,
+							  FileFilterEnum.DIY.getExtensions()[0],
+							  null);
     }
 
     class FramePlugin implements IPlugIn {
@@ -469,17 +533,15 @@ public class MainFrame extends JFrame implements ISwingUI {
 		    fileName = "Untitled";
 		}
 		String modified = (Boolean) params[1] ? " (modified)" : "";
-		setTitle(String.format("DIYLC v%s.%s.%s - %s %s",
-				       plugInPort.getCurrentVersionNumber().getMajor(),
-				       plugInPort.getCurrentVersionNumber().getMinor(),
-				       plugInPort.getCurrentVersionNumber().getBuild(),
+		setTitle(String.format("DIYLC v%s - %s %s",
+				       DIYLC.getFullVersionString(),
 				       fileName,
 				       modified));
 	    }
 	}
     }
 
-    @Override
+
     public void bringToFocus() {
 	this.requestFocus();
     }
