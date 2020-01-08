@@ -10,15 +10,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.diylc.images.IconLoader;
-
+import org.diylc.images.Icon;
 
 /**
- * {@link JTextField} adapted to display {@link Double}. Use {@link #getValue()}
- * and {@link #setValue(Double)} to read and write.
- * 
- * @author Branislav Stojkovic
- */
+  {@link JTextField} adapted to display {@link Double}. Use
+  {@link #getValue()} and {@link #setValue(Double)} to read and write.
+
+  @author Branislav Stojkovic
+*/
 public class DoubleTextField extends JTextField {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +42,7 @@ public class DoubleTextField extends JTextField {
     public DoubleTextField() {
 	super();
 	setLayout(new BorderLayout());
-	errorLabel = new JLabel(IconLoader.Warning.getIcon());
+	errorLabel = new JLabel(Icon.Warning.icon());
 	errorLabel.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
 	add(errorLabel, BorderLayout.EAST);
 	getDocument().addDocumentListener(new DocumentListener() {
