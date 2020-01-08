@@ -49,7 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -89,9 +89,8 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
 import org.diylc.core.Template;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.presenter.ComponentProcessor;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.toolbox.ComponentButtonFactory;
 
 public class TreePanel extends JPanel {
@@ -114,14 +113,12 @@ public class TreePanel extends JPanel {
     private List<String> blocks;
 
     private IPlugInPort plugInPort;
-    private ISwingUI swingUI;
     private boolean initializing = false;
 
     private JPopupMenu popup;
 
-    public TreePanel(IPlugInPort plugInPort, ISwingUI swingUI) {
+    public TreePanel(IPlugInPort plugInPort) {
 	this.plugInPort = plugInPort;
-	this.swingUI = swingUI;
 	setLayout(new GridBagLayout());
 
 	GridBagConstraints gbc = new GridBagConstraints();
@@ -586,7 +583,7 @@ public class TreePanel extends JPanel {
 			    final boolean isFavorite = favorites != null && favorites.indexOf(fav) >= 0;
 			    final JMenuItem favoritesItem =
 				new JMenuItem(isFavorite ? "Remove From Favorites" : "Add To Favorites",
-					      isFavorite ? IconLoader.StarBlue.getIcon() : IconLoader.StarGrey.getIcon());
+					      isFavorite ? Icon.StarBlue.icon() : Icon.StarGrey.icon());
 			    favoritesItem.addActionListener(new ActionListener() {
 
 				    @Override
@@ -623,7 +620,7 @@ public class TreePanel extends JPanel {
 			    }
 			} else if (selectedNode.isLeaf()) {
 			    popup.add(shortcutSubmenu);
-			    popup.add(new DeleteBlockAction(plugInPort, swingUI, payload.toString()));
+			    popup.add(new DeleteBlockAction(plugInPort, payload.toString()));
 			}
 		    }
 
@@ -649,7 +646,7 @@ public class TreePanel extends JPanel {
 
 			Graphics2D g2d = (Graphics2D) g;
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-			Icon icon = IconLoader.SearchBox.getIcon();
+			javax.swing.Icon icon = Icon.SearchBox.icon();
 			icon.paintIcon(searchField, g2d, searchField.getWidth() - 18, 3);
 
 			if (searchField.getText().trim().length() == 0 && !searchField.hasFocus()) {
@@ -760,7 +757,7 @@ public class TreePanel extends JPanel {
 		if (payload.getComponentType() == null) {
 		    setToolTipText(null);
 		    if (leaf)
-			setIcon(IconLoader.Component.getIcon());
+			setIcon(Icon.Component.icon());
 		    if (payload.isVisible())
 			setPreferredSize(new Dimension(250, 20));
 		    else
@@ -906,13 +903,11 @@ public class TreePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private IPlugInPort plugInPort;
-	private ISwingUI swingUI;
-	private String blockName;    
+	private String blockName;
 
-	public DeleteBlockAction(IPlugInPort plugInPort, ISwingUI swingUI, String blockName) {
+	public DeleteBlockAction(IPlugInPort plugInPort, String blockName) {
 	    super();
 	    this.plugInPort = plugInPort;
-	    this.swingUI = swingUI;
 	    this.blockName = blockName;
 	    putValue(AbstractAction.NAME, "Delete Building Block");
 	}
@@ -920,7 +915,9 @@ public class TreePanel extends JPanel {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	    LOG.info(getValue(AbstractAction.NAME) + " triggered");
-	    if (swingUI.showConfirmDialog("Are you sure you want to delete building block \"" + blockName + "\"?", "Delete Building Block", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) == IView.YES_OPTION)
+	    if (DIYLC.ui().showConfirmDialog("Are you sure you want to delete building block \"" + blockName + "\"?",
+					     "Delete Building Block",
+					     IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) == IView.YES_OPTION)
 		plugInPort.deleteBlock(blockName);
 	}
     }
