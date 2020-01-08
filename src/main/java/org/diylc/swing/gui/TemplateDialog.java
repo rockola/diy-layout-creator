@@ -41,6 +41,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -48,6 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -58,6 +60,7 @@ import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
+import org.diylc.common.Message;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
 import org.diylc.core.Project;
@@ -210,12 +213,14 @@ public class TemplateDialog extends JDialog {
 	    infoPanel = new JPanel();
 	    infoPanel.setBackground(Color.decode("#FFFFCC"));
 	    infoPanel.setBorder(new JTextField().getBorder());
-	    JLabel infoLabel =
-		new JLabel(
-			   "<html>Templates are semi-product layouts that are used as a starting point for your projects.<br>"
-			   + "Pick a template in the left list and click \"Load Template\" to load it or close this dialog to continue.<br>"
-			   + "You can create your own templates by placing a DIY file into <b>diylc/templates</b> directory.</html>");
-	    infoLabel.setOpaque(false);
+	    //JLabel infoLabel = new JLabel(DIYLC.getHTML("message.templateDialog.info"));
+	    //infoLabel.setOpaque(false);
+	    JTextPane infoLabel = new JTextPane();
+	    infoLabel.setContentType("text/html");
+	    infoLabel.setText(Message.getHTML("message.templateDialog.info", true, "<br>"));
+	    infoLabel.setEditable(false);
+	    //infoLabel.setLineWrap(true);
+	    //infoLabel.setWrapStyleWord(true);
 	    infoPanel.add(infoLabel);
 	}
 	return infoPanel;
