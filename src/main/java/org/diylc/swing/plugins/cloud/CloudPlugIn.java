@@ -33,17 +33,17 @@ import javax.swing.AbstractAction;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.core.IView;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.presenter.CloudException;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.presenter.Presenter;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.plugins.cloud.view.ChangePasswordDialog;
 import org.diylc.swing.plugins.cloud.view.LoginDialog;
@@ -60,7 +60,6 @@ public class CloudPlugIn implements IPlugIn {
 
     private final static Logger LOG = LogManager.getLogger(CloudPlugIn.class);
 
-    private ISwingUI swingUI;
     private IPlugInPort plugInPort;
     private IPlugInPort thumbnailPresenter;
 
@@ -78,15 +77,14 @@ public class CloudPlugIn implements IPlugIn {
     private CloudBrowserFrame cloudBrowser;
 
     private void menuEntry(AbstractAction action) {
-	swingUI.injectMenuAction(action, ONLINE_TITLE);
+	DIYLC.ui().injectMenuAction(action, ONLINE_TITLE);
     }
     private void separator() { menuEntry(null); }
     private String getMsg(String key) { return Config.getString("message.cloud." + key); }
 
-    public CloudPlugIn(ISwingUI swingUI) {
+    public CloudPlugIn() {
 	super();
 
-	this.swingUI = swingUI;
 	this.thumbnailPresenter = new Presenter();
 
 	menuEntry(getLibraryAction());
@@ -115,7 +113,7 @@ public class CloudPlugIn implements IPlugIn {
     }
 
     private void initialize() {
-	this.swingUI.executeBackgroundTask(new ITask<Boolean>() {
+	DIYLC.ui().executeBackgroundTask(new ITask<Boolean>() {
 
 		@Override
 		public Boolean doInBackground() throws Exception {
@@ -141,13 +139,13 @@ public class CloudPlugIn implements IPlugIn {
 
     public CloudBrowserFrame getCloudBrowser() {
 	if (cloudBrowser == null) {
-	    cloudBrowser = new CloudBrowserFrame(swingUI, plugInPort);
+	    cloudBrowser = new CloudBrowserFrame(plugInPort);
 	}
 	return cloudBrowser;
     }
 
     public UploadManagerFrame createUploadManagerFrame() {
-	return new UploadManagerFrame(swingUI, plugInPort);
+	return new UploadManagerFrame(plugInPort);
     }
 
     public LibraryAction getLibraryAction() {
@@ -221,7 +219,7 @@ public class CloudPlugIn implements IPlugIn {
 	public LibraryAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("search"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Cloud.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.Cloud.icon());
 	}
 
 	@Override
@@ -238,7 +236,7 @@ public class CloudPlugIn implements IPlugIn {
 	public LoginAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("log-in"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.IdCard.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
 	}
 
 	@Override
@@ -250,17 +248,16 @@ public class CloudPlugIn implements IPlugIn {
 		    try {
 			if (CloudPresenter.Instance.logIn(dialog.getUserName(),
 							  dialog.getPassword())) {
-			    swingUI.info(getMsg("login-successful"),
-					 getMsg("successfully-logged-in"));
+			    DIYLC.ui().info(getMsg("login-successful"),
+					    getMsg("successfully-logged-in"));
 			    loggedIn();
 			    break;
 			} else {
-			    swingUI.error(getMsg("login-error"),
-					  getMsg("could-not-login"));
+			    DIYLC.ui().error(getMsg("login-error"),
+					     getMsg("could-not-login"));
 			}
 		    } catch (CloudException e1) {
-			    swingUI.error(getMsg("login-error"),
-					  getMsg("could-not-login") + e1.getMessage());
+			DIYLC.ui().error(getMsg("could-not-login"), e1);
 		    }
 		} else
 		    break;
@@ -275,7 +272,7 @@ public class CloudPlugIn implements IPlugIn {
 	public LogOutAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("log-out"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.IdCard.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
 	}
 
 	@Override
@@ -292,7 +289,7 @@ public class CloudPlugIn implements IPlugIn {
 	public CreateAccountAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("create-new-account"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.IdCardAdd.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.IdCardAdd.icon());
 	}
 
 	@Override
@@ -300,7 +297,7 @@ public class CloudPlugIn implements IPlugIn {
 	    final UserEditDialog dialog = DialogFactory.getInstance().createUserEditDialog(null);
 	    dialog.setVisible(true);
 	    if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		swingUI.executeBackgroundTask(new ITask<Void>() {
+		DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
 
 			@Override
 			public Void doInBackground() throws Exception {
@@ -314,12 +311,12 @@ public class CloudPlugIn implements IPlugIn {
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.error(getMsg("account-not-created") + e.getMessage());
+			    DIYLC.ui().error(getMsg("account-not-created"), e);
 			}
 
 			@Override
 			public void complete(Void result) {
-			    swingUI.info(getMsg("account-created"));
+			    DIYLC.ui().info(getMsg("account-created"));
 			}
 		    }, true);
 	    }
@@ -333,7 +330,7 @@ public class CloudPlugIn implements IPlugIn {
 	public ManageAccountAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("manage-account"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.IdCardEdit.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.IdCardEdit.icon());
 	}
 
 	@Override
@@ -343,7 +340,7 @@ public class CloudPlugIn implements IPlugIn {
 		    DialogFactory.getInstance().createUserEditDialog(CloudPresenter.Instance.getUserDetails());
 		dialog.setVisible(true);
 		if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		    swingUI.executeBackgroundTask(new ITask<Void>() {
+		    DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
 
 			    @Override
 			    public Void doInBackground() throws Exception {
@@ -355,17 +352,17 @@ public class CloudPlugIn implements IPlugIn {
 
 			    @Override
 			    public void failed(Exception e) {
-				swingUI.error(getMsg("account-not-updated") + e.getMessage());
+				DIYLC.ui().error(getMsg("account-not-updated"), e);
 			    }
 
 			    @Override
 			    public void complete(Void result) {
-				swingUI.info(getMsg("account-updated"));
+				DIYLC.ui().info(getMsg("account-updated"));
 			    }
 			}, true);
 		}
 	    } catch (CloudException e1) {
-		swingUI.error(getMsg("could-not-connect") + e1.getMessage());
+		DIYLC.ui().error(getMsg("could-not-connect"), e1);
 	    }
 	}
     }
@@ -377,7 +374,7 @@ public class CloudPlugIn implements IPlugIn {
 	public ChangePasswordAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("change-password"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.KeyEdit.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.KeyEdit.icon());
 	}
 
 	@Override
@@ -385,7 +382,7 @@ public class CloudPlugIn implements IPlugIn {
 	    final ChangePasswordDialog dialog = DialogFactory.getInstance().createChangePasswordDialog();
 	    dialog.setVisible(true);
 	    if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		swingUI.executeBackgroundTask(new ITask<Void>() {
+		DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
 
 			@Override
 			public Void doInBackground() throws Exception {
@@ -396,12 +393,12 @@ public class CloudPlugIn implements IPlugIn {
 
 			@Override
 			public void failed(Exception e) {
-			    swingUI.error(getMsg("password-update-failed") + e.getMessage());
+			    DIYLC.ui().error(getMsg("password-update-failed"), e);
 			}
 
 			@Override
 			public void complete(Void result) {
-			    swingUI.info(getMsg("password-updated"));
+			    DIYLC.ui().info(getMsg("password-updated"));
 			}
 		    }, true);
 	    }
@@ -415,7 +412,7 @@ public class CloudPlugIn implements IPlugIn {
 	public UploadAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("upload-project"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.CloudUp.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.CloudUp.icon());
 	}
 
 	@Override
@@ -427,7 +424,7 @@ public class CloudPlugIn implements IPlugIn {
 								null,
 								FileFilterEnum.DIY.getExtensions()[0],
 								null,
-								swingUI.getOwnerFrame());
+								DIYLC.ui().getOwnerFrame());
 	    if (files != null && files.length > 0) {
 		List<ITask<String[]>> tasks = new ArrayList<ITask<String[]>>();
 		final ListIterator<ITask<String[]>> taskIterator = tasks.listIterator();
@@ -445,7 +442,7 @@ public class CloudPlugIn implements IPlugIn {
 			    @Override
 			    public void complete(final String[] result) {
 				final UploadDialog dialog =
-				    DialogFactory.getInstance().createUploadDialog(swingUI.getOwnerFrame(),
+				    DialogFactory.getInstance().createUploadDialog(DIYLC.ui().getOwnerFrame(),
 										   thumbnailPresenter,
 										   result,
 										   false);
@@ -455,7 +452,7 @@ public class CloudPlugIn implements IPlugIn {
 					final File thumbnailFile = File.createTempFile("upload-thumbnail",
 										       ".png");
 					if (ImageIO.write(dialog.getThumbnail(), "png", thumbnailFile)) {
-					    swingUI.executeBackgroundTask(new ITask<Void>() {
+					    DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
 
 						    @Override
 						    public Void doInBackground() throws Exception {
@@ -463,7 +460,7 @@ public class CloudPlugIn implements IPlugIn {
 											      dialog.getCategory(),
 											      dialog.getDescription(),
 											      dialog.getKeywords(),
-											      plugInPort.getCurrentVersionNumber().toString(),
+											      DIYLC.getVersionNumber().toString(),
 											      thumbnailFile,
 											      file,
 											      null);
@@ -472,41 +469,40 @@ public class CloudPlugIn implements IPlugIn {
 
 						    @Override
 						    public void failed(Exception e) {
-							swingUI.error(getMsg("upload-error"),
-								      e.getMessage());
+							DIYLC.ui().error(getMsg("upload-error"), e);
 						    }
 
 						    @Override
 						    public void complete(Void result) {
-							swingUI.info(getMsg("upload-success"),
-								     getMsg("project-uploaded"));
+							DIYLC.ui().info(getMsg("upload-success"),
+									getMsg("project-uploaded"));
 							synchronized (taskIterator) {
 							    if (taskIterator.hasPrevious())
-								swingUI.executeBackgroundTask(taskIterator.previous(),
+								DIYLC.ui().executeBackgroundTask(taskIterator.previous(),
 											      true);
 							}
 						    }
 						}, true);
 					} else {
-					    swingUI.error(getMsg("upload-error"),
-							  getMsg("temp-file-error"));
+					    DIYLC.ui().error(getMsg("upload-error"),
+							     getMsg("temp-file-error"));
 					}
 				    } catch (Exception e) {
-					swingUI.error(getMsg("upload-error"), e.getMessage());
+					DIYLC.ui().error(getMsg("upload-error"), e);
 				    }
 				}
 			    }
 
 			    @Override
 			    public void failed(Exception e) {
-				swingUI.error(getMsg("file-not-opened") + e.getMessage());
+				DIYLC.ui().error(getMsg("file-not-opened"), e);
 			    }
 			});
 		}        
 
 		synchronized (taskIterator) {
 		    if (taskIterator.hasPrevious())
-			swingUI.executeBackgroundTask(taskIterator.previous(), true);
+			DIYLC.ui().executeBackgroundTask(taskIterator.previous(), true);
 		}
 	    }
 	}
@@ -519,7 +515,7 @@ public class CloudPlugIn implements IPlugIn {
 	public ManageProjectsAction() {
 	    super();
 	    putValue(AbstractAction.NAME, getMsg("manage-my-uploads"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.CloudGear.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.CloudGear.icon());
 	}
 
 	@Override
