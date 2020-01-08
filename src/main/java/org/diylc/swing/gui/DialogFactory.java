@@ -63,11 +63,11 @@ public class DialogFactory {
     private DialogFactory() {}
 
     /**
-     * Sets the frame to be used as dialog parent. This should be called prior to any other methods in
-     * this class.
-     * 
-     * @param mainFrame
-     */
+       Sets the frame to be used as dialog parent. This should be
+       called prior to any other methods in this class.
+
+       @param mainFrame
+    */
     public void initialize(JFrame mainFrame) {
 	this.mainFrame = mainFrame;
 	String lastDirectoryPath = DIYLC.getString(PATH_KEY, null);
@@ -210,6 +210,7 @@ public class DialogFactory {
 	return dialog;
     }
 
+    /*
     public UserEditDialog createUserEditDialog(UserEntity existingUser) {
 	UserEditDialog dialog = new UserEditDialog(mainFrame, existingUser);
 	return dialog;
@@ -231,6 +232,7 @@ public class DialogFactory {
 	ChangePasswordDialog dialog = new ChangePasswordDialog(mainFrame);
 	return dialog;
     }
+    */
 
     public ProgressDialog createProgressDialog(String title, String[] buttonCaptions,
 					       String description,
