@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
+  <app>
+    <author>Branislav Stojkovic and others</author>
+  </app>
   <project>
     <new-title>New Project</new-title>
   </project>
