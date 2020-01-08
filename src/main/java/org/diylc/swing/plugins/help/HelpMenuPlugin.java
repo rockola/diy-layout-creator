@@ -105,12 +105,12 @@ public class HelpMenuPlugin implements IPlugIn {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-	    about.setEditorText(Message.getHTML(this.textKey));
+	    about.setEditorText(DIYLC.getHTML(this.textKey));
 	}
     }
 
     private String defaultAboutText() {
-	return Message.getHTML("interactive-license");
+	return DIYLC.getHTML("interactive-license");
     }
 
     private AboutDialog getAboutDialog() {
