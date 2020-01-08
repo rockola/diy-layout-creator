@@ -3,9 +3,9 @@ package org.diylc.swing.plugins.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.diylc.DIYLC;
 import org.diylc.common.IPlugInPort;
 import org.diylc.swing.ActionFactory;
-import org.diylc.swing.ISwingUI;
 
 public class ConfigActions {
     private List<ConfigAction> actions;
@@ -18,13 +18,13 @@ public class ConfigActions {
 	actions.add(new ConfigAction(name, action, defaultValue));
     }
 
-    public void injectActions(ISwingUI ui, IPlugInPort plugInPort, String menuName) {
+    public void injectActions(IPlugInPort plugInPort, String menuName) {
 	for (ConfigAction a : actions) {
-	    ui.injectMenuAction(ActionFactory.createConfigAction(plugInPort,
-								 a.getName(),
-								 a.getAction(),
-								 a.getDefault()),
-				menuName);
+	    DIYLC.ui().injectMenuAction(ActionFactory.createConfigAction(plugInPort,
+									 a.getName(),
+									 a.getAction(),
+									 a.getDefault()),
+					menuName);
 	}
     }
 
