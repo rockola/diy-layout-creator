@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <font>
+    <!-- "Open Sans is the go to Humanist web font for designers that
+         want a great substitute to Tahoma."
+
+	 https://medium.com/designed-thought/the-top-5-google-sans-serif-typefaces-7477bfbebae7
+	 referenced 2020-01-01 
+    -->
+    <sans-serif>Open Sans</sans-serif>
+    <!-- "Jura is a decent substitue to Eurostile.  The uppercase
+         letters are a closer match than the lowercase.  But after a
+         couple hours searching IMO its the best availible." 
+
+	 http://joelcrawfordsmith.com/closest-font/font/eurostile
+	 referenced 2020-01-01 
+    -->
+    <label>Jura</label>    
+  </font>
+</configuration>
