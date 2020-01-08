@@ -45,6 +45,8 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
+import org.diylc.DIYLC;
+
 public class AboutDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
@@ -60,10 +62,11 @@ public class AboutDialog extends JDialog {
     private final URL url;
     private final String htmlContent;
 
-    public AboutDialog(JFrame parent, String appName, Icon icon,
+    public AboutDialog(JFrame parent,
+		       String appName, Icon icon,
 		       String version, String author,
 		       URL url, String htmlContent) {
-	super(parent, "About");
+	super(parent, DIYLC.getString("menu.help.about"));
 	this.appName = appName;
 	this.icon = icon;
 	this.version = version;
