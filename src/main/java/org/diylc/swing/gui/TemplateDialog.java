@@ -55,11 +55,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import org.diylc.DIYLC;
+import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
+import org.diylc.core.Project;
+import org.diylc.presenter.DrawingManager;
 import org.diylc.presenter.Presenter;
+import org.diylc.presenter.ProjectFileManager;
 
 public class TemplateDialog extends JDialog {
 
@@ -68,9 +72,8 @@ public class TemplateDialog extends JDialog {
     private static final Logger LOG = LogManager.getLogger(TemplateDialog.class);
 
     private static final Dimension panelSize = new Dimension(400, 300);
-    public static final String SHOW_TEMPLATES_KEY = "showTemplatesAtStartup";
-
-    private IPlugInPort plugInPort;
+    public static final String SHOW_TEMPLATES_KEY =
+	"templates.show-at-startup"; //"showTemplatesAtStartup";
 
     private JList fileList;
     private JPanel canvasPanel;
@@ -81,21 +84,26 @@ public class TemplateDialog extends JDialog {
     private JButton loadButton;
     private JPanel infoPanel;
 
-    public TemplateDialog(JFrame owner, IPlugInPort plugInPort) {
+    private Project templateProject;
+
+    public TemplateDialog(JFrame owner) {
 	super(owner, "Templates");
 	setModal(true);
 	setResizable(false);
-	this.plugInPort = plugInPort;
+	/*
 	this.presenter = new Presenter(new IView() {
 
 		@Override
-		public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-		    return JOptionPane.showConfirmDialog(TemplateDialog.this, message, title, optionType, messageType);
+		public int showConfirmDialog(String message, String title,
+					     int optionType, int messageType) {
+		    return JOptionPane.showConfirmDialog(TemplateDialog.this,
+							 message, title, optionType, messageType);
 		}
 
 		@Override
 		public void showMessage(String message, String title, int messageType) {
-		    JOptionPane.showMessageDialog(TemplateDialog.this, message, title, messageType);
+		    JOptionPane.showMessageDialog(TemplateDialog.this,
+						  message, title, messageType);
 		}
 
 		@Override
@@ -104,10 +112,12 @@ public class TemplateDialog extends JDialog {
 		}
 
 		@Override
-		public boolean editProperties(List<PropertyWrapper> properties, Set<PropertyWrapper> defaultedProperties) {
+		public boolean editProperties(List<PropertyWrapper> properties,
+					      Set<PropertyWrapper> defaultedProperties) {
 		    return false;
 		}
 	    });
+	*/
 	// this.presenter.installPlugin(new IPlugIn() {
 	//
 	// @Override
@@ -185,7 +195,9 @@ public class TemplateDialog extends JDialog {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
-			plugInPort.loadProject(presenter.getCurrentProject(), true, null);
+			DIYLC.ui().getPresenter().loadProject(templateProject,
+							      true,
+							      null);
 			dispose();
 		    }
 		});
@@ -201,7 +213,7 @@ public class TemplateDialog extends JDialog {
 	    JLabel infoLabel =
 		new JLabel(
 			   "<html>Templates are semi-product layouts that are used as a starting point for your projects.<br>"
-			   + "Pick a templete in the left list and click \"Load Template\" to load it or close this dialog to continue.<br>"
+			   + "Pick a template in the left list and click \"Load Template\" to load it or close this dialog to continue.<br>"
 			   + "You can create your own templates by placing a DIY file into <b>diylc/templates</b> directory.</html>");
 	    infoLabel.setOpaque(false);
 	    infoPanel.add(infoLabel);
@@ -218,9 +230,14 @@ public class TemplateDialog extends JDialog {
 		    private static final long serialVersionUID = 1L;
 
 		    @Override
-		    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+		    public Component getListCellRendererComponent(JList list, Object value,
+								  int index, boolean isSelected,
 								  boolean cellHasFocus) {
-			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			JLabel label = (JLabel) super.getListCellRendererComponent(list,
+										   value,
+										   index,
+										   isSelected,
+										   cellHasFocus);
 			if (value instanceof File) {
 			    label.setText(((File) value).getName());
 			}
@@ -234,11 +251,20 @@ public class TemplateDialog extends JDialog {
 		    public void valueChanged(ListSelectionEvent e) {
 			File file = (File) fileList.getSelectedValue();
 			if (file != null) {
-			    presenter.loadProjectFromFile(file.getAbsolutePath());
-			    Dimension dim = presenter.getCanvasDimensions(true, true);
+			    Project p =
+				ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+			    templateProject = p;
+			    // TODO: show p in canvasPanel
+			    Dimension dim = DrawingManager.getCanvasDimensions(p,
+									       // TODO:
+									       // drawingManager.
+									       // zoomLevel
+									       1.0,
+									       true);
 			    double xFactor = panelSize.getWidth() / dim.getWidth();
 			    double yFactor = panelSize.getHeight() / dim.getHeight();
-			    presenter.setZoomLevel(Math.min(xFactor, yFactor));
+			    // TODO: set zoom level
+			    // presenter.setZoomLevel(Math.min(xFactor, yFactor));
 			    getCanvasPanel().repaint();
 			}
 		    }
@@ -266,15 +292,18 @@ public class TemplateDialog extends JDialog {
     public List<File> getFiles() {
 	if (files == null) {
 	    files = new ArrayList<File>();
-	    File dir = new File("templates");
+	    String s = Utils.getUserDataDirectory("diylc") + "templates";
+	    File dir = new File(s);
 	    if (dir.exists()) {
 		for (File f : dir.listFiles()) {
 		    if (f.isFile() && f.getName().toLowerCase().endsWith(".diy")) {
 			files.add(f);
 		    }
 		}
+	    } else {
+		LOG.debug("Template dir {} does not exist", s);
 	    }
-	    LOG.debug("Found " + files.size() + " templates");
+	    LOG.debug("Found {} templates in {} ", files.size(), s);
 	}
 	return files;
     }
@@ -288,14 +317,9 @@ public class TemplateDialog extends JDialog {
 		    @Override
 		    public void paint(Graphics g) {
 			super.paint(g);
-			// Graphics2D g2d = (Graphics2D) g;
-			// AffineTransform transform = g2d.getTransform();
-			presenter.draw((Graphics2D) g, EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING), null, null);
-			// g2d.setTransform(transform);
-			// Rectangle rect = canvasPanel.getBounds();
-			// BorderFactory.createEtchedBorder().paintBorder(canvasPanel,
-			// g, 0, 0,
-			// (int) rect.getWidth(), (int) rect.getHeight());
+			Presenter.drawProject(templateProject,
+					      (Graphics2D) g,
+					      EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING));
 		    }
 		};
 	    canvasPanel.setBackground(Color.white);
