@@ -37,7 +37,6 @@ import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.swing.ISwingUI;
 import org.diylc.swing.plugins.config.ConfigPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
 
@@ -45,14 +44,11 @@ public class ComponentTree implements IPlugIn {
 
     private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
-    private ISwingUI swingUI;
     private IPlugInPort plugInPort;
-
     private TreePanel treePanel;
     private JComponent canvasPanel;
 
-    public ComponentTree(ISwingUI swingUI, JComponent canvasPanel) {
-	this.swingUI = swingUI;
+    public ComponentTree(JComponent canvasPanel) {
 	this.canvasPanel = canvasPanel;
     }
 
@@ -60,7 +56,7 @@ public class ComponentTree implements IPlugIn {
     public void connect(IPlugInPort plugInPort) {
 	this.plugInPort = plugInPort;
 	try {
-	    swingUI.injectGUIComponent(getTreePanel(), SwingConstants.LEFT);
+	    DIYLC.ui().injectGUIComponent(getTreePanel(), SwingConstants.LEFT);
 	} catch (BadPositionException e) {
 	    LOG.error("Could not install the component tree", e);
 	}
@@ -96,7 +92,7 @@ public class ComponentTree implements IPlugIn {
 
     public TreePanel getTreePanel() {
 	if (treePanel == null) {
-	    treePanel = new TreePanel(plugInPort, swingUI);
+	    treePanel = new TreePanel(plugInPort);
 	}
 	return treePanel;
     }
