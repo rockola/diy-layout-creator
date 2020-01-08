@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 
 /**
  * {@link JTextField} adapted to display {@link Double}. Use {@link #getValue()}
@@ -45,7 +45,7 @@ public class DoubleArrayTextField extends JTextField {
     public DoubleArrayTextField() {
 	super();
 	setLayout(new BorderLayout());
-	errorLabel = new JLabel(IconLoader.Warning.getIcon());
+	errorLabel = new JLabel(Icon.Warning.icon());
 	errorLabel.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
 	add(errorLabel, BorderLayout.EAST);
 	getDocument().addDocumentListener(new DocumentListener() {
@@ -134,8 +134,7 @@ public class DoubleArrayTextField extends JTextField {
 	} else if (parsed instanceof Float) {
 	    return ((Float) parsed).doubleValue();
 	} else {
-	    throw new RuntimeException(
-				       "Unrecognized data type: "
+	    throw new RuntimeException("Unrecognized data type: "
 				       + parsed.getClass().getName());
 	}
     }
