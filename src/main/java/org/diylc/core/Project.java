@@ -49,13 +49,9 @@ public class Project implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static String DEFAULT_TITLE = Config.getString("project.new-title");
-
     public static Size DEFAULT_WIDTH = new Size(29d, SizeUnit.cm);
-
     public static Size DEFAULT_HEIGHT =	new Size(21d, SizeUnit.cm);
-
     public static Size DEFAULT_GRID_SPACING = new Size(0.1d, SizeUnit.in);
-
     public static Font DEFAULT_FONT = new Font(Config.getString("font.label"),
 					       Font.PLAIN, 14);
 
@@ -322,7 +318,8 @@ public class Project implements Serializable {
 	project.getHiddenLayers().addAll(this.getHiddenLayers());
 	project.setFont(this.getFont());
 
-	Map<IDIYComponent<?>, IDIYComponent<?>> cloneMap = new HashMap<IDIYComponent<?>, IDIYComponent<?>>();
+	Map<IDIYComponent<?>, IDIYComponent<?>> cloneMap =
+	    new HashMap<IDIYComponent<?>, IDIYComponent<?>>();
 
 	for (IDIYComponent<?> component : this.components) {
 	    try {
