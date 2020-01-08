@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.appframework.update;
 
 import java.io.Serializable;
@@ -10,11 +29,27 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
     private int minor;
     private int build;
 
-    public VersionNumber(int major, int minor, int build) {
-	super();
+    private final void initComponents(int major, int minor, int build) {
 	this.major = major;
 	this.minor = minor;
 	this.build = build;
+    }
+
+    private final void initComponents(String versionString) {
+	String[] versionComponents = versionString.split("\\.", 0);
+	initComponents(Integer.parseInt(versionComponents[0]),
+		       Integer.parseInt(versionComponents[1]),
+		       Integer.parseInt(versionComponents[2]));
+    }
+
+    public VersionNumber(int major, int minor, int build) {
+	super();
+	initComponents(major, minor, build);
+    }
+
+    public VersionNumber(String versionString) {
+	super();
+	initComponents(versionString);
     }
 
     public int getMajor() {
@@ -83,6 +118,6 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
 
     @Override
     public String toString() {
-	return major + "." + minor + "." + build;
+	return String.format("%d.%d.%d", major, minor, build);
     }
 }
