@@ -210,7 +210,6 @@ public class DialogFactory {
 	return dialog;
     }
 
-    /*
     public UserEditDialog createUserEditDialog(UserEntity existingUser) {
 	UserEditDialog dialog = new UserEditDialog(mainFrame, existingUser);
 	return dialog;
@@ -232,7 +231,6 @@ public class DialogFactory {
 	ChangePasswordDialog dialog = new ChangePasswordDialog(mainFrame);
 	return dialog;
     }
-    */
 
     public ProgressDialog createProgressDialog(String title, String[] buttonCaptions,
 					       String description,
