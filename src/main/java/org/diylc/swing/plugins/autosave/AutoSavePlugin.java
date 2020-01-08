@@ -1,6 +1,6 @@
 /*
   DIY Layout Creator (DIYLC). 
-  Copyright (c) 2009-2019 held jointly by the individual authors.
+  Copyright (c) 2009-2020 held jointly by the individual authors.
   
   This file is part of DIYLC.
   
@@ -40,7 +40,6 @@ import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.IView;
 
 public class AutoSavePlugin implements IPlugIn {
 
@@ -56,7 +55,7 @@ public class AutoSavePlugin implements IPlugIn {
   private IPlugInPort plugInPort;
   private long lastSave = 0;
 
-  public AutoSavePlugin(IView view) {
+  public AutoSavePlugin() {
     executor = Executors.newSingleThreadExecutor();
   }
 
