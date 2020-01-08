@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
 import org.diylc.appframework.update.VersionNumber;
@@ -56,15 +56,16 @@ public class UpdateLabel extends JLabel {
 		    try {
 			updatedVersions = get();
 			if (updatedVersions.size() == 0) {
-			    setIcon(IconLoader.LightBulbOff.getIcon());
+			    setIcon(Icon.LightBulbOff.icon());
 			    setToolTipText("No updates available, click to check again");
 			} else {
-			    setIcon(IconLoader.LightBulbOn.getIcon());
+			    setIcon(Icon.LightBulbOn.icon());
 			    setToolTipText("Updates are available, click to see details");
 			}
 		    } catch (Exception e) {
-			setIcon(IconLoader.LightBulbOff.getIcon());
-			setToolTipText("Error occurred while searching for updates: " + e.getMessage());
+			setIcon(Icon.LightBulbOff.icon());
+			setToolTipText("Error occurred while searching for updates: "
+				       + e.getMessage());
 			setCursor(Cursor.getDefaultCursor());
 		    }
 		}
