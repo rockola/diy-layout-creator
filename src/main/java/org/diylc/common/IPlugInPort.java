@@ -32,7 +32,6 @@ import java.util.Set;
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.Version;
-import org.diylc.appframework.update.VersionNumber;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
@@ -191,20 +190,6 @@ public interface IPlugInPort
      * @param zoomLevel new zoom leve
      */
     void setZoomLevel(double zoomLevel);
-
-    /**
-     * Returns current version number.
-     * 
-     * @return
-     */
-    VersionNumber getCurrentVersionNumber();
-  
-    /**
-     * Returns few most recent versions. 
-     * 
-     * @return
-     */
-    List<Version> getRecentUpdates();
 
     /**
      * Adds a list of components to the project.
