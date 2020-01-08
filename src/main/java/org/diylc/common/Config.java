@@ -23,10 +23,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Arrays;
 
 import javax.swing.KeyStroke;
 
+import org.apache.commons.configuration2.CompositeConfiguration;
+import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
@@ -39,6 +43,7 @@ import org.apache.commons.configuration2.io.FileSystemLocationStrategy;
 
 import org.apache.commons.text.WordUtils;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -46,38 +51,64 @@ import org.diylc.swing.gui.Keymap;
 
 public final class Config {
 
+    private static final Logger LOG = LogManager.getLogger(Config.class);
+
     private Config() { }
     
-    private static final Configurations configs = new Configurations();
+    private static final CompositeConfiguration config;
+    // private static final Configurations configs = new Configurations();
     
-    private static XMLConfiguration config = null;
-    private static FileBasedConfigurationBuilder<XMLConfiguration> builder = null;
+    //private static XMLConfiguration config = null;
+    //private static FileBasedConfigurationBuilder<XMLConfiguration> builder = null;
     private static Keymap keymap = null;
 
-    private static final String defaults = "org/diylc/defaults.xml";
+    private static final List<String> configurationFiles =
+	Arrays.asList("org/diylc/defaults.xml",
+		      "org/diylc/fonts.xml",
+		      "org/diylc/icons.xml",
+		      "org/diylc/strings-EN.xml");
 
-    private static FileBasedConfigurationBuilder<XMLConfiguration> getBuilder() {
-	if (builder == null) {
-	    final FileLocationStrategy strategy =
-		new CombinedLocationStrategy(Arrays.asList(new ClasspathLocationStrategy(),
-							   new FileSystemLocationStrategy()));
-	    builder = new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
-		.configure(new Parameters()
-			   .xml()
-			   .setLocationStrategy(strategy)
-			   .setFileName(defaults));
-	}
-
-	return builder;
+    private static FileBasedConfigurationBuilder<XMLConfiguration> getBuilder(String configurationFile) {
+	final FileLocationStrategy strategy =
+	    new CombinedLocationStrategy(Arrays.asList(new ClasspathLocationStrategy(),
+						       new FileSystemLocationStrategy()));
+	return new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
+	    .configure(new Parameters()
+		       .xml()
+		       .setLocationStrategy(strategy)
+		       .setFileName(configurationFile));
     }
 
-    private static void initConfig() {
-	if (config == null) {
-	    try {
-		config = getBuilder().getConfiguration();
-		keymap = Keymap.readDefaultKeymap();
-	    } catch (ConfigurationException e) {
-		LogManager.getLogger(Config.class).error("Could not read " + defaults, e);
+    /* initialize configurations */
+    static {
+	config = new CompositeConfiguration();
+	String f = "";
+	try {
+	    for (String configurationFile : configurationFiles) {
+		f = configurationFile;
+		LOG.info("Adding {} to configurations.", configurationFile);
+		config.addConfiguration(getBuilder(configurationFile).getConfiguration());
+	    }
+	    LOG.info("{} configurations added.", config.getNumberOfConfigurations());
+	} catch (ConfigurationException e) {
+	    LOG.error("Could not read " + f, e);
+	}
+	try {
+	    keymap = Keymap.readDefaultKeymap();
+	} catch (Exception e) {
+	    LOG.error("Could not load default keymap", e);
+	}
+
+	LOG.debug("{} configurations exist.", config.getNumberOfConfigurations());
+	if (LOG.getLevel().isMoreSpecificThan(Level.TRACE)) {
+	    for (int i = 0; i < config.getNumberOfConfigurations(); i++) {
+		Configuration c = config.getConfiguration(i);
+		LOG.trace("Configuration #{} size {}", i, c.size());
+		Iterator<String> keys = c.getKeys();
+		while (keys.hasNext()) {
+		    String key = keys.next();
+		    LOG.trace("Key {}", key);
+		}
 	    }
 	}
     }
@@ -103,6 +134,10 @@ public final class Config {
 	return url;
     }
 
+    public static Boolean getBoolean(String key) {
+	return config.getBoolean(key, null);
+    }
+
     /**
        Fetch _key_ contents from defaults as String.
 
@@ -112,7 +147,6 @@ public final class Config {
        Only the last part after any dot ('.') is used.
      */
     public static String getString(String key) {
-	initConfig();
 	String s = config.getString(key);
 	if (s != null && s.isEmpty()) {
 	    int beginIndex = key.lastIndexOf('.') > 0 ? key.lastIndexOf('.') + 1 : 0;
@@ -122,7 +156,6 @@ public final class Config {
     }
 
     public static KeyStroke getKeyStroke(String action) {
-	initConfig();
 	return keymap.stroke(action);
     }
 }
