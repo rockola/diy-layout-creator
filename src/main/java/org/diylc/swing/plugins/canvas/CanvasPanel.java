@@ -76,7 +76,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
     private Image bufferImage;
     private GraphicsConfiguration screenGraphicsConfiguration;
 
-    public boolean useHardwareAcceleration = DIYLC.getBoolean(IPlugInPort.HARDWARE_ACCELERATION);
+    public boolean useHardwareAcceleration = DIYLC.hardwareAcceleration();
 
     // static final EnumSet<DrawOption> DRAW_OPTIONS =
     // EnumSet.of(DrawOption.GRID,
@@ -258,16 +258,16 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 	Set<DrawOption> drawOptions = EnumSet.of(DrawOption.SELECTION,
 						 DrawOption.ZOOM,
 						 DrawOption.CONTROL_POINTS);
-	if (DIYLC.getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true)) {
+	if (DIYLC.antiAliasing()) {
 	    drawOptions.add(DrawOption.ANTIALIASING);
 	}
-	if (DIYLC.getBoolean(IPlugInPort.OUTLINE_KEY, false)) {
+	if (DIYLC.outlineMode()) {
 	    drawOptions.add(DrawOption.OUTLINE_MODE);
 	}
-	if (DIYLC.getBoolean(IPlugInPort.SHOW_GRID_KEY, true)) {
+	if (DIYLC.showGrid()) {
 	    drawOptions.add(DrawOption.GRID);
 	}
-	if (DIYLC.getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true)) {
+	if (DIYLC.extraSpace()) {
 	    drawOptions.add(DrawOption.EXTRA_SPACE);
 	}
 
