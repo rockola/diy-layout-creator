@@ -90,7 +90,7 @@ import org.diylc.netlist.NetlistAnalyzer;
 import org.diylc.netlist.Node;
 import org.diylc.netlist.Position;
 import org.diylc.netlist.SwitchSetup;
-import org.diylc.swing.gui.DummyView;
+import org.diylc.swing.gui.MainFrame;
 import org.diylc.utils.Constants;
 
 /**
@@ -102,49 +102,8 @@ public class Presenter implements IPlugInPort {
 
     private static final Logger LOG = LogManager.getLogger(Presenter.class);
 
-    public static VersionNumber CURRENT_VERSION = new VersionNumber(3, 0, 0);
-    public static List<Version> RECENT_VERSIONS = null;
-
     private String getMsg(String key) { return DIYLC.getString("message.presenter." + key); }
     
-    // Read the latest version from the local update.xml file
-    static {
-	try {
-	    //@SuppressWarnings("unchecked")
-	    List<Version> allVersions =
-		(List<Version>) Serializer.fromResource("/org/diylc/update.xml");
-	    CURRENT_VERSION = allVersions.get(allVersions.size() - 1).getVersionNumber();
-	    LOG.info("Current DIYLC version: " + CURRENT_VERSION);
-	    RECENT_VERSIONS = allVersions.subList(allVersions.size() - 10, allVersions.size());
-	    Collections.sort(RECENT_VERSIONS, new Comparator<Version>() {
-
-		    @Override
-		    public int compare(Version o1, Version o2) {
-			return -o1.getVersionNumber().compareTo(o2.getVersionNumber());
-		    }
-		});
-
-	    // REMOVE THIS when done --ola 20200107
-	    Collections.sort(allVersions); //, Collections.reverseOrder());
-	    Serializer.toFile("/tmp/reversed.xml", allVersions);
-	    try (FileWriter w = new FileWriter("/tmp/update.md")) {
-		for (Version v : allVersions) {
-		    w.write(String.format("## %s\n### %s\n(%s)\n",
-					  v.getVersionNumber(),
-					  v.getReleaseDate(),
-					  v.getUrl()));
-		    for (Change c : v.getChanges()) {
-			w.write(String.format("#### %s\n%s\n",
-					      c.getChangeType(),
-					      c.getDescription()));
-		    }
-		}
-	    }
-	    // end of REMOVE THIS
-	} catch (IOException e) {
-	    LOG.error("Could not find version number, using default", e);
-	}
-    }
     public static final String DEFAULTS_KEY_PREFIX = "default.";
 
     private static Map<String, List<Template>> defaultVariantMap = null;
@@ -193,11 +152,9 @@ public class Presenter implements IPlugInPort {
     // private Cloner cloner;
     private DrawingManager drawingManager;
     private ProjectFileManager projectFileManager;
-    private InstantiationManager instantiationManager;
+    private static InstantiationManager instantiationManager;
 
     private Rectangle selectionRect;
-
-    private final IView view;
 
     private MessageDispatcher<EventType> messageDispatcher;
 
@@ -213,9 +170,8 @@ public class Presenter implements IPlugInPort {
     private int dragAction;
     private Point previousScaledPoint;
 
-    public Presenter(IView view) {
+    public Presenter() {
 	super();
-	this.view = view;
 	plugIns = new ArrayList<IPlugIn>();
 	messageDispatcher = new MessageDispatcher<EventType>(true);
 	selectedComponents = new HashSet<IDIYComponent<?>>();
@@ -230,8 +186,6 @@ public class Presenter implements IPlugInPort {
 	// visibleLayers = EnumSet.allOf(ComponentLayer.class);
 	upgradeVariants();
     }
-
-    public Presenter() { this(new DummyView()); }
 
     public void installPlugin(IPlugIn plugIn) {
 	LOG.trace("installPlugin({})", plugIn.getClass().getSimpleName());
@@ -304,12 +258,10 @@ public class Presenter implements IPlugInPort {
 						  includeExtraSpace);
     }
 
-    @Override
     public Project getCurrentProject() {
 	return currentProject;
     }
 
-    @Override
     public void loadProject(Project project, boolean freshStart, String filename) {
 	LOG.trace("loadProject({}, {})", project.getTitle(), freshStart);
 	this.currentProject = project;
@@ -327,7 +279,6 @@ public class Presenter implements IPlugInPort {
 					  currentProject.getHiddenLayers());
     }
 
-    @Override
     public void createNewProject() {
 	LOG.trace("createNewFile()");
 	try {
@@ -337,13 +288,20 @@ public class Presenter implements IPlugInPort {
 	    projectFileManager.startNewFile();
 	} catch (Exception e) {
 	    LOG.error("Could not create new file", e);
-	    view.showMessage(getMsg("could-not-create"),
-			     "Error",
-			     IView.ERROR_MESSAGE);
+	    DIYLC.ui().error(getMsg("could-not-create"));
 	}
     }
 
-    @Override
+    /**
+       Loads a project from a file but does not set it up for use.
+
+       @param fileName name of the project file
+       @return the project
+     */
+    public Project getProjectFromFile(String fileName) {
+	return ProjectFileManager.getProjectFromFile(fileName);
+    }
+
     public void loadProjectFromFile(String fileName) {
 	LOG.trace("loadProjectFromFile({})", fileName);
 	List<String> warnings = null;
@@ -359,7 +317,7 @@ public class Presenter implements IPlugInPort {
 		for (String warning : warnings) {
 		    builder.append(warning);
 		}
-		view.showMessage(builder.toString(), "Warning", IView.WARNING_MESSAGE);
+		DIYLC.ui().warn(builder.toString());
 	    }
 	    addToRecentFiles(fileName);
 	} catch (Exception ex) {
@@ -373,9 +331,7 @@ public class Presenter implements IPlugInPort {
 		    errorMessage += "\n";
 		}
 	    }
-	    view.showMessage(String.format(errorMessage, fileName),
-			     "Error",
-			     IView.ERROR_MESSAGE);
+	    DIYLC.ui().error(String.format(errorMessage, fileName));
 	}
     }
 
@@ -391,17 +347,21 @@ public class Presenter implements IPlugInPort {
 	DIYLC.putValue(RECENT_FILES_KEY, recentFiles);
     }
 
+    private int showConfirmDialog(String message, String title, int optionType, int messageType) {
+	return DIYLC.ui().showConfirmDialog(message, title, optionType, messageType);
+    }
+
+
     @Override
     public boolean allowFileAction() {
 	if (projectFileManager.isModified()) {
-	    int response =
-		view.showConfirmDialog(getMsg("unsaved-changes"),
-				       DIYLC.getString("message.warn"),
-				       IView.YES_NO_CANCEL_OPTION,
-				       IView.WARNING_MESSAGE);
+	    int response = showConfirmDialog(getMsg("unsaved-changes"),
+					     DIYLC.getString("message.warn"),
+					     IView.YES_NO_CANCEL_OPTION,
+					     IView.WARNING_MESSAGE);
 	    if (response == IView.YES_OPTION) {
 		if (this.getCurrentFileName() == null) {
-		    File file = view.promptFileSave();
+		    File file = DIYLC.ui().promptFileSave();
 		    if (file == null) {
 			return false;
 		    }
@@ -419,16 +379,14 @@ public class Presenter implements IPlugInPort {
     public void saveProjectToFile(String fileName, boolean isBackup) {
 	LOG.trace("saveProjectToFile({})", fileName);
 	try {
-	    currentProject.setFileVersion(CURRENT_VERSION);
+	    currentProject.setFileVersion(DIYLC.getVersionNumber());
 	    projectFileManager.serializeProjectToFile(currentProject, fileName, isBackup);
 	    if (!isBackup)
 		addToRecentFiles(fileName);
 	} catch (Exception ex) {
 	    LOG.error("Could not save file", ex);
 	    if (!isBackup) {
-		view.showMessage(String.format(getMsg("could-not-save"), fileName),
-				 DIYLC.getString("message.error"),
-				 IView.ERROR_MESSAGE);
+		DIYLC.ui().error(String.format(getMsg("could-not-save"), fileName));
 	    }
 	}
     }
@@ -518,10 +476,28 @@ public class Presenter implements IPlugInPort {
 
     @SuppressWarnings({"unchecked"})
     private boolean isComponentVisible(IDIYComponent<?> component) {
+	return isComponentVisible(currentProject, component);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private static boolean isComponentVisible(Project p, IDIYComponent<?> component) {
+
 	ComponentType componentType =
-	    ComponentProcessor.getInstance().extractComponentTypeFrom(
-								      (Class<? extends IDIYComponent<?>>) component.getClass());
-	return !currentProject.getHiddenLayers().contains((int) Math.round(componentType.getZOrder()));
+	    ComponentProcessor.getInstance().extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+	return !p.getHiddenLayers().contains((int) Math.round(componentType.getZOrder()));
+    }
+
+    public static void drawProject(Project p, Graphics2D g2d, Set<DrawOption> drawOptions) {
+	List<String> failedComponentNames =
+	    drawProjectInternal(p, g2d, drawOptions, null, null,
+				null, null, false,
+				new DrawingManager(null));
+
+	if (!failedComponentNames.isEmpty()) {
+	    for (String fc : failedComponentNames) {
+		LOG.error("drawProject: {} failed", fc);
+	    }
+	}
     }
 
     @Override
@@ -530,10 +506,36 @@ public class Presenter implements IPlugInPort {
 	if (currentProject == null) {
 	    return;
 	}
+	List<String> failedComponentNames =
+	    drawProjectInternal(currentProject, g2d, drawOptions, filter, externalZoom,
+				selectionRect, selectedComponents, dragInProgress,
+				drawingManager);
+
+	if (!failedComponentNames.isEmpty()) {
+	    messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED,
+					      "<html><font color='red'>Failed to draw components: " + Utils.toCommaString(failedComponentNames)
+					      + "</font></html>");
+	} else {
+	    messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "");
+	}
+
+    }
+
+    private static List<String> drawProjectInternal(Project p,
+						    Graphics2D g2d,
+						    Set<DrawOption> drawOptions,
+						    final IComponentFiler filter,
+						    Double externalZoom,
+						    Rectangle selectionRect,
+						    Set<IDIYComponent<?>> selectedComponents,
+						    boolean dragInProgress,
+						    DrawingManager drawingManager
+						    ) {
+
 	Set<IDIYComponent<?>> groupedComponents = new HashSet<IDIYComponent<?>>();
-	for (IDIYComponent<?> component : currentProject.getComponents()) {
+	for (IDIYComponent<?> component : p.getComponents()) {
 	    // Only try to draw control points of ungrouped components.
-	    if (findAllGroupedComponents(component).size() > 1) {
+	    if (findAllGroupedComponents(p, component).size() > 1) {
 		groupedComponents.add(component);
 	    }
 	}
@@ -544,7 +546,7 @@ public class Presenter implements IPlugInPort {
 		@Override
 		public boolean testComponent(IDIYComponent<?> component) {
 		    return ((filter == null || filter.testComponent(component))
-			    && isComponentVisible(component));
+			    && isComponentVisible(p, component));
 		}
 	    };
 
@@ -561,12 +563,12 @@ public class Presenter implements IPlugInPort {
 	}
 	List<IDIYComponent<?>> failedComponents =
 	    drawingManager.drawProject(g2d,
-				       currentProject,
+				       p,
 				       drawOptions,
 				       newFiler,
 				       selectionRect,
 				       selectedComponents,
-				       getLockedComponents(),
+				       getLockedComponents(p),
 				       groupedComponents,
 				       Arrays.asList(instantiationManager.getFirstControlPoint(),
 						     instantiationManager.getPotentialControlPoint()),
@@ -578,13 +580,7 @@ public class Presenter implements IPlugInPort {
 	    failedComponentNames.add(component.getName());
 	}
 	Collections.sort(failedComponentNames);
-	if (!failedComponentNames.isEmpty()) {
-	    messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED,
-					      "<html><font color='red'>Failed to draw components: " + Utils.toCommaString(failedComponentNames)
-					      + "</font></html>");
-	} else {
-	    messageDispatcher.dispatchMessage(EventType.STATUS_MESSAGE_CHANGED, "");
-	}
+	return failedComponentNames;
     }
 
     /**
@@ -685,9 +681,7 @@ public class Presenter implements IPlugInPort {
 			    instantiationManager.instantiatePointByPoint(scaledPoint,
 									 currentProject);
 			} catch (Exception e) {
-			    view.showMessage("Could not create component. Check log for details.",
-					     "Error",
-					     IView.ERROR_MESSAGE);
+			    DIYLC.ui().error("Could not create component. Check log for details.");
 			    LOG.error("Could not create component", e);
 			}
 			messageDispatcher.dispatchMessage(EventType.SLOT_CHANGED,
@@ -896,14 +890,12 @@ public class Presenter implements IPlugInPort {
 	List<PropertyWrapper> properties = getMutualSelectionProperties();
 	if (properties != null && !properties.isEmpty()) {
 	    Set<PropertyWrapper> defaultedProperties = new HashSet<PropertyWrapper>();
-	    boolean edited = view.editProperties(properties, defaultedProperties);
+	    boolean edited = DIYLC.ui().editProperties(properties, defaultedProperties);
 	    if (edited) {
 		try {
 		    applyPropertiesToSelection(properties);
 		} catch (Exception e1) {
-		    view.showMessage("Error occured while editing selection. Check the log for details.",
-				     "Error",
-				     JOptionPane.ERROR_MESSAGE);
+		    DIYLC.ui().error("Error occured while editing selection. Check the log for details.");
 		    LOG.error("Error applying properties", e1);
 		}
 		// Save default values.
@@ -1107,16 +1099,6 @@ public class Presenter implements IPlugInPort {
     }
 
     @Override
-    public VersionNumber getCurrentVersionNumber() {
-	return CURRENT_VERSION;
-    }
-
-    @Override
-    public List<Version> getRecentUpdates() {
-	return RECENT_VERSIONS;
-    }
-
-    @Override
     public void dragStarted(Point point, int dragAction, boolean forceSelectionRect) {
 	LOG.trace("dragStarted({}, {})", point, dragAction);
 	if (instantiationManager.getComponentTypeSlot() != null) {
@@ -1136,9 +1118,8 @@ public class Presenter implements IPlugInPort {
 	this.preDragProject = currentProject.clone();
 	Point scaledPoint = scalePoint(point);
 	this.previousDragPoint = scaledPoint;
-	List<IDIYComponent<?>> components = (forceSelectionRect
-					     ? null
-					     : findComponentsAtScaled(scaledPoint));
+	List<IDIYComponent<?>> components =
+	    (forceSelectionRect ? null : findComponentsAtScaled(scaledPoint));
 	if (!this.controlPointMap.isEmpty()) {
 	    // If we're dragging control points reset selection.
 	    updateSelection(new ArrayList<IDIYComponent<?>>(this.controlPointMap.keySet()));
@@ -1292,7 +1273,8 @@ public class Presenter implements IPlugInPort {
 		   && previousDragPoint != null) {
 	    // If there's no selection, the only thing to do is update the
 	    // selection rectangle and refresh.
-	    Rectangle oldSelectionRect = selectionRect == null ? null : new Rectangle(selectionRect);
+	    Rectangle oldSelectionRect =
+		(selectionRect == null ? null : new Rectangle(selectionRect));
 	    this.selectionRect = Utils.createRectangle(scaledPoint, previousDragPoint);
 	    if (selectionRect.equals(oldSelectionRect)) {
 		return true;
@@ -1429,8 +1411,10 @@ public class Presenter implements IPlugInPort {
 	}
 
 	if (!canRotate)
-	    if (view.showConfirmDialog("Selection contains components that cannot be rotated. Do you want to exclude them?",
-				       "Mirror Selection", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) != IView.YES_OPTION)
+	    if (showConfirmDialog("Selection contains components that cannot be rotated. Do you want to exclude them?",
+				  "Mirror Selection",
+				  IView.YES_NO_OPTION,
+				  IView.QUESTION_MESSAGE) != IView.YES_OPTION)
 		return;
 
 	for (IDIYComponent<?> component : selectedComponents) {
@@ -1538,13 +1522,17 @@ public class Presenter implements IPlugInPort {
 	}
 
 	if (!canMirror)
-	    if (view.showConfirmDialog("Selection contains components that cannot be mirrored. Do you want to exclude them?",
-				       "Mirror Selection", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) != IView.YES_OPTION)
+	    if (showConfirmDialog("Selection contains components that cannot be mirrored. Do you want to exclude them?",
+				  "Mirror Selection",
+				  IView.YES_NO_OPTION,
+				  IView.QUESTION_MESSAGE) != IView.YES_OPTION)
 		return;
 
 	if (changesCircuit)
-	    if (view.showConfirmDialog("Mirroring operation will change the circuit. Do you want to continue?",
-				       "Mirror Selection", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) != IView.YES_OPTION)
+	    if (showConfirmDialog("Mirroring operation will change the circuit. Do you want to continue?",
+				  "Mirror Selection",
+				  IView.YES_NO_OPTION,
+				  IView.QUESTION_MESSAGE) != IView.YES_OPTION)
 		return;
 
 	for (IDIYComponent<?> component : components) {
@@ -1841,10 +1829,10 @@ public class Presenter implements IPlugInPort {
 			    && Math.round(componentBeforeType.getZOrder()) < Math.round(componentType.getZOrder())
 			    && forceConfirmation != IView.YES_OPTION
 			    && (forceConfirmation =
-				this.view
-				.showConfirmDialog(
-						   "Selected component(s) have reached the bottom of their layer. Do you want to force the selection to the back?",
-						   "Send Selection to Back", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
+				showConfirmDialog("Selected component(s) have reached the bottom of their layer. Do you want to force the selection to the back?",
+						  "Send Selection to Back",
+						  IView.YES_NO_OPTION,
+						  IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
 			    break;
 		    }
 		    Collections.swap(currentProject.getComponents(), index, index - 1);
@@ -1894,10 +1882,10 @@ public class Presenter implements IPlugInPort {
 			    && Math.round(componentAfterType.getZOrder()) > Math.round(componentType.getZOrder())
 			    && forceConfirmation != IView.YES_OPTION
 			    && (forceConfirmation =
-				this.view
-				.showConfirmDialog(
-						   "Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?",
-						   "Bring Selection to Front", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
+				showConfirmDialog("Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?",
+						  "Bring Selection to Front",
+						  IView.YES_NO_OPTION,
+						  IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
 			    break;
 		    }
 		    Collections.swap(currentProject.getComponents(), index, index + 1);
@@ -2112,10 +2100,11 @@ public class Presenter implements IPlugInPort {
      * @return set of all components that belong to the same group with the specified component. At
      *         the minimum, set contains that single component.
      */
-    private Set<IDIYComponent<?>> findAllGroupedComponents(IDIYComponent<?> component) {
+    private static Set<IDIYComponent<?>> findAllGroupedComponents(Project p,
+								  IDIYComponent<?> component) {
 	Set<IDIYComponent<?>> components = new HashSet<IDIYComponent<?>>();
 	components.add(component);
-	for (Set<IDIYComponent<?>> group : currentProject.getGroups()) {
+	for (Set<IDIYComponent<?>> group : p.getGroups()) {
 	    if (group.contains(component)) {
 		components.addAll(group);
 		break;
@@ -2123,6 +2112,11 @@ public class Presenter implements IPlugInPort {
 	}
 	return components;
     }
+
+    private Set<IDIYComponent<?>> findAllGroupedComponents(IDIYComponent<?> component) {
+	return findAllGroupedComponents(currentProject, component);
+    }
+
 
     @Override
     public Point2D[] calculateSelectionDimension() {
@@ -2221,8 +2215,7 @@ public class Presenter implements IPlugInPort {
 	    }
 	} catch (Exception e) {
 	    LOG.error("Could not apply selection properties", e);
-	    view.showMessage("Could not apply changes to the selection. Check the log for details.", "Error",
-			     IView.ERROR_MESSAGE);
+	    DIYLC.ui().error("Could not apply changes to the selection. Check the log for details.");
 	} finally {
 	    // Notify the listeners.
 	    if (!oldProject.equals(currentProject)) {
@@ -2260,7 +2253,7 @@ public class Presenter implements IPlugInPort {
 	    }
 	} catch (Exception e) {
 	    LOG.error("Could not apply properties", e);
-	    view.showMessage("Could not apply changes. Check the log for details.", "Error", IView.ERROR_MESSAGE);
+	    DIYLC.ui().error("Could not apply changes. Check the log for details.");
 	} finally {
 	    // Notify the listeners.
 	    if (!oldProject.equals(currentProject)) {
@@ -2324,7 +2317,7 @@ public class Presenter implements IPlugInPort {
 					      instantiationManager.getFirstControlPoint(), forceInstatiate);
 	} catch (Exception e) {
 	    LOG.error("Could not set component type slot", e);
-	    view.showMessage("Could not set component type slot. Check log for details.", "Error", IView.ERROR_MESSAGE);
+	    DIYLC.ui().error("Could not set component type slot. Check log for details.");
 	}
     }
 
@@ -2384,9 +2377,9 @@ public class Presenter implements IPlugInPort {
 	}
 
 	if (exists) {
-	    int result =
-		view.showConfirmDialog("A variant with that name already exists. Overwrite?", "Save as Variant",
-				       IView.YES_NO_OPTION, IView.WARNING_MESSAGE);
+	    int result = showConfirmDialog("A variant with that name already exists. Overwrite?",
+					   "Save as Variant",
+					   IView.YES_NO_OPTION, IView.WARNING_MESSAGE);
 	    if (result != IView.YES_OPTION) {
 		return;
 	    }
@@ -2595,21 +2588,30 @@ public class Presenter implements IPlugInPort {
     }
 
     private Set<IDIYComponent<?>> getLockedComponents() {
-	lockedComponents.clear();
-	for (IDIYComponent<?> component : currentProject.getComponents()) {
-	    if (isComponentLocked(component)) {
-		lockedComponents.add(component);
+	lockedComponents = getLockedComponents(currentProject);
+	return lockedComponents;
+    }
+
+    private static Set<IDIYComponent<?>> getLockedComponents(Project p) {
+	Set<IDIYComponent<?>> locked = new HashSet<IDIYComponent<?>>();
+	for (IDIYComponent<?> component : p.getComponents()) {
+	    if (isComponentLocked(p, component)) {
+		locked.add(component);
 	    }
 	}
-	return lockedComponents;
+	return locked;
     }
 
     @SuppressWarnings("unchecked")
     private boolean isComponentLocked(IDIYComponent<?> component) {
+	return isComponentLocked(currentProject, component);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static boolean isComponentLocked(Project p, IDIYComponent<?> component) {
 	ComponentType componentType =
-	    ComponentProcessor.getInstance().extractComponentTypeFrom(
-								      (Class<? extends IDIYComponent<?>>) component.getClass());
-	return currentProject.getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
+	    ComponentProcessor.getInstance().extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+	return p.getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
     }
 
     /**
