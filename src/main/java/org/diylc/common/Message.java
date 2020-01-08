@@ -33,6 +33,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.*;
 
 public final class Message {
+    private static Logger LOG = LogManager.getLogger(Message.class);
     private static Parser parser = Parser.builder().build();
     private static HtmlRenderer renderer = HtmlRenderer.builder().build();
 
@@ -48,10 +49,10 @@ public final class Message {
 		new BufferedReader(new InputStreamReader(loader.getResourceAsStream(markdownResource)));
 	    Node document = parser.parse(reader.lines().collect(Collectors.joining("\n")));
 	    String ret = renderer.render(document);
-	    LogManager.getLogger(Message.class).info("getHtml({}) returns [{}]", name, ret);
+	    LOG.info("getHtml({}) returns [{}]", name, ret);
 	    return ret;
 	} catch (Exception e) {
-	    LogManager.getLogger(Message.class).error("getHtml(" + name + ") failed", e);
+	    LOG.error("getHtml(" + name + ") failed", e);
 	}
 	return "";
     }
