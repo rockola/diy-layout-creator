@@ -145,6 +145,10 @@ public final class Config {
        This means that <key>Key</key> can be stored simply as <key/>.
        Hyphens in _key_ are changed to spaces.
        Only the last part after any dot ('.') is used.
+
+       TODO: use a proper title case function that can turn "bill of
+       materials" into "Bill of Materials" (instead of "Bill Of
+       Materials")
      */
     public static String getString(String key) {
 	String s = config.getString(key);
