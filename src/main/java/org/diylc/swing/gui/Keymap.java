@@ -97,21 +97,24 @@ public class Keymap {
     }
 
     public KeyStroke stroke(String actionName) {
+	if (actionName == null) // perfectly OK to pass null here
+	    return null;
         return getKeyForAction(actionName);
     }
 
-    public static Keymap getDefaultKeymap() {
+    public static Keymap getDefaultKeymap() throws JAXBException {
         if (defaultKeymap == null)
             defaultKeymap = readDefaultKeymap();
         return defaultKeymap;
     }
 
-    public static Keymap readDefaultKeymap() {
+    public static Keymap readDefaultKeymap() throws JAXBException {
+	Keymap defaultKeymap = null;
         try {
             String defaultKeymapResource = "/org/diylc/action/keymap.xml";
             JAXBContext jaxbContext = JAXBContext.newInstance(Keymap.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Keymap defaultKeymap =
+            defaultKeymap =
                 (Keymap) jaxbUnmarshaller.unmarshal(Keymap.class.getResourceAsStream(defaultKeymapResource));
             // initialize mapping from action name to binding
             for (Binding b : defaultKeymap.getBindings()) {
@@ -119,10 +122,10 @@ public class Keymap {
                 defaultKeymap.actionBindingMap.put(b.getAction(), b);
             }
             LOG.debug(KeyCodeAdapter.getAllKeycodes().toString());
-            return defaultKeymap;
         } catch (JAXBException e) {
             LOG.error("Could not load default keymap", e);
+	    throw e;
         }
-        return null;
+	return defaultKeymap;
     }
 }
