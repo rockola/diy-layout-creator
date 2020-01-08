@@ -31,9 +31,8 @@ import javax.swing.KeyStroke;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-
 import org.diylc.DIYLC;
-import org.diylc.images.IconLoader;
+import org.diylc.images.Icon;
 
 /**
   Utility that handles undo/redo operations. Use 
@@ -110,7 +109,7 @@ public class UndoHandler<T> {
 	    super();
 	    putValue(Action.NAME, "Undo");
 	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Undo"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Undo.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.Undo.icon());
 	}
 
 	@Override
@@ -135,7 +134,7 @@ public class UndoHandler<T> {
 	    super();
 	    putValue(Action.NAME, "Redo");
 	    putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Redo"));
-	    putValue(AbstractAction.SMALL_ICON, IconLoader.Redo.getIcon());
+	    putValue(AbstractAction.SMALL_ICON, Icon.Redo.icon());
 	}
 
 	@Override
