@@ -36,134 +36,158 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
+import org.diylc.core.Project;
 
 public class AutoSavePlugin implements IPlugIn {
 
-  private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory("diylc") + "backup";
+    private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory("diylc") + "backup";
 
-  private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
+    private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
 
-  public static long BACKUP_FREQ_MS = 60 * 1000;
-  public static int MAX_TOTAL_SIZE_MB = 64;
+    public static long BACKUP_FREQ_MS = 60 * 1000;
+    public static int MAX_TOTAL_SIZE_MB = 64;
 
-  private ExecutorService executor;
+    private ExecutorService executor;
 
-  private IPlugInPort plugInPort;
-  private long lastSave = 0;
+    private IPlugInPort plugInPort;
+    private long lastSave = 0;
 
-  public AutoSavePlugin() {
-    executor = Executors.newSingleThreadExecutor();
-  }
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
 
-  @Override
-  public void connect(IPlugInPort plugInPort) {
-    this.plugInPort = plugInPort;
-    // create the directory if needed
-    File dir = new File(AUTO_SAVE_PATH);
-    if (!dir.exists())
-      dir.mkdirs();
-  }
-
-  @Override
-  public EnumSet<EventType> getSubscribedEventTypes() {
-    return EnumSet.of(EventType.PROJECT_MODIFIED, EventType.PROJECT_LOADED);
-  }
-
-  @Override
-  public void processMessage(EventType eventType, Object... params) {
-    if (eventType == EventType.PROJECT_MODIFIED) {
-      if (System.currentTimeMillis() - lastSave > BACKUP_FREQ_MS) {
-        executor.execute(new Runnable() {
-
-          @Override
-          public void run() {
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-
-            lastSave = System.currentTimeMillis();
-            String fileName = generateBackupFileName(plugInPort.getCurrentFileName());
-            plugInPort.saveProjectToFile(fileName, true);
-            cleanupExtra();
-          }
-        });
-      }
-    } else if (eventType == EventType.PROJECT_LOADED) {
-      String fileName = (String) params[2];
-      if (fileName != null) {
-        String backupName = generateBackupFileName(fileName);
-        try {
-          copyFileUsingStream(new File(fileName), new File(backupName));
-          LOG.info("Copied loaded file to " + backupName);
-        } catch (IOException e) {
-          LOG.error("Could not copy the loaded file to backup", e);
-        }
-      }
+    public AutoSavePlugin() {
+	executor = Executors.newSingleThreadExecutor();
     }
-  }
 
-  private static void copyFileUsingStream(File source, File dest) throws IOException {
-    InputStream is = null;
-    OutputStream os = null;
-    try {
-      is = new FileInputStream(source);
-      os = new FileOutputStream(dest);
-      byte[] buffer = new byte[1024];
-      int length;
-      while ((length = is.read(buffer)) > 0) {
-        os.write(buffer, 0, length);
-      }
-    } finally {
-      is.close();
-      os.close();
+    @Override
+    public void connect(IPlugInPort plugInPort) {
+	this.plugInPort = plugInPort;
+	File dir = new File(AUTO_SAVE_PATH);
+	if (!dir.exists()) // create the directory if needed
+	    dir.mkdirs();
     }
-  }
 
-  private String generateBackupFileName(String baseFileName) {
-    if (baseFileName == null)
-      baseFileName = "Untitled";
-    File file = new File(baseFileName);
-    String name = file.getName();
-
-    // remove extension
-    if (name.toLowerCase().endsWith(".diy"))
-      name = name.substring(0, name.length() - 4);
-
-    // append date and time
-    Date date = new Date();
-    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-    file = new File(AUTO_SAVE_PATH + File.separator + name + "." + dateFormat.format(date) + ".diy");
-    // make sure that it doesn't already exist
-    int i = 2;
-    while (file.exists()) {
-      file = new File(AUTO_SAVE_PATH + File.separator + name + "." + dateFormat.format(date) + "-" + i + ".diy");
-      i++;
+    @Override
+    public EnumSet<EventType> getSubscribedEventTypes() {
+	return EnumSet.of(EventType.PROJECT_MODIFIED, EventType.PROJECT_LOADED);
     }
-    return file.getAbsolutePath();
-  }
 
-  private void cleanupExtra() {
-    File[] files = new File(AUTO_SAVE_PATH).listFiles();
-    // sort files by date
-    Arrays.sort(files, new Comparator<File>() {
+    @Override
+    public void processMessage(EventType eventType, Object... params) {
+	if (eventType == EventType.PROJECT_MODIFIED) {
+	    if (System.currentTimeMillis() - lastSave > BACKUP_FREQ_MS) {
+		executor.execute(new Runnable() {
 
-      @Override
-      public int compare(File o1, File o2) {
-        return Long.valueOf(o1.lastModified()).compareTo(o2.lastModified());
-      }
-    });
-    long totalSize = 0;
-    long maxTotalSize = MAX_TOTAL_SIZE_MB * 1024 * 1024;
-    for (File f : files)
-      totalSize += f.length();
-    int i = 0;
-    while (i < files.length && totalSize > maxTotalSize) {
-      totalSize -= files[i].length();
-      LOG.info("Maximum backup size exceeded. Deleteting old backup file: " + files[i].getName());
-      files[i].delete();
-      i++;
+			@Override
+			public void run() {
+			    Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+
+			    lastSave = System.currentTimeMillis();
+			    String fileName = generateBackupFileName(plugInPort.getCurrentFileName());
+			    plugInPort.saveProjectToFile(fileName, true);
+			    cleanupExtra();
+			}
+		    });
+	    }
+	} else if (eventType == EventType.PROJECT_LOADED) {
+	    String fileName = (String) params[2];
+	    if (fileName != null) {
+		String backupName = generateBackupFileName(fileName);
+		try {
+		    copyFileUsingStream(new File(fileName), new File(backupName));
+		    LOG.info("Copied loaded file to {}", backupName);
+		} catch (IOException e) {
+		    LOG.error("Could not copy the loaded file to backup", e);
+		}
+	    }
+	}
     }
-  }
+
+    private static void copyFileUsingStream(File source, File dest) throws IOException {
+	InputStream is = null;
+	OutputStream os = null;
+	try {
+	    is = new FileInputStream(source);
+	    os = new FileOutputStream(dest);
+	    byte[] buffer = new byte[1024];
+	    int length;
+	    while ((length = is.read(buffer)) > 0) {
+		os.write(buffer, 0, length);
+	    }
+	} finally {
+	    is.close();
+	    os.close();
+	}
+    }
+
+    private String formatBackupFileName(String name, Date date, int nth) {
+	return AUTO_SAVE_PATH + File.separator + name + "." + dateFormat.format(date)
+	    + (nth < 2 ? "" : "-" + nth)
+	    + Project.FILE_SUFFIX;
+    }
+
+    private String generateBackupFileName(String baseFileName) {
+	if (baseFileName == null)
+	    baseFileName = "Untitled";
+	File file = new File(baseFileName);
+	String name = file.getName();
+
+	// remove extension
+	if (name.toLowerCase().endsWith(Project.FILE_SUFFIX))
+	    name = name.substring(0, name.length() - 4);
+
+	// append date and time
+	Date date = new Date();
+	file = new File(formatBackupFileName(name, date, 1));
+	// make sure that it doesn't already exist
+	int i = 1;
+	String backupFileName = null;
+	do {
+	    if (i > 999) {
+		// 999 is a magic number pulled out of a hat
+		// arbitrarily constraining us to <1000 backup files
+		// by the same name in the same directory
+		//
+		// To be fixed if someone files a bug report
+		LOG.error("Could not generate backup file name from {} after {} tries, last one tried was {}",
+			  baseFileName, i, backupFileName);
+		DIYLC.ui().requestBugReport(DIYLC.getString("project.autosave-failed"));
+		return null;
+	    }
+	    backupFileName = formatBackupFileName(name, date, i);
+	    file = new File(backupFileName);
+	    i++;
+	} while (file.exists());
+
+	return file.getAbsolutePath();
+    }
+
+    private void cleanupExtra() {
+	File[] files = new File(AUTO_SAVE_PATH).listFiles();
+	// sort files by date
+	Arrays.sort(files, new Comparator<File>() {
+
+		@Override
+		public int compare(File o1, File o2) {
+		    return Long.valueOf(o1.lastModified()).compareTo(o2.lastModified());
+		}
+	    });
+	long totalSize = 0;
+	long maxTotalSize = MAX_TOTAL_SIZE_MB * 1024 * 1024;
+	for (File f : files)
+	    totalSize += f.length();
+	int i = 0;
+	while (i < files.length && totalSize > maxTotalSize) {
+	    totalSize -= files[i].length();
+	    LOG.info("Maximum backup size exceeded. Deleting old backup file {}",
+		     files[i].getName());
+	    files[i].delete();
+	    i++;
+	}
+    }
 }
