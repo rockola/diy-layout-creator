@@ -97,7 +97,7 @@ public class ConfigurationManager {
     File configFile = new File(configFileName);
     // if there's no file in the preferred folder, look for it in the app folder
     if (!configFile.exists()) {
-      configFile = new File(fileName);
+      // configFile = new File(fileName); // created but not used? //ola 20200109
       configuration = new HashMap<String, Object>();
     } else {
       try {
@@ -110,7 +110,9 @@ public class ConfigurationManager {
         configuration = new HashMap<String, Object>();
         try {
           File backupFile = new File(path + fileName + "~");
-          while (backupFile.exists()) backupFile = new File(backupFile.getAbsolutePath() + "~");
+          while (backupFile.exists()) {
+            backupFile = new File(backupFile.getAbsolutePath() + "~");
+          }
           copyFileUsingStream(configFile, backupFile);
         } catch (Exception e1) {
           LOG.error("Could not create configuration backup", e1);
