@@ -1,5 +1,7 @@
 ### Building the Project ###
 
+**NOTE: these instructions only apply to DIYLC version 3!**
+
 This tutorial assumes that you have a newer version of Eclipse with
 working Ant and Java 1.6.0_45 installed. It also assumes that you have
 pulled the latest version of the code from the main Git
