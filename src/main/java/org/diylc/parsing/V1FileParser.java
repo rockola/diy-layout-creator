@@ -215,11 +215,9 @@ public class V1FileParser implements IOldFileParser {
           long seed = Long.parseLong(node.getAttributes().getNamedItem("Seed").getNodeValue());
           Random r = new Random(seed);
           randSeed = seed;
-          int d =
-              (int)
-                  Math.round(
-                      Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2))
-                          / 2);
+          int d = (int) Math.round(Math.sqrt(Math.pow(point1.x - point2.x, 2)
+                                             + Math.pow(point1.y - point2.y, 2))
+                                   / 2);
           int x2 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.40) + myRandom(d, r));
           int y2 = (int) (point1.y + Math.round((point2.y - point1.y) * 0.40) + myRandom(d, r));
           int x3 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.60) + myRandom(d, r));
