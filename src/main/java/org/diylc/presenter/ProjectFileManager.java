@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -115,17 +116,25 @@ public class ProjectFileManager {
 	xStream.registerConverter(new FontConverter());
 	xStream.registerConverter(new MeasureConverter());
 	/*
-	  NOTE: XStream.addImmutableType() has been deprecated! //ola 20191230
+	  NOTE: XStream.addImmutableType(java.lang.Class type) has
+	  been deprecated.  My best guess is that
+	  XStream.addImmutableType(java.lang.Class type, boolean
+	  isReferenceable) with isReferenceable set to true will do
+	  the trick. //ola 20191230
 	*/
-	xStream.addImmutableType(Color.class);
-	xStream.addImmutableType(java.awt.Point.class);
-	xStream.addImmutableType(org.diylc.core.measures.Voltage.class);
-	xStream.addImmutableType(org.diylc.core.measures.Resistance.class);
-	xStream.addImmutableType(org.diylc.core.measures.Capacitance.class);
-	xStream.addImmutableType(org.diylc.core.measures.Current.class);
-	xStream.addImmutableType(org.diylc.core.measures.Power.class);
-	xStream.addImmutableType(org.diylc.core.measures.Inductance.class);
-	xStream.addImmutableType(org.diylc.core.measures.Size.class);
+	ArrayList<Class> immutables =
+	    new ArrayList<Class>(Arrays.asList(Color.class,
+					       java.awt.Point.class,
+					       org.diylc.core.measures.Voltage.class,
+					       org.diylc.core.measures.Resistance.class,
+					       org.diylc.core.measures.Capacitance.class,
+					       org.diylc.core.measures.Current.class,
+					       org.diylc.core.measures.Power.class,
+					       org.diylc.core.measures.Inductance.class,
+					       org.diylc.core.measures.Size.class));
+	for (Class c : immutables) {
+	    xStream.addImmutableType(c, true);
+	}
 
 	xStreamOld = new XStream(new DomDriver());
 	xStreamOld.autodetectAnnotations(true);
