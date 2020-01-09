@@ -3,7 +3,7 @@
 ## Requirements
 
 * Java JDK 8 or newer
-* Apache (https://maven.apache.org)[Maven]
+* Apache [Maven](https://maven.apache.org)
 
 Note: Eclipse is not required to build DIYLC. Eclipse setup is not covered here.
 
