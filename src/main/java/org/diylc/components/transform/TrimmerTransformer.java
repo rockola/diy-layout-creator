@@ -1,14 +1,14 @@
-//package org.diylc.components.transform;
+// package org.diylc.components.transform;
 //
-//import java.awt.Point;
-//import java.awt.geom.AffineTransform;
+// import java.awt.Point;
+// import java.awt.geom.AffineTransform;
 //
-//import org.diylc.common.IComponentTransformer;
-//import org.diylc.common.Orientation;
-//import org.diylc.components.passive.TrimmerPotentiometer;
-//import org.diylc.core.IDIYComponent;
+// import org.diylc.common.IComponentTransformer;
+// import org.diylc.common.Orientation;
+// import org.diylc.components.passive.TrimmerPotentiometer;
+// import org.diylc.core.IDIYComponent;
 //
-//public class TrimmerTransformer implements IComponentTransformer {
+// public class TrimmerTransformer implements IComponentTransformer {
 //
 //  @Override
 //  public boolean canRotate(IDIYComponent<?> component) {
@@ -19,15 +19,16 @@
 //  public boolean canMirror(IDIYComponent<?> component) {
 //    return component.getClass().equals(TrimmerPotentiometer.class);
 //  }
-//  
+//
 //  @Override
-//  public boolean mirroringChangesCircuit() {   
+//  public boolean mirroringChangesCircuit() {
 //    return true;
 //  }
 //
 //  @Override
 //  public void rotate(IDIYComponent<?> component, Point center, int direction) {
-//    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+//    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x,
+// center.y);
 //    for (int index = 0; index < component.getControlPointCount(); index++) {
 //      Point p = new Point(component.getControlPoint(index));
 //      rotate.transform(p, p);
@@ -66,7 +67,8 @@
 //        Point p = potentiometer.getControlPoint(i);
 //        potentiometer
 //            .setControlPoint(
-//                new Point(p.x + 2 * dx, p.y + (potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y)),
+//                new Point(p.x + 2 * dx, p.y + (potentiometer.getControlPoint(2).y -
+// potentiometer.getControlPoint(0).y)),
 //                i);
 //      }
 //
@@ -84,11 +86,12 @@
 //      for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
 //        Point p = potentiometer.getControlPoint(i);
 //        potentiometer
-//            .setControlPoint(new Point(p.x + (potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x),
+//            .setControlPoint(new Point(p.x + (potentiometer.getControlPoint(2).x -
+// potentiometer.getControlPoint(0).x),
 //                p.y + 2 * dy), i);
 //      }
 //
 //      potentiometer.setOrientation(o);
 //    }
 //  }
-//}
+// }

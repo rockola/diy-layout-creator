@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -51,9 +50,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Logic Gate", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    instanceNamePrefix = "LG", description = "Basic logic gate schematic symbols",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "Logic Gate",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "LG",
+    description = "Basic logic gate schematic symbols",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
+    keywordTag = "Schematic")
 public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -68,7 +73,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
   protected Display display = Display.NONE;
-  transient private Shape[] body;
+  private transient Shape[] body;
 
   public LogicGateSymbol() {
     super();
@@ -76,7 +81,11 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -95,7 +104,9 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = borderColor;
@@ -107,20 +118,23 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     // Draw triangle
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
     g2d.draw(body[0]);
-    if (body[2] != null)
-      g2d.draw(body[2]);
+    if (body[2] != null) g2d.draw(body[2]);
     // Draw label
     g2d.setFont(project.getFont());
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -133,8 +147,13 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     if (display == Display.BOTH) {
       label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
     }
-    StringUtils.drawCenteredText(g2d, label, x, controlPoints[0].y + (getControlPointCount() == 2 ? 0 : pinSpacing), HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);   
+    StringUtils.drawCenteredText(
+        g2d,
+        label,
+        x,
+        controlPoints[0].y + (getControlPointCount() == 2 ? 0 : pinSpacing),
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
   }
 
   @Override
@@ -142,7 +161,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     int margin = 3 * width / 32;
     Path2D path = new Path2D.Double();
     path.moveTo(margin, margin);
-    path.curveTo(margin * 4, margin * 2, margin * 4, height - margin * 2, margin, height - margin);    
+    path.curveTo(margin * 4, margin * 2, margin * 4, height - margin * 2, margin, height - margin);
     path.quadTo(width - 2 * margin, height - margin * 2, width - margin, height / 2);
     path.quadTo(width - margin * 2, margin * 2, margin, margin);
     Area area = new Area(path);
@@ -179,7 +198,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
       controlPoints[2].x = x + pinSpacing * 6;
       controlPoints[2].y = y + pinSpacing;
-    }   
+    }
   }
 
   public Shape[] getBody() {
@@ -192,31 +211,55 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
       Area main = null;
 
       switch (getGateType()) {
-        case Not:         
+        case Not:
         case Buffer:
-          main = new Area(new Polygon(new int[] {x + pinSpacing * 3 / 2, x + pinSpacing * 9 / 2, x + pinSpacing * 3 / 2}, new int[] {
-                  y - pinSpacing * 2, y, y + pinSpacing * 2}, 3));
+          main =
+              new Area(
+                  new Polygon(
+                      new int[] {
+                        x + pinSpacing * 3 / 2, x + pinSpacing * 9 / 2, x + pinSpacing * 3 / 2
+                      },
+                      new int[] {y - pinSpacing * 2, y, y + pinSpacing * 2},
+                      3));
           break;
         case And:
         case Nand:
-          Path2D path1 = new Path2D.Double();          
+          Path2D path1 = new Path2D.Double();
           path1.moveTo(x + pinSpacing * 3 / 2, y - pinSpacing);
           path1.lineTo(x + pinSpacing * 3 / 2, y + pinSpacing * 3);
-          path1.quadTo(x + pinSpacing * 9 / 2, y + pinSpacing * 3, x + pinSpacing * 9 / 2, y + pinSpacing);
-          path1.quadTo(x + pinSpacing * 9 / 2, y - pinSpacing, x + pinSpacing * 3 / 2, y - pinSpacing);
+          path1.quadTo(
+              x + pinSpacing * 9 / 2, y + pinSpacing * 3, x + pinSpacing * 9 / 2, y + pinSpacing);
+          path1.quadTo(
+              x + pinSpacing * 9 / 2, y - pinSpacing, x + pinSpacing * 3 / 2, y - pinSpacing);
           main = new Area(path1);
           break;
         default:
-          Path2D path2 = new Path2D.Double();          
+          Path2D path2 = new Path2D.Double();
           path2.moveTo(x + pinSpacing, y - pinSpacing);
-          path2.curveTo(x + pinSpacing * 2, y, x + pinSpacing * 2, y + 2 * pinSpacing, x + pinSpacing, y + pinSpacing * 3);
-          path2.quadTo(x + pinSpacing * 7 / 2, y + pinSpacing * 5 / 2, x + pinSpacing * 9 / 2, y + pinSpacing);
+          path2.curveTo(
+              x + pinSpacing * 2,
+              y,
+              x + pinSpacing * 2,
+              y + 2 * pinSpacing,
+              x + pinSpacing,
+              y + pinSpacing * 3);
+          path2.quadTo(
+              x + pinSpacing * 7 / 2,
+              y + pinSpacing * 5 / 2,
+              x + pinSpacing * 9 / 2,
+              y + pinSpacing);
           path2.quadTo(x + pinSpacing * 7 / 2, y - pinSpacing / 2, x + pinSpacing, y - pinSpacing);
           main = new Area(path2);
       }
-      
+
       if (getGateType().getNeedsCircle()) {
-        Area circle = new Area(new Ellipse2D.Double(x + pinSpacing * 9 / 2, y - pinSpacing / 4 + (getControlPointCount() == 2 ? 0 : pinSpacing), pinSpacing / 2, pinSpacing / 2));
+        Area circle =
+            new Area(
+                new Ellipse2D.Double(
+                    x + pinSpacing * 9 / 2,
+                    y - pinSpacing / 4 + (getControlPointCount() == 2 ? 0 : pinSpacing),
+                    pinSpacing / 2,
+                    pinSpacing / 2));
         main.add(circle);
       }
 
@@ -229,8 +272,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
         connections.moveTo(controlPoints[1].x, controlPoints[1].y);
         if (getGateType().getNeedsCircle())
           connections.lineTo(controlPoints[1].x - pinSpacing, controlPoints[1].y);
-        else
-          connections.lineTo(controlPoints[1].x - pinSpacing * 3 / 2, controlPoints[1].y);
+        else connections.lineTo(controlPoints[1].x - pinSpacing * 3 / 2, controlPoints[1].y);
       } else {
         connections.moveTo(controlPoints[0].x, controlPoints[0].y);
         connections.lineTo(controlPoints[0].x + pinSpacing * 3 / 2, controlPoints[0].y);
@@ -239,17 +281,22 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
         connections.moveTo(controlPoints[2].x, controlPoints[2].y);
         if (getGateType().getNeedsCircle())
           connections.lineTo(controlPoints[2].x - pinSpacing, controlPoints[2].y);
-        else
-          connections.lineTo(controlPoints[2].x - pinSpacing * 3 / 2, controlPoints[2].y);
+        else connections.lineTo(controlPoints[2].x - pinSpacing * 3 / 2, controlPoints[2].y);
       }
       body[1] = connections;
-      
+
       if (getGateType().toString().startsWith("X")) {
-        Path2D path = new Path2D.Double();         
+        Path2D path = new Path2D.Double();
         path.moveTo(x + pinSpacing / 2, y - pinSpacing);
-        path.curveTo(x + pinSpacing * 3 / 2, y, x + pinSpacing * 3 / 2, y + 2 * pinSpacing, x + pinSpacing / 2, y + pinSpacing * 3);
+        path.curveTo(
+            x + pinSpacing * 3 / 2,
+            y,
+            x + pinSpacing * 3 / 2,
+            y + 2 * pinSpacing,
+            x + pinSpacing / 2,
+            y + pinSpacing * 3);
         body[2] = path;
-      }     
+      }
     }
     return body;
   }
@@ -318,21 +365,28 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   public void setDisplay(Display display) {
     this.display = display;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public enum GateType {
-    Buffer(false), Not(true), Or(false), And(false), Xor(false), Nor(true), Nand(true), Xnor(true);
-    
+    Buffer(false),
+    Not(true),
+    Or(false),
+    And(false),
+    Xor(false),
+    Nor(true),
+    Nand(true),
+    Xnor(true);
+
     boolean needsCircle;
-    
+
     private GateType(boolean needsCircle) {
       this.needsCircle = needsCircle;
     }
-    
+
     public boolean getNeedsCircle() {
       return needsCircle;
     }

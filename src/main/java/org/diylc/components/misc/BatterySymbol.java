@@ -24,7 +24,6 @@ package org.diylc.components.misc;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
@@ -34,8 +33,13 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.measures.VoltageUnit;
 
-@ComponentDescriptor(name = "Battery", author = "N9XYP", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "B", description = "Battery schematic symbol",
+@ComponentDescriptor(
+    name = "Battery",
+    author = "N9XYP",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "B",
+    description = "Battery schematic symbol",
     zOrder = IDIYComponent.COMPONENT)
 public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
 
@@ -46,16 +50,16 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
   public static Size DEFAULT_LENGTH = new Size(0.05, SizeUnit.in); // plate spacing
   public static Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in); // plate size
 
-  private org.diylc.core.measures.Voltage voltageNew = new org.diylc.core.measures.Voltage(9d, VoltageUnit.V);
+  private org.diylc.core.measures.Voltage voltageNew =
+      new org.diylc.core.measures.Voltage(9d, VoltageUnit.V);
 
   // sets battery voltage to 9V
 
-
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
-
 
   @EditableProperty
   public String getValue() {
@@ -75,7 +79,6 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
     this.voltageNew = voltageNew;
   }
 
-
   @Override
   protected Size getDefaultWidth() {
     return DEFAULT_WIDTH;
@@ -93,8 +96,8 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
     double width = getWidth().convertToPixels(); // plate size
     polyline.moveTo(0, 0); // start point
     polyline.lineTo(0, width); // draw first plate (positive)
-                               // 2nd plate width = w/4 + w/2 + w/4
-                               // w - w/4 = w/2 pixels
+    // 2nd plate width = w/4 + w/2 + w/4
+    // w - w/4 = w/2 pixels
     polyline.moveTo(length, width / 4); // start 2nd plate
     polyline.lineTo(length, width - width / 4); // draw second plate w/2 pixels (negative)
     return polyline;
@@ -108,11 +111,11 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
     int x = -plusSize; // center point
     int y = plusSize; // end point
     g2d.drawLine(x - plusSize / 2, y - plusSize, x + plusSize / 2, y - plusSize); // line from
-                                                                                  // X-center point
-                                                                                  // +- 1/2 length
-                                                                                  // about y-center
+    // X-center point
+    // +- 1/2 length
+    // about y-center
     g2d.drawLine(x, y - plusSize / 2, x, y - plusSize * 3 / 2); // line from y-center point +- 1/2
-                                                                // length about x-center
+    // length about x-center
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -121,17 +124,31 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
     g2d.drawLine(0, height / 2, 13 * width / 32, height / 2); // draw leads
     g2d.drawLine(width - 13 * width / 32, height / 2, width, height / 2);
     g2d.setColor(COLOR);
-    g2d.drawLine(14 * width / 32, height / 2 - 6 * width / 32, 14 * width / 32, height / 2 + 6 * width / 32); // pos
-                                                                                                              // plate
-    g2d.drawLine(width - 14 * width / 32, height / 2 - 3, width - 14 * width / 32, height / 2 + 3 * width / 32); // neg
-                                                                                                                 // plate
+    g2d.drawLine(
+        14 * width / 32,
+        height / 2 - 6 * width / 32,
+        14 * width / 32,
+        height / 2 + 6 * width / 32); // pos
+    // plate
+    g2d.drawLine(
+        width - 14 * width / 32,
+        height / 2 - 3,
+        width - 14 * width / 32,
+        height / 2 + 3 * width / 32); // neg
+    // plate
     // plus sign
-    g2d.drawLine(height / 2 - 4 * width / 32, height / 2 - 5 * width / 32, height / 2 - 8 * width / 32, height / 2 - 5
-        * width / 32);
-    g2d.drawLine(height / 2 - 6 * width / 32, height / 2 - 3 * width / 32, height / 2 - 6 * width / 32, height / 2 - 7
-        * width / 32);
+    g2d.drawLine(
+        height / 2 - 4 * width / 32,
+        height / 2 - 5 * width / 32,
+        height / 2 - 8 * width / 32,
+        height / 2 - 5 * width / 32);
+    g2d.drawLine(
+        height / 2 - 6 * width / 32,
+        height / 2 - 3 * width / 32,
+        height / 2 - 6 * width / 32,
+        height / 2 - 7 * width / 32);
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return getName() + "." + (index == 0 ? "+" : "-");

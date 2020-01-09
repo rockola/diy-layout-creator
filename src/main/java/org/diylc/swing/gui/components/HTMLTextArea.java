@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 
 /**
  * {@link JTextArea} that replaces new line characters with html &lt;br&gt; tags.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class HTMLTextArea extends JTextArea {

@@ -1,7 +1,6 @@
 package com.diyfever.httpproxy;
 
 import java.net.URI;
-
 import javax.tools.SimpleJavaFileObject;
 
 public class JavaStringSource extends SimpleJavaFileObject {

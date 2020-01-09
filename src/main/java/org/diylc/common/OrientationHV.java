@@ -22,8 +22,8 @@
 package org.diylc.common;
 
 public enum OrientationHV {
-
-  VERTICAL, HORIZONTAL;
+  VERTICAL,
+  HORIZONTAL;
 
   @Override
   public String toString() {

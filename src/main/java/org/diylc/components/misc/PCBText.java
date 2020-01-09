@@ -28,7 +28,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.PCBLayer;
@@ -44,9 +43,16 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 
-@ComponentDescriptor(name = "PCB Text", author = "Branislav Stojkovic", category = "Misc",
-    description = "Mirrored text for PCB artwork", instanceNamePrefix = "L", zOrder = IDIYComponent.TRACE,
-    flexibleZOrder = false, bomPolicy = BomPolicy.NEVER_SHOW, transformer = TextTransformer.class)
+@ComponentDescriptor(
+    name = "PCB Text",
+    author = "Branislav Stojkovic",
+    category = "Misc",
+    description = "Mirrored text for PCB artwork",
+    instanceNamePrefix = "L",
+    zOrder = IDIYComponent.TRACE,
+    flexibleZOrder = false,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    transformer = TextTransformer.class)
 public class PCBText extends AbstractComponent<Void> {
 
   public static String DEFAULT_TEXT = "Double click to edit text";
@@ -62,12 +68,16 @@ public class PCBText extends AbstractComponent<Void> {
   private HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER;
   private VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
   private Orientation orientation = Orientation.DEFAULT;
-  
+
   private PCBLayer layer = PCBLayer._1;
 
   @SuppressWarnings("incomplete-switch")
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     g2d.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
@@ -117,7 +127,7 @@ public class PCBText extends AbstractComponent<Void> {
         g2d.rotate(Math.PI * 3 / 2, point.x, point.y);
         break;
     }
-    
+
     AffineTransform oldTx = g2d.getTransform();
 
     // Flip horizontally
@@ -126,7 +136,7 @@ public class PCBText extends AbstractComponent<Void> {
     g2d.transform(tx);
 
     g2d.drawString(text, x, y);
-    
+
     g2d.setTransform(oldTx);
   }
 
@@ -291,7 +301,7 @@ public class PCBText extends AbstractComponent<Void> {
   public void setHorizontalAlignment(HorizontalAlignment alignment) {
     this.horizontalAlignment = alignment;
   }
-  
+
   @EditableProperty
   public PCBLayer getLayer() {
     if (layer == null) {
@@ -316,7 +326,7 @@ public class PCBText extends AbstractComponent<Void> {
 
   @Override
   public void setValue(Void value) {}
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;

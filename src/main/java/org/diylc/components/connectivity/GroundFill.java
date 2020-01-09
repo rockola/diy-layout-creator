@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.PCBLayer;
 import org.diylc.common.SimpleComponentTransformer;
@@ -41,9 +40,16 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Ground Fill", author = "Branislav Stojkovic", category = "Connectivity",
-    instanceNamePrefix = "GF", description = "Polygonal ground fill area", zOrder = IDIYComponent.TRACE,
-    bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Ground Fill",
+    author = "Branislav Stojkovic",
+    category = "Connectivity",
+    instanceNamePrefix = "GF",
+    description = "Polygonal ground fill area",
+    zOrder = IDIYComponent.TRACE,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
+    transformer = SimpleComponentTransformer.class)
 public class GroundFill extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
@@ -52,20 +58,29 @@ public class GroundFill extends AbstractComponent<Void> {
   public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
   public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
 
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)};
+  protected Point[] controlPoints =
+      new Point[] {
+        new Point(0, 0),
+        new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+        new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+      };
 
   protected Color color = COLOR;
   protected PointCount pointCount = PointCount._4;
   private PCBLayer layer = PCBLayer._1;
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Color fillColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
             : color;
     g2d.setColor(fillColor);
     int[] xPoints = new int[controlPoints.length];
@@ -122,8 +137,7 @@ public class GroundFill extends AbstractComponent<Void> {
   }
 
   public void setPointCount(PointCount pointCount) {
-    if (this.pointCount == pointCount)
-      return;
+    if (this.pointCount == pointCount) return;
     int oldPointCount = Integer.parseInt(this.pointCount.toString());
     int newPointCount = Integer.parseInt(pointCount.toString());
     this.controlPoints = Arrays.copyOf(this.controlPoints, newPointCount);
@@ -131,7 +145,8 @@ public class GroundFill extends AbstractComponent<Void> {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
         this.controlPoints[i] =
-            new Point((this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+            new Point(
+                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
                 (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
@@ -150,7 +165,6 @@ public class GroundFill extends AbstractComponent<Void> {
     this.layer = layer;
   }
 
-
   @Deprecated
   @Override
   public Void getValue() {
@@ -160,9 +174,9 @@ public class GroundFill extends AbstractComponent<Void> {
   @Deprecated
   @Override
   public void setValue(Void value) {}
-  
+
   @Override
-  public String getControlPointNodeName(int index) {   
+  public String getControlPointNodeName(int index) {
     return null;
   }
 
@@ -176,7 +190,12 @@ public class GroundFill extends AbstractComponent<Void> {
   }
 
   public enum PointCount {
-    _3, _4, _5, _6, _7, _8;
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8;
 
     public String toString() {
       return name().substring(1);

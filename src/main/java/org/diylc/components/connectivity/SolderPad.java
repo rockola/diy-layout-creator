@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.PCBLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -41,10 +40,18 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Solder Pad", category = "Connectivity", author = "Branislav Stojkovic",
-    description = "Copper solder pad, round or square", instanceNamePrefix = "Pad",
-    zOrder = IDIYComponent.TRACE + 0.1, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "PCB", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Solder Pad",
+    category = "Connectivity",
+    author = "Branislav Stojkovic",
+    description = "Copper solder pad, round or square",
+    instanceNamePrefix = "Pad",
+    zOrder = IDIYComponent.TRACE + 0.1,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "PCB",
+    transformer = SimpleComponentTransformer.class)
 public class SolderPad extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
@@ -61,29 +68,44 @@ public class SolderPad extends AbstractComponent<Void> {
   private PCBLayer layer = PCBLayer._1;
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     double diameter = getSize().convertToPixels();
     double holeDiameter = getHoleSize().convertToPixels();
-    g2d.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-        : color);
+    g2d.setColor(
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color);
     drawingObserver.startTrackingContinuityArea(true);
     if (type == Type.ROUND) {
-      g2d.fill(new Ellipse2D.Double(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter));
+      g2d.fill(
+          new Ellipse2D.Double(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter));
     } else if (type == Type.OVAL_HORIZONTAL) {
-      g2d.fill(new Ellipse2D.Double(point.x - diameter / 2, point.y - diameter * 3 / 8, diameter, diameter * 3 / 4));
+      g2d.fill(
+          new Ellipse2D.Double(
+              point.x - diameter / 2, point.y - diameter * 3 / 8, diameter, diameter * 3 / 4));
     } else if (type == Type.OVAL_VERTICAL) {
-      g2d.fill(new Ellipse2D.Double(point.x - diameter * 3 / 8, point.y - diameter / 2, diameter * 3 / 4, diameter));
+      g2d.fill(
+          new Ellipse2D.Double(
+              point.x - diameter * 3 / 8, point.y - diameter / 2, diameter * 3 / 4, diameter));
     } else {
-      g2d.fill(new Rectangle2D.Double(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter));
+      g2d.fill(
+          new Rectangle2D.Double(
+              point.x - diameter / 2, point.y - diameter / 2, diameter, diameter));
     }
     drawingObserver.stopTrackingContinuityArea();
     if (getHoleSize().getValue() > 0) {
       g2d.setColor(Constants.CANVAS_COLOR);
-      g2d.fill(new Ellipse2D.Double(point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter));
+      g2d.fill(
+          new Ellipse2D.Double(
+              point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter));
     }
   }
 
@@ -94,7 +116,8 @@ public class SolderPad extends AbstractComponent<Void> {
     g2d.setColor(COLOR);
     g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval((width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    g2d.fillOval(
+        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)
@@ -182,9 +205,9 @@ public class SolderPad extends AbstractComponent<Void> {
   public Void getValue() {
     return null;
   }
-  
+
   @Override
-  public String getControlPointNodeName(int index) {   
+  public String getControlPointNodeName(int index) {
     return null;
   }
 
@@ -192,7 +215,10 @@ public class SolderPad extends AbstractComponent<Void> {
   public void setValue(Void value) {}
 
   public static enum Type {
-    ROUND, SQUARE, OVAL_HORIZONTAL, OVAL_VERTICAL;
+    ROUND,
+    SQUARE,
+    OVAL_HORIZONTAL,
+    OVAL_VERTICAL;
 
     @Override
     public String toString() {

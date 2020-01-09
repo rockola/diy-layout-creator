@@ -23,25 +23,23 @@ package org.diylc.core;
 
 /**
  * Interface for all component that can act as switches. They must have at least one position.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public interface ISwitch {
 
-  /**
-   * @return a positive number of positions.
-   */
+  /** @return a positive number of positions. */
   int getPositionCount();
-  
-  /**   
+
+  /**
    * @param position
    * @return name of switch positions, e.g. "ON", "OFF"...
    */
   String getPositionName(int position);
-  
+
   /**
    * Tests control point connectivity.
-   *  
+   *
    * @param index1
    * @param index2
    * @param position

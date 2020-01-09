@@ -28,32 +28,31 @@ import java.util.List;
 import java.util.Set;
 
 public class Netlist implements Comparable<Netlist> {
-  
+
   private Set<Group> groups = new HashSet<Group>();
   private List<SwitchSetup> switchSetup = new ArrayList<SwitchSetup>();
 
-  public Netlist() {
-  }
+  public Netlist() {}
 
   public Set<Group> getGroups() {
     return groups;
   }
-  
+
   public Netlist add(Group g) {
     groups.add(g);
     return this;
   }
-  
+
   public List<Group> getSortedGroups() {
     List<Group> list = new ArrayList<Group>(groups);
     Collections.sort(list);
     return list;
   }
-  
+
   public List<SwitchSetup> getSwitchSetup() {
     return switchSetup;
   }
-  
+
   public void done() {
     Collections.sort(switchSetup);
   }
@@ -68,18 +67,13 @@ public class Netlist implements Comparable<Netlist> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Netlist other = (Netlist) obj;
     if (groups == null) {
-      if (other.groups != null)
-        return false;
-    } else if (!groups.equals(other.groups))
-      return false;
+      if (other.groups != null) return false;
+    } else if (!groups.equals(other.groups)) return false;
     return true;
   }
 

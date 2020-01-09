@@ -24,11 +24,11 @@ package org.diylc.common;
 import java.io.Serializable;
 
 public class Favorite implements Serializable, Comparable<Favorite> {
-  
+
   private static final long serialVersionUID = 1L;
-  
+
   private FavoriteType type;
-  private String name;   
+  private String name;
 
   public Favorite(FavoriteType type, String name) {
     super();
@@ -55,35 +55,30 @@ public class Favorite implements Serializable, Comparable<Favorite> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Favorite other = (Favorite) obj;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
-    if (type != other.type)
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
+    if (type != other.type) return false;
     return true;
   }
-  
+
   @Override
-  public String toString() {   
+  public String toString() {
     return type + ":" + name;
   }
 
   public enum FavoriteType {
-    Component, Block
+    Component,
+    Block
   }
-  
+
   public String toDisplay() {
     String[] parts = name.split("\\.");
-    return parts[parts.length - 1];    
+    return parts[parts.length - 1];
   }
 
   @Override

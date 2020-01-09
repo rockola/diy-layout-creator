@@ -25,12 +25,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents a full switch configuration of the whole {@link Netlist}, containing one position of each switch in the {@link Netlist}.
- * 
+ * Represents a full switch configuration of the whole {@link Netlist}, containing one position of
+ * each switch in the {@link Netlist}.
+ *
  * @author Branislav Stojkovic
  */
 public class SwitchSetup implements Comparable<SwitchSetup> {
-  
+
   private List<Position> positions;
 
   public SwitchSetup(List<Position> positions) {
@@ -53,29 +54,22 @@ public class SwitchSetup implements Comparable<SwitchSetup> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     SwitchSetup other = (SwitchSetup) obj;
     if (positions == null) {
-      if (other.positions != null)
-        return false;
-    } else if (!positions.equals(other.positions))
-      return false;
+      if (other.positions != null) return false;
+    } else if (!positions.equals(other.positions)) return false;
     return true;
   }
-  
+
   @Override
-  public String toString() {   
+  public String toString() {
     StringBuilder sb = new StringBuilder();
-    for (Position s : positions)
-    {      
-      if (sb.length() > 0)
-        sb.append(":");      
-      sb.append(s.toString());      
+    for (Position s : positions) {
+      if (sb.length() > 0) sb.append(":");
+      sb.append(s.toString());
     }
     return sb.toString();
   }

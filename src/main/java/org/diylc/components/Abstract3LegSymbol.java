@@ -29,7 +29,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -55,13 +54,14 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
   public static Color COLOR = Color.black;
-  
+
   protected String value = "";
-  protected Point[] controlPoints = new Point[] { new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) };
+  protected Point[] controlPoints =
+      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected Color color = COLOR;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
   protected Display display = Display.NAME;
-  transient protected Shape[] body;
+  protected transient Shape[] body;
   protected Orientation orientation = Orientation.DEFAULT;
   protected boolean moveLabel = false;
 
@@ -70,22 +70,34 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     updateControlPoints();
     controlPoints[3] = getDefaultLabelPosition(controlPoints);
   }
-  
+
   public Point[] getControlPoints() {
     if (controlPoints.length == 3) {
-      controlPoints = new Point[] { controlPoints[0], controlPoints[1], controlPoints[2], getDefaultLabelPosition(controlPoints) };
+      controlPoints =
+          new Point[] {
+            controlPoints[0],
+            controlPoints[1],
+            controlPoints[2],
+            getDefaultLabelPosition(controlPoints)
+          };
     }
     return controlPoints;
   }
-  
+
   protected Point getDefaultLabelPosition(Point[] oldControlPoints) {
     int f = flip == SymbolFlipping.X ? -1 : 1;
     int d = flip == SymbolFlipping.X ? (int) PIN_SPACING.convertToPixels() / 2 : 0;
-    return new Point(oldControlPoints[0].x + f * (int) (PIN_SPACING.convertToPixels() * 1.5 + d), oldControlPoints[0].y);
+    return new Point(
+        oldControlPoints[0].x + f * (int) (PIN_SPACING.convertToPixels() * 1.5 + d),
+        oldControlPoints[0].y);
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -96,7 +108,9 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
       finalColor = SELECTION_COLOR;
     } else if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalColor = theme.getOutlineColor();
     } else {
       finalColor = color;
@@ -109,7 +123,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     }
 
     AffineTransform old = g2d.getTransform();
-    
+
     Point[] controlPoints = getControlPoints();
 
     if (this.flip == SymbolFlipping.Y) {
@@ -136,13 +150,17 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -158,14 +176,23 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D textRect = fontMetrics.getStringBounds(label, g2d);
     Rectangle shapeRect = body[0].getBounds().union(body[1].getBounds()).union(body[2].getBounds());
-    
+
     if (getMoveLabel()) {
-      StringUtils.drawCenteredText(g2d, label, controlPoints[3].x, controlPoints[3].y, flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT
-              : HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+      StringUtils.drawCenteredText(
+          g2d,
+          label,
+          controlPoints[3].x,
+          controlPoints[3].y,
+          flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT : HorizontalAlignment.CENTER,
+          VerticalAlignment.CENTER);
     } else {
-      StringUtils.drawCenteredText(g2d, label, getLabelX(shapeRect, textRect, fontMetrics, outlineMode),
-          getLabelY(shapeRect, textRect, fontMetrics, outlineMode), flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT
-              : HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+      StringUtils.drawCenteredText(
+          g2d,
+          label,
+          getLabelX(shapeRect, textRect, fontMetrics, outlineMode),
+          getLabelY(shapeRect, textRect, fontMetrics, outlineMode),
+          flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT,
+          VerticalAlignment.CENTER);
     }
   }
 
@@ -179,44 +206,46 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     return getControlPoints().length;
   }
 
-  protected int getLabelX(Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
+  protected int getLabelX(
+      Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
     int f = flip == SymbolFlipping.X ? -1 : 1;
     int d = flip == SymbolFlipping.X ? (int) PIN_SPACING.convertToPixels() / 2 : 0;
     return getControlPoints()[0].x + f * (int) (PIN_SPACING.convertToPixels() * 1.5 + d);
   }
 
-  protected int getLabelY(Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
+  protected int getLabelY(
+      Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
     return getControlPoints()[0].y;
   }
 
   protected void updateControlPoints() {
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
     Point[] controlPoints = getControlPoints();
-        
+
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
 
     // set default point positions
-    controlPoints[1].x = x +  pinSpacing * 2;
+    controlPoints[1].x = x + pinSpacing * 2;
     controlPoints[1].y = y - pinSpacing * 2;
 
     controlPoints[2].x = x + pinSpacing * 2;
     controlPoints[2].y = y + pinSpacing * 2;
-    
+
     controlPoints[3].x = x + (int) (PIN_SPACING.convertToPixels() * 2);
     controlPoints[3].y = y;
-    
+
     // apply rotation if needed
-    if (getOrientation() != Orientation.DEFAULT)
-    {    
+    if (getOrientation() != Orientation.DEFAULT) {
       Point first = controlPoints[0];
       double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-      AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
+      AffineTransform rotate =
+          AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
       for (int i = 1; i < controlPoints.length; i++) {
         rotate.transform(controlPoints[i], controlPoints[i]);
       }
     }
-    
+
     // flip at the end
     if (flip == SymbolFlipping.X) {
       controlPoints[1].x = controlPoints[0].x - (controlPoints[1].x - controlPoints[0].x);
@@ -258,12 +287,12 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     // make sure we have a new drawing
     body = null;
   }
-  
+
   @Override
-  public boolean canPointMoveFreely(int pointIndex) {   
+  public boolean canPointMoveFreely(int pointIndex) {
     return pointIndex == 3;
   }
-  
+
   @Override
   public boolean canControlPointOverlap(int index) {
     return index >= 3;
@@ -290,7 +319,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
   public void setColor(Color color) {
     this.color = color;
   }
-  
+
   @EditableProperty(name = "Moveable Label")
   public boolean getMoveLabel() {
     return moveLabel;
@@ -308,12 +337,11 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
   public void setDisplay(Display display) {
     this.display = display;
   }
-  
+
   @EditableProperty
   public Orientation getOrientation() {
-    if (orientation == null)
-      orientation = Orientation.DEFAULT;
-    
+    if (orientation == null) orientation = Orientation.DEFAULT;
+
     return orientation;
   }
 
@@ -324,33 +352,32 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     // make sure we have a new drawing
     body = null;
   }
-  
+
   protected void applyOrientation(Shape[] body) {
-    if (getOrientation() == Orientation.DEFAULT)
-      return;
+    if (getOrientation() == Orientation.DEFAULT) return;
 
     Point first = getControlPoints()[0];
     double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
-    
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
+
     if (body != null) {
       for (int i = 0; i < body.length; i++) {
         body[i] = rotate.createTransformedShape(body[i]);
       }
     }
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
-    if (index >= 3)
-      return null;
+    if (index >= 3) return null;
     return Integer.toString(index + 1);
   }
 
   /**
    * Returns transistor shape consisting of 3 parts, in this order: main body, connectors, polarity
    * arrow.
-   * 
+   *
    * @return
    */
   protected abstract Shape[] getBody();

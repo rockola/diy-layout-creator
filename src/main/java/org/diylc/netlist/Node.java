@@ -24,8 +24,9 @@ package org.diylc.netlist;
 import org.diylc.core.IDIYComponent;
 
 /**
- * Represents a single node in a {@link Netlist}, uniquely defined by a component and a control point.
- * 
+ * Represents a single node in a {@link Netlist}, uniquely defined by a component and a control
+ * point.
+ *
  * @author Branislav Stojkovic
  */
 public class Node implements Comparable<Node> {
@@ -46,10 +47,11 @@ public class Node implements Comparable<Node> {
   public int getPointIndex() {
     return pointIndex;
   }
-  
+
   public String getDisplayName() {
     String[] section = component.getSectionNames(pointIndex);
-    return (section == null || section.length > 1 ? "" : section[0] + ".") + component.getControlPointNodeName(pointIndex);
+    return (section == null || section.length > 1 ? "" : section[0] + ".")
+        + component.getControlPointNodeName(pointIndex);
   }
 
   @Override
@@ -63,28 +65,23 @@ public class Node implements Comparable<Node> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Node other = (Node) obj;
     if (component == null) {
-      if (other.component != null)
-        return false;
-    } else if (!component.equals(other.component))
-      return false;
-    if (pointIndex != other.pointIndex)
-      return false;
+      if (other.component != null) return false;
+    } else if (!component.equals(other.component)) return false;
+    if (pointIndex != other.pointIndex) return false;
     return true;
   }
 
   @Override
   public String toString() {
-    if (component.getControlPointCount() == 1)
-      return component.getName();
-    return component.getName() + "." + getDisplayName() /*+ " @ (" + component.getControlPoint(pointIndex).getX() + ":" + component.getControlPoint(pointIndex).getY() + ")"*/;
+    if (component.getControlPointCount() == 1) return component.getName();
+    return component.getName()
+        + "."
+        + getDisplayName() /*+ " @ (" + component.getControlPoint(pointIndex).getX() + ":" + component.getControlPoint(pointIndex).getY() + ")"*/;
   }
 
   @Override

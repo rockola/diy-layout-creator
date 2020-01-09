@@ -22,8 +22,10 @@
 package org.diylc.common;
 
 public enum Orientation {
-
-  DEFAULT, _90, _180, _270;
+  DEFAULT,
+  _90,
+  _180,
+  _270;
 
   @Override
   public String toString() {

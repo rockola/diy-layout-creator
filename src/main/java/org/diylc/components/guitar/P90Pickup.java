@@ -33,7 +33,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -51,16 +50,22 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "P-90 Single Coil Pickup", category = "Guitar", author = "Branislav Stojkovic",
+@ComponentDescriptor(
+    name = "P-90 Single Coil Pickup",
+    category = "Guitar",
+    author = "Branislav Stojkovic",
     description = "Single coil P-90 guitar pickup, both \"dog ear\" and \"soap bar\"",
-    zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Guitar Wiring Diagram")
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "PKP",
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Guitar Wiring Diagram")
 public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
   private static final long serialVersionUID = 1L;
 
   private static Color BODY_COLOR = Color.decode("#D8C989");;
-//  private static Color POINT_COLOR = Color.darkGray;
+  //  private static Color POINT_COLOR = Color.darkGray;
 
   // dog ear
   private static Size DOG_EAR_WIDTH = new Size(41d, SizeUnit.mm);
@@ -79,19 +84,23 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
   private static Size LIP_HOLE_SIZE = new Size(2.5d, SizeUnit.mm);
   private static Size LIP_HOLE_SPACING = new Size(97d, SizeUnit.mm);
   private static Size POLE_SIZE = new Size(4d, SizeUnit.mm);
-  private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm);  
-    
+  private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm);
+
   private Color color = BODY_COLOR;
   private P90Type type = P90Type.DOG_EAR;
   private Color poleColor = METAL_COLOR;
-  
+
   @Override
-  protected OrientationHV getControlPointDirection() {   
+  protected OrientationHV getControlPointDirection() {
     return OrientationHV.VERTICAL;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
@@ -103,90 +112,99 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
     }
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
     g2d.fill(body[0]);
-    if (body[1] != null)
-      g2d.fill(body[1]);
-//    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : POINT_COLOR);
-//    g2d.fill(body[2]);
-    g2d.setComposite(oldComposite);    
+    if (body[1] != null) g2d.fill(body[1]);
+    //    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : POINT_COLOR);
+    //    g2d.fill(body[2]);
+    g2d.setComposite(oldComposite);
 
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : color.darker();
     }
 
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
-    if (body[1] != null)
-      g2d.draw(body[1]);
-    
+    if (body[1] != null) g2d.draw(body[1]);
+
     if (!outlineMode) {
       g2d.setColor(getPoleColor());
       g2d.fill(body[3]);
       g2d.setColor(darkerOrLighter(getPoleColor()));
-      g2d.draw(body[3]);    
+      g2d.draw(body[3]);
     }
 
-//    Color finalLabelColor;
-//    if (outlineMode) {
-//      Theme theme =
-//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-//      finalLabelColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-//              : theme.getOutlineColor();
-//    } else {
-//      finalLabelColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-//              : LABEL_COLOR;
-//    }
-//    g2d.setColor(finalLabelColor);
-//    g2d.setFont(project.getFont());
-//    Rectangle bounds = body[0].getBounds();
-//    drawCenteredText(g2d, value, bounds.x + bounds.width / 2, bounds.y + bounds.height / 2, HorizontalAlignment.CENTER,
-//        VerticalAlignment.CENTER);
+    //    Color finalLabelColor;
+    //    if (outlineMode) {
+    //      Theme theme =
+    //          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY,
+    // Constants.DEFAULT_THEME);
+    //      finalLabelColor =
+    //          componentState == ComponentState.SELECTED || componentState ==
+    // ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+    //              : theme.getOutlineColor();
+    //    } else {
+    //      finalLabelColor =
+    //          componentState == ComponentState.SELECTED || componentState ==
+    // ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+    //              : LABEL_COLOR;
+    //    }
+    //    g2d.setColor(finalLabelColor);
+    //    g2d.setFont(project.getFont());
+    //    Rectangle bounds = body[0].getBounds();
+    //    drawCenteredText(g2d, value, bounds.x + bounds.width / 2, bounds.y + bounds.height / 2,
+    // HorizontalAlignment.CENTER,
+    //        VerticalAlignment.CENTER);
     drawMainLabel(g2d, project, outlineMode, componentState);
-    
+
     drawlTerminalLabels(g2d, finalBorderColor, project);
     // terminal labels
-//    Point[] points = getControlPoints();
-//    g2d.setColor(finalBorderColor);
-//
-//    g2d.setFont(project.getFont().deriveFont(TERMINAL_FONT_SIZE * 1f));
-//    int dx = 0;
-//    int dy = 0;
-//    switch (orientation) {
-//      case DEFAULT:        
-//        dx = (int) (TERMINAL_FONT_SIZE * 0.8);
-//        dy = 0;  
-//        break;
-//      case _90:
-//        dx = 0;
-//        dy = (int) (TERMINAL_FONT_SIZE * 0.8);
-//        break;
-//      case _180:
-//        dx = -(int) (TERMINAL_FONT_SIZE * 0.8);
-//        dy = 0;       
-//        break;
-//      case _270:
-//        dx = 0;
-//        dy = -(int) (TERMINAL_FONT_SIZE * 0.8);
-//        break;     
-//    }
-//    
-//    if (getPolarity() == Polarity.North || getPolarity() == Polarity.South) {
-//      drawCenteredText(g2d, getPolarity().name().substring(0, 1), (points[1].x + points[2].x) / 2 + dx, (points[1].y + points[2].y) / 2 + dy, HorizontalAlignment.CENTER,
-//          VerticalAlignment.CENTER);
-//    } else {
-//      drawCenteredText(g2d, "N", (points[0].x + points[1].x) / 2 + dx, (points[0].y + points[1].y) / 2 + dy, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-//      drawCenteredText(g2d, "S", (points[2].x + points[3].x) / 2 + dx, (points[2].y + points[3].y) / 2 + dy, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-//    }
+    //    Point[] points = getControlPoints();
+    //    g2d.setColor(finalBorderColor);
+    //
+    //    g2d.setFont(project.getFont().deriveFont(TERMINAL_FONT_SIZE * 1f));
+    //    int dx = 0;
+    //    int dy = 0;
+    //    switch (orientation) {
+    //      case DEFAULT:
+    //        dx = (int) (TERMINAL_FONT_SIZE * 0.8);
+    //        dy = 0;
+    //        break;
+    //      case _90:
+    //        dx = 0;
+    //        dy = (int) (TERMINAL_FONT_SIZE * 0.8);
+    //        break;
+    //      case _180:
+    //        dx = -(int) (TERMINAL_FONT_SIZE * 0.8);
+    //        dy = 0;
+    //        break;
+    //      case _270:
+    //        dx = 0;
+    //        dy = -(int) (TERMINAL_FONT_SIZE * 0.8);
+    //        break;
+    //    }
+    //
+    //    if (getPolarity() == Polarity.North || getPolarity() == Polarity.South) {
+    //      drawCenteredText(g2d, getPolarity().name().substring(0, 1), (points[1].x + points[2].x)
+    // / 2 + dx, (points[1].y + points[2].y) / 2 + dy, HorizontalAlignment.CENTER,
+    //          VerticalAlignment.CENTER);
+    //    } else {
+    //      drawCenteredText(g2d, "N", (points[0].x + points[1].x) / 2 + dx, (points[0].y +
+    // points[1].y) / 2 + dy, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    //      drawCenteredText(g2d, "S", (points[2].x + points[3].x) / 2 + dx, (points[2].y +
+    // points[3].y) / 2 + dy, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    //    }
   }
 
   @SuppressWarnings("incomplete-switch")
@@ -209,34 +227,56 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
       int lipHoleSpacing = getClosestOdd(LIP_HOLE_SPACING.convertToPixels());
 
       body[0] =
-          new Area(new RoundRectangle2D.Double(x /*+ pointMargin*/ - length, y - pointMargin, length, width, edgeRadius,
-              edgeRadius));
+          new Area(
+              new RoundRectangle2D.Double(
+                  x /*+ pointMargin*/ - length,
+                  y - pointMargin,
+                  length,
+                  width,
+                  edgeRadius,
+                  edgeRadius));
 
       if (getType() == P90Type.DOG_EAR) {
         double rectWidth = (totalLength - length) / Math.sqrt(2);
         RoundRectangle2D roundRect =
-            new RoundRectangle2D.Double(-rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
+            new RoundRectangle2D.Double(
+                -rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
         Area leftEar = new Area(roundRect);
         leftEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         leftEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
-        leftEar.transform(AffineTransform.getTranslateInstance(x /*+ pointMargin*/ - length, y - pointMargin + width / 2));
+        leftEar.transform(
+            AffineTransform.getTranslateInstance(
+                x /*+ pointMargin*/ - length, y - pointMargin + width / 2));
         leftEar.subtract((Area) body[0]);
         Area rightEar = new Area(roundRect);
         rightEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         rightEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
-        rightEar.transform(AffineTransform.getTranslateInstance(x /*+ pointMargin*/, y - pointMargin + width / 2));
+        rightEar.transform(
+            AffineTransform.getTranslateInstance(x /*+ pointMargin*/, y - pointMargin + width / 2));
         rightEar.subtract((Area) body[0]);
         Area lipArea = leftEar;
         lipArea.add(rightEar);
-        lipArea.subtract(new Area(new Ellipse2D.Double(x /*+ pointMargin*/ - length / 2 - lipHoleSpacing / 2 - lipHoleSize
-            / 2, y - pointMargin + width / 2 - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
-        lipArea.subtract(new Area(new Ellipse2D.Double(x /*+ pointMargin*/ - length / 2 + lipHoleSpacing / 2 - lipHoleSize
-            / 2, y - pointMargin + width / 2 - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
+        lipArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /*+ pointMargin*/ - length / 2 - lipHoleSpacing / 2 - lipHoleSize / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
+        lipArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /*+ pointMargin*/ - length / 2 + lipHoleSpacing / 2 - lipHoleSize / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
 
         body[1] = lipArea;
       }
 
-      body[2] = new Area(new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] =
+          new Area(
+              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       int poleSize = (int) POLE_SIZE.convertToPixels();
       int poleSpacing = (int) POLE_SPACING.convertToPixels();
@@ -244,8 +284,11 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
       Area poleArea = new Area();
       for (int i = 0; i < 6; i++) {
         Ellipse2D pole =
-            new Ellipse2D.Double(x /*+ pointMargin*/ - length + poleMargin + i * poleSpacing - poleSize / 2, y
-                - pointMargin - poleSize / 2 + width / 2, poleSize, poleSize);
+            new Ellipse2D.Double(
+                x /*+ pointMargin*/ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                y - pointMargin - poleSize / 2 + width / 2,
+                poleSize,
+                poleSize);
         poleArea.add(new Area(pole));
       }
       body[3] = poleArea;
@@ -267,14 +310,13 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
         AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
-          if (shape != null)
-            area.transform(rotation);
+          if (shape != null) area.transform(rotation);
         }
       }
     }
     return body;
   }
-  
+
   @Override
   protected int getMainLabelYOffset() {
     return (int) (getType().getWidth().convertToPixels() / 2 - 20);
@@ -290,9 +332,24 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
     g2d.setColor(BODY_COLOR);
     Polygon base =
-        new Polygon(new int[] {width / 2, (width + baseWidth) / 2, (width + baseWidth) / 2, width / 2,
-            (width - baseWidth) / 2, (width - baseWidth) / 2}, new int[] {-2, (height - baseLength) / 2,
-            (height + baseLength) / 2, height + 1, (height + baseLength) / 2, (height - baseLength) / 2}, 6);
+        new Polygon(
+            new int[] {
+              width / 2,
+              (width + baseWidth) / 2,
+              (width + baseWidth) / 2,
+              width / 2,
+              (width - baseWidth) / 2,
+              (width - baseWidth) / 2
+            },
+            new int[] {
+              -2,
+              (height - baseLength) / 2,
+              (height + baseLength) / 2,
+              height + 1,
+              (height + baseLength) / 2,
+              (height - baseLength) / 2
+            },
+            6);
     Area baseArea = new Area(base);
     baseArea.intersect(new Area(new Rectangle(0, -1, width, height + 1)));
     g2d.fill(baseArea);
@@ -300,15 +357,21 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
     g2d.draw(baseArea);
 
     g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
+    g2d.fillRoundRect(
+        (width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
     g2d.setColor(BODY_COLOR.darker());
-    g2d.drawRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
+    g2d.drawRoundRect(
+        (width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
 
     g2d.setColor(METAL_COLOR);
     int poleSize = 2;
     int poleSpacing = 17 * width / 32;
     for (int i = 0; i < 6; i++) {
-      g2d.fillOval((width - poleSize) / 2, (height - poleSpacing) / 2 + (i * poleSpacing / 5), poleSize, poleSize);
+      g2d.fillOval(
+          (width - poleSize) / 2,
+          (height - poleSpacing) / 2 + (i * poleSpacing / 5),
+          poleSize,
+          poleSize);
     }
   }
 
@@ -331,21 +394,20 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
   public void setColor(Color color) {
     this.color = color;
   }
-  
+
   @EditableProperty(name = "Pole Color")
   public Color getPoleColor() {
-    if (poleColor == null)
-      poleColor = METAL_COLOR;
+    if (poleColor == null) poleColor = METAL_COLOR;
     return poleColor;
   }
 
   public void setPoleColor(Color poleColor) {
     this.poleColor = poleColor;
-  }  
+  }
 
   public enum P90Type {
-    DOG_EAR("Dog Ear", DOG_EAR_LENGTH, DOG_EAR_WIDTH, DOG_EAR_EDGE_RADIUS), SOAP_BAR("Soap Bar", SOAP_BAR_LENGTH,
-        SOAP_BAR_WIDTH, SOAP_BAR_EDGE_RADIUS);
+    DOG_EAR("Dog Ear", DOG_EAR_LENGTH, DOG_EAR_WIDTH, DOG_EAR_EDGE_RADIUS),
+    SOAP_BAR("Soap Bar", SOAP_BAR_LENGTH, SOAP_BAR_WIDTH, SOAP_BAR_EDGE_RADIUS);
 
     private String label;
     private Size length;

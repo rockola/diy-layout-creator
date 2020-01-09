@@ -32,7 +32,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -50,9 +49,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Potentiometer", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.SINGLE_CLICK, instanceNamePrefix = "VR",
-    description = "Panel mount potentiometer with solder lugs", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Potentiometer",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.SINGLE_CLICK,
+    instanceNamePrefix = "VR",
+    description = "Panel mount potentiometer with solder lugs",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = PotentiometerTransformer.class)
 public class PotentiometerPanel extends AbstractPotentiometer {
 
@@ -69,7 +73,6 @@ public class PotentiometerPanel extends AbstractPotentiometer {
   protected static Color BORDER_COLOR = Color.gray;
   protected static Color NUT_COLOR = Color.decode("#CBD5DB");
 
-
   protected Size bodyDiameter = BODY_DIAMETER;
   protected Size spacing = SPACING;
   protected Size lugDiameter = LUG_DIAMETER;
@@ -78,11 +81,10 @@ public class PotentiometerPanel extends AbstractPotentiometer {
   protected Color nutColor = NUT_COLOR;
   protected Color waferColor = WAFER_COLOR;
   protected Type type = Type.ThroughHole;
-  @Deprecated
-  protected boolean showShaft = false;
+  @Deprecated protected boolean showShaft = false;
   protected View view;
   // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
-  transient protected Area[] body = null;
+  protected transient Area[] body = null;
 
   public PotentiometerPanel() {
     controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
@@ -136,13 +138,23 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y - spacing / 2 - diameter / 2;
 
           body[9] =
-              new Area(new RoundRectangle2D.Double(centerX - waferWidth / 2, controlPoints[0].y - waferHeight - spacing
-                  / 2, waferWidth, waferHeight, spacing / 4, spacing / 4));
+              new Area(
+                  new RoundRectangle2D.Double(
+                      centerX - waferWidth / 2,
+                      controlPoints[0].y - waferHeight - spacing / 2,
+                      waferWidth,
+                      waferHeight,
+                      spacing / 4,
+                      spacing / 4));
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(new Rectangle2D.Double(controlPoints[i].x - pinWidth / 2, controlPoints[i].y
-                    - (spacing + diameter) / 2, pinWidth, (spacing + diameter) / 2));
+                new Area(
+                    new Rectangle2D.Double(
+                        controlPoints[i].x - pinWidth / 2,
+                        controlPoints[i].y - (spacing + diameter) / 2,
+                        pinWidth,
+                        (spacing + diameter) / 2));
           }
           break;
         case _90:
@@ -150,13 +162,23 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y + spacing;
 
           body[9] =
-              new Area(new RoundRectangle2D.Double(controlPoints[0].x + spacing / 2, centerY - waferWidth / 2,
-                  waferHeight, waferWidth, spacing / 4, spacing / 4));
+              new Area(
+                  new RoundRectangle2D.Double(
+                      controlPoints[0].x + spacing / 2,
+                      centerY - waferWidth / 2,
+                      waferHeight,
+                      waferWidth,
+                      spacing / 4,
+                      spacing / 4));
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(new Rectangle2D.Double(controlPoints[i].x, controlPoints[i].y - pinWidth / 2,
-                    (spacing + diameter) / 2, pinWidth));
+                new Area(
+                    new Rectangle2D.Double(
+                        controlPoints[i].x,
+                        controlPoints[i].y - pinWidth / 2,
+                        (spacing + diameter) / 2,
+                        pinWidth));
           }
           break;
         case _180:
@@ -164,13 +186,23 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y + spacing / 2 + diameter / 2;
 
           body[9] =
-              new Area(new RoundRectangle2D.Double(centerX - waferWidth / 2, controlPoints[0].y + spacing / 2,
-                  waferWidth, waferHeight, spacing / 4, spacing / 4));
+              new Area(
+                  new RoundRectangle2D.Double(
+                      centerX - waferWidth / 2,
+                      controlPoints[0].y + spacing / 2,
+                      waferWidth,
+                      waferHeight,
+                      spacing / 4,
+                      spacing / 4));
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(new Rectangle2D.Double(controlPoints[i].x - pinWidth / 2, controlPoints[i].y, pinWidth,
-                    (spacing + diameter) / 2));
+                new Area(
+                    new Rectangle2D.Double(
+                        controlPoints[i].x - pinWidth / 2,
+                        controlPoints[i].y,
+                        pinWidth,
+                        (spacing + diameter) / 2));
           }
           break;
         case _270:
@@ -178,20 +210,33 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y - spacing;
 
           body[9] =
-              new Area(new RoundRectangle2D.Double(controlPoints[0].x - waferHeight - spacing / 2, centerY - waferWidth
-                  / 2, waferHeight, waferWidth, spacing / 4, spacing / 4));
+              new Area(
+                  new RoundRectangle2D.Double(
+                      controlPoints[0].x - waferHeight - spacing / 2,
+                      centerY - waferWidth / 2,
+                      waferHeight,
+                      waferWidth,
+                      spacing / 4,
+                      spacing / 4));
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(new Rectangle2D.Double(controlPoints[i].x - (spacing + diameter) / 2, controlPoints[i].y
-                    - pinWidth / 2, (spacing + diameter) / 2, pinWidth));
+                new Area(
+                    new Rectangle2D.Double(
+                        controlPoints[i].x - (spacing + diameter) / 2,
+                        controlPoints[i].y - pinWidth / 2,
+                        (spacing + diameter) / 2,
+                        pinWidth));
           }
           break;
         default:
           break;
       }
 
-      body[3] = new Area(new Ellipse2D.Double(centerX - diameter / 2, centerY - diameter / 2, diameter, diameter));
+      body[3] =
+          new Area(
+              new Ellipse2D.Double(
+                  centerX - diameter / 2, centerY - diameter / 2, diameter, diameter));
 
       body[9].subtract(body[3]);
 
@@ -205,8 +250,12 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
         for (int i = 0; i < 3; i++) {
           Area area =
-              new Area(new Ellipse2D.Double(controlPoints[i].x - lugDiameter / 2, controlPoints[i].y - lugDiameter / 2,
-                  lugDiameter, lugDiameter));
+              new Area(
+                  new Ellipse2D.Double(
+                      controlPoints[i].x - lugDiameter / 2,
+                      controlPoints[i].y - lugDiameter / 2,
+                      lugDiameter,
+                      lugDiameter));
           body[4 + i] = area;
         }
 
@@ -217,11 +266,16 @@ public class PotentiometerPanel extends AbstractPotentiometer {
         }
         // Make holes in the lugs.
         for (int i = 0; i < 3; i++) {
-          body[4 + i].subtract(new Area(new Ellipse2D.Double(controlPoints[i].x - holeDiameter / 2, controlPoints[i].y
-              - holeDiameter / 2, holeDiameter, holeDiameter)));
+          body[4 + i].subtract(
+              new Area(
+                  new Ellipse2D.Double(
+                      controlPoints[i].x - holeDiameter / 2,
+                      controlPoints[i].y - holeDiameter / 2,
+                      holeDiameter,
+                      holeDiameter)));
         }
       }
-      
+
       if (getView() == View.ShaftUp) {
         int nutSize = (int) NUT_SIZE.convertToPixels();
         int shaftSize = (int) SHAFT_SIZE.convertToPixels();
@@ -234,7 +288,9 @@ public class PotentiometerPanel extends AbstractPotentiometer {
         }
         body[7] = new Area(new Polygon(xPoints, yPoints, 6));
         body[8] =
-            new Area(new Ellipse2D.Double(centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
+            new Area(
+                new Ellipse2D.Double(
+                    centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
       }
     }
     return body;
@@ -254,13 +310,20 @@ public class PotentiometerPanel extends AbstractPotentiometer {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     Area[] body = getBody();
     for (int i = 0; i < body.length; i++) {
-      Area shape = body[i];      
+      Area shape = body[i];
       // determine color
       if (shape != null) {
         switch (i) {
@@ -276,24 +339,25 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
         Composite oldComposite = g2d.getComposite();
         if (alpha < MAX_ALPHA) {
-          g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+          g2d.setComposite(
+              AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
         }
         if (!outlineMode) {
-          if (i == 3)
-            drawingObserver.startTrackingContinuityArea(true);
+          if (i == 3) drawingObserver.startTrackingContinuityArea(true);
           g2d.fill(shape);
-          if (i == 3)
-            drawingObserver.stopTrackingContinuityArea();
+          if (i == 3) drawingObserver.stopTrackingContinuityArea();
         }
         g2d.setComposite(oldComposite);
         Color finalBorderColor;
         if (outlineMode) {
           finalBorderColor =
-              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                  ? SELECTION_COLOR
                   : theme.getOutlineColor();
         } else {
           finalBorderColor =
-              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                  ? SELECTION_COLOR
                   : getBorderColor();
         }
         g2d.setColor(finalBorderColor);
@@ -305,11 +369,13 @@ public class PotentiometerPanel extends AbstractPotentiometer {
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -346,9 +412,15 @@ public class PotentiometerPanel extends AbstractPotentiometer {
     int spacing = width / 3 - 1;
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1 * width / 32));
     g2d.setColor(WAFER_COLOR);
-    g2d.fillRect(waferMargin, height / 2, width - 2 * waferMargin, height / 3);    
+    g2d.fillRect(waferMargin, height / 2, width - 2 * waferMargin, height / 3);
     g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(waferMargin, height / 2, width - 2 * waferMargin, height / 3, 2 * width / 32, 2 * width / 32);
+    g2d.drawRoundRect(
+        waferMargin,
+        height / 2,
+        width - 2 * waferMargin,
+        height / 3,
+        2 * width / 32,
+        2 * width / 32);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2 * width / 32));
     g2d.drawLine(width / 2 - spacing, height / 2, width / 2 - spacing, height - margin);
     g2d.drawLine(width / 2 + spacing, height / 2, width / 2 + spacing, height - margin);
@@ -377,8 +449,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty
   public Type getType() {
-    if (type == null)
-      type = Type.ThroughHole;
+    if (type == null) type = Type.ThroughHole;
     return type;
   }
 
@@ -389,8 +460,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "Nut")
   public Color getNutColor() {
-    if (nutColor == null)
-      nutColor = NUT_COLOR;
+    if (nutColor == null) nutColor = NUT_COLOR;
     return nutColor;
   }
 
@@ -438,11 +508,10 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "View")
   public View getView() {
-    if (view == null)
-      view = showShaft ? View.ShaftUp : View.ShaftDown;
+    if (view == null) view = showShaft ? View.ShaftUp : View.ShaftDown;
     return view;
   }
-  
+
   public void setView(View view) {
     this.view = view;
     body = null;
@@ -450,33 +519,31 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "Wafer")
   public Color getWaferColor() {
-    if (waferColor == null)
-      waferColor = WAFER_COLOR;
+    if (waferColor == null) waferColor = WAFER_COLOR;
     return waferColor;
   }
 
   public void setWaferColor(Color waferColor) {
     this.waferColor = waferColor;
   }
-  
+
   @Override
   public String getInternalLinkName(int index1, int index2) {
-    if (index1 > index2)
-      return getInternalLinkName(index2, index1);
-    
-    if (index2 - index1 == 1)
-      return (index1 + 1) + "-" + (index2 + 1);
-    
+    if (index1 > index2) return getInternalLinkName(index2, index1);
+
+    if (index2 - index1 == 1) return (index1 + 1) + "-" + (index2 + 1);
+
     return null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public enum Type {
-    ThroughHole("Through Hole"), PCB("PCB");
+    ThroughHole("Through Hole"),
+    PCB("PCB");
 
     private String value;
 
@@ -489,10 +556,11 @@ public class PotentiometerPanel extends AbstractPotentiometer {
       return value;
     }
   }
-  
+
   public enum View {
-    ShaftDown("Shaft Down"), ShaftUp("Shaft Up");//, TerminalsDown, TerminalsUp;
-    
+    ShaftDown("Shaft Down"),
+    ShaftUp("Shaft Up"); // , TerminalsDown, TerminalsUp;
+
     private String value;
 
     private View(String value) {

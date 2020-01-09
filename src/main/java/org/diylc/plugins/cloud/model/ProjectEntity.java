@@ -22,14 +22,13 @@
 package org.diylc.plugins.cloud.model;
 
 import java.io.Serializable;
-
 import org.diylc.core.annotations.DynamicList;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.MultiLineText;
 
 /**
  * Represents a cloud project object, identified by {@link ProjectEntity#id}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class ProjectEntity implements Serializable {
@@ -98,7 +97,7 @@ public class ProjectEntity implements Serializable {
     this.category = category;
   }
 
-  @DynamicList(availableValueFunction="getCategories")
+  @DynamicList(availableValueFunction = "getCategories")
   @EditableProperty(defaultable = false, sortOrder = 2)
   public String getCategoryForDisplay() {
     return categoryForDisplay;
@@ -194,61 +193,38 @@ public class ProjectEntity implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     ProjectEntity other = (ProjectEntity) obj;
     if (category == null) {
-      if (other.category != null)
-        return false;
-    } else if (!category.equals(other.category))
-      return false;
-    if (commentCount != other.commentCount)
-      return false;
+      if (other.category != null) return false;
+    } else if (!category.equals(other.category)) return false;
+    if (commentCount != other.commentCount) return false;
     if (description == null) {
-      if (other.description != null)
-        return false;
-    } else if (!description.equals(other.description))
-      return false;
-    if (downloadCount != other.downloadCount)
-      return false;
+      if (other.description != null) return false;
+    } else if (!description.equals(other.description)) return false;
+    if (downloadCount != other.downloadCount) return false;
     if (downloadUrl == null) {
-      if (other.downloadUrl != null)
-        return false;
-    } else if (!downloadUrl.equals(other.downloadUrl))
-      return false;
-    if (id != other.id)
-      return false;
+      if (other.downloadUrl != null) return false;
+    } else if (!downloadUrl.equals(other.downloadUrl)) return false;
+    if (id != other.id) return false;
     if (keywords == null) {
-      if (other.keywords != null)
-        return false;
-    } else if (!keywords.equals(other.keywords))
-      return false;
+      if (other.keywords != null) return false;
+    } else if (!keywords.equals(other.keywords)) return false;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (owner == null) {
-      if (other.owner != null)
-        return false;
-    } else if (!owner.equals(other.owner))
-      return false;
+      if (other.owner != null) return false;
+    } else if (!owner.equals(other.owner)) return false;
     if (thumbnailUrl == null) {
-      if (other.thumbnailUrl != null)
-        return false;
-    } else if (!thumbnailUrl.equals(other.thumbnailUrl))
-      return false;
+      if (other.thumbnailUrl != null) return false;
+    } else if (!thumbnailUrl.equals(other.thumbnailUrl)) return false;
     if (updated == null) {
-      if (other.updated != null)
-        return false;
-    } else if (!updated.equals(other.updated))
-      return false;
-    if (viewCount != other.viewCount)
-      return false;
+      if (other.updated != null) return false;
+    } else if (!updated.equals(other.updated)) return false;
+    if (viewCount != other.viewCount) return false;
     return true;
   }
 

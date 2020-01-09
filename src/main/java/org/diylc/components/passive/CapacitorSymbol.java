@@ -24,7 +24,6 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
@@ -37,10 +36,17 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Capacitor", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Capacitor schematic symbol with an optional polarity sign", zOrder = IDIYComponent.COMPONENT,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Capacitor",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Capacitor schematic symbol with an optional polarity sign",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic",
+    transformer = SimpleComponentTransformer.class)
 public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> {
 
   private static final long serialVersionUID = 1L;
@@ -49,8 +55,7 @@ public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> 
   public static Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in);
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
   private boolean polarized = false;
 
@@ -65,7 +70,8 @@ public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> 
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @Deprecated

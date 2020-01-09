@@ -24,7 +24,6 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
@@ -37,10 +36,17 @@ import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Resistor", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R",
-    description = "Resistor schematic symbol", zOrder = IDIYComponent.COMPONENT,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Resistor",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "R",
+    description = "Resistor schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic",
+    transformer = SimpleComponentTransformer.class)
 public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
 
   private static final long serialVersionUID = 1L;
@@ -49,9 +55,9 @@ public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
   public static Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in);
 
   private Resistance value = null;
-  @Deprecated
-  private Power power = Power.HALF;
-  private org.diylc.core.measures.Power powerNew = new org.diylc.core.measures.Power(0.5, PowerUnit.W);
+  @Deprecated private Power power = Power.HALF;
+  private org.diylc.core.measures.Power powerNew =
+      new org.diylc.core.measures.Power(0.5, PowerUnit.W);
 
   @EditableProperty
   public Resistance getValue() {
@@ -92,15 +98,25 @@ public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
     this.powerNew = powerNew;
   }
 
-
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.rotate(-Math.PI / 4, width / 2, height / 2);
     g2d.setColor(LEAD_COLOR);
     g2d.drawLine(0, height / 2, 4, height / 2);
     g2d.drawLine(width - 4, height / 2, width, height / 2);
     g2d.setColor(COLOR);
-    g2d.drawPolyline(new int[] {4, 6, 10, 14, 18, 22, 26, 28}, new int[] {height / 2, height / 2 + 2, height / 2 - 2,
-        height / 2 + 2, height / 2 - 2, height / 2 + 2, height / 2 - 2, height / 2}, 8);
+    g2d.drawPolyline(
+        new int[] {4, 6, 10, 14, 18, 22, 26, 28},
+        new int[] {
+          height / 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2
+        },
+        8);
   }
 
   @Override

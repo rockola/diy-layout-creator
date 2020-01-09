@@ -2,20 +2,22 @@ package org.diylc.swingframework.awt;
 
 import java.awt.geom.GeneralPath;
 
-/***
- * 
- * Creates a {@link GeneralPath} with rounded edges. To create a rounded path, follow these steps:
- * 
+/**
+ * *
+ *
+ * <p>Creates a {@link GeneralPath} with rounded edges. To create a rounded path, follow these
+ * steps:
+ *
  * <ul>
- * <li>instantiate a {@link RoundedPath}</li>
- * <li>place a starting point using {@link RoundedPath#moveTo(double, double)}</li>
- * <li>create a polygon using a series of {@link RoundedPath#lineTo(double, double)} calls</li>
- * <li>call {@link RoundedPath#getPath()} to get a rounded path</li>
+ *   <li>instantiate a {@link RoundedPath}
+ *   <li>place a starting point using {@link RoundedPath#moveTo(double, double)}
+ *   <li>create a polygon using a series of {@link RoundedPath#lineTo(double, double)} calls
+ *   <li>call {@link RoundedPath#getPath()} to get a rounded path
  * </ul>
- * 
+ *
  * Note that the starting point shouldn't lie on a corner of the polygon if you want that corner to
  * get rounded too. Instead, place the starting/ending point on one of the polygon sides.
- * 
+ *
  * @author bancika
  */
 public class RoundedPath {
@@ -47,7 +49,13 @@ public class RoundedPath {
       path.lineTo(this.x + Math.cos(theta) * (r - radius), this.y + Math.sin(theta) * (r - radius));
     } else {
       double theta = Math.atan2(y - this.y, x - this.x);
-      path.curveTo(this.x, this.y, this.x, this.y, this.x + Math.cos(theta) * radius, this.y + Math.sin(theta) * radius);
+      path.curveTo(
+          this.x,
+          this.y,
+          this.x,
+          this.y,
+          this.x + Math.cos(theta) * radius,
+          this.y + Math.sin(theta) * radius);
     }
 
     isFirst = false;

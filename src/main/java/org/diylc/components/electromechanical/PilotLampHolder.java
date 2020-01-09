@@ -33,7 +33,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -51,16 +50,20 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Pilot Lamp Holder", category = "Electro-Mechanical", author = "Branislav Stojkovic",
+@ComponentDescriptor(
+    name = "Pilot Lamp Holder",
+    category = "Electro-Mechanical",
+    author = "Branislav Stojkovic",
     description = "Fender-style pilot bulb holder for T2 and T-3 ¼ miniature bayonet lamps",
-    zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PL")
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "PL")
 public class PilotLampHolder extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
   private static Color BASE_COLOR = Color.lightGray;
   private static Color WAFER_COLOR = Color.decode("#CD8500");
-  
+
   private static final double SLEEVE_THETA = Math.PI * 0.29444444444;
 
   private static Size THREAD_OUTER_DIAMETER = new Size(11 / 16d, SizeUnit.in);
@@ -76,10 +79,10 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
   private static Size HOLE_SPACING = new Size(0.1d, SizeUnit.in);
 
   private String value = "";
-  private Point[] controlPoints = new Point[] { new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) };
+  private Point[] controlPoints =
+      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   transient Area[] body;
-  @Deprecated
-  private Orientation orientation = Orientation.DEFAULT;
+  @Deprecated private Orientation orientation = Orientation.DEFAULT;
   private Integer angle = 0;
 
   public PilotLampHolder() {
@@ -88,27 +91,33 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-//    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
-      g2d.fill(body[0]);
+    //    if (componentState != ComponentState.DRAGGING) {
+    Composite oldComposite = g2d.getComposite();
+    if (alpha < MAX_ALPHA) {
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+    }
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
+    g2d.fill(body[0]);
 
-      g2d.setComposite(oldComposite);
-//    }
+    g2d.setComposite(oldComposite);
+    //    }
 
     Color finalBorderColor;
 
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = WAFER_COLOR.darker();
@@ -117,44 +126,46 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
 
-//    if (componentState != ComponentState.DRAGGING) {
-      oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
-      
-      drawingObserver.startTrackingContinuityArea(true);
-      
-      g2d.fill(body[3]);
-      g2d.fill(body[4]);
-      g2d.fill(body[5]);
-      
-      g2d.fill(body[1]);
-      g2d.fill(body[2]);
-      
-      drawingObserver.stopTrackingContinuityArea();
+    //    if (componentState != ComponentState.DRAGGING) {
+    oldComposite = g2d.getComposite();
+    if (alpha < MAX_ALPHA) {
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+    }
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
 
-      g2d.setComposite(oldComposite);
-//    }
+    drawingObserver.startTrackingContinuityArea(true);
+
+    g2d.fill(body[3]);
+    g2d.fill(body[4]);
+    g2d.fill(body[5]);
+
+    g2d.fill(body[1]);
+    g2d.fill(body[2]);
+
+    drawingObserver.stopTrackingContinuityArea();
+
+    g2d.setComposite(oldComposite);
+    //    }
 
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = BASE_COLOR.darker();
     }
 
     g2d.setColor(finalBorderColor);
-    
+
     g2d.draw(body[3]);
     g2d.draw(body[4]);
     g2d.draw(body[5]);
-    
+
     g2d.draw(body[1]);
     g2d.draw(body[2]);
-    
+
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 
@@ -178,74 +189,133 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
       int centerY = y + springLength - holeToEdge;
 
       Area wafer =
-          new Area(new Ellipse2D.Double(x - waferDiameter / 2, centerY - waferDiameter / 2, waferDiameter,
-              waferDiameter));
-      wafer.subtract(new Area(new Ellipse2D.Double(x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter,
-          ringDiameter)));
+          new Area(
+              new Ellipse2D.Double(
+                  x - waferDiameter / 2,
+                  centerY - waferDiameter / 2,
+                  waferDiameter,
+                  waferDiameter));
+      wafer.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
 
       body[0] = wafer;
 
       Area tip =
-          new Area(new RoundRectangle2D.Double(x - springWidth / 2, y - holeToEdge, springWidth, springLength, springWidth, springWidth));
-      tip.subtract(new Area(new Ellipse2D.Double(x - waferDiameter / 2, centerY - waferDiameter / 2, waferDiameter, waferDiameter)));
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - springWidth / 2,
+                  y - holeToEdge,
+                  springWidth,
+                  springLength,
+                  springWidth,
+                  springWidth));
+      tip.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - waferDiameter / 2,
+                  centerY - waferDiameter / 2,
+                  waferDiameter,
+                  waferDiameter)));
 
       body[1] = tip;
 
       Area sleeve =
-          new Area(new RoundRectangle2D.Double(x - springWidth / 2, y - holeToEdge, springWidth, springLength,
-              springWidth, springWidth));
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - springWidth / 2,
+                  y - holeToEdge,
+                  springWidth,
+                  springLength,
+                  springWidth,
+                  springWidth));
       sleeve.transform(AffineTransform.getRotateInstance(SLEEVE_THETA, x, centerY));
-      sleeve.add(new Area(new Ellipse2D.Double(x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
-      sleeve.subtract(new Area(new Ellipse2D.Double(x - innerDiameter / 2, centerY - innerDiameter / 2, innerDiameter, innerDiameter)));
+      sleeve.add(
+          new Area(
+              new Ellipse2D.Double(
+                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
+      sleeve.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - innerDiameter / 2,
+                  centerY - innerDiameter / 2,
+                  innerDiameter,
+                  innerDiameter)));
 
-      body[2] = sleeve;  
+      body[2] = sleeve;
       tip.subtract(sleeve);
-      
-      Area thread = new Area(new Ellipse2D.Double(x - threadOuterDiameter / 2, centerY - threadOuterDiameter / 2, threadOuterDiameter, threadOuterDiameter));
-      
+
+      Area thread =
+          new Area(
+              new Ellipse2D.Double(
+                  x - threadOuterDiameter / 2,
+                  centerY - threadOuterDiameter / 2,
+                  threadOuterDiameter,
+                  threadOuterDiameter));
+
       Path2D polygon = new Path2D.Double();
       for (int i = 0; i < 6; i++) {
-        double theta = Math.PI /3 * i;
+        double theta = Math.PI / 3 * i;
         if (i == 0)
-          polygon.moveTo(x + nutDiameter / 2 * Math.cos(theta), centerY + nutDiameter / 2 * Math.sin(theta));
+          polygon.moveTo(
+              x + nutDiameter / 2 * Math.cos(theta), centerY + nutDiameter / 2 * Math.sin(theta));
         else
-          polygon.lineTo(x + nutDiameter / 2 * Math.cos(theta), centerY + nutDiameter / 2 * Math.sin(theta));
+          polygon.lineTo(
+              x + nutDiameter / 2 * Math.cos(theta), centerY + nutDiameter / 2 * Math.sin(theta));
       }
       polygon.closePath();
       Area nut = new Area(polygon);
       nut.subtract(thread);
-      nut.subtract(new Area(new Rectangle2D.Double(x - springWidth / 2, y - holeToEdge, springWidth, springLength)));
+      nut.subtract(
+          new Area(
+              new Rectangle2D.Double(
+                  x - springWidth / 2, y - holeToEdge, springWidth, springLength)));
       nut.subtract(sleeve);
-      
-      thread.subtract(new Area(new Ellipse2D.Double(x - threadOuterDiameter / 2 + threadThickness, centerY - threadOuterDiameter / 2 + threadThickness, 
-          threadOuterDiameter - 2 * + threadThickness, threadOuterDiameter - 2 * + threadThickness)));
+
+      thread.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - threadOuterDiameter / 2 + threadThickness,
+                  centerY - threadOuterDiameter / 2 + threadThickness,
+                  threadOuterDiameter - 2 * +threadThickness,
+                  threadOuterDiameter - 2 * +threadThickness)));
       thread.subtract(tip);
       thread.subtract(sleeve);
-      
+
       body[3] = thread;
       body[4] = nut;
-      
+
       double linkLength = (int) (Math.sin(Math.PI / 3) * nutDiameter / 2);
-      Area link = new Area(new Rectangle2D.Double(x - waferDiameter / 2, centerY, waferDiameter, linkLength));
-      link.subtract(new Area(new Ellipse2D.Double(x - waferDiameter / 2, centerY - waferDiameter / 2, waferDiameter,
-              waferDiameter)));
-      
+      Area link =
+          new Area(
+              new Rectangle2D.Double(x - waferDiameter / 2, centerY, waferDiameter, linkLength));
+      link.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - waferDiameter / 2,
+                  centerY - waferDiameter / 2,
+                  waferDiameter,
+                  waferDiameter)));
+
       body[5] = link;
-      
+
       nut.subtract(link);
-      thread.subtract(link);     
+      thread.subtract(link);
 
       if (getTheta() != 0) {
         AffineTransform rotation = AffineTransform.getRotateInstance(getTheta(), x, y);
-        for (Area area : body) {  
-          if (area != null)
-            area.transform(rotation);
+        for (Area area : body) {
+          if (area != null) area.transform(rotation);
         }
       }
-      
+
       for (int i = 1; i <= 2; i++)
         for (Point p : controlPoints)
-          body[i].subtract(new Area(new Ellipse2D.Double(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter)));
+          body[i].subtract(
+              new Area(
+                  new Ellipse2D.Double(
+                      p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter)));
     }
 
     return body;
@@ -260,11 +330,11 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
     int holeSpacing = (int) HOLE_SPACING.convertToPixels();
 
     int centerY = y + springLength - holeToEdge;
-    
+
     AffineTransform rotation = AffineTransform.getRotateInstance(Math.PI * 0.295, x, centerY);
 
     rotation.transform(controlPoints[0], controlPoints[1]);
-    
+
     controlPoints[2].setLocation(controlPoints[0].x, controlPoints[0].y + holeSpacing);
     rotation.transform(controlPoints[2], controlPoints[3]);
 
@@ -287,66 +357,75 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
     g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 4);
 
     g2d.setColor(WAFER_COLOR);
-    g2d.draw(new Ellipse2D.Double(width / 2 - waferDiameter / 2, height / 2 - waferDiameter / 2, waferDiameter,
-        waferDiameter));
+    g2d.draw(
+        new Ellipse2D.Double(
+            width / 2 - waferDiameter / 2,
+            height / 2 - waferDiameter / 2,
+            waferDiameter,
+            waferDiameter));
 
     g2d.setColor(BASE_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(3f * width / 32));
-    g2d.draw(new Ellipse2D.Double(width / 2 - sleeveDiameter / 2, height / 2 - sleeveDiameter / 2, sleeveDiameter,
-        sleeveDiameter));
-    
+    g2d.draw(
+        new Ellipse2D.Double(
+            width / 2 - sleeveDiameter / 2,
+            height / 2 - sleeveDiameter / 2,
+            sleeveDiameter,
+            sleeveDiameter));
+
     g2d.rotate(Math.PI * 0.295, width / 2, height / 2);
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
     g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 3);
-//
-//    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
-//    g2d.rotate(-Math.PI / 2, width / 2, height / 2);
-//
-//    g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 3);
-//    g2d.setColor(BASE_COLOR);
-//    int margin = (int) (2f * width / 32);
-//    g2d.fillOval(0, 0, width, height);
-//    Color jewelColor = Color.decode("#0CDEFF");
-//    Color darkerColor = Color.decode("#0AB2CC");
-//    RadialGradientPaint gradient = new RadialGradientPaint(new Point(width / 2, height / 2), width / 2 - margin * 2, new float[] {0f,  1f}, new Color[] { jewelColor, darkerColor });
-//    g2d.setPaint(gradient);
-//    g2d.fillOval(margin, margin, width - margin * 2, height - margin * 2);
-//    
-//    g2d.setColor(darkerColor);
-//    double r = 6f * width / 32;
-//    Polygon p = new Polygon();
-//    List<Polygon> p1 = new ArrayList<Polygon>();
-//    for (int i = 0; i < 6; i++) {
-//      double theta = Math.PI / 3 * i;
-//      
-//      int x = (int) (width / 2 + r * Math.cos(theta));
-//      int y = (int) (height / 2 + r * Math.sin(theta));
-//      
-//      g2d.drawLine(width / 2, height / 2, x, y);
-//      p.addPoint(x, y);
-//      
-//      Polygon pa = new Polygon();
-//      pa.addPoint(x, y);
-//      int x1 = (int) (x + r * Math.cos(theta - Math.PI / 6));
-//      int y1 = (int) (x + r * Math.sin(theta - Math.PI / 6));
-//      pa.addPoint(x1, y1);
-//      int x2 = (int) (x + r * Math.cos(theta+ Math.PI / 6));
-//      int y2 = (int) (x + r * Math.sin(theta+ Math.PI / 6));
-//      pa.addPoint(x2, y2);
-//      p1.add(pa);
-////      
-////      Polygon pb = new Polygon();
-////      pb.addPoint(x, y);
-////      pb.addPoint(x2, y2);
-////      int x3 = (int) (x + r * Math.cos(theta + Math.PI / 6));
-////      int y3 = (int) (x + r * Math.sin(theta + Math.PI / 6));
-////      pb.addPoint(x3, y3);
-////      p1.add(pb);
-//    }
-//    g2d.draw(p);
-//    for (Polygon pa : p1)
-//      g2d.draw(pa);
+    //
+    //    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
+    //    g2d.rotate(-Math.PI / 2, width / 2, height / 2);
+    //
+    //    g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 3);
+    //    g2d.setColor(BASE_COLOR);
+    //    int margin = (int) (2f * width / 32);
+    //    g2d.fillOval(0, 0, width, height);
+    //    Color jewelColor = Color.decode("#0CDEFF");
+    //    Color darkerColor = Color.decode("#0AB2CC");
+    //    RadialGradientPaint gradient = new RadialGradientPaint(new Point(width / 2, height / 2),
+    // width / 2 - margin * 2, new float[] {0f,  1f}, new Color[] { jewelColor, darkerColor });
+    //    g2d.setPaint(gradient);
+    //    g2d.fillOval(margin, margin, width - margin * 2, height - margin * 2);
+    //
+    //    g2d.setColor(darkerColor);
+    //    double r = 6f * width / 32;
+    //    Polygon p = new Polygon();
+    //    List<Polygon> p1 = new ArrayList<Polygon>();
+    //    for (int i = 0; i < 6; i++) {
+    //      double theta = Math.PI / 3 * i;
+    //
+    //      int x = (int) (width / 2 + r * Math.cos(theta));
+    //      int y = (int) (height / 2 + r * Math.sin(theta));
+    //
+    //      g2d.drawLine(width / 2, height / 2, x, y);
+    //      p.addPoint(x, y);
+    //
+    //      Polygon pa = new Polygon();
+    //      pa.addPoint(x, y);
+    //      int x1 = (int) (x + r * Math.cos(theta - Math.PI / 6));
+    //      int y1 = (int) (x + r * Math.sin(theta - Math.PI / 6));
+    //      pa.addPoint(x1, y1);
+    //      int x2 = (int) (x + r * Math.cos(theta+ Math.PI / 6));
+    //      int y2 = (int) (x + r * Math.sin(theta+ Math.PI / 6));
+    //      pa.addPoint(x2, y2);
+    //      p1.add(pa);
+    ////
+    ////      Polygon pb = new Polygon();
+    ////      pb.addPoint(x, y);
+    ////      pb.addPoint(x2, y2);
+    ////      int x3 = (int) (x + r * Math.cos(theta + Math.PI / 6));
+    ////      int y3 = (int) (x + r * Math.sin(theta + Math.PI / 6));
+    ////      pb.addPoint(x3, y3);
+    ////      p1.add(pb);
+    //    }
+    //    g2d.draw(p);
+    //    for (Polygon pa : p1)
+    //      g2d.draw(pa);
   }
 
   @Override
@@ -391,24 +470,23 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
     if (angle == null) {
       if (orientation != null && orientation != Orientation.DEFAULT)
         angle = Integer.parseInt(orientation.name().replace("_", ""));
-      else 
-        angle = 0;
+      else angle = 0;
     }
     return angle;
   }
-  
+
   public void setAngle(Integer angle) {
     this.angle = angle;
     updateControlPoints();
     // Invalidate the body
     body = null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
-  
+
   protected double getTheta() {
     return Math.toRadians(getAngle());
   }

@@ -28,7 +28,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -45,9 +44,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Electrolytic Capacitor (Axial)", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Electrolytic Capacitor (Axial)",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacitance> {
 
@@ -61,8 +65,7 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
   public static Color TICK_COLOR = Color.white;
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
 
   private Color markerColor = MARKER_COLOR;
@@ -87,7 +90,8 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @Deprecated
@@ -164,17 +168,34 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
   protected Shape getBodyShape() {
     double length = getLength().convertToPixels();
     double width = getWidth().convertToPixels();
-    RoundRectangle2D rect = new RoundRectangle2D.Double(0f, 0f, length, width, width / 6, width / 6);
+    RoundRectangle2D rect =
+        new RoundRectangle2D.Double(0f, 0f, length, width, width / 6, width / 6);
     Area a = new Area(rect);
     double notchDiameter = width / 4;
-    a.subtract(new Area(new Ellipse2D.Double(notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
-    a.subtract(new Area(new Ellipse2D.Double(notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
+    a.subtract(
+        new Area(
+            new Ellipse2D.Double(
+                notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
+    a.subtract(
+        new Area(
+            new Ellipse2D.Double(
+                notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
 
     if (!getPolarized()) {
-      a.subtract(new Area(new Ellipse2D.Double(length - notchDiameter * 2, -notchDiameter * 3 / 4, notchDiameter,
-          notchDiameter)));
-      a.subtract(new Area(new Ellipse2D.Double(length - notchDiameter * 2, width - notchDiameter / 4, notchDiameter,
-          notchDiameter)));
+      a.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  length - notchDiameter * 2,
+                  -notchDiameter * 3 / 4,
+                  notchDiameter,
+                  notchDiameter)));
+      a.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  length - notchDiameter * 2,
+                  width - notchDiameter / 4,
+                  notchDiameter,
+                  notchDiameter)));
     }
     return a;
   }
@@ -192,7 +213,8 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
       int markerLength = (int) (getLength().convertToPixels() * 0.2);
       if (!outlineMode) {
         g2d.setColor(markerColor);
-        Rectangle2D markerRect = new Rectangle2D.Double(length - markerLength, 0, markerLength + 2, width);
+        Rectangle2D markerRect =
+            new Rectangle2D.Double(length - markerLength, 0, markerLength + 2, width);
         Area markerArea = new Area(markerRect);
         markerArea.intersect((Area) getBodyShape());
         g2d.fill(markerArea);
@@ -200,15 +222,20 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
       Color finalTickColor;
       if (outlineMode) {
         Theme theme =
-            (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+            (Theme)
+                ConfigurationManager.getInstance()
+                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
         finalTickColor = theme.getOutlineColor();
       } else {
         finalTickColor = tickColor;
       }
       g2d.setColor(finalTickColor);
       g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(2));
-      g2d.drawLine((int) getLength().convertToPixels() - markerLength / 2, (int) (width / 2 - width * 0.15),
-          (int) getLength().convertToPixels() - markerLength / 2, (int) (width / 2 + width * 0.15));
+      g2d.drawLine(
+          (int) getLength().convertToPixels() - markerLength / 2,
+          (int) (width / 2 - width * 0.15),
+          (int) getLength().convertToPixels() - markerLength / 2,
+          (int) (width / 2 + width * 0.15));
     } else {
       g2d.drawLine(length - notchDiameter, 0, length - notchDiameter, width);
       g2d.drawLine(length - notchDiameter * 2, 0, length - notchDiameter * 2, width);

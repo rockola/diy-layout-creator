@@ -23,7 +23,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.semiconductors.TransistorTO1;
@@ -48,7 +47,8 @@ public class TO1Transformer implements IComponentTransformer {
 
   @Override
   public void rotate(IDIYComponent<?> component, Point center, int direction) {
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
       Point p = new Point(component.getControlPoint(index));
       rotate.transform(p, p);
@@ -59,10 +59,8 @@ public class TO1Transformer implements IComponentTransformer {
     Orientation o = transistor.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0)
-      oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length)
-      oValue = 0;
+    if (oValue < 0) oValue = Orientation.values().length - 1;
+    if (oValue >= Orientation.values().length) oValue = 0;
     o = Orientation.values()[oValue];
     transistor.setOrientation(o);
   }
@@ -92,7 +90,10 @@ public class TO1Transformer implements IComponentTransformer {
       for (int i = 0; i < transistor.getControlPointCount(); i++) {
         Point p = transistor.getControlPoint(i);
         transistor.setControlPoint(
-            new Point(p.x + 2 * dx, p.y + (transistor.getControlPoint(2).y - transistor.getControlPoint(0).y)), i);
+            new Point(
+                p.x + 2 * dx,
+                p.y + (transistor.getControlPoint(2).y - transistor.getControlPoint(0).y)),
+            i);
       }
 
       transistor.setOrientation(o);
@@ -115,8 +116,11 @@ public class TO1Transformer implements IComponentTransformer {
 
       for (int i = 0; i < transistor.getControlPointCount(); i++) {
         Point p = transistor.getControlPoint(i);
-        transistor.setControlPoint(new Point(p.x + (transistor.getControlPoint(2).x - transistor.getControlPoint(0).x),
-            p.y + 2 * dy), i);
+        transistor.setControlPoint(
+            new Point(
+                p.x + (transistor.getControlPoint(2).x - transistor.getControlPoint(0).x),
+                p.y + 2 * dy),
+            i);
       }
 
       transistor.setOrientation(o);

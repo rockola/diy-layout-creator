@@ -27,7 +27,6 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
@@ -38,9 +37,15 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "LED", author = "Branislav Stojkovic", category = "Semiconductors",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Light Emitting Diode",
-    zOrder = IDIYComponent.COMPONENT, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "LED",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "D",
+    description = "Light Emitting Diode",
+    zOrder = IDIYComponent.COMPONENT,
+    transformer = SimpleComponentTransformer.class)
 public class LED extends AbstractLeadedComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -73,8 +78,11 @@ public class LED extends AbstractLeadedComponent<String> {
     g2d.drawLine(0, height / 2, width, height / 2);
 
     int margin = 4 * width / 32;
-    Area area = new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
-    area.intersect(new Area(new Rectangle2D.Double(margin, margin, width - 5 * margin / 2, width - 2 * margin)));
+    Area area =
+        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
+    area.intersect(
+        new Area(
+            new Rectangle2D.Double(margin, margin, width - 5 * margin / 2, width - 2 * margin)));
     g2d.setColor(BODY_COLOR);
     g2d.fill(area);
     g2d.setColor(BORDER_COLOR);
@@ -96,7 +104,8 @@ public class LED extends AbstractLeadedComponent<String> {
   protected Shape getBodyShape() {
     int size = getClosestOdd((int) (getLength().convertToPixels() * 1.2));
     Area area = new Area(new Ellipse2D.Double(0, 0, size, size));
-    area.intersect(new Area(new Rectangle2D.Double(0, 0, getLength().convertToPixels() * 1.15, size)));
+    area.intersect(
+        new Area(new Rectangle2D.Double(0, 0, getLength().convertToPixels() * 1.15, size)));
     return area;
   }
 

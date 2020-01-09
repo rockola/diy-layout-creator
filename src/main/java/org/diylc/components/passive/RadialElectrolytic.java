@@ -28,7 +28,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -45,9 +44,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Electrolytic Capacitor (Radial)", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Vertically mounted electrolytic capacitor, polarized or bipolar", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Electrolytic Capacitor (Radial)",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Vertically mounted electrolytic capacitor, polarized or bipolar",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
 
@@ -62,8 +66,7 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
   public static Size EDGE_RADIUS = new Size(1d, SizeUnit.mm);
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
 
   private Color markerColor = MARKER_COLOR;
@@ -91,7 +94,8 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @Deprecated
@@ -117,11 +121,14 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
     g2d.setColor(BODY_COLOR);
     int margin = 3;
     Ellipse2D body =
-        new Ellipse2D.Double(margin, margin, getClosestOdd(width - 2 * margin), getClosestOdd(width - 2 * margin));
+        new Ellipse2D.Double(
+            margin, margin, getClosestOdd(width - 2 * margin), getClosestOdd(width - 2 * margin));
     g2d.fill(body);
     Area marker = new Area(body);
-    marker.subtract(new Area(new Rectangle2D.Double(margin, margin, width - 4 * margin, getClosestOdd(width - 2
-        * margin))));
+    marker.subtract(
+        new Area(
+            new Rectangle2D.Double(
+                margin, margin, width - 4 * margin, getClosestOdd(width - 2 * margin))));
     g2d.setColor(MARKER_COLOR);
     g2d.fill(marker);
     g2d.setColor(TICK_COLOR);
@@ -146,18 +153,25 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
         if (folded) {
           Area area = new Area(getBodyShape());
           if (invert) {
-            area.subtract(new Area(new Rectangle2D.Double(totalDiameter * 0.2, -height, totalDiameter, height * 2)));
+            area.subtract(
+                new Area(
+                    new Rectangle2D.Double(
+                        totalDiameter * 0.2, -height, totalDiameter, height * 2)));
           } else {
-            area.subtract(new Area(new Rectangle2D.Double(0, -height, totalDiameter * 0.8, height * 2)));
+            area.subtract(
+                new Area(new Rectangle2D.Double(0, -height, totalDiameter * 0.8, height * 2)));
           }
           g2d.setColor(markerColor);
           g2d.fill(area);
         } else {
           Area area = new Area(getBodyShape());
           if (invert) {
-            area.subtract(new Area(new Rectangle2D.Double(totalDiameter * 0.2, 0, totalDiameter, totalDiameter)));
+            area.subtract(
+                new Area(
+                    new Rectangle2D.Double(totalDiameter * 0.2, 0, totalDiameter, totalDiameter)));
           } else {
-            area.subtract(new Area(new Rectangle2D.Double(0, 0, totalDiameter * 0.8, totalDiameter)));
+            area.subtract(
+                new Area(new Rectangle2D.Double(0, 0, totalDiameter * 0.8, totalDiameter)));
           }
           g2d.setColor(markerColor);
           g2d.fill(area);
@@ -166,7 +180,9 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
       Color finalTickColor;
       if (outlineMode) {
         Theme theme =
-            (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+            (Theme)
+                ConfigurationManager.getInstance()
+                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
         finalTickColor = theme.getOutlineColor();
       } else {
         finalTickColor = tickColor;
@@ -176,13 +192,18 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
       if (folded) {
         int tickLength = height / 7;
         for (int i = 0; i < 3; i++) {
-          g2d.drawLine((int) (totalDiameter * (invert ? 0.08 : 0.92)), -height / 2 + tickLength + i * tickLength * 2,
-              (int) (totalDiameter * (invert ? 0.08 : 0.92)), -height / 2 + tickLength + i * tickLength * 2
-                  + tickLength);
+          g2d.drawLine(
+              (int) (totalDiameter * (invert ? 0.08 : 0.92)),
+              -height / 2 + tickLength + i * tickLength * 2,
+              (int) (totalDiameter * (invert ? 0.08 : 0.92)),
+              -height / 2 + tickLength + i * tickLength * 2 + tickLength);
         }
       } else {
-        g2d.drawLine((int) (totalDiameter * (invert ? 0.1 : 0.9)), totalDiameter / 2 - (int) (totalDiameter * 0.06),
-            (int) (totalDiameter * (invert ? 0.1 : 0.9)), totalDiameter / 2 + (int) (totalDiameter * 0.06));
+        g2d.drawLine(
+            (int) (totalDiameter * (invert ? 0.1 : 0.9)),
+            totalDiameter / 2 - (int) (totalDiameter * 0.06),
+            (int) (totalDiameter * (invert ? 0.1 : 0.9)),
+            totalDiameter / 2 + (int) (totalDiameter * 0.06));
       }
     }
     // int coverDiameter = getClosestOdd(totalDiameter * 3 / 4);
@@ -282,8 +303,13 @@ public class RadialElectrolytic extends AbstractRadialComponent<Capacitance> {
     double height = (int) getHeight().convertToPixels();
     double diameter = (int) getLength().convertToPixels();
     if (folded) {
-      return new RoundRectangle2D.Double(0f, -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-          getClosestOdd(diameter), getClosestOdd(height), EDGE_RADIUS.convertToPixels(), EDGE_RADIUS.convertToPixels());
+      return new RoundRectangle2D.Double(
+          0f,
+          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+          getClosestOdd(diameter),
+          getClosestOdd(height),
+          EDGE_RADIUS.convertToPixels(),
+          EDGE_RADIUS.convertToPixels());
     }
     return new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter));
   }

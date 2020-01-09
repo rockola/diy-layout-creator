@@ -31,7 +31,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -67,7 +66,7 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   protected Color bodyColor;
   protected Color borderColor;
   private Color labelColor = LABEL_COLOR;
-  transient private Area[] body;
+  private transient Area[] body;
 
   public PassiveSMDComponent() {
     super();
@@ -209,7 +208,8 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      Area mainArea = new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
+      Area mainArea =
+          new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
 
       // create contact area
       Area contactArea = new Area();
@@ -225,13 +225,16 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
       mainArea.subtract(contactArea);
       body[0] = mainArea;
       body[1] = contactArea;
-
     }
     return body;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -250,26 +253,30 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : getBorderColor();
     }
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(mainArea);
 
-
     // draw contact area
     Area contactArea = getBody()[1];
     if (!outlineMode) {
       g2d.setColor(PIN_COLOR);
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.fill(contactArea);
       g2d.setComposite(oldComposite);
@@ -277,13 +284,17 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
 
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : PIN_BORDER_COLOR;
     }
     g2d.setColor(finalBorderColor);
@@ -294,13 +305,17 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -362,21 +377,31 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
     int thickness = getClosestOdd(width / 2);
     g2d.rotate(Math.PI / 4, width / 2, height / 2);
     RoundRectangle2D rect =
-        new RoundRectangle2D.Double((width - thickness) / 2, 4 * width / 32, thickness, height - 8 * width / 32,
-            radius, radius);
+        new RoundRectangle2D.Double(
+            (width - thickness) / 2,
+            4 * width / 32,
+            thickness,
+            height - 8 * width / 32,
+            radius,
+            radius);
     g2d.setColor(getBodyColor());
     g2d.fill(rect);
     g2d.setColor(getBorderColor());
     g2d.draw(rect);
     Area contactArea = new Area();
-    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, 4 * width / 32, thickness, contactSize)));
-    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, height - 8 * width / 32, thickness,
-        contactSize)));
+    contactArea.add(
+        new Area(
+            new Rectangle2D.Double(
+                (width - thickness) / 2, 4 * width / 32, thickness, contactSize)));
+    contactArea.add(
+        new Area(
+            new Rectangle2D.Double(
+                (width - thickness) / 2, height - 8 * width / 32, thickness, contactSize)));
     contactArea.intersect(new Area(rect));
     g2d.setColor(PIN_COLOR);
     g2d.fill(contactArea);
   }
-  
+
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
     return bodyColor;
@@ -406,17 +431,18 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public static enum SMDSize {
-
-    _0805(new Size(0.05d, SizeUnit.in), new Size(0.08d, SizeUnit.in)), _1206(new Size(1.6d, SizeUnit.mm), new Size(3.2d,
-        SizeUnit.mm)), _1210(new Size(2.5d, SizeUnit.mm), new Size(3.2d, SizeUnit.mm)), _1806(new Size(1.6d,
-        SizeUnit.mm), new Size(4.5d, SizeUnit.mm)), _1812(new Size(3.2d, SizeUnit.mm), new Size(4.5d, SizeUnit.mm));
+    _0805(new Size(0.05d, SizeUnit.in), new Size(0.08d, SizeUnit.in)),
+    _1206(new Size(1.6d, SizeUnit.mm), new Size(3.2d, SizeUnit.mm)),
+    _1210(new Size(2.5d, SizeUnit.mm), new Size(3.2d, SizeUnit.mm)),
+    _1806(new Size(1.6d, SizeUnit.mm), new Size(4.5d, SizeUnit.mm)),
+    _1812(new Size(3.2d, SizeUnit.mm), new Size(4.5d, SizeUnit.mm));
 
     private Size width;
     private Size length;

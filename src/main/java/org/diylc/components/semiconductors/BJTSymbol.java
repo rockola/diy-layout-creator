@@ -28,7 +28,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.core.IDIYComponent;
@@ -36,9 +35,15 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 
-@ComponentDescriptor(name = "BJT", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    instanceNamePrefix = "Q", description = "Bipolar junction transistor schematic symbol",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "BJT",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "Q",
+    description = "Bipolar junction transistor schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
+    keywordTag = "Schematic")
 public class BJTSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
@@ -76,19 +81,34 @@ public class BJTSymbol extends Abstract3LegSymbol {
     if (polarity == BJTPolarity.NPN) {
       theta = Math.atan(1.0 / 3);
       arrow =
-          new Area(new Polygon(new int[] {x + pinSpacing, x + pinSpacing, x + pinSpacing * 10 / 6}, new int[] {
-              y - pinSpacing / 5 + pinSpacing / 2, y + pinSpacing / 5 + pinSpacing / 2, y + pinSpacing / 2}, 3));
-      arrow.transform(AffineTransform.getRotateInstance(theta, x + pinSpacing / 2, y + pinSpacing / 2));
+          new Area(
+              new Polygon(
+                  new int[] {x + pinSpacing, x + pinSpacing, x + pinSpacing * 10 / 6},
+                  new int[] {
+                    y - pinSpacing / 5 + pinSpacing / 2,
+                    y + pinSpacing / 5 + pinSpacing / 2,
+                    y + pinSpacing / 2
+                  },
+                  3));
+      arrow.transform(
+          AffineTransform.getRotateInstance(theta, x + pinSpacing / 2, y + pinSpacing / 2));
     } else {
       theta = -Math.atan(1.0 / 3);
       arrow =
           new Area(
-              new Polygon(new int[] {x + pinSpacing, x + pinSpacing * 10 / 6, x + pinSpacing * 10 / 6}, new int[] {
-                  y - pinSpacing / 2, y - pinSpacing / 5 - pinSpacing / 2, y + pinSpacing / 5 - pinSpacing / 2}, 3));
-      arrow.transform(AffineTransform.getRotateInstance(theta, x + pinSpacing / 2, y - pinSpacing / 2));
+              new Polygon(
+                  new int[] {x + pinSpacing, x + pinSpacing * 10 / 6, x + pinSpacing * 10 / 6},
+                  new int[] {
+                    y - pinSpacing / 2,
+                    y - pinSpacing / 5 - pinSpacing / 2,
+                    y + pinSpacing / 5 - pinSpacing / 2
+                  },
+                  3));
+      arrow.transform(
+          AffineTransform.getRotateInstance(theta, x + pinSpacing / 2, y - pinSpacing / 2));
     }
     body[2] = arrow;
-      
+
     return body;
   }
 
@@ -119,7 +139,7 @@ public class BJTSymbol extends Abstract3LegSymbol {
 
     body = null;
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return getName() + "." + index;

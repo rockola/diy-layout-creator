@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Shape;
-
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
@@ -73,7 +72,10 @@ public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol<
   protected Shape getBodyShape() {
     double width = getWidth().convertToPixels();
     Polygon p =
-        new Polygon(new int[] {0, 0, (int) (width / Math.sqrt(2))}, new int[] {0, (int) (width), (int) (width / 2)}, 3);
+        new Polygon(
+            new int[] {0, 0, (int) (width / Math.sqrt(2))},
+            new int[] {0, (int) (width), (int) (width / 2)},
+            3);
     // Area a = new Area(p);
     // int bandSize = (int) BAND_SIZE.convertToPixels();
     // a.add(new Area(new Rectangle2D.Double((int) (width / Math.sqrt(2)) +

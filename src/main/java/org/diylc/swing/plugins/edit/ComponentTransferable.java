@@ -28,20 +28,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.diylc.core.IDIYComponent;
 
 /**
  * Represents component selection as a {@link List} of {@link IDIYComponent} objects. Implements
  * {@link Transferable}, so it is suitable for clipboard usage.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class ComponentTransferable extends ArrayList<IDIYComponent<?>> implements Transferable {
 
   private static final long serialVersionUID = 1L;
 
-  public static final DataFlavor listFlavor = new DataFlavor(ComponentTransferable.class, "application/diylc");
+  public static final DataFlavor listFlavor =
+      new DataFlavor(ComponentTransferable.class, "application/diylc");
 
   public ComponentTransferable() {
     super();

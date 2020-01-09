@@ -28,15 +28,14 @@ import org.diylc.core.measures.AbstractMeasure;
 /**
  * Validates any generic {@link AbstractMeasure} descendants and makes sure that the value is
  * positive.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class PositiveNonZeroMeasureValidator implements IPropertyValidator {
 
   @Override
   public void validate(Object value) throws ValidationException {
-    if (value == null)
-      return;
+    if (value == null) return;
     if (value instanceof AbstractMeasure) {
       AbstractMeasure<?> measure = (AbstractMeasure<?>) value;
       if (measure.getValue() <= 0) {

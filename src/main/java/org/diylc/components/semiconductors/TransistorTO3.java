@@ -34,7 +34,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.TwoCircleTangent;
 import org.diylc.common.Display;
@@ -55,9 +54,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Transistor (TO-3)", author = "Branislav Stojkovic", category = "Semiconductors",
-    instanceNamePrefix = "Q", description = "Transistor with large metal body",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE)
+@ComponentDescriptor(
+    name = "Transistor (TO-3)",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    instanceNamePrefix = "Q",
+    description = "Transistor with large metal body",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE)
 public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -80,7 +84,7 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
-  transient private Area[] body;
+  private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
@@ -191,17 +195,31 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
       int smallDiameter = getClosestOdd(SMALL_DIAMETER.convertToPixels());
       int holeDistance = getClosestOdd(HOLE_DISTANCE.convertToPixels());
       int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
-      
-      TwoCircleTangent left = new TwoCircleTangent(new Point2D.Double(x, y), new Point2D.Double(x - holeDistance / 2, y), largeDiameter / 2, smallDiameter / 2);
-      TwoCircleTangent right = new TwoCircleTangent(new Point2D.Double(x, y), new Point2D.Double(x + holeDistance / 2, y), largeDiameter / 2, smallDiameter / 2);
-      
+
+      TwoCircleTangent left =
+          new TwoCircleTangent(
+              new Point2D.Double(x, y),
+              new Point2D.Double(x - holeDistance / 2, y),
+              largeDiameter / 2,
+              smallDiameter / 2);
+      TwoCircleTangent right =
+          new TwoCircleTangent(
+              new Point2D.Double(x, y),
+              new Point2D.Double(x + holeDistance / 2, y),
+              largeDiameter / 2,
+              smallDiameter / 2);
+
       body[0] = left;
       body[0].add(right);
 
-      body[0].subtract(new Area(new Ellipse2D.Double(x - holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize,
-          holeSize)));
-      body[0].subtract(new Area(new Ellipse2D.Double(x + holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize,
-          holeSize)));
+      body[0].subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
+      body[0].subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x + holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
 
       switch (orientation) {
         case DEFAULT:
@@ -220,30 +238,39 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
       }
 
       body[1] =
-          new Area(new Ellipse2D.Double(x - innerDiameter / 2, y - innerDiameter / 2, innerDiameter, innerDiameter));
+          new Area(
+              new Ellipse2D.Double(
+                  x - innerDiameter / 2, y - innerDiameter / 2, innerDiameter, innerDiameter));
     }
     return body;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     int pinSize = (int) PIN_DIAMETER.convertToPixels() / 2 * 2;
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-    
+
     for (Point point : controlPoints) {
       if (!outlineMode) {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);      
+      g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
-    
+
     Area mainArea = getBody()[0];
     Area innerArea = getBody()[1];
     Composite oldComposite = g2d.getComposite();
@@ -254,31 +281,35 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
     Color finalBorderColor;
-    
+
     if (outlineMode) {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : borderColor;
     }
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(mainArea);
-    g2d.draw(innerArea);   
+    g2d.draw(innerArea);
 
     // Draw label.
     g2d.setFont(project.getFont());
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -306,14 +337,27 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
     g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     int largeR = getClosestOdd(width * 3d / 8);
     int smallR = getClosestOdd(width / 6d);
-    int innerD = getClosestOdd(width / 2d);    
+    int innerD = getClosestOdd(width / 2d);
     int hole = 4 * width / 32;
-    
-    Area area = new TwoCircleTangent(new Point2D.Double(width * 0.5, height * 0.5), new Point2D.Double(width / 2, height / 8d), largeR, smallR);
-    area.add((Area)new TwoCircleTangent(new Point2D.Double(width * 0.5, height * 0.5), new Point2D.Double(width / 2, height * 7 / 8d), largeR, smallR));
-    
-    area.subtract(new Area(new Ellipse2D.Double((width - hole) / 2, height / 8 - hole / 2, hole, hole)));
-    area.subtract(new Area(new Ellipse2D.Double((width - hole) / 2, height * 7 / 8 - hole / 2, hole, hole)));
+
+    Area area =
+        new TwoCircleTangent(
+            new Point2D.Double(width * 0.5, height * 0.5),
+            new Point2D.Double(width / 2, height / 8d),
+            largeR,
+            smallR);
+    area.add(
+        (Area)
+            new TwoCircleTangent(
+                new Point2D.Double(width * 0.5, height * 0.5),
+                new Point2D.Double(width / 2, height * 7 / 8d),
+                largeR,
+                smallR));
+
+    area.subtract(
+        new Area(new Ellipse2D.Double((width - hole) / 2, height / 8 - hole / 2, hole, hole)));
+    area.subtract(
+        new Area(new Ellipse2D.Double((width - hole) / 2, height * 7 / 8 - hole / 2, hole, hole)));
     area.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, height / 2));
     g2d.setColor(BODY_COLOR);
     g2d.fill(area);

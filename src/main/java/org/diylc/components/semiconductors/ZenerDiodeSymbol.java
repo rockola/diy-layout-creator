@@ -23,7 +23,6 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.CreationMethod;
@@ -33,10 +32,17 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Zener Diode", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D",
-    description = "Zener diode schematic symbol", zOrder = IDIYComponent.COMPONENT,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Zener Diode",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "D",
+    description = "Zener diode schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic",
+    transformer = SimpleComponentTransformer.class)
 public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
 
   private static final long serialVersionUID = 1L;
@@ -51,17 +57,32 @@ public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
     g2d.drawLine(0, height / 2, (width - size) / 2, height / 2);
     g2d.drawLine((int) (width + size / Math.sqrt(2) + bandSize) / 2, height / 2, width, height / 2);
     g2d.setColor(COLOR);
-    g2d.fill(new Polygon(new int[] {(width - size) / 2, (width - size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2))}, new int[] {(height - size) / 2, (height + size) / 2,
-        height / 2}, 3));
+    g2d.fill(
+        new Polygon(
+            new int[] {
+              (width - size) / 2,
+              (width - size) / 2,
+              (int) ((width - size) / 2 + size / Math.sqrt(2))
+            },
+            new int[] {(height - size) / 2, (height + size) / 2, height / 2},
+            3));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
-    g2d.drawLine((int) ((width - size) / 2 + size / Math.sqrt(2)), (height - size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2)), (height + size) / 2);
+    g2d.drawLine(
+        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (height - size) / 2,
+        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (height + size) / 2);
     int finSize = 2 * width / 32;
-    g2d.drawLine((int) ((width - size) / 2 + size / Math.sqrt(2)), (height - size) / 2, (int) ((width - size) / 2
-        + size / Math.sqrt(2) + finSize), (height - size) / 2 - finSize);
-    g2d.drawLine((int) ((width - size) / 2 + size / Math.sqrt(2)), (height + size) / 2, (int) ((width - size) / 2
-        + size / Math.sqrt(2) - finSize), (height + size) / 2 + finSize);
+    g2d.drawLine(
+        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (height - size) / 2,
+        (int) ((width - size) / 2 + size / Math.sqrt(2) + finSize),
+        (height - size) / 2 - finSize);
+    g2d.drawLine(
+        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (height + size) / 2,
+        (int) ((width - size) / 2 + size / Math.sqrt(2) - finSize),
+        (height + size) / 2 + finSize);
   }
 
   @Override
@@ -79,9 +100,14 @@ public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
     // (int) (width / Math.sqrt(2) + bandSize - finSize),
     // (int) (width + finSize));
 
-    g2d.drawPolyline(new int[] {(int) (width / Math.sqrt(2) + bandSize + finSize),
-        (int) (width / Math.sqrt(2) + bandSize), (int) (width / Math.sqrt(2) + bandSize),
-        (int) (width / Math.sqrt(2) + bandSize - finSize)}, new int[] {(int) -finSize, 0, (int) width,
-        (int) (width + finSize)}, 4);
+    g2d.drawPolyline(
+        new int[] {
+          (int) (width / Math.sqrt(2) + bandSize + finSize),
+          (int) (width / Math.sqrt(2) + bandSize),
+          (int) (width / Math.sqrt(2) + bandSize),
+          (int) (width / Math.sqrt(2) + bandSize - finSize)
+        },
+        new int[] {(int) -finSize, 0, (int) width, (int) (width + finSize)},
+        4);
   }
 }

@@ -24,7 +24,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-
 import org.diylc.common.Display;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
@@ -39,9 +38,16 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
-@ComponentDescriptor(name = "Jumper", author = "Branislav Stojkovic", category = "Connectivity",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "J", description = "",
-    zOrder = IDIYComponent.COMPONENT, bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false,
+@ComponentDescriptor(
+    name = "Jumper",
+    author = "Branislav Stojkovic",
+    category = "Connectivity",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "J",
+    description = "",
+    zOrder = IDIYComponent.COMPONENT,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
     transformer = SimpleComponentTransformer.class)
 public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity {
 
@@ -49,9 +55,8 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
 
   public static Color COLOR = Color.blue;
 
-  @Deprecated
-  private Color color;
-  protected LineStyle style = LineStyle.SOLID; 
+  @Deprecated private Color color;
+  protected LineStyle style = LineStyle.SOLID;
 
   public Jumper() {
     super();
@@ -70,7 +75,8 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
 
   @Override
   public Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+        ? SELECTION_COLOR
         : getLeadColor();
   }
 
@@ -82,11 +88,10 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
     }
     return super.getLeadColor();
   }
-  
+
   @EditableProperty(name = "Style")
   public LineStyle getStyle() {
-    if (style == null)
-      style = LineStyle.SOLID;
+    if (style == null) style = LineStyle.SOLID;
     return style;
   }
 
@@ -162,8 +167,8 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
   @Override
   public boolean arePointsConnected(int index1, int index2) {
     return true;
-  }  
-  
+  }
+
   public boolean getMoveLabel() {
     // override to disable edit
     return false;

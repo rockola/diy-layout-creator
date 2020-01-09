@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -47,9 +46,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Trimmer Potentiometer", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.SINGLE_CLICK, instanceNamePrefix = "VR",
-    description = "Various types of board mounted trimmer potentiometers", zOrder = IDIYComponent.COMPONENT)
+@ComponentDescriptor(
+    name = "Trimmer Potentiometer",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.SINGLE_CLICK,
+    instanceNamePrefix = "VR",
+    description = "Various types of board mounted trimmer potentiometers",
+    zOrder = IDIYComponent.COMPONENT)
 public class TrimmerPotentiometer extends AbstractPotentiometer {
 
   private static final long serialVersionUID = 1L;
@@ -76,7 +80,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   protected Color borderColor = BORDER_COLOR;
   protected Display display = DISPLAY;
   // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
-  transient protected Shape[] body = null;
+  protected transient Shape[] body = null;
 
   protected TrimmerType type = TrimmerType.FLAT_SMALL;
 
@@ -294,11 +298,13 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
       // Calculate the center point as center of the minimum bounding
       // rectangle.
       int centerX =
-          (Math.max(Math.max(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x) + Math.min(
-              Math.min(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x)) / 2;
+          (Math.max(Math.max(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x)
+                  + Math.min(Math.min(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x))
+              / 2;
       int centerY =
-          (Math.max(Math.max(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y) + Math.min(
-              Math.min(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y)) / 2;
+          (Math.max(Math.max(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y)
+                  + Math.min(Math.min(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y))
+              / 2;
 
       // Calculate body dimensions based on the selected type.
       int length = 0;
@@ -315,15 +321,17 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
             length = getClosestOdd(FLAT_LARGE_BODY_SIZE.convertToPixels());
           else if (getType() == TrimmerType.FLAT_SMALL2)
             length = getClosestOdd(FLAT_SMALL2_BODY_SIZE.convertToPixels());
-          else
-            length = getClosestOdd(FLAT_BODY_SIZE.convertToPixels());
+          else length = getClosestOdd(FLAT_BODY_SIZE.convertToPixels());
           width = length;
           int shaftSize = getClosestOdd(FLAT_SHAFT_SIZE.convertToPixels());
           Area shaft =
-              new Area(new Ellipse2D.Double(centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
           Area slot =
-              new Area(new Rectangle2D.Double(centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize,
-                  shaftSize / 4));
+              new Area(
+                  new Rectangle2D.Double(
+                      centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize, shaftSize / 4));
           slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, centerX, centerY));
           shaft.subtract(slot);
           body[1] = shaft;
@@ -344,7 +352,9 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
       if (getType() == TrimmerType.FLAT_SMALL2)
         body[0] = new Ellipse2D.Double(centerX - length / 2, centerY - width / 2, length, width);
       else
-        body[0] = new RoundRectangle2D.Double(centerX - length / 2, centerY - width / 2, length, width, edge, edge);
+        body[0] =
+            new RoundRectangle2D.Double(
+                centerX - length / 2, centerY - width / 2, length, width, edge, edge);
     }
     return body;
   }
@@ -363,7 +373,11 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -371,12 +385,16 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Shape mainShape = getBody()[0];
     Shape shaftShape = getBody()[1];
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     if (mainShape != null) {
       g2d.setColor(bodyColor);
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       if (!outlineMode) {
         g2d.fill(mainShape);
@@ -391,11 +409,13 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
       Color finalBorderColor;
       if (outlineMode) {
         finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                ? SELECTION_COLOR
                 : theme.getOutlineColor();
       } else {
         finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                ? SELECTION_COLOR
                 : borderColor;
       }
       g2d.setColor(finalBorderColor);
@@ -418,16 +438,21 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
 
     String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : (getValue() == null ? "" : getValue().toString());
+    label =
+        (getDisplay() == Display.NAME)
+            ? getName()
+            : (getValue() == null ? "" : getValue().toString());
     if (getDisplay() == Display.NONE) {
       label = "";
     }
@@ -462,7 +487,9 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     int shaftSize = 11;
     int slotSize = 2;
     Area area =
-        new Area(new Ellipse2D.Double(width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
+        new Area(
+            new Ellipse2D.Double(
+                width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
     Area slot = new Area(new Rectangle2D.Double(0, width / 2 - slotSize / 2, width, slotSize));
     slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, width / 2));
     area.subtract(slot);
@@ -528,16 +555,21 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     updateControlPoints();
     body = null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public static enum TrimmerType {
-    FLAT_SMALL("Horizontal Small 1"), FLAT_SMALL2("Horizontal Small 2"), FLAT_XSMALL("Horizontal X-Small"), FLAT_LARGE(
-        "Horizontal Medium"), FLAT_XLARGE("Horizontal Large"), VERTICAL_INLINE("Vertical Inline"), VERTICAL_OFFSET(
-        "Vertical Offset 1"), VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2");
+    FLAT_SMALL("Horizontal Small 1"),
+    FLAT_SMALL2("Horizontal Small 2"),
+    FLAT_XSMALL("Horizontal X-Small"),
+    FLAT_LARGE("Horizontal Medium"),
+    FLAT_XLARGE("Horizontal Large"),
+    VERTICAL_INLINE("Vertical Inline"),
+    VERTICAL_OFFSET("Vertical Offset 1"),
+    VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2");
 
     String label;
 
@@ -547,7 +579,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
     @Override
     public String toString() {
-      return label;// name().substring(0, 1) + name().substring(1).toLowerCase().replace("_", " ");
+      return label; // name().substring(0, 1) + name().substring(1).toLowerCase().replace("_", " ");
     }
   }
 }

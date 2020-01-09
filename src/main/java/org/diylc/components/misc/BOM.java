@@ -29,7 +29,6 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
-
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -44,8 +43,14 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.BomEntry;
 import org.diylc.utils.BomMaker;
 
-@ComponentDescriptor(name = "Bill of Materials", author = "Branislav Stojkovic", category = "Misc", description = "",
-    instanceNamePrefix = "BOM", zOrder = IDIYComponent.TEXT, bomPolicy = BomPolicy.NEVER_SHOW,
+@ComponentDescriptor(
+    name = "Bill of Materials",
+    author = "Branislav Stojkovic",
+    category = "Misc",
+    description = "",
+    instanceNamePrefix = "BOM",
+    zOrder = IDIYComponent.TEXT,
+    bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false)
 public class BOM extends AbstractComponent<Void> {
 
@@ -59,14 +64,18 @@ public class BOM extends AbstractComponent<Void> {
 
   private Point point = new Point(0, 0);
   private Color color = COLOR;
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     List<BomEntry> bom = BomMaker.getInstance().createBom(project.getComponents());
     // Cleanup entries that do not have a value set.
@@ -78,8 +87,10 @@ public class BOM extends AbstractComponent<Void> {
       }
     }
     g2d.setFont(project.getFont());
-    g2d.setColor(componentState == ComponentState.DRAGGING || componentState == ComponentState.SELECTED ? SELECTION_COLOR
-        : getColor());
+    g2d.setColor(
+        componentState == ComponentState.DRAGGING || componentState == ComponentState.SELECTED
+            ? SELECTION_COLOR
+            : getColor());
     // Determine maximum name length and maximum value length to calculate
     // number of columns.
     FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -111,8 +122,7 @@ public class BOM extends AbstractComponent<Void> {
     // Calculate maximum entry size.
     int maxEntrySize = maxNameWidth + maxValueWidth + 2 * (int) SPACING.convertToPixels();
     int columnCount = (int) size.convertToPixels() / maxEntrySize;
-    if (columnCount == 0)
-      columnCount = 1;
+    if (columnCount == 0) columnCount = 1;
     int columnWidth = (int) size.convertToPixels() / columnCount;
     int entriesPerColumn = (int) Math.ceil(1.d * bom.size() / columnCount);
     if (entriesPerColumn == 0) {

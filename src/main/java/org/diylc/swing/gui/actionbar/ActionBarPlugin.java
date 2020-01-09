@@ -21,10 +21,8 @@ package org.diylc.swing.gui.actionbar;
 
 import java.awt.BorderLayout;
 import java.util.EnumSet;
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-
 import org.diylc.DIYLC;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
@@ -33,67 +31,66 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.swing.ActionFactory;
 
 /**
-   Mini toolbar with common actions
-
-   @author Branislav Stojkovic
-*/
+ * Mini toolbar with common actions
+ *
+ * @author Branislav Stojkovic
+ */
 public class ActionBarPlugin implements IPlugIn {
 
-    private IPlugInPort plugInPort;
-    private JPanel actionPanel;
-    private MiniToolbar miniToolbar;
+  private IPlugInPort plugInPort;
+  private JPanel actionPanel;
+  private MiniToolbar miniToolbar;
 
-    public ActionBarPlugin() { }
+  public ActionBarPlugin() {}
 
-    public JPanel getActionPanel() {
-	if (actionPanel == null) {
-	    actionPanel = new JPanel();
-	    actionPanel.setOpaque(false);
-	    actionPanel.setLayout(new BorderLayout());
-	    actionPanel.add(getMiniToolbar(), BorderLayout.EAST);
-	    actionPanel.setBorder(BorderFactory.createEmptyBorder());
-	}
-	return actionPanel;
+  public JPanel getActionPanel() {
+    if (actionPanel == null) {
+      actionPanel = new JPanel();
+      actionPanel.setOpaque(false);
+      actionPanel.setLayout(new BorderLayout());
+      actionPanel.add(getMiniToolbar(), BorderLayout.EAST);
+      actionPanel.setBorder(BorderFactory.createEmptyBorder());
     }
-  
-    public MiniToolbar getMiniToolbar() {
-	if (miniToolbar == null) {
-	    miniToolbar = new MiniToolbar();
-	    miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, 1));
-	    miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, -1));
-	    miniToolbar.addSpacer();
-	    miniToolbar.add(ActionFactory.createMirrorSelectionAction(plugInPort,
-								      IComponentTransformer.HORIZONTAL));
-	    miniToolbar.add(ActionFactory.createMirrorSelectionAction(plugInPort,
-								      IComponentTransformer.VERTICAL));
-	    miniToolbar.addSpacer();
-	    miniToolbar.add(ActionFactory.createNudgeAction(plugInPort));
-	    miniToolbar.addSpacer();
-	    miniToolbar.add(ActionFactory.createSendToBackAction(plugInPort));
-	    miniToolbar.add(ActionFactory.createBringToFrontAction(plugInPort));
-	    miniToolbar.addSpacer();
-	    miniToolbar.add(ActionFactory.createGroupAction(plugInPort));
-	    miniToolbar.add(ActionFactory.createUngroupAction(plugInPort));
-	}
-	return miniToolbar;
-    }
+    return actionPanel;
+  }
 
-    @Override
-    public void connect(IPlugInPort plugInPort) {
-	this.plugInPort = plugInPort;
-	DIYLC.ui().injectMenuComponent(getActionPanel());
+  public MiniToolbar getMiniToolbar() {
+    if (miniToolbar == null) {
+      miniToolbar = new MiniToolbar();
+      miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, 1));
+      miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, -1));
+      miniToolbar.addSpacer();
+      miniToolbar.add(
+          ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.HORIZONTAL));
+      miniToolbar.add(
+          ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.VERTICAL));
+      miniToolbar.addSpacer();
+      miniToolbar.add(ActionFactory.createNudgeAction(plugInPort));
+      miniToolbar.addSpacer();
+      miniToolbar.add(ActionFactory.createSendToBackAction(plugInPort));
+      miniToolbar.add(ActionFactory.createBringToFrontAction(plugInPort));
+      miniToolbar.addSpacer();
+      miniToolbar.add(ActionFactory.createGroupAction(plugInPort));
+      miniToolbar.add(ActionFactory.createUngroupAction(plugInPort));
     }
+    return miniToolbar;
+  }
 
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-	return EnumSet.of(EventType.SELECTION_CHANGED);
-    }
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+    DIYLC.ui().injectMenuComponent(getActionPanel());
+  }
 
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-	if (eventType != EventType.SELECTION_CHANGED)
-	    return;
-	boolean enabled = !plugInPort.getSelectedComponents().isEmpty();
-	getMiniToolbar().setEnabled(enabled);
-    }
+  @Override
+  public EnumSet<EventType> getSubscribedEventTypes() {
+    return EnumSet.of(EventType.SELECTION_CHANGED);
+  }
+
+  @Override
+  public void processMessage(EventType eventType, Object... params) {
+    if (eventType != EventType.SELECTION_CHANGED) return;
+    boolean enabled = !plugInPort.getSelectedComponents().isEmpty();
+    getMiniToolbar().setEnabled(enabled);
+  }
 }

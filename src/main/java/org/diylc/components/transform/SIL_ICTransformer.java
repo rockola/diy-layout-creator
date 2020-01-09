@@ -23,7 +23,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.semiconductors.SIL_IC;
@@ -48,7 +47,8 @@ public class SIL_ICTransformer implements IComponentTransformer {
 
   @Override
   public void rotate(IDIYComponent<?> component, Point center, int direction) {
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
       Point p = new Point(component.getControlPoint(index));
       rotate.transform(p, p);
@@ -59,10 +59,8 @@ public class SIL_ICTransformer implements IComponentTransformer {
     Orientation o = ic.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0)
-      oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length)
-      oValue = 0;
+    if (oValue < 0) oValue = Orientation.values().length - 1;
+    if (oValue >= Orientation.values().length) oValue = 0;
     o = Orientation.values()[oValue];
     ic.setOrientation(o);
   }

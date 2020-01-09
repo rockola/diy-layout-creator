@@ -23,7 +23,7 @@ package org.diylc.core;
 
 /**
  * Interface for validating property value changes.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public interface IPropertyValidator {

@@ -1,5 +1,5 @@
 /*
-  DIY Layout Creator (DIYLC). 
+  DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
@@ -22,11 +22,9 @@ package org.diylc.swingframework;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -35,7 +33,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-
 import org.diylc.DIYLC;
 
 public abstract class ButtonDialog extends JDialog {
@@ -54,21 +51,21 @@ public abstract class ButtonDialog extends JDialog {
 
   private String selectedButtonCaption;
 
-  public static final String windowClosingKey
-      = "org.diylc.swingframework.dispatch:WINDOW_CLOSING";
+  public static final String windowClosingKey = "org.diylc.swingframework.dispatch:WINDOW_CLOSING";
 
   public static void installEscapeCloseOperation(final JDialog dialog) {
-    Action dispatchClosing = new AbstractAction() {
+    Action dispatchClosing =
+        new AbstractAction() {
 
-      private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent event) {
-        dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
-      }
-    };
+          public void actionPerformed(ActionEvent event) {
+            dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+          }
+        };
     JRootPane root = dialog.getRootPane();
-    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(DIYLC.getKeyStroke("Escape"),
-							    windowClosingKey);
+    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        .put(DIYLC.getKeyStroke("Escape"), windowClosingKey);
     root.getActionMap().put(windowClosingKey, dispatchClosing);
   }
 
@@ -112,16 +109,17 @@ public abstract class ButtonDialog extends JDialog {
       for (String caption : buttonCaptions) {
         final String command = caption;
         JButton button = new JButton(caption);
-        button.addActionListener(new ActionListener() {
+        button.addActionListener(
+            new ActionListener() {
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (validateInput(command)) {
-              selectedButtonCaption = command;
-              ButtonDialog.this.setVisible(false);
-            }
-          }
-        });
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                if (validateInput(command)) {
+                  selectedButtonCaption = command;
+                  ButtonDialog.this.setVisible(false);
+                }
+              }
+            });
         buttonPanel.add(button);
         buttonMap.put(command, button);
       }
@@ -132,7 +130,7 @@ public abstract class ButtonDialog extends JDialog {
     return buttonPanel;
   }
 
-  abstract protected JComponent getMainComponent();
+  protected abstract JComponent getMainComponent();
 
   protected boolean validateInput(String button) {
     return true;

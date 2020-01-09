@@ -24,7 +24,6 @@ package org.diylc.components.semiconductors;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.CreationMethod;
@@ -32,9 +31,16 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 
-@ComponentDescriptor(name = "LED", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D", description = "Diode schematic symbol",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic",
+@ComponentDescriptor(
+    name = "LED",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "D",
+    description = "Diode schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)
 public class LEDSymbol extends DiodeSymbol {
 
@@ -69,13 +75,19 @@ public class LEDSymbol extends DiodeSymbol {
     int x2 = (int) (d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     int y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(d / 2, (int) width, x2 - 2, y2 - 2);
-    g2d.fillPolygon(new Polygon(new int[] {x2, x2, (int) (x2 - arrowSize)}, new int[] {y2, (int) (y2 - arrowSize), y2},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {x2, x2, (int) (x2 - arrowSize)},
+            new int[] {y2, (int) (y2 - arrowSize), y2},
+            3));
 
     x2 = (int) (3 * d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(3 * d / 2, (int) width, x2 - 2, y2 - 2);
-    g2d.fillPolygon(new Polygon(new int[] {x2, x2, (int) (x2 - arrowSize)}, new int[] {y2, (int) (y2 - arrowSize), y2},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {x2, x2, (int) (x2 - arrowSize)},
+            new int[] {y2, (int) (y2 - arrowSize), y2},
+            3));
   }
 }

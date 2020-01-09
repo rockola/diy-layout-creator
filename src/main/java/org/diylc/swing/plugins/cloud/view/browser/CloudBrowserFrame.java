@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,10 +38,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
@@ -56,245 +53,253 @@ import org.diylc.swing.ISimpleView;
 import org.diylc.utils.Pair;
 
 /**
-   {@link JFrame} for searching the projects on the cloud.
-
-   @author Branislav Stojkovic
-*/
+ * {@link JFrame} for searching the projects on the cloud.
+ *
+ * @author Branislav Stojkovic
+ */
 public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
-    private static final String TITLE = "Search the Cloud";
+  private static final String TITLE = "Search the Cloud";
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LogManager.getLogger(CloudBrowserFrame.class);
+  private static final Logger LOG = LogManager.getLogger(CloudBrowserFrame.class);
 
-    private JPanel mainPanel;
-    private JTabbedPane tabbedPane;
-    private JPanel dashboardPanel;
-    private JPanel searchPanel;
+  private JPanel mainPanel;
+  private JTabbedPane tabbedPane;
+  private JPanel dashboardPanel;
+  private JPanel searchPanel;
 
-    private SearchHeaderPanel searchHeaderPanel;
-    private ResultsScrollPanel resultsScrollPane;
+  private SearchHeaderPanel searchHeaderPanel;
+  private ResultsScrollPanel resultsScrollPane;
 
-    private IPlugInPort plugInPort;
-    private SearchSession searchSession;
+  private IPlugInPort plugInPort;
+  private SearchSession searchSession;
 
-    public CloudBrowserFrame(IPlugInPort plugInPort) {
-	super(TITLE);
-	this.setIconImage(Icon.Cloud.image());
-	this.setPreferredSize(new Dimension(700, 640));
-	this.plugInPort = plugInPort;
-	this.searchSession = new SearchSession();
+  public CloudBrowserFrame(IPlugInPort plugInPort) {
+    super(TITLE);
+    this.setIconImage(Icon.Cloud.image());
+    this.setPreferredSize(new Dimension(700, 640));
+    this.plugInPort = plugInPort;
+    this.searchSession = new SearchSession();
 
-	setContentPane(getSearchPanel());
-	this.pack();
-	this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
-	this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
+    setContentPane(getSearchPanel());
+    this.pack();
+    this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
+    this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
-	JRootPane rootPane = SwingUtilities.getRootPane(getSearchHeaderPanel().getGoButton());
-	rootPane.setDefaultButton(getSearchHeaderPanel().getGoButton());
+    JRootPane rootPane = SwingUtilities.getRootPane(getSearchHeaderPanel().getGoButton());
+    rootPane.setDefaultButton(getSearchHeaderPanel().getGoButton());
+  }
+
+  @Override
+  public void setVisible(boolean b) {
+    super.setVisible(b);
+    if (b && !getSearchHeaderPanel().isInitialized()) {
+      executeBackgroundTask(
+          new ITask<Pair<String[], String[]>>() {
+
+            @Override
+            public Pair<String[], String[]> doInBackground() throws Exception {
+              return new Pair<String[], String[]>(
+                  CloudPresenter.Instance.getCategories(), CloudPresenter.Instance.getSortings());
+            }
+
+            @Override
+            public void failed(Exception e) {
+              LOG.error("Could not fetch categories and sortings from the cloud", e);
+              error(DIYLC.getString("cloud.category-setup-failed"));
+            }
+
+            @Override
+            public void complete(Pair<String[], String[]> result) {
+              getSearchHeaderPanel().initializeLists(result.getFirst(), result.getSecond());
+            }
+          });
     }
+  }
 
-    @Override
-    public void setVisible(boolean b) {
-	super.setVisible(b);
-	if (b && !getSearchHeaderPanel().isInitialized()) {
-	    executeBackgroundTask(new ITask<Pair<String[], String[]>>() {
+  public JPanel getMainPanel() {
+    if (mainPanel == null) {
+      mainPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints gbc = new GridBagConstraints();
+      gbc.anchor = GridBagConstraints.NORTHWEST;
+      gbc.insets = new Insets(2, 2, 2, 2);
 
-		    @Override
-		    public Pair<String[], String[]> doInBackground() throws Exception {
-			return new Pair<String[], String[]>(CloudPresenter.Instance.getCategories(),
-							    CloudPresenter.Instance.getSortings());
-		    }
-
-		    @Override
-		    public void failed(Exception e) {
-			LOG.error("Could not fetch categories and sortings from the cloud", e);
-			error(DIYLC.getString("cloud.category-setup-failed"));
-		    }
-
-		    @Override
-		    public void complete(Pair<String[], String[]> result) {
-			getSearchHeaderPanel().initializeLists(result.getFirst(),
-							       result.getSecond());
-		    }
-		});
-	}
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.fill = GridBagConstraints.BOTH;
+      gbc.weightx = 1;
+      gbc.weighty = 1;
+      mainPanel.add(getTabbedPane(), gbc);
     }
+    return mainPanel;
+  }
 
-    public JPanel getMainPanel() {
-	if (mainPanel == null) {
-	    mainPanel = new JPanel(new GridBagLayout());
-	    GridBagConstraints gbc = new GridBagConstraints();
-	    gbc.anchor = GridBagConstraints.NORTHWEST;
-	    gbc.insets = new Insets(2, 2, 2, 2);
+  private JTabbedPane getTabbedPane() {
+    if (tabbedPane == null) {
+      tabbedPane = new JTabbedPane();
+      tabbedPane.addTab("Dashboard", Icon.Dashboard.icon(), getDashboardPanel());
+      tabbedPane.addTab("Search For Projects", Icon.Find.icon(), getSearchPanel());
+      tabbedPane.setSelectedIndex(1);
+      tabbedPane.addChangeListener(
+          new ChangeListener() {
 
-	    gbc.gridx = 0;
-	    gbc.gridy = 0;
-	    gbc.fill = GridBagConstraints.BOTH;
-	    gbc.weightx = 1;
-	    gbc.weighty = 1;
-	    mainPanel.add(getTabbedPane(), gbc);
-	}
-	return mainPanel;
+            @Override
+            public void stateChanged(ChangeEvent e) {
+              if (getTabbedPane().getSelectedIndex() == 1) getSearchHeaderPanel().setFocus();
+            }
+          });
     }
+    return tabbedPane;
+  }
 
-    private JTabbedPane getTabbedPane() {
-	if (tabbedPane == null) {
-	    tabbedPane = new JTabbedPane();
-	    tabbedPane.addTab("Dashboard", Icon.Dashboard.icon(), getDashboardPanel());
-	    tabbedPane.addTab("Search For Projects", Icon.Find.icon(), getSearchPanel());
-	    tabbedPane.setSelectedIndex(1);
-	    tabbedPane.addChangeListener(new ChangeListener() {
-
-		    @Override
-		    public void stateChanged(ChangeEvent e) {
-			if (getTabbedPane().getSelectedIndex() == 1)
-			    getSearchHeaderPanel().setFocus();
-		    }
-		});
-	}
-	return tabbedPane;
+  private JPanel getDashboardPanel() {
+    if (dashboardPanel == null) {
+      dashboardPanel = new JPanel();
     }
+    return dashboardPanel;
+  }
 
-    private JPanel getDashboardPanel() {
-	if (dashboardPanel == null) {
-	    dashboardPanel = new JPanel();
-	}
-	return dashboardPanel;
-    }
+  private JPanel getSearchPanel() {
+    if (searchPanel == null) {
+      searchPanel = new JPanel(new GridBagLayout());
+      GridBagConstraints gbc = new GridBagConstraints();
+      searchPanel.setBackground(Color.white);
+      gbc.anchor = GridBagConstraints.NORTH;
+      gbc.insets = new Insets(2, 2, 2, 2);
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.fill = GridBagConstraints.HORIZONTAL;
+      gbc.weightx = 1;
+      searchPanel.add(getSearchHeaderPanel(), gbc);
 
-    private JPanel getSearchPanel() {
-	if (searchPanel == null) {
-	    searchPanel = new JPanel(new GridBagLayout());
-	    GridBagConstraints gbc = new GridBagConstraints();
-	    searchPanel.setBackground(Color.white);
-	    gbc.anchor = GridBagConstraints.NORTH;
-	    gbc.insets = new Insets(2, 2, 2, 2);
-	    gbc.gridx = 0;
-	    gbc.gridy = 0;
-	    gbc.fill = GridBagConstraints.HORIZONTAL;
-	    gbc.weightx = 1;
-	    searchPanel.add(getSearchHeaderPanel(), gbc);
+      gbc.gridy = 1;
+      gbc.weighty = 1;
+      gbc.fill = GridBagConstraints.BOTH;
+      searchPanel.add(getResultsScrollPane(), gbc);
+    }
+    return searchPanel;
+  }
 
-	    gbc.gridy = 1;
-	    gbc.weighty = 1;
-	    gbc.fill = GridBagConstraints.BOTH;
-	    searchPanel.add(getResultsScrollPane(), gbc);
-	}
-	return searchPanel;
-    }
+  private SearchHeaderPanel getSearchHeaderPanel() {
+    if (searchHeaderPanel == null) {
+      searchHeaderPanel = new SearchHeaderPanel();
+      searchHeaderPanel
+          .getGoButton()
+          .addActionListener(
+              new ActionListener() {
 
-    private SearchHeaderPanel getSearchHeaderPanel() {
-	if (searchHeaderPanel == null) {
-	    searchHeaderPanel = new SearchHeaderPanel();
-	    searchHeaderPanel.getGoButton().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                  search();
+                }
+              });
+    }
+    return searchHeaderPanel;
+  }
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			search();
-		    }
-		});
-	}
-	return searchHeaderPanel;
+  private ResultsScrollPanel getResultsScrollPane() {
+    if (resultsScrollPane == null) {
+      resultsScrollPane = new ResultsScrollPanel(this, plugInPort, searchSession, false);
     }
+    return resultsScrollPane;
+  }
 
-    private ResultsScrollPanel getResultsScrollPane() {
-	if (resultsScrollPane == null) {
-	    resultsScrollPane = new ResultsScrollPanel(this,
-						       plugInPort,
-						       searchSession,
-						       false);
-	}
-	return resultsScrollPane;
-    }
+  private void search() {
+    getResultsScrollPane().clearPrevious();
+    executeBackgroundTask(
+        new ITask<List<ProjectEntity>>() {
 
-    private void search() {
-	getResultsScrollPane().clearPrevious();
-	executeBackgroundTask(new ITask<List<ProjectEntity>>() {
+          @Override
+          public List<ProjectEntity> doInBackground() throws Exception {
+            return searchSession.startSession(
+                getSearchHeaderPanel().getSearchText(),
+                getSearchHeaderPanel().getCategory(),
+                getSearchHeaderPanel().getSorting());
+          }
 
-		@Override
-		public List<ProjectEntity> doInBackground() throws Exception {
-		    return searchSession.startSession(getSearchHeaderPanel().getSearchText(),
-						      getSearchHeaderPanel().getCategory(),
-						      getSearchHeaderPanel().getSorting());
-		}
+          @Override
+          public void failed(Exception e) {
+            error(DIYLC.getString("cloud.search-failed"));
+          }
 
-		@Override
-		public void failed(Exception e) {
-		    error(DIYLC.getString("cloud.search-failed"));
-		}
+          @Override
+          public void complete(List<ProjectEntity> result) {
+            getResultsScrollPane().startSearch(result);
+          }
+        });
+  }
 
-		@Override
-		public void complete(List<ProjectEntity> result) {        
-		    getResultsScrollPane().startSearch(result);
-		}
-	    });
-    }
+  @Override
+  public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
+    getGlassPane().setVisible(true);
+    SwingWorker<T, Void> worker =
+        new SwingWorker<T, Void>() {
 
-    @Override
-    public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
-	getGlassPane().setVisible(true);
-	SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
+          @Override
+          protected T doInBackground() throws Exception {
+            return task.doInBackground();
+          }
 
-		@Override
-		protected T doInBackground() throws Exception {
-		    return task.doInBackground();
-		}
+          @Override
+          protected void done() {
+            getGlassPane().setVisible(false);
+            try {
+              T result = get();
+              task.complete(result);
+            } catch (ExecutionException e) {
+              LOG.error("Background task execution failed", e);
+              task.failed(e);
+            } catch (InterruptedException e) {
+              LOG.error("Background task execution interrupted", e);
+              task.failed(e);
+            }
+          }
+        };
+    worker.execute();
+  }
 
-		@Override
-		protected void done() {
-		    getGlassPane().setVisible(false);
-		    try {
-			T result = get();
-			task.complete(result);
-		    } catch (ExecutionException e) {
-			LOG.error("Background task execution failed", e);
-			task.failed(e);
-		    } catch (InterruptedException e) {
-			LOG.error("Background task execution interrupted", e);
-			task.failed(e);
-		    }
-		}
-	    };
-	worker.execute();
-    }
+  @Override
+  public void showMessage(String message, String title, int messageType) {
+    JOptionPane.showMessageDialog(this, message, title, messageType);
+  }
 
-    @Override
-    public void showMessage(String message, String title, int messageType) {
-	JOptionPane.showMessageDialog(this, message, title, messageType);
-    }
+  public void info(String title, String text) {
+    showMessage(text, title, IView.INFORMATION_MESSAGE);
+  }
 
-    public void info(String title, String text) {
-	showMessage(text, title, IView.INFORMATION_MESSAGE);
-    }
-    public void info(String text) {
-	info(Config.getString("message.info"), text);
-    }
-    public void error(String title, String text) {
-	showMessage(text, title, IView.ERROR_MESSAGE);
-    }
-    public void error(String text) {
-	error(Config.getString("message.error"), text);
-    }
-    public void error(String text, Exception e) {
-	error(Config.getString("message.error"),
-	      String.format("%s %s", text, e.getMessage()));
-    }
-    public void warn(String title, String text) {
-	showMessage(text, title, IView.WARNING_MESSAGE);
-    }
-    public void warn(String text) {
-	warn(Config.getString("message.warn"), text);
-    }
+  public void info(String text) {
+    info(Config.getString("message.info"), text);
+  }
 
-    @Override
-    public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-	return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
-    }
-  
-    @Override
-    public JFrame getOwnerFrame() {
-	return this;
-    }
+  public void error(String title, String text) {
+    showMessage(text, title, IView.ERROR_MESSAGE);
+  }
+
+  public void error(String text) {
+    error(Config.getString("message.error"), text);
+  }
+
+  public void error(String text, Exception e) {
+    error(Config.getString("message.error"), String.format("%s %s", text, e.getMessage()));
+  }
+
+  public void warn(String title, String text) {
+    showMessage(text, title, IView.WARNING_MESSAGE);
+  }
+
+  public void warn(String text) {
+    warn(Config.getString("message.warn"), text);
+  }
+
+  @Override
+  public int showConfirmDialog(String message, String title, int optionType, int messageType) {
+    return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
+  }
+
+  @Override
+  public JFrame getOwnerFrame() {
+    return this;
+  }
 }

@@ -27,7 +27,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
@@ -42,9 +41,16 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 
-@ComponentDescriptor(name = "Label", author = "Branislav Stojkovic", category = "Misc",
-    description = "User defined label", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true,
-    bomPolicy = BomPolicy.NEVER_SHOW, transformer = TextTransformer.class)
+@ComponentDescriptor(
+    name = "Label",
+    author = "Branislav Stojkovic",
+    category = "Misc",
+    description = "User defined label",
+    instanceNamePrefix = "L",
+    zOrder = IDIYComponent.TEXT,
+    flexibleZOrder = true,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    transformer = TextTransformer.class)
 public class Label extends AbstractComponent<String> {
 
   public static String DEFAULT_TEXT = "Double click to edit text";
@@ -55,16 +61,22 @@ public class Label extends AbstractComponent<String> {
   private String text = DEFAULT_TEXT;
   private Font font = LABEL_FONT;
   private Color color = LABEL_COLOR;
+
   @SuppressWarnings("unused")
   @Deprecated
   private boolean center;
+
   private HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER;
   private VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
   private Orientation orientation = Orientation.DEFAULT;
 
   @SuppressWarnings("incomplete-switch")
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     g2d.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
@@ -233,7 +245,7 @@ public class Label extends AbstractComponent<String> {
   @Override
   public void setControlPoint(Point point, int index) {
     this.point.setLocation(point);
-  }  
+  }
 
   @EditableProperty
   public Color getColor() {
@@ -273,7 +285,7 @@ public class Label extends AbstractComponent<String> {
     return super.getName();
   }
 
-  @EditableProperty(name="Text", defaultable = false)
+  @EditableProperty(name = "Text", defaultable = false)
   @Override
   public String getValue() {
     return text;
@@ -283,7 +295,7 @@ public class Label extends AbstractComponent<String> {
   public void setValue(String value) {
     this.text = value;
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;

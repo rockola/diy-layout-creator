@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -18,104 +17,109 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.Utils;
 
-
 public class UpdateDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private JEditorPane htmlLabel;
+  private JEditorPane htmlLabel;
 
-	private String htmlText;
-	private String latestVersionUrl;
+  private String htmlText;
+  private String latestVersionUrl;
 
-	public UpdateDialog(JComponent owner, String htmlText, String latestVersionUrl) {
-		super(SwingUtilities.getWindowAncestor(owner));
-		this.htmlText = htmlText;
-		this.latestVersionUrl = latestVersionUrl;
-		setTitle(latestVersionUrl == null ? "Version History" : "Update Details");
+  public UpdateDialog(JComponent owner, String htmlText, String latestVersionUrl) {
+    super(SwingUtilities.getWindowAncestor(owner));
+    this.htmlText = htmlText;
+    this.latestVersionUrl = latestVersionUrl;
+    setTitle(latestVersionUrl == null ? "Version History" : "Update Details");
 
-		setModal(true);
+    setModal(true);
 
-		JPanel holderPanel = new JPanel();
-		holderPanel.setLayout(new BorderLayout());
-		holderPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+    JPanel holderPanel = new JPanel();
+    holderPanel.setLayout(new BorderLayout());
+    holderPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-		holderPanel.add(new JLabel(latestVersionUrl == null ? "Most recent updates on this computer:" : "These updates are available for your computer:"),
-				BorderLayout.NORTH);
+    holderPanel.add(
+        new JLabel(
+            latestVersionUrl == null
+                ? "Most recent updates on this computer:"
+                : "These updates are available for your computer:"),
+        BorderLayout.NORTH);
 
-		final JScrollPane scrollPane = new JScrollPane(getHtmlLabel());
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);		
-		holderPanel.add(scrollPane, BorderLayout.CENTER);
-		holderPanel.add(createButtonPanel(), BorderLayout.SOUTH);
+    final JScrollPane scrollPane = new JScrollPane(getHtmlLabel());
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    holderPanel.add(scrollPane, BorderLayout.CENTER);
+    holderPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
-		setContentPane(holderPanel);
+    setContentPane(holderPanel);
 
-		setPreferredSize(new Dimension(480, 400));
+    setPreferredSize(new Dimension(480, 400));
 
-		pack();
-		setLocationRelativeTo(getOwner());
-		
-		SwingUtilities.invokeLater(new Runnable() {
-		  
-		   public void run() { 
-		     scrollPane.getVerticalScrollBar().setValue(0);
-		   }
-		});
-	}
+    pack();
+    setLocationRelativeTo(getOwner());
 
-	private JPanel createButtonPanel() {
-		JPanel buttonPanel = new JPanel(new GridBagLayout());
-		buttonPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
+    SwingUtilities.invokeLater(
+        new Runnable() {
 
-		if (latestVersionUrl != null) {
-    		JButton downloadButton = new JButton("Download");
-    		downloadButton.addActionListener(new ActionListener() {
-    
-    			@Override
-    			public void actionPerformed(ActionEvent e) {
-    				try {
-    					Utils.openURL(latestVersionUrl);
-    					UpdateDialog.this.setVisible(false);
-    				} catch (Exception e1) {
-    					JOptionPane.showMessageDialog(UpdateDialog.this,
-    							"Could not launch default browser. To downlaod the latest version visit "
-    									+ latestVersionUrl);
-    					LogManager.getLogger(UpdateDialog.class).error("Could not launch default browser",
-    							e1);
-    				}
-    			}
-    		});
-    		buttonPanel.add(downloadButton);
-    
-    		buttonPanel.add(Box.createHorizontalStrut(4));
-		}
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
+  }
 
-		JButton cancelButton = new JButton("Close");
-		cancelButton.addActionListener(new ActionListener() {
+  private JPanel createButtonPanel() {
+    JPanel buttonPanel = new JPanel(new GridBagLayout());
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				UpdateDialog.this.setVisible(false);
-			}
-		});
-		buttonPanel.add(cancelButton);
+    if (latestVersionUrl != null) {
+      JButton downloadButton = new JButton("Download");
+      downloadButton.addActionListener(
+          new ActionListener() {
 
-		return buttonPanel;
-	}
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              try {
+                Utils.openURL(latestVersionUrl);
+                UpdateDialog.this.setVisible(false);
+              } catch (Exception e1) {
+                JOptionPane.showMessageDialog(
+                    UpdateDialog.this,
+                    "Could not launch default browser. To downlaod the latest version visit "
+                        + latestVersionUrl);
+                LogManager.getLogger(UpdateDialog.class)
+                    .error("Could not launch default browser", e1);
+              }
+            }
+          });
+      buttonPanel.add(downloadButton);
 
-	public JEditorPane getHtmlLabel() {
-		if (htmlLabel == null) {
-			htmlLabel = new JEditorPane();
-			htmlLabel.setEditable(false);
-			htmlLabel.setContentType("text/html");
-			htmlLabel.setText(htmlText);
-			htmlLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
-		}
-		return htmlLabel;
-	}
+      buttonPanel.add(Box.createHorizontalStrut(4));
+    }
+
+    JButton cancelButton = new JButton("Close");
+    cancelButton.addActionListener(
+        new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            UpdateDialog.this.setVisible(false);
+          }
+        });
+    buttonPanel.add(cancelButton);
+
+    return buttonPanel;
+  }
+
+  public JEditorPane getHtmlLabel() {
+    if (htmlLabel == null) {
+      htmlLabel = new JEditorPane();
+      htmlLabel.setEditable(false);
+      htmlLabel.setContentType("text/html");
+      htmlLabel.setText(htmlText);
+      htmlLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
+    }
+    return htmlLabel;
+  }
 }

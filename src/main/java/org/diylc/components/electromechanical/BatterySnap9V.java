@@ -32,7 +32,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -51,9 +50,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "9V Battery Snap", category = "Electro-Mechanical", author = "Branislav Stojkovic",
-    description = "", zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "BTR",
-    autoEdit = false, transformer = BatterySnapTransformer.class)
+@ComponentDescriptor(
+    name = "9V Battery Snap",
+    category = "Electro-Mechanical",
+    author = "Branislav Stojkovic",
+    description = "",
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "BTR",
+    autoEdit = false,
+    transformer = BatterySnapTransformer.class)
 public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -72,7 +77,11 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
   private Color color = BODY_COLOR;
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
@@ -80,7 +89,8 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     if (componentState != ComponentState.DRAGGING) {
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
       g2d.fill(body[0]);
@@ -93,13 +103,17 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : color.brighter();
     }
 
@@ -126,13 +140,18 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       int terminalBorder = (int) TERMINAL_BORDER.convertToPixels();
 
       Area mainArea = new Area(new Rectangle2D.Double(x, y - width / 2, length, width));
-      mainArea.add(new Area(new Ellipse2D.Double(x + length - width / 2, y - width / 2, width, width)));
+      mainArea.add(
+          new Area(new Ellipse2D.Double(x + length - width / 2, y - width / 2, width, width)));
 
       body[0] = mainArea;
 
       Area terminalArea =
-          new Area(new Ellipse2D.Double(x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2, y
-              - terminalDiameter / 2, terminalDiameter, terminalDiameter));
+          new Area(
+              new Ellipse2D.Double(
+                  x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2,
+                  y - terminalDiameter / 2,
+                  terminalDiameter,
+                  terminalDiameter));
 
       int centerX = x + (totalLength + terminalSpacing) / 2;
       int[] terminalX = new int[6];
@@ -147,13 +166,18 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       body[1] = terminalArea;
 
       terminalArea =
-          new Area(new Ellipse2D.Double(
-              x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder, y - terminalDiameter / 2
-                  + terminalBorder, terminalDiameter - 2 * terminalBorder, terminalDiameter - 2 * terminalBorder));
+          new Area(
+              new Ellipse2D.Double(
+                  x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder,
+                  y - terminalDiameter / 2 + terminalBorder,
+                  terminalDiameter - 2 * terminalBorder,
+                  terminalDiameter - 2 * terminalBorder));
 
       for (int i = 0; i < 6; i++) {
-        terminalX[i] = (int) (centerX + Math.cos(Math.PI / 3 * i) * (terminalDiameter / 2 + terminalBorder));
-        terminalY[i] = (int) (y + Math.sin(Math.PI / 3 * i) * (terminalDiameter / 2 + terminalBorder));
+        terminalX[i] =
+            (int) (centerX + Math.cos(Math.PI / 3 * i) * (terminalDiameter / 2 + terminalBorder));
+        terminalY[i] =
+            (int) (y + Math.sin(Math.PI / 3 * i) * (terminalDiameter / 2 + terminalBorder));
       }
       terminalArea.add(new Area(new Polygon(terminalX, terminalY, 6)));
 
@@ -194,8 +218,11 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     g2d.setColor(BODY_COLOR.darker());
     g2d.drawRect(width / 4, width / 32 + width / 4, width / 2, width * 3 / 4 - 2 * width / 32);
     g2d.setColor(METAL_COLOR);
-    g2d.fillOval(width / 4 + 3 * width / 32, width / 32 + 3 * width / 32, width / 2 - 6 * width / 32, width / 2 - 6
-        * width / 32);
+    g2d.fillOval(
+        width / 4 + 3 * width / 32,
+        width / 32 + 3 * width / 32,
+        width / 2 - 6 * width / 32,
+        width / 2 - 6 * width / 32);
 
     int centerX = width / 2;
     int centerY = height * 7 / 9;
@@ -209,8 +236,11 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     }
     g2d.fillPolygon(terminalX, terminalY, 6);
     g2d.setColor(METAL_COLOR.darker());
-    g2d.drawOval(width / 4 + 3 * width / 32, width / 32 + 3 * width / 32, width / 2 - 6 * width / 32, width / 2 - 6
-        * width / 32);
+    g2d.drawOval(
+        width / 4 + 3 * width / 32,
+        width / 32 + 3 * width / 32,
+        width / 2 - 6 * width / 32,
+        width / 2 - 6 * width / 32);
     g2d.drawPolygon(terminalX, terminalY, 6);
   }
 

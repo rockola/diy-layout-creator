@@ -26,20 +26,16 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.ListIterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
-import org.diylc.core.IView;
 import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.presenter.CloudException;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
@@ -56,490 +52,515 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class CloudPlugIn implements IPlugIn {
 
-    private final static Logger LOG = LogManager.getLogger(CloudPlugIn.class);
+  private static final Logger LOG = LogManager.getLogger(CloudPlugIn.class);
 
-    private IPlugInPort plugInPort;
-    private IPlugInPort thumbnailPresenter;
+  private IPlugInPort plugInPort;
+  private IPlugInPort thumbnailPresenter;
 
-    private LibraryAction libraryAction;
+  private LibraryAction libraryAction;
 
-    private LoginAction loginAction;
-    private LogOutAction logOutAction;
-    private CreateAccountAction createAccountAction;
-    private ManageAccountAction manageAccountAction;
+  private LoginAction loginAction;
+  private LogOutAction logOutAction;
+  private CreateAccountAction createAccountAction;
+  private ManageAccountAction manageAccountAction;
 
-    private UploadAction uploadAction;
-    private ChangePasswordAction changePasswordAction;
-    private ManageProjectsAction manageProjectsAction;
+  private UploadAction uploadAction;
+  private ChangePasswordAction changePasswordAction;
+  private ManageProjectsAction manageProjectsAction;
 
-    private CloudBrowserFrame cloudBrowser;
+  private CloudBrowserFrame cloudBrowser;
 
-    private void menuEntry(AbstractAction action) {
-	DIYLC.ui().injectMenuAction(action, DIYLC.getString("cloud.title"));
+  private void menuEntry(AbstractAction action) {
+    DIYLC.ui().injectMenuAction(action, DIYLC.getString("cloud.title"));
+  }
+
+  private void separator() {
+    menuEntry(null);
+  }
+
+  private String getMsg(String key) {
+    return Config.getString("message.cloud." + key);
+  }
+
+  public CloudPlugIn() {
+    super();
+
+    this.thumbnailPresenter = new Presenter();
+
+    menuEntry(getLibraryAction());
+    separator();
+    menuEntry(getLoginAction());
+    menuEntry(getCreateAccountAction());
+    separator();
+    menuEntry(getUploadAction());
+    menuEntry(getManageProjectsAction());
+    separator();
+    menuEntry(getManageAccountAction());
+    menuEntry(getChangePasswordAction());
+    menuEntry(getLogOutAction());
+
+    // default state
+    getUploadAction().setEnabled(false);
+    getManageProjectsAction().setEnabled(false);
+    getLogOutAction().setEnabled(false);
+  }
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+
+    initialize();
+  }
+
+  private void initialize() {
+    DIYLC
+        .ui()
+        .executeBackgroundTask(
+            new ITask<Boolean>() {
+
+              @Override
+              public Boolean doInBackground() throws Exception {
+                return CloudPresenter.Instance.tryLogInWithToken();
+              }
+
+              @Override
+              public void failed(Exception e) {
+                LOG.error("Error while trying to login using token");
+              }
+
+              @Override
+              public void complete(Boolean result) {
+                try {
+                  if (result) loggedIn();
+                } catch (Exception e) {
+                  LOG.error("Error while trying to login with token", e);
+                }
+              }
+            },
+            false);
+  }
+
+  public CloudBrowserFrame getCloudBrowser() {
+    if (cloudBrowser == null) {
+      cloudBrowser = new CloudBrowserFrame(plugInPort);
     }
-    private void separator() { menuEntry(null); }
-    private String getMsg(String key) { return Config.getString("message.cloud." + key); }
+    return cloudBrowser;
+  }
 
-    public CloudPlugIn() {
-	super();
+  public UploadManagerFrame createUploadManagerFrame() {
+    return new UploadManagerFrame(plugInPort);
+  }
 
-	this.thumbnailPresenter = new Presenter();
+  public LibraryAction getLibraryAction() {
+    if (libraryAction == null) {
+      libraryAction = new LibraryAction();
+    }
+    return libraryAction;
+  }
 
-	menuEntry(getLibraryAction());
-	separator();
-	menuEntry(getLoginAction());
-	menuEntry(getCreateAccountAction());
-	separator();
-	menuEntry(getUploadAction());
-	menuEntry(getManageProjectsAction());
-	separator();
-	menuEntry(getManageAccountAction());
-	menuEntry(getChangePasswordAction());
-	menuEntry(getLogOutAction());
+  public LoginAction getLoginAction() {
+    if (loginAction == null) {
+      loginAction = new LoginAction();
+    }
+    return loginAction;
+  }
 
-	// default state
-	getUploadAction().setEnabled(false);
-	getManageProjectsAction().setEnabled(false);
-	getLogOutAction().setEnabled(false);
+  public LogOutAction getLogOutAction() {
+    if (logOutAction == null) {
+      logOutAction = new LogOutAction();
+    }
+    return logOutAction;
+  }
+
+  public CreateAccountAction getCreateAccountAction() {
+    if (createAccountAction == null) {
+      createAccountAction = new CreateAccountAction();
+    }
+    return createAccountAction;
+  }
+
+  public ManageAccountAction getManageAccountAction() {
+    if (manageAccountAction == null) {
+      manageAccountAction = new ManageAccountAction();
+    }
+    return manageAccountAction;
+  }
+
+  public UploadAction getUploadAction() {
+    if (uploadAction == null) {
+      uploadAction = new UploadAction();
+    }
+    return uploadAction;
+  }
+
+  public ChangePasswordAction getChangePasswordAction() {
+    if (changePasswordAction == null) {
+      changePasswordAction = new ChangePasswordAction();
+    }
+    return changePasswordAction;
+  }
+
+  public ManageProjectsAction getManageProjectsAction() {
+    if (manageProjectsAction == null) {
+      manageProjectsAction = new ManageProjectsAction();
+    }
+    return manageProjectsAction;
+  }
+
+  @Override
+  public EnumSet<EventType> getSubscribedEventTypes() {
+    return null;
+  }
+
+  @Override
+  public void processMessage(EventType eventType, Object... params) {}
+
+  class LibraryAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public LibraryAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("search"));
+      putValue(AbstractAction.SMALL_ICON, Icon.Cloud.icon());
     }
 
     @Override
-    public void connect(IPlugInPort plugInPort) {
-	this.plugInPort = plugInPort;
-
-	initialize();
+    public void actionPerformed(ActionEvent e) {
+      getCloudBrowser().setVisible(true);
+      getCloudBrowser().requestFocus();
     }
+  }
 
-    private void initialize() {
-	DIYLC.ui().executeBackgroundTask(new ITask<Boolean>() {
+  class LoginAction extends AbstractAction {
 
-		@Override
-		public Boolean doInBackground() throws Exception {
-		    return CloudPresenter.Instance.tryLogInWithToken();
-		}
+    private static final long serialVersionUID = 1L;
 
-		@Override
-		public void failed(Exception e) {
-		    LOG.error("Error while trying to login using token");
-		}
-
-		@Override
-		public void complete(Boolean result) {
-		    try {
-			if (result)
-			    loggedIn();
-		    } catch (Exception e) {
-			LOG.error("Error while trying to login with token", e);
-		    }
-		}
-	    }, false);
-    }
-
-    public CloudBrowserFrame getCloudBrowser() {
-	if (cloudBrowser == null) {
-	    cloudBrowser = new CloudBrowserFrame(plugInPort);
-	}
-	return cloudBrowser;
-    }
-
-    public UploadManagerFrame createUploadManagerFrame() {
-	return new UploadManagerFrame(plugInPort);
-    }
-
-    public LibraryAction getLibraryAction() {
-	if (libraryAction == null) {
-	    libraryAction = new LibraryAction();
-	}
-	return libraryAction;
-    }
-
-    public LoginAction getLoginAction() {
-	if (loginAction == null) {
-	    loginAction = new LoginAction();
-	}
-	return loginAction;
-    }
-
-    public LogOutAction getLogOutAction() {
-	if (logOutAction == null) {
-	    logOutAction = new LogOutAction();
-	}
-	return logOutAction;
-    }
-
-    public CreateAccountAction getCreateAccountAction() {
-	if (createAccountAction == null) {
-	    createAccountAction = new CreateAccountAction();
-	}
-	return createAccountAction;
-    }
-
-    public ManageAccountAction getManageAccountAction() {
-	if (manageAccountAction == null) {
-	    manageAccountAction = new ManageAccountAction();
-	}
-	return manageAccountAction;
-    }
-
-    public UploadAction getUploadAction() {
-	if (uploadAction == null) {
-	    uploadAction = new UploadAction();
-	}
-	return uploadAction;
-    }
-
-    public ChangePasswordAction getChangePasswordAction() {
-	if (changePasswordAction == null) {
-	    changePasswordAction = new ChangePasswordAction();
-	}
-	return changePasswordAction;
-    }
-
-    public ManageProjectsAction getManageProjectsAction() {
-	if (manageProjectsAction == null) {
-	    manageProjectsAction = new ManageProjectsAction();
-	}
-	return manageProjectsAction;
+    public LoginAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("log-in"));
+      putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
     }
 
     @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-	return null;
+    public void actionPerformed(ActionEvent e) {
+      LoginDialog dialog = DialogFactory.getInstance().createLoginDialog();
+      do {
+        dialog.setVisible(true);
+        if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
+          try {
+            if (CloudPresenter.Instance.logIn(dialog.getUserName(), dialog.getPassword())) {
+              DIYLC.ui().info(getMsg("login-successful"), getMsg("successfully-logged-in"));
+              loggedIn();
+              break;
+            } else {
+              DIYLC.ui().error(getMsg("login-error"), getMsg("could-not-login"));
+            }
+          } catch (CloudException e1) {
+            DIYLC.ui().error(getMsg("could-not-login"), e1);
+          }
+        } else break;
+      } while (true);
+    }
+  }
+
+  class LogOutAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public LogOutAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("log-out"));
+      putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
     }
 
     @Override
-    public void processMessage(EventType eventType, Object... params) {}
+    public void actionPerformed(ActionEvent e) {
+      CloudPresenter.Instance.logOut();
+      loggedOut();
+    }
+  }
 
-    class LibraryAction extends AbstractAction {
+  class CreateAccountAction extends AbstractAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public LibraryAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("search"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.Cloud.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    getCloudBrowser().setVisible(true);
-	    getCloudBrowser().requestFocus();
-	}
+    public CreateAccountAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("create-new-account"));
+      putValue(AbstractAction.SMALL_ICON, Icon.IdCardAdd.icon());
     }
 
-    class LoginAction extends AbstractAction {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      final UserEditDialog dialog = DialogFactory.getInstance().createUserEditDialog(null);
+      dialog.setVisible(true);
+      if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
+        DIYLC
+            .ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-	private static final long serialVersionUID = 1L;
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    CloudPresenter.Instance.createUserAccount(
+                        dialog.getUserName(),
+                        dialog.getPassword(),
+                        dialog.getEmail(),
+                        dialog.getWebsite(),
+                        dialog.getBio());
+                    return null;
+                  }
 
-	public LoginAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("log-in"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
-	}
+                  @Override
+                  public void failed(Exception e) {
+                    DIYLC.ui().error(getMsg("account-not-created"), e);
+                  }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    LoginDialog dialog = DialogFactory.getInstance().createLoginDialog();
-	    do {
-		dialog.setVisible(true);
-		if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		    try {
-			if (CloudPresenter.Instance.logIn(dialog.getUserName(),
-							  dialog.getPassword())) {
-			    DIYLC.ui().info(getMsg("login-successful"),
-					    getMsg("successfully-logged-in"));
-			    loggedIn();
-			    break;
-			} else {
-			    DIYLC.ui().error(getMsg("login-error"),
-					     getMsg("could-not-login"));
-			}
-		    } catch (CloudException e1) {
-			DIYLC.ui().error(getMsg("could-not-login"), e1);
-		    }
-		} else
-		    break;
-	    } while (true);
-	}
+                  @Override
+                  public void complete(Void result) {
+                    DIYLC.ui().info(getMsg("account-created"));
+                  }
+                },
+                true);
+      }
+    }
+  }
+
+  class ManageAccountAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public ManageAccountAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("manage-account"));
+      putValue(AbstractAction.SMALL_ICON, Icon.IdCardEdit.icon());
     }
 
-    class LogOutAction extends AbstractAction {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      try {
+        final UserEditDialog dialog =
+            DialogFactory.getInstance()
+                .createUserEditDialog(CloudPresenter.Instance.getUserDetails());
+        dialog.setVisible(true);
+        if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
+          DIYLC
+              .ui()
+              .executeBackgroundTask(
+                  new ITask<Void>() {
 
-	private static final long serialVersionUID = 1L;
+                    @Override
+                    public Void doInBackground() throws Exception {
+                      CloudPresenter.Instance.updateUserDetails(
+                          dialog.getEmail(), dialog.getWebsite(), dialog.getBio());
+                      return null;
+                    }
 
-	public LogOutAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("log-out"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.IdCard.icon());
-	}
+                    @Override
+                    public void failed(Exception e) {
+                      DIYLC.ui().error(getMsg("account-not-updated"), e);
+                    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    CloudPresenter.Instance.logOut();
-	    loggedOut();
-	}
+                    @Override
+                    public void complete(Void result) {
+                      DIYLC.ui().info(getMsg("account-updated"));
+                    }
+                  },
+                  true);
+        }
+      } catch (CloudException e1) {
+        DIYLC.ui().error(getMsg("could-not-connect"), e1);
+      }
+    }
+  }
+
+  class ChangePasswordAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public ChangePasswordAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("change-password"));
+      putValue(AbstractAction.SMALL_ICON, Icon.KeyEdit.icon());
     }
 
-    class CreateAccountAction extends AbstractAction {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      final ChangePasswordDialog dialog = DialogFactory.getInstance().createChangePasswordDialog();
+      dialog.setVisible(true);
+      if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
+        DIYLC
+            .ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-	private static final long serialVersionUID = 1L;
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    CloudPresenter.Instance.updatePassword(
+                        dialog.getOldPassword(), dialog.getNewPassword());
+                    return null;
+                  }
 
-	public CreateAccountAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("create-new-account"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.IdCardAdd.icon());
-	}
+                  @Override
+                  public void failed(Exception e) {
+                    DIYLC.ui().error(getMsg("password-update-failed"), e);
+                  }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    final UserEditDialog dialog = DialogFactory.getInstance().createUserEditDialog(null);
-	    dialog.setVisible(true);
-	    if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
+                  @Override
+                  public void complete(Void result) {
+                    DIYLC.ui().info(getMsg("password-updated"));
+                  }
+                },
+                true);
+      }
+    }
+  }
 
-			@Override
-			public Void doInBackground() throws Exception {
-			    CloudPresenter.Instance.createUserAccount(dialog.getUserName(),
-								      dialog.getPassword(),
-								      dialog.getEmail(),
-								      dialog.getWebsite(),
-								      dialog.getBio());
-			    return null;
-			}
+  class UploadAction extends AbstractAction {
 
-			@Override
-			public void failed(Exception e) {
-			    DIYLC.ui().error(getMsg("account-not-created"), e);
-			}
+    private static final long serialVersionUID = 1L;
 
-			@Override
-			public void complete(Void result) {
-			    DIYLC.ui().info(getMsg("account-created"));
-			}
-		    }, true);
-	    }
-	}
+    public UploadAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("upload-project"));
+      putValue(AbstractAction.SMALL_ICON, Icon.CloudUp.icon());
     }
 
-    class ManageAccountAction extends AbstractAction {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      LOG.info("UploadAction triggered");
 
-	private static final long serialVersionUID = 1L;
+      final File[] files =
+          DialogFactory.getInstance()
+              .showOpenMultiDialog(
+                  FileFilterEnum.DIY.getFilter(),
+                  null,
+                  FileFilterEnum.DIY.getExtensions()[0],
+                  null,
+                  DIYLC.ui().getOwnerFrame());
+      if (files != null && files.length > 0) {
+        List<ITask<String[]>> tasks = new ArrayList<ITask<String[]>>();
+        final ListIterator<ITask<String[]>> taskIterator = tasks.listIterator();
 
-	public ManageAccountAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("manage-account"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.IdCardEdit.icon());
-	}
+        for (final File file : files) {
+          taskIterator.add(
+              new ITask<String[]>() {
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    try {
-		final UserEditDialog dialog =
-		    DialogFactory.getInstance().createUserEditDialog(CloudPresenter.Instance.getUserDetails());
-		dialog.setVisible(true);
-		if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		    DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
+                @Override
+                public String[] doInBackground() throws Exception {
+                  LOG.debug("Uploading from " + file.getAbsolutePath());
+                  thumbnailPresenter.loadProjectFromFile(file.getAbsolutePath());
+                  return CloudPresenter.Instance.getCategories();
+                }
 
-			    @Override
-			    public Void doInBackground() throws Exception {
-				CloudPresenter.Instance.updateUserDetails(dialog.getEmail(),
-									  dialog.getWebsite(),
-									  dialog.getBio());
-				return null;
-			    }
+                @Override
+                public void complete(final String[] result) {
+                  final UploadDialog dialog =
+                      DialogFactory.getInstance()
+                          .createUploadDialog(
+                              DIYLC.ui().getOwnerFrame(), thumbnailPresenter, result, false);
+                  dialog.setVisible(true);
+                  if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
+                    try {
+                      final File thumbnailFile = File.createTempFile("upload-thumbnail", ".png");
+                      if (ImageIO.write(dialog.getThumbnail(), "png", thumbnailFile)) {
+                        DIYLC
+                            .ui()
+                            .executeBackgroundTask(
+                                new ITask<Void>() {
 
-			    @Override
-			    public void failed(Exception e) {
-				DIYLC.ui().error(getMsg("account-not-updated"), e);
-			    }
+                                  @Override
+                                  public Void doInBackground() throws Exception {
+                                    CloudPresenter.Instance.uploadProject(
+                                        dialog.getName(),
+                                        dialog.getCategory(),
+                                        dialog.getDescription(),
+                                        dialog.getKeywords(),
+                                        DIYLC.getVersionNumber().toString(),
+                                        thumbnailFile,
+                                        file,
+                                        null);
+                                    return null;
+                                  }
 
-			    @Override
-			    public void complete(Void result) {
-				DIYLC.ui().info(getMsg("account-updated"));
-			    }
-			}, true);
-		}
-	    } catch (CloudException e1) {
-		DIYLC.ui().error(getMsg("could-not-connect"), e1);
-	    }
-	}
+                                  @Override
+                                  public void failed(Exception e) {
+                                    DIYLC.ui().error(getMsg("upload-error"), e);
+                                  }
+
+                                  @Override
+                                  public void complete(Void result) {
+                                    DIYLC
+                                        .ui()
+                                        .info(getMsg("upload-success"), getMsg("project-uploaded"));
+                                    synchronized (taskIterator) {
+                                      if (taskIterator.hasPrevious())
+                                        DIYLC
+                                            .ui()
+                                            .executeBackgroundTask(taskIterator.previous(), true);
+                                    }
+                                  }
+                                },
+                                true);
+                      } else {
+                        DIYLC.ui().error(getMsg("upload-error"), getMsg("temp-file-error"));
+                      }
+                    } catch (Exception e) {
+                      DIYLC.ui().error(getMsg("upload-error"), e);
+                    }
+                  }
+                }
+
+                @Override
+                public void failed(Exception e) {
+                  DIYLC.ui().error(getMsg("file-not-opened"), e);
+                }
+              });
+        }
+
+        synchronized (taskIterator) {
+          if (taskIterator.hasPrevious())
+            DIYLC.ui().executeBackgroundTask(taskIterator.previous(), true);
+        }
+      }
+    }
+  }
+
+  class ManageProjectsAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public ManageProjectsAction() {
+      super();
+      putValue(AbstractAction.NAME, getMsg("manage-my-uploads"));
+      putValue(AbstractAction.SMALL_ICON, Icon.CloudGear.icon());
     }
 
-    class ChangePasswordAction extends AbstractAction {
-
-	private static final long serialVersionUID = 1L;
-
-	public ChangePasswordAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("change-password"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.KeyEdit.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    final ChangePasswordDialog dialog = DialogFactory.getInstance().createChangePasswordDialog();
-	    dialog.setVisible(true);
-	    if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-		DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
-
-			@Override
-			public Void doInBackground() throws Exception {
-			    CloudPresenter.Instance.updatePassword(dialog.getOldPassword(),
-								   dialog.getNewPassword());
-			    return null;
-			}
-
-			@Override
-			public void failed(Exception e) {
-			    DIYLC.ui().error(getMsg("password-update-failed"), e);
-			}
-
-			@Override
-			public void complete(Void result) {
-			    DIYLC.ui().info(getMsg("password-updated"));
-			}
-		    }, true);
-	    }
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      UploadManagerFrame frame = createUploadManagerFrame();
+      frame.setVisible(true);
     }
+  }
 
-    class UploadAction extends AbstractAction {
+  public void loggedIn() {
+    getLoginAction().setEnabled(false);
+    getCreateAccountAction().setEnabled(false);
 
-	private static final long serialVersionUID = 1L;
+    getLogOutAction().setEnabled(true);
+    getManageAccountAction().setEnabled(true);
+    getUploadAction().setEnabled(true);
+    getManageProjectsAction().setEnabled(true);
+  }
 
-	public UploadAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("upload-project"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.CloudUp.icon());
-	}
+  public void loggedOut() {
+    getLoginAction().setEnabled(true);
+    getCreateAccountAction().setEnabled(true);
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    LOG.info("UploadAction triggered");
-
-	    final File[] files =
-		DialogFactory.getInstance().showOpenMultiDialog(FileFilterEnum.DIY.getFilter(),
-								null,
-								FileFilterEnum.DIY.getExtensions()[0],
-								null,
-								DIYLC.ui().getOwnerFrame());
-	    if (files != null && files.length > 0) {
-		List<ITask<String[]>> tasks = new ArrayList<ITask<String[]>>();
-		final ListIterator<ITask<String[]>> taskIterator = tasks.listIterator();
-
-		for (final File file : files) {
-		    taskIterator.add(new ITask<String[]>() {
-
-			    @Override
-			    public String[] doInBackground() throws Exception {
-				LOG.debug("Uploading from " + file.getAbsolutePath());
-				thumbnailPresenter.loadProjectFromFile(file.getAbsolutePath());
-				return CloudPresenter.Instance.getCategories();
-			    }
-
-			    @Override
-			    public void complete(final String[] result) {
-				final UploadDialog dialog =
-				    DialogFactory.getInstance().createUploadDialog(DIYLC.ui().getOwnerFrame(),
-										   thumbnailPresenter,
-										   result,
-										   false);
-				dialog.setVisible(true);
-				if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-				    try {
-					final File thumbnailFile = File.createTempFile("upload-thumbnail",
-										       ".png");
-					if (ImageIO.write(dialog.getThumbnail(), "png", thumbnailFile)) {
-					    DIYLC.ui().executeBackgroundTask(new ITask<Void>() {
-
-						    @Override
-						    public Void doInBackground() throws Exception {
-							CloudPresenter.Instance.uploadProject(dialog.getName(),
-											      dialog.getCategory(),
-											      dialog.getDescription(),
-											      dialog.getKeywords(),
-											      DIYLC.getVersionNumber().toString(),
-											      thumbnailFile,
-											      file,
-											      null);
-							return null;
-						    }
-
-						    @Override
-						    public void failed(Exception e) {
-							DIYLC.ui().error(getMsg("upload-error"), e);
-						    }
-
-						    @Override
-						    public void complete(Void result) {
-							DIYLC.ui().info(getMsg("upload-success"),
-									getMsg("project-uploaded"));
-							synchronized (taskIterator) {
-							    if (taskIterator.hasPrevious())
-								DIYLC.ui().executeBackgroundTask(taskIterator.previous(),
-											      true);
-							}
-						    }
-						}, true);
-					} else {
-					    DIYLC.ui().error(getMsg("upload-error"),
-							     getMsg("temp-file-error"));
-					}
-				    } catch (Exception e) {
-					DIYLC.ui().error(getMsg("upload-error"), e);
-				    }
-				}
-			    }
-
-			    @Override
-			    public void failed(Exception e) {
-				DIYLC.ui().error(getMsg("file-not-opened"), e);
-			    }
-			});
-		}        
-
-		synchronized (taskIterator) {
-		    if (taskIterator.hasPrevious())
-			DIYLC.ui().executeBackgroundTask(taskIterator.previous(), true);
-		}
-	    }
-	}
-    }
-
-    class ManageProjectsAction extends AbstractAction {
-
-	private static final long serialVersionUID = 1L;
-
-	public ManageProjectsAction() {
-	    super();
-	    putValue(AbstractAction.NAME, getMsg("manage-my-uploads"));
-	    putValue(AbstractAction.SMALL_ICON, Icon.CloudGear.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    UploadManagerFrame frame = createUploadManagerFrame();
-	    frame.setVisible(true);
-	}
-    }
-
-    public void loggedIn() {
-	getLoginAction().setEnabled(false);
-	getCreateAccountAction().setEnabled(false);
-
-	getLogOutAction().setEnabled(true);
-	getManageAccountAction().setEnabled(true);
-	getUploadAction().setEnabled(true);
-	getManageProjectsAction().setEnabled(true);
-    }
-
-    public void loggedOut() {
-	getLoginAction().setEnabled(true);
-	getCreateAccountAction().setEnabled(true);
-
-	getLogOutAction().setEnabled(false);
-	getManageAccountAction().setEnabled(false);
-	getUploadAction().setEnabled(false);
-	getManageProjectsAction().setEnabled(false);
-    }
+    getLogOutAction().setEnabled(false);
+    getManageAccountAction().setEnabled(false);
+    getUploadAction().setEnabled(false);
+    getManageProjectsAction().setEnabled(false);
+  }
 }

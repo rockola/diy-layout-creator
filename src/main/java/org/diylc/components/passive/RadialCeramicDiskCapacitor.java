@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractRadialComponent;
 import org.diylc.core.CreationMethod;
@@ -37,9 +36,14 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Ceramic Capacitor (Radial)", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Standard radial ceramic capacitor", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Ceramic Capacitor (Radial)",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Standard radial ceramic capacitor",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacitance> {
 
@@ -51,8 +55,7 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
   public static Color BORDER_COLOR = BODY_COLOR.darker();
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
 
   public RadialCeramicDiskCapacitor() {
@@ -72,7 +75,8 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @EditableProperty(name = "Voltage")
@@ -115,6 +119,7 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
 
   @Override
   protected Shape getBodyShape() {
-    return new Ellipse2D.Double(0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
+    return new Ellipse2D.Double(
+        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
   }
 }

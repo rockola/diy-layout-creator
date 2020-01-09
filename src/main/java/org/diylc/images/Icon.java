@@ -23,190 +23,185 @@ import java.awt.Image;
 import java.io.IOException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
-//import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 
 public enum Icon {
-    App,
-    AppMedium,
-    AppSmall,
-    ApplicationEdit,
-    Arrow,
-    BranchAdd,
-    BriefcaseInto,
-    CloudBg,
-    CloudDelete,
-    CloudGear,
-    CloudUpload,
-    CloudWait,
-    Component,
-    Cut,
-    DataFind,
-    Delete,
-    DocumentEdit,
-    Donate,
-    Error,
-    Excel,
-    Exit,
-    FitToSize,
-    FlipHorizontal,
-    Form,
-    FormAdd,
-    Garbage,
-    Guitar,
-    History,
-    IconSmall,
-    IconMedium,
-    IconLarge,
-    IdCard,
-    KeyEdit,
-    LightBulbOff,
-    MagicWand,
-    Megaphone,
-    Messages,
-    MoveSmall,
-    NavRightBlue,
-    NavigateCheck,
-    PhotoScenery,
-    PinGreen,
-    RotateCCW,
-    Screwdriver,
-    ScrollInformation,
-    Selection,
-    Size,
-    Sort,
-    Splash,
-    SplashElectrolytic,
-    SplashResistor,
-    StarBlue,
-    Ungroup,
-    Upload,
-    WindowColors,
-    About,
-    Add,
-    BOM,
-    Back,
-    BlackBoard,
-    BriefcaseAdd,
-    Bug,
-    CSV,
-    Chest,
-    Cloud,
-    CloudBig,
-    CloudDownload,
-    CloudEdit,
-    CloudUp,
-    CoffeebeanEdit,
-    ComponentAdd,
-    Copy,
-    Dashboard,
-    DiskBlue,
-    DocumentPlain,
-    DocumentPlainYellow,
-    DocumentsGear,
-    Download,
-    EditComponent,
-    ElementInto,
-    ElementsSelection,
-    Eye,
-    Faq,
-    Find,
-    FlipVertical,
-    FolderOut,
-    Front,
-    Gears,
-    Group,
-    HTML,
-    Hammer,
-    Help,
-    IdCardAdd,
-    IdCardEdit,
-    Image,
-    JarBeanInto,
-    LightBulbOn,
-    Manual,
-    MissingImage,
-    NavLeftBlue,
-    Node,
-    NotebookAdd,
-    PDF,
-    Paste,
-    Pens,
-    PinGrey,
-    Plugin,
-    Print,
-    Redo,
-    RotateCW,
-    SaveAs,
-    Scientist,
-    SearchBox,
-    Spinning,
-    SplashCeramic,
-    SplashFilm,
-    StarGrey,
-    TraceMask,
-    Undo,
-    Warning,
-    Web,
-    WindowGear,
-    Wrench,
-    ZoomSmall;
+  App,
+  AppMedium,
+  AppSmall,
+  ApplicationEdit,
+  Arrow,
+  BranchAdd,
+  BriefcaseInto,
+  CloudBg,
+  CloudDelete,
+  CloudGear,
+  CloudUpload,
+  CloudWait,
+  Component,
+  Cut,
+  DataFind,
+  Delete,
+  DocumentEdit,
+  Donate,
+  Error,
+  Excel,
+  Exit,
+  FitToSize,
+  FlipHorizontal,
+  Form,
+  FormAdd,
+  Garbage,
+  Guitar,
+  History,
+  IconSmall,
+  IconMedium,
+  IconLarge,
+  IdCard,
+  KeyEdit,
+  LightBulbOff,
+  MagicWand,
+  Megaphone,
+  Messages,
+  MoveSmall,
+  NavRightBlue,
+  NavigateCheck,
+  PhotoScenery,
+  PinGreen,
+  RotateCCW,
+  Screwdriver,
+  ScrollInformation,
+  Selection,
+  Size,
+  Sort,
+  Splash,
+  SplashElectrolytic,
+  SplashResistor,
+  StarBlue,
+  Ungroup,
+  Upload,
+  WindowColors,
+  About,
+  Add,
+  BOM,
+  Back,
+  BlackBoard,
+  BriefcaseAdd,
+  Bug,
+  CSV,
+  Chest,
+  Cloud,
+  CloudBig,
+  CloudDownload,
+  CloudEdit,
+  CloudUp,
+  CoffeebeanEdit,
+  ComponentAdd,
+  Copy,
+  Dashboard,
+  DiskBlue,
+  DocumentPlain,
+  DocumentPlainYellow,
+  DocumentsGear,
+  Download,
+  EditComponent,
+  ElementInto,
+  ElementsSelection,
+  Eye,
+  Faq,
+  Find,
+  FlipVertical,
+  FolderOut,
+  Front,
+  Gears,
+  Group,
+  HTML,
+  Hammer,
+  Help,
+  IdCardAdd,
+  IdCardEdit,
+  Image,
+  JarBeanInto,
+  LightBulbOn,
+  Manual,
+  MissingImage,
+  NavLeftBlue,
+  Node,
+  NotebookAdd,
+  PDF,
+  Paste,
+  Pens,
+  PinGrey,
+  Plugin,
+  Print,
+  Redo,
+  RotateCW,
+  SaveAs,
+  Scientist,
+  SearchBox,
+  Spinning,
+  SplashCeramic,
+  SplashFilm,
+  StarGrey,
+  TraceMask,
+  Undo,
+  Warning,
+  Web,
+  WindowGear,
+  Wrench,
+  ZoomSmall;
 
-    private static final Logger LOG = LogManager.getLogger(Icon.class);
+  private static final Logger LOG = LogManager.getLogger(Icon.class);
 
-    private static HashMap<Icon, ImageIcon> icons = new HashMap<>();
+  private static HashMap<Icon, ImageIcon> icons = new HashMap<>();
 
-    private String resourcePNG() {
-	String resourceID = "icon." + this.toString();
-	String r = DIYLC.getString(resourceID) + ".png";
-	if (r == null)
-	    LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
-	else
-	    LOG.debug("Looking for {} in icons...", r);
-	return r;
+  private String resourcePNG() {
+    String resourceID = "icon." + this.toString();
+    String r = DIYLC.getString(resourceID) + ".png";
+    if (r == null) LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
+    else LOG.debug("Looking for {} in icons...", r);
+    return r;
+  }
+
+  public ImageIcon imageIcon() {
+    ImageIcon i = icons.get(this);
+    if (i == null) {
+      // this icon hasn't been requested yet, let's load it from
+      // resources
+      try {
+        i = new ImageIcon(Icon.class.getResource(resourcePNG()));
+      } catch (NullPointerException e) {
+        LOG.error("Cannot create ImageIcon for {}", this.toString());
+        throw e;
+      }
+      if (i != null) {
+        // let's store the icon for future reference
+        LOG.debug("storing ImageIcon for {}", this.toString());
+        icons.put(this, i);
+        if (icons.get(this) == null) {
+          LOG.error("ImageIcon for {} was not stored!", this.toString());
+        }
+      } else {
+        LOG.error("Could not retrieve icon {}", this);
+      }
     }
+    return i;
+  }
 
-    public ImageIcon imageIcon() {
-	ImageIcon i = icons.get(this);
-	if (i == null) {
-	    // this icon hasn't been requested yet, let's load it from
-	    // resources
-	    try {
-		i = new ImageIcon(Icon.class.getResource(resourcePNG()));
-	    } catch (NullPointerException e) {
-		LOG.error("Cannot create ImageIcon for {}", this.toString());
-		throw e;
-	    }
-	    if (i != null) {
-		// let's store the icon for future reference
-		LOG.debug("storing ImageIcon for {}", this.toString());
-		icons.put(this, i);
-		if (icons.get(this) == null) {
-		    LOG.error("ImageIcon for {} was not stored!", this.toString());
-		}
-	    } else {
-		LOG.error("Could not retrieve icon {}", this);
-	    }
-	}
-	return i;
-    }
+  public javax.swing.Icon icon() {
+    return imageIcon();
+  }
 
-    public javax.swing.Icon icon() {
-	return imageIcon();
+  public Image image() {
+    Image r = null;
+    try {
+      r = ImageIO.read(Icon.class.getResourceAsStream(resourcePNG()));
+    } catch (IOException e) {
+      LOG.error(this.toString() + ".image() failed", e);
     }
-
-    public Image image() {
-	Image r = null;
-	try {
-	    r = ImageIO.read(Icon.class.getResourceAsStream(resourcePNG()));
-	} catch (IOException e) {
-	    LOG.error(this.toString() + ".image() failed", e);
-	}
-	return r;
-    }
+    return r;
+  }
 };

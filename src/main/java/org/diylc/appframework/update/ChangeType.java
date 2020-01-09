@@ -19,35 +19,35 @@
 */
 package org.diylc.appframework.update;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 public enum ChangeType {
+  BUG_FIX("Bug Fix"),
+  NEW_FEATURE("New Feature"),
+  IMPROVEMENT("Improvement");
 
-    BUG_FIX("Bug Fix"),
-    NEW_FEATURE("New Feature"),
-    IMPROVEMENT("Improvement");
+  private String name;
 
-    private String name;
+  private ChangeType(String name) {
+    this.name = name;
+  }
 
-    private ChangeType(String name) {
-	this.name = name;
+  @Override
+  public String toString() {
+    return name;
+  }
+
+  public static ChangeType parseName(String name) {
+    switch (name) {
+      case "Bug Fix":
+        return BUG_FIX;
+      case "New Feature":
+        return NEW_FEATURE;
+      case "Improvement":
+        return IMPROVEMENT;
+      default:
+        LogManager.getLogger(ChangeType.class).error("parseName({}) not a valid ChangeType", name);
+        return null;
     }
-
-    @Override
-    public String toString() {
-	return name;
-    }
-
-    public static ChangeType parseName(String name) {
-	switch (name) {
-	case "Bug Fix": return BUG_FIX;
-	case "New Feature": return NEW_FEATURE;
-	case "Improvement": return IMPROVEMENT;
-	default:
-	    LogManager.getLogger(ChangeType.class).error("parseName({}) not a valid ChangeType",
-							 name);
-	    return null;
-	}
-    }
+  }
 }

@@ -11,11 +11,11 @@ public class Connection {
     this.p1 = p1.getX() < p2.getX() || p1.getX() == p2.getX() && p1.getY() < p2.getY() ? p1 : p2;
     this.p2 = p1.getX() < p2.getX() || p1.getX() == p2.getX() && p1.getY() < p2.getY() ? p2 : p1;
   }
-  
+
   public Point2D getP1() {
     return p1;
   }
-  
+
   public Point2D getP2() {
     return p2;
   }
@@ -31,23 +31,16 @@ public class Connection {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Connection other = (Connection) obj;
     if (p1 == null) {
-      if (other.p1 != null)
-        return false;
-    } else if (!p1.equals(other.p1))
-      return false;
+      if (other.p1 != null) return false;
+    } else if (!p1.equals(other.p1)) return false;
     if (p2 == null) {
-      if (other.p2 != null)
-        return false;
-    } else if (!p2.equals(other.p2))
-      return false;
+      if (other.p2 != null) return false;
+    } else if (!p2.equals(other.p2)) return false;
     return true;
   }
 }

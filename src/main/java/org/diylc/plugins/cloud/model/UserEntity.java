@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
  * Represents cloud user details.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class UserEntity implements Serializable {
@@ -90,33 +90,22 @@ public class UserEntity implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     UserEntity other = (UserEntity) obj;
     if (bio == null) {
-      if (other.bio != null)
-        return false;
-    } else if (!bio.equals(other.bio))
-      return false;
+      if (other.bio != null) return false;
+    } else if (!bio.equals(other.bio)) return false;
     if (email == null) {
-      if (other.email != null)
-        return false;
-    } else if (!email.equals(other.email))
-      return false;
+      if (other.email != null) return false;
+    } else if (!email.equals(other.email)) return false;
     if (username == null) {
-      if (other.username != null)
-        return false;
-    } else if (!username.equals(other.username))
-      return false;
+      if (other.username != null) return false;
+    } else if (!username.equals(other.username)) return false;
     if (website == null) {
-      if (other.website != null)
-        return false;
-    } else if (!website.equals(other.website))
-      return false;
+      if (other.website != null) return false;
+    } else if (!website.equals(other.website)) return false;
     return true;
   }
 
@@ -124,5 +113,4 @@ public class UserEntity implements Serializable {
   public String toString() {
     return "UserEntity [userName=" + username + "]";
   }
-
 }

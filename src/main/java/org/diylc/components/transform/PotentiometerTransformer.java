@@ -23,7 +23,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.passive.PotentiometerPanel;
@@ -40,15 +39,16 @@ public class PotentiometerTransformer implements IComponentTransformer {
   public boolean canMirror(IDIYComponent<?> component) {
     return component.getClass().equals(PotentiometerPanel.class);
   }
-  
+
   @Override
-  public boolean mirroringChangesCircuit() {   
+  public boolean mirroringChangesCircuit() {
     return true;
   }
 
   @Override
   public void rotate(IDIYComponent<?> component, Point center, int direction) {
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
       Point p = new Point(component.getControlPoint(index));
       rotate.transform(p, p);
@@ -59,10 +59,8 @@ public class PotentiometerTransformer implements IComponentTransformer {
     Orientation o = potentiometer.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0)
-      oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length)
-      oValue = 0;
+    if (oValue < 0) oValue = Orientation.values().length - 1;
+    if (oValue >= Orientation.values().length) oValue = 0;
     o = Orientation.values()[oValue];
     potentiometer.setOrientation(o);
   }
@@ -85,10 +83,11 @@ public class PotentiometerTransformer implements IComponentTransformer {
 
       for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
         Point p = potentiometer.getControlPoint(i);
-        potentiometer
-            .setControlPoint(
-                new Point(p.x + 2 * dx, p.y + (potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y)),
-                i);
+        potentiometer.setControlPoint(
+            new Point(
+                p.x + 2 * dx,
+                p.y + (potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y)),
+            i);
       }
 
       potentiometer.setOrientation(o);
@@ -104,9 +103,11 @@ public class PotentiometerTransformer implements IComponentTransformer {
 
       for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
         Point p = potentiometer.getControlPoint(i);
-        potentiometer
-            .setControlPoint(new Point(p.x + (potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x),
-                p.y + 2 * dy), i);
+        potentiometer.setControlPoint(
+            new Point(
+                p.x + (potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x),
+                p.y + 2 * dy),
+            i);
       }
 
       potentiometer.setOrientation(o);

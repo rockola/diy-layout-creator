@@ -25,12 +25,11 @@ import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-
 import org.diylc.common.IPlugInPort;
 
 /**
  * {@link DragGestureListener} for {@link CanvasPanel}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 class CanvasGestureListener implements DragGestureListener {
@@ -51,7 +50,9 @@ class CanvasGestureListener implements DragGestureListener {
       forceReSelection = me.getButton() != MouseEvent.BUTTON1;
     }
     presenter.dragStarted(dge.getDragOrigin(), dge.getDragAction(), forceReSelection);
-    dge.startDrag(presenter.getCursorAt(dge.getDragOrigin()), new EmptyTransferable(), new CanvasSourceListener(
-        presenter));
+    dge.startDrag(
+        presenter.getCursorAt(dge.getDragOrigin()),
+        new EmptyTransferable(),
+        new CanvasSourceListener(presenter));
   }
 }

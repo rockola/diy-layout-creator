@@ -22,9 +22,9 @@
 package org.diylc.netlist;
 
 public enum TreeConnectionType {
+  Series("+", "red"),
+  Parallel("||", "blue");
 
-  Series("+", "red"), Parallel("||", "blue");
-  
   private String label;
   private String color;
 
@@ -37,7 +37,7 @@ public enum TreeConnectionType {
   public String toString() {
     return label;
   }
-  
+
   public String toHTML() {
     return "<b><font color='" + color + "'>" + label + "</font></b>";
   }

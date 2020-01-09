@@ -22,8 +22,9 @@
 package org.diylc.common;
 
 public enum ResistorColorCode {
-
-  NONE, _4_BAND, _5_BAND;
+  NONE,
+  _4_BAND,
+  _5_BAND;
 
   @Override
   public String toString() {

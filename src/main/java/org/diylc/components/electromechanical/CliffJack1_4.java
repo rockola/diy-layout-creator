@@ -32,7 +32,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -54,9 +53,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Cliff 1/4\" Jack", category = "Electro-Mechanical", author = "Branislav Stojkovic",
+@ComponentDescriptor(
+    name = "Cliff 1/4\" Jack",
+    category = "Electro-Mechanical",
+    author = "Branislav Stojkovic",
     description = "Cliff-style closed panel mount 1/4\" phono jack",
-    zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "J", autoEdit = false, transformer = CliffJackTransformer.class)
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "J",
+    autoEdit = false,
+    transformer = CliffJackTransformer.class)
 public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -75,7 +80,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private JackType type = JackType.MONO;
   private Orientation orientation = Orientation.DEFAULT;
-  transient private Area[] body;
+  private transient Area[] body;
   private String value = "";
 
   public CliffJack1_4() {
@@ -139,21 +144,42 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
       int bodyWidth = (int) BODY_WIDTH.convertToPixels();
       int centerX = (controlPoints[0].x + controlPoints[3].x) / 2;
       int centerY = (controlPoints[0].y + controlPoints[3].y) / 2;
-      body[0] = new Area(new Rectangle(centerX - bodyLength / 2, centerY - bodyWidth / 2, bodyLength, bodyWidth));
+      body[0] =
+          new Area(
+              new Rectangle(
+                  centerX - bodyLength / 2, centerY - bodyWidth / 2, bodyLength, bodyWidth));
 
       int tailLength = (int) TAIL_LENGTH.convertToPixels();
-      body[1] = new Area(new RoundRectangle2D.Double(centerX - bodyLength / 2 - tailLength, centerY - bodyWidth / 4, tailLength * 2,
-              bodyWidth / 2, tailLength, tailLength));
+      body[1] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  centerX - bodyLength / 2 - tailLength,
+                  centerY - bodyWidth / 4,
+                  tailLength * 2,
+                  bodyWidth / 2,
+                  tailLength,
+                  tailLength));
       Area tailArea = new Area(body[1]);
       tailArea.subtract(new Area(body[0]));
       body[1] = tailArea;
 
-      body[2] = new Area(new Rectangle(centerX + bodyLength / 2, centerY - bodyWidth / 4, tailLength, bodyWidth / 2));
+      body[2] =
+          new Area(
+              new Rectangle(
+                  centerX + bodyLength / 2, centerY - bodyWidth / 4, tailLength, bodyWidth / 2));
 
-      body[3] = new Area(new Rectangle(centerX + bodyLength / 2 + tailLength, centerY - bodyWidth / 4, tailLength, bodyWidth / 2));
+      body[3] =
+          new Area(
+              new Rectangle(
+                  centerX + bodyLength / 2 + tailLength,
+                  centerY - bodyWidth / 4,
+                  tailLength,
+                  bodyWidth / 2));
       tailArea = new Area(body[3]);
       int radius = bodyLength / 2 + tailLength * 2;
-      tailArea.intersect(new Area(new Ellipse2D.Double(centerX - radius, centerY - radius, radius * 2, radius * 2)));
+      tailArea.intersect(
+          new Area(
+              new Ellipse2D.Double(centerX - radius, centerY - radius, radius * 2, radius * 2)));
       body[3] = tailArea;
 
       // Apply rotation if necessary
@@ -178,9 +204,13 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
         Point point = getControlPoint(i);
         Rectangle pin;
         if (orientation == Orientation.DEFAULT || orientation == Orientation._180) {
-          pin = new Rectangle(point.x - pinWidth / 2, point.y - pinThickness / 2, pinWidth, pinThickness);
+          pin =
+              new Rectangle(
+                  point.x - pinWidth / 2, point.y - pinThickness / 2, pinWidth, pinThickness);
         } else {
-          pin = new Rectangle(point.x - pinThickness / 2, point.y - pinWidth / 2, pinThickness, pinWidth);
+          pin =
+              new Rectangle(
+                  point.x - pinThickness / 2, point.y - pinWidth / 2, pinThickness, pinWidth);
         }
         pins.add(new Area(pin));
       }
@@ -191,28 +221,34 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-//    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
-      for (int i = 0; i < body.length - 1; i++) {
-        // Nut is brighter colored.
-        if (i == body.length - 2)
-          g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : NUT_COLOR);
-        g2d.fill(body[i]);
-      }
-      g2d.setComposite(oldComposite);
-//    }
+    //    if (componentState != ComponentState.DRAGGING) {
+    Composite oldComposite = g2d.getComposite();
+    if (alpha < MAX_ALPHA) {
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+    }
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
+    for (int i = 0; i < body.length - 1; i++) {
+      // Nut is brighter colored.
+      if (i == body.length - 2) g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : NUT_COLOR);
+      g2d.fill(body[i]);
+    }
+    g2d.setComposite(oldComposite);
+    //    }
 
     Color finalBorderColor;
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     if (outlineMode) {
       finalBorderColor = theme.getOutlineColor();
     } else {
@@ -236,19 +272,22 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
     g2d.setFont(project.getFont());
     int centerX = (controlPoints[0].x + controlPoints[3].x) / 2;
     int centerY = (controlPoints[0].y + controlPoints[3].y) / 2;
-    StringUtils.drawCenteredText(g2d, name, centerX, centerY, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    
+    StringUtils.drawCenteredText(
+        g2d, name, centerX, centerY, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 
@@ -258,16 +297,38 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     int tailWidth = getClosestOdd(width * 3 / 9);
 
     g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect((width - tailWidth) / 2, height / 2, tailWidth, height / 2 - 2 * 32 / height, 4 * 32 / width,
+    g2d.fillRoundRect(
+        (width - tailWidth) / 2,
+        height / 2,
+        tailWidth,
+        height / 2 - 2 * 32 / height,
+        4 * 32 / width,
         4 * 32 / width);
     g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect((width - tailWidth) / 2, height / 2, tailWidth, height / 2 - 2 * 32 / height, 4 * 32 / width,
+    g2d.drawRoundRect(
+        (width - tailWidth) / 2,
+        height / 2,
+        tailWidth,
+        height / 2 - 2 * 32 / height,
+        4 * 32 / width,
         4 * 32 / width);
 
     g2d.setColor(NUT_COLOR);
-    g2d.fillRoundRect((width - tailWidth) / 2, 2 * 32 / height, tailWidth, height / 2, 4 * 32 / width, 4 * 32 / width);
+    g2d.fillRoundRect(
+        (width - tailWidth) / 2,
+        2 * 32 / height,
+        tailWidth,
+        height / 2,
+        4 * 32 / width,
+        4 * 32 / width);
     g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect((width - tailWidth) / 2, 2 * 32 / height, tailWidth, height / 2, 4 * 32 / width, 4 * 32 / width);
+    g2d.drawRoundRect(
+        (width - tailWidth) / 2,
+        2 * 32 / height,
+        tailWidth,
+        height / 2,
+        4 * 32 / width,
+        4 * 32 / width);
 
     g2d.setColor(BODY_COLOR);
     g2d.fillRect((width - bodyWidth) / 2, height / 7 + 1, bodyWidth, height * 5 / 7);
@@ -339,7 +400,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     this.orientation = orientation;
     updateControlPoints();
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

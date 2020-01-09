@@ -23,7 +23,6 @@ package org.diylc.components.shapes;
 
 import java.awt.Color;
 import java.awt.Point;
-
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
@@ -41,8 +40,11 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
   public static Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
 
   protected String value = "";
-  protected Point[] controlPoints = new Point[] {new Point(0, 0),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())};
+  protected Point[] controlPoints =
+      new Point[] {
+        new Point(0, 0),
+        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+      };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
 
@@ -100,12 +102,14 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
   @Override
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
-    firstPoint.setLocation(Math.min(controlPoints[0].x, controlPoints[1].x),
+    firstPoint.setLocation(
+        Math.min(controlPoints[0].x, controlPoints[1].x),
         Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint.setLocation(Math.max(controlPoints[0].x, controlPoints[1].x),
+    secondPoint.setLocation(
+        Math.max(controlPoints[0].x, controlPoints[1].x),
         Math.max(controlPoints[0].y, controlPoints[1].y));
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;

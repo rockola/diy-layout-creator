@@ -22,30 +22,27 @@
 package org.diylc.common;
 
 import java.util.List;
-
 import org.diylc.netlist.Netlist;
 
 /**
  * Interface for {@link Netlist} related operations.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public interface INetlistProcessor {
 
   /**
-   * Finds all {@link Netlist}s for each switch position combination. 
-   * 
+   * Finds all {@link Netlist}s for each switch position combination.
+   *
    * @param includeSwitches
    * @return
    */
   List<Netlist> extractNetlists(boolean includeSwitches);
-  
+
   /**
    * Finds all available {@link INetlistAnalyzer} implementations.
-   * 
+   *
    * @return
    */
   List<INetlistAnalyzer> getNetlistAnalyzers();
-  
-  
 }

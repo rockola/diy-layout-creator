@@ -22,7 +22,6 @@
 package org.diylc.netlist;
 
 import java.util.List;
-
 import org.diylc.core.IDIYComponent;
 
 public class TreeLeaf implements ITree {
@@ -57,8 +56,8 @@ public class TreeLeaf implements ITree {
   @Override
   public TreeConnectionType getConnectionType() {
     return null;
-  }  
-  
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -71,42 +70,34 @@ public class TreeLeaf implements ITree {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     TreeLeaf other = (TreeLeaf) obj;
     if (component == null) {
-      if (other.component != null)
-        return false;
-    } else if (!component.equals(other.component))
-      return false;
-    if (pointIndex1 != other.pointIndex1)
-      return false;
-    if (pointIndex2 != other.pointIndex2)
-      return false;
+      if (other.component != null) return false;
+    } else if (!component.equals(other.component)) return false;
+    if (pointIndex1 != other.pointIndex1) return false;
+    if (pointIndex2 != other.pointIndex2) return false;
     return true;
   }
-  
+
   public boolean equals(TreeLeaf other, boolean forceDirection) {
     if (component == null) {
-      if (other.component != null)
-        return false;
-    } else if (!component.equals(other.component))
-      return false;
-    return (pointIndex1 == other.pointIndex1 && pointIndex2 == other.pointIndex2) || (!forceDirection && (pointIndex1 == other.pointIndex2 && pointIndex2 == other.pointIndex1));
+      if (other.component != null) return false;
+    } else if (!component.equals(other.component)) return false;
+    return (pointIndex1 == other.pointIndex1 && pointIndex2 == other.pointIndex2)
+        || (!forceDirection
+            && (pointIndex1 == other.pointIndex2 && pointIndex2 == other.pointIndex1));
   }
 
   @Override
-  public String toString() {   
+  public String toString() {
     String linkName = component.getInternalLinkName(pointIndex1, pointIndex2);
-    if (component.getName().equals(linkName))
-      return linkName;
+    if (component.getName().equals(linkName)) return linkName;
     return component.getName() + "." + linkName;
   }
-  
+
   public String toHTML() {
     return toString().replace("<", "&lt;").replace(">", "&gt");
   }

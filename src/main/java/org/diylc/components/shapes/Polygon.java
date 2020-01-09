@@ -27,7 +27,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
@@ -38,9 +37,16 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 
-@ComponentDescriptor(name = "Polygon", author = "Branislav Stojkovic", category = "Shapes",
-    instanceNamePrefix = "POLY", description = "Polygonal area", zOrder = IDIYComponent.COMPONENT,
-    flexibleZOrder = true, bomPolicy = BomPolicy.SHOW_ALL_NAMES, autoEdit = false,
+@ComponentDescriptor(
+    name = "Polygon",
+    author = "Branislav Stojkovic",
+    category = "Shapes",
+    instanceNamePrefix = "POLY",
+    description = "Polygonal area",
+    zOrder = IDIYComponent.COMPONENT,
+    flexibleZOrder = true,
+    bomPolicy = BomPolicy.SHOW_ALL_NAMES,
+    autoEdit = false,
     transformer = SimpleComponentTransformer.class)
 public class Polygon extends AbstractShape {
 
@@ -51,15 +57,23 @@ public class Polygon extends AbstractShape {
   public Polygon() {
     super();
     this.controlPoints =
-        new Point[] {new Point(0, 0), new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-            new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-            new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)};
+        new Point[] {
+          new Point(0, 0),
+          new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+        };
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
-    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
+    g2d.setStroke(
+        ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     g2d.setColor(color);
     int[] xPoints = new int[controlPoints.length];
     int[] yPoints = new int[controlPoints.length];
@@ -79,7 +93,8 @@ public class Polygon extends AbstractShape {
     // tracked so far.
     drawingObserver.stopTracking();
     Color lineColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
             : borderColor;
     g2d.setColor(lineColor);
     g2d.drawPolygon(xPoints, yPoints, controlPoints.length);
@@ -91,8 +106,7 @@ public class Polygon extends AbstractShape {
   }
 
   public void setPointCount(PointCount pointCount) {
-    if (this.pointCount == pointCount)
-      return;
+    if (this.pointCount == pointCount) return;
     int oldPointCount = Integer.parseInt(this.pointCount.toString());
     int newPointCount = Integer.parseInt(pointCount.toString());
     this.controlPoints = Arrays.copyOf(this.controlPoints, newPointCount);
@@ -100,7 +114,8 @@ public class Polygon extends AbstractShape {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
         this.controlPoints[i] =
-            new Point((this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+            new Point(
+                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
                 (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
@@ -119,7 +134,12 @@ public class Polygon extends AbstractShape {
   }
 
   public enum PointCount {
-    _3, _4, _5, _6, _7, _8;
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8;
 
     public String toString() {
       return name().substring(1);

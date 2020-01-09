@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractRadialComponent;
 import org.diylc.core.CreationMethod;
@@ -37,9 +36,14 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Film Capacitor (Radial)", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Radial film capacitor, similar to Sprague Orange Drop", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Film Capacitor (Radial)",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Radial film capacitor, similar to Sprague Orange Drop",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class RadialFilmCapacitor extends AbstractRadialComponent<Capacitance> {
 
@@ -51,8 +55,7 @@ public class RadialFilmCapacitor extends AbstractRadialComponent<Capacitance> {
   public static Color BORDER_COLOR = BODY_COLOR.darker();
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
 
   public RadialFilmCapacitor() {
@@ -72,7 +75,8 @@ public class RadialFilmCapacitor extends AbstractRadialComponent<Capacitance> {
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @Deprecated
@@ -117,7 +121,12 @@ public class RadialFilmCapacitor extends AbstractRadialComponent<Capacitance> {
   @Override
   protected Shape getBodyShape() {
     double radius = getWidth().convertToPixels() * 0.7;
-    return new RoundRectangle2D.Double(0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth()
-        .convertToPixels()), radius, radius);
+    return new RoundRectangle2D.Double(
+        0f,
+        0f,
+        getLength().convertToPixels(),
+        getClosestOdd(getWidth().convertToPixels()),
+        radius,
+        radius);
   }
 }

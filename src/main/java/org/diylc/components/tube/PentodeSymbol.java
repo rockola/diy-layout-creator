@@ -27,7 +27,6 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.components.transform.TubeSymbolTransformer;
 import org.diylc.core.IDIYComponent;
@@ -36,9 +35,14 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 
-@ComponentDescriptor(name = "Pentode", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    instanceNamePrefix = "V", description = "Pentode tube symbol", 
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE,
+@ComponentDescriptor(
+    name = "Pentode",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "V",
+    description = "Pentode tube symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = TubeSymbolTransformer.class)
 public class PentodeSymbol extends AbstractTubeSymbol {
 
@@ -49,8 +53,15 @@ public class PentodeSymbol extends AbstractTubeSymbol {
   public PentodeSymbol() {
     super();
     this.controlPoints =
-        new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0),
-            new Point(0, 0), new Point(0, 0)};
+        new Point[] {
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0)
+        };
     updateControlPoints();
   }
 
@@ -127,11 +138,21 @@ public class PentodeSymbol extends AbstractTubeSymbol {
         polyline.moveTo(x + pinSpacing * 19 / 4, y - pinSpacing - pinSpacing * 5 / 8);
         polyline.lineTo(x + pinSpacing * 5, y - pinSpacing - pinSpacing * 5 / 8);
         polyline.lineTo(x + pinSpacing * 5, y - pinSpacing * 5 / 4);
-        polyline.curveTo(x + pinSpacing * 21 / 4, y - pinSpacing * 5 / 4, x + pinSpacing * 21 / 4, y - pinSpacing * 3
-            / 4, x + pinSpacing * 5, y - pinSpacing * 3 / 4);
+        polyline.curveTo(
+            x + pinSpacing * 21 / 4,
+            y - pinSpacing * 5 / 4,
+            x + pinSpacing * 21 / 4,
+            y - pinSpacing * 3 / 4,
+            x + pinSpacing * 5,
+            y - pinSpacing * 3 / 4);
         polyline.moveTo(x + pinSpacing * 5, y - pinSpacing * 3 / 4);
-        polyline.curveTo(x + pinSpacing * 5, y + pinSpacing * 3 / 8, x + pinSpacing * 5, y + pinSpacing * 3 / 8, x
-            + pinSpacing * 4, y + pinSpacing * 3 / 8);
+        polyline.curveTo(
+            x + pinSpacing * 5,
+            y + pinSpacing * 3 / 8,
+            x + pinSpacing * 5,
+            y + pinSpacing * 3 / 8,
+            x + pinSpacing * 4,
+            y + pinSpacing * 3 / 8);
       }
 
       // plate
@@ -145,17 +166,21 @@ public class PentodeSymbol extends AbstractTubeSymbol {
       if (showHeaters) {
         polyline.moveTo(controlPoints[5].x, controlPoints[5].y);
         polyline.lineTo(controlPoints[5].x, controlPoints[5].y - pinSpacing * 6 / 8);
-        polyline.lineTo(controlPoints[5].x + pinSpacing / 2, controlPoints[5].y - pinSpacing * 10 / 8);
+        polyline.lineTo(
+            controlPoints[5].x + pinSpacing / 2, controlPoints[5].y - pinSpacing * 10 / 8);
 
         polyline.moveTo(controlPoints[6].x, controlPoints[6].y);
         polyline.lineTo(controlPoints[6].x, controlPoints[6].y - pinSpacing * 6 / 8);
-        polyline.lineTo(controlPoints[6].x - pinSpacing / 2, controlPoints[6].y - pinSpacing * 10 / 8);
+        polyline.lineTo(
+            controlPoints[6].x - pinSpacing / 2, controlPoints[6].y - pinSpacing * 10 / 8);
       }
 
       body[1] = polyline;
 
       // bulb
-      body[2] = new Ellipse2D.Double(x + pinSpacing / 2, y - pinSpacing * 7 / 2, pinSpacing * 5, pinSpacing * 5);
+      body[2] =
+          new Ellipse2D.Double(
+              x + pinSpacing / 2, y - pinSpacing * 7 / 2, pinSpacing * 5, pinSpacing * 5);
     }
     return body;
   }
@@ -169,13 +194,17 @@ public class PentodeSymbol extends AbstractTubeSymbol {
     g2d.drawLine(width / 4, height / 4, width * 3 / 4, height / 4);
     g2d.drawLine(width / 2, height / 4, width / 2, 0);
 
-    g2d.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width * 3 / 4 - 4 * width / 32, height * 3 / 4);
-    g2d.drawLine(width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2 * width / 32, height - 1);
+    g2d.drawLine(
+        width / 4 + 2 * width / 32, height * 3 / 4, width * 3 / 4 - 4 * width / 32, height * 3 / 4);
+    g2d.drawLine(
+        width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2 * width / 32, height - 1);
 
     g2d.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width / 32);
 
     g2d.drawLine(0, height / 2, width / 8, height / 2);
-    g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0, new float[] {3f}, 6f));
+    g2d.setStroke(
+        new BasicStroke(
+            1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0, new float[] {3f}, 6f));
     g2d.drawLine(width / 8, height / 2, width * 7 / 8, height / 2);
     g2d.drawLine(width / 8, height * 3 / 8, width * 7 / 8, height * 3 / 8);
     g2d.drawLine(width / 8, height * 5 / 8, width * 7 / 8, height * 5 / 8);
@@ -188,8 +217,15 @@ public class PentodeSymbol extends AbstractTubeSymbol {
     int y = first.y;
 
     Point[] newPoints =
-        new Point[] {first, new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0),
-            new Point(0, 0)};
+        new Point[] {
+          first,
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0),
+          new Point(0, 0)
+        };
 
     newPoints[1].x = x + pinSpacing * 3;
     newPoints[1].y = y - pinSpacing * 4;
@@ -215,9 +251,12 @@ public class PentodeSymbol extends AbstractTubeSymbol {
   @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     if (showHeaters) {
-      return !exposeSuppressorGrid && index == 4 ? VisibilityPolicy.NEVER : VisibilityPolicy.WHEN_SELECTED;
+      return !exposeSuppressorGrid && index == 4
+          ? VisibilityPolicy.NEVER
+          : VisibilityPolicy.WHEN_SELECTED;
     } else {
-      return index >= 5 || (!exposeSuppressorGrid && index == 4) ? VisibilityPolicy.NEVER
+      return index >= 5 || (!exposeSuppressorGrid && index == 4)
+          ? VisibilityPolicy.NEVER
           : VisibilityPolicy.WHEN_SELECTED;
     }
   }

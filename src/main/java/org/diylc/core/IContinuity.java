@@ -22,10 +22,10 @@
 package org.diylc.core;
 
 public interface IContinuity {
-  
+
   /**
    * Tests control point connectivity.
-   *  
+   *
    * @param index1
    * @param index2
    * @return true if the two points are connected, false otherwise.

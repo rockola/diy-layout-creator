@@ -22,8 +22,9 @@
 package org.diylc.common;
 
 public enum LineStyle {
-
-  SOLID, DASHED, DOTTED;
+  SOLID,
+  DASHED,
+  DOTTED;
 
   @Override
   public String toString() {

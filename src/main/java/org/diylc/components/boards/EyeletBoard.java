@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -40,9 +39,16 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Eyelet Board", category = "Boards", author = "Branislav Stojkovic",
-    zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board", description = "Perforated board with eyelets",
-    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false, keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
+@ComponentDescriptor(
+    name = "Eyelet Board",
+    category = "Boards",
+    author = "Branislav Stojkovic",
+    zOrder = IDIYComponent.BOARD,
+    instanceNamePrefix = "Board",
+    description = "Perforated board with eyelets",
+    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
     transformer = SimpleComponentTransformer.class)
 public class EyeletBoard extends AbstractBoard {
 
@@ -67,17 +73,23 @@ public class EyeletBoard extends AbstractBoard {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape clip = g2d.getClip();
-    if (checkPointsClipped(clip) && !clip.contains(firstPoint.x, secondPoint.y)
+    if (checkPointsClipped(clip)
+        && !clip.contains(firstPoint.x, secondPoint.y)
         && !clip.contains(secondPoint.x, firstPoint.y)) {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
     if (componentState != ComponentState.DRAGGING) {
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       Point p = new Point(firstPoint);
       int diameter = getClosestOdd((int) EYELET_SIZE.convertToPixels());
@@ -120,7 +132,7 @@ public class EyeletBoard extends AbstractBoard {
   public void setSpacing(Size spacing) {
     this.spacing = spacing;
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;
@@ -138,10 +150,16 @@ public class EyeletBoard extends AbstractBoard {
     g2d.setColor(EYELET_COLOR.darker());
     g2d.drawOval(width / 4, width / 4, width / 2, width / 2);
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(width / 2 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.fillOval(
+        width / 2 - 2 / factor,
+        width / 2 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
     g2d.setColor(EYELET_COLOR.darker());
-    g2d.drawOval(width / 2 - 2 / factor, width / 2 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.drawOval(
+        width / 2 - 2 / factor,
+        width / 2 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
   }
 }

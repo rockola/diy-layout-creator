@@ -30,14 +30,14 @@ public class Template {
   private String name;
   private Map<String, Object> values;
   private List<Point> points;
+
   @SuppressWarnings("unused")
   @Deprecated
   private boolean defaultFlag;
-  
-  public Template() {    
-  }
 
-  public Template(String name, Map<String, Object> values, List<Point> points) {    
+  public Template() {}
+
+  public Template(String name, Map<String, Object> values, List<Point> points) {
     this.name = name;
     this.values = values;
     this.points = points;
@@ -79,28 +79,19 @@ public class Template {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Template other = (Template) obj;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (points == null) {
-      if (other.points != null)
-        return false;
-    } else if (!points.equals(other.points))
-      return false;
+      if (other.points != null) return false;
+    } else if (!points.equals(other.points)) return false;
     if (values == null) {
-      if (other.values != null)
-        return false;
-    } else if (!values.equals(other.values))
-      return false;
+      if (other.values != null) return false;
+    } else if (!values.equals(other.values)) return false;
     return true;
   }
 

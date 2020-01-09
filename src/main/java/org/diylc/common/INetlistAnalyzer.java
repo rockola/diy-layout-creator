@@ -22,7 +22,6 @@
 package org.diylc.common;
 
 import java.util.List;
-
 import org.diylc.netlist.Netlist;
 import org.diylc.netlist.Node;
 import org.diylc.netlist.Summary;
@@ -30,28 +29,22 @@ import org.diylc.netlist.TreeException;
 
 public interface INetlistAnalyzer {
 
-  /**   
-   * @return summarizer name
-   */
+  /** @return summarizer name */
   String getName();
-  
-  /**   
-   * @return name of the icon to use
-   */
-  String getIconName();  
-  
+
+  /** @return name of the icon to use */
+  String getIconName();
+
   /**
-   * Summarizes all {@link Netlist}s provided. 
-   * 
+   * Summarizes all {@link Netlist}s provided.
+   *
    * @param netlists
    * @param preferredOutput optional, needed only where there's more than one possible output node.
    * @return
-   * @throws TreeException 
+   * @throws TreeException
    */
   List<Summary> summarize(List<Netlist> netlists, Node preferredOutput) throws TreeException;
-  
-  /**   
-   * @return name of the font to be used for display.
-   */
+
+  /** @return name of the font to be used for display. */
   String getFontName();
 }

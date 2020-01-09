@@ -27,7 +27,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.components.AbstractComponent;
@@ -44,29 +43,38 @@ import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Auto-Wrap Label", author = "Branislav Stojkovic", category = "Misc",
-description = "User defined label with auto-wrapped text", instanceNamePrefix = "L", zOrder = IDIYComponent.TEXT, flexibleZOrder = true,
-bomPolicy = BomPolicy.NEVER_SHOW, transformer = TextTransformer.class)
+@ComponentDescriptor(
+    name = "Auto-Wrap Label",
+    author = "Branislav Stojkovic",
+    category = "Misc",
+    description = "User defined label with auto-wrapped text",
+    instanceNamePrefix = "L",
+    zOrder = IDIYComponent.TEXT,
+    flexibleZOrder = true,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    transformer = TextTransformer.class)
 public class WrapLabel extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
-  
+
   public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
   public static Size DEFAULT_HEIGHT = new Size(0.5d, SizeUnit.in);
-  
-  protected Point[] controlPoints = new Point[] {new Point(0, 0),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())};
+
+  protected Point[] controlPoints =
+      new Point[] {
+        new Point(0, 0),
+        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+      };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
-  
+
   private Font font = LABEL_FONT;
   private Color color = LABEL_COLOR;
   private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
-  
+
   private String value = "The quick brown fox jumped over a lazy dog";
 
-  public WrapLabel() {
-  }
+  public WrapLabel() {}
 
   @MultiLineText
   @EditableProperty
@@ -93,9 +101,11 @@ public class WrapLabel extends AbstractComponent<String> {
   @Override
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
-    firstPoint.setLocation(Math.min(controlPoints[0].x, controlPoints[1].x),
+    firstPoint.setLocation(
+        Math.min(controlPoints[0].x, controlPoints[1].x),
         Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint.setLocation(Math.max(controlPoints[0].x, controlPoints[1].x),
+    secondPoint.setLocation(
+        Math.max(controlPoints[0].x, controlPoints[1].x),
         Math.max(controlPoints[0].y, controlPoints[1].y));
   }
 
@@ -108,7 +118,7 @@ public class WrapLabel extends AbstractComponent<String> {
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
   }
-  
+
   @EditableProperty
   public Font getFont() {
     return font;
@@ -117,52 +127,52 @@ public class WrapLabel extends AbstractComponent<String> {
   public void setFont(Font font) {
     this.font = font;
   }
-  
-//Bold and italic fields are named to be alphabetically after Font. This is
- // important!
 
- @EditableProperty(name = "Font Bold")
- public boolean getBold() {
-   return font.isBold();
- }
+  // Bold and italic fields are named to be alphabetically after Font. This is
+  // important!
 
- public void setBold(boolean bold) {
-   if (bold) {
-     if (font.isItalic()) {
-       font = font.deriveFont(Font.BOLD + Font.ITALIC);
-     } else {
-       font = font.deriveFont(Font.BOLD);
-     }
-   } else {
-     if (font.isItalic()) {
-       font = font.deriveFont(Font.ITALIC);
-     } else {
-       font = font.deriveFont(Font.PLAIN);
-     }
-   }
- }
+  @EditableProperty(name = "Font Bold")
+  public boolean getBold() {
+    return font.isBold();
+  }
 
- @EditableProperty(name = "Font Italic")
- public boolean getItalic() {
-   return font.isItalic();
- }
+  public void setBold(boolean bold) {
+    if (bold) {
+      if (font.isItalic()) {
+        font = font.deriveFont(Font.BOLD + Font.ITALIC);
+      } else {
+        font = font.deriveFont(Font.BOLD);
+      }
+    } else {
+      if (font.isItalic()) {
+        font = font.deriveFont(Font.ITALIC);
+      } else {
+        font = font.deriveFont(Font.PLAIN);
+      }
+    }
+  }
 
- public void setItalic(boolean italic) {
-   if (italic) {
-     if (font.isBold()) {
-       font = font.deriveFont(Font.BOLD + Font.ITALIC);
-     } else {
-       font = font.deriveFont(Font.ITALIC);
-     }
-   } else {
-     if (font.isBold()) {
-       font = font.deriveFont(Font.BOLD);
-     } else {
-       font = font.deriveFont(Font.PLAIN);
-     }
-   }
- }
-  
+  @EditableProperty(name = "Font Italic")
+  public boolean getItalic() {
+    return font.isItalic();
+  }
+
+  public void setItalic(boolean italic) {
+    if (italic) {
+      if (font.isBold()) {
+        font = font.deriveFont(Font.BOLD + Font.ITALIC);
+      } else {
+        font = font.deriveFont(Font.ITALIC);
+      }
+    } else {
+      if (font.isBold()) {
+        font = font.deriveFont(Font.BOLD);
+      } else {
+        font = font.deriveFont(Font.PLAIN);
+      }
+    }
+  }
+
   @EditableProperty(name = "Font Size")
   public int getFontSize() {
     return font.getSize();
@@ -173,7 +183,11 @@ public class WrapLabel extends AbstractComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     g2d.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
@@ -181,7 +195,7 @@ public class WrapLabel extends AbstractComponent<String> {
     int x = firstPoint.x;
     int y = firstPoint.y;
     int maxWidth = secondPoint.x - firstPoint.x;
-    
+
     StringUtils.drawWrappedText(value, g2d, x, y, maxWidth, horizontalAlignment);
   }
 
@@ -203,7 +217,7 @@ public class WrapLabel extends AbstractComponent<String> {
     y += g2d.getFont().getSize();
     g2d.drawString("Text", x, y);
   }
-  
+
   @EditableProperty
   public Color getColor() {
     return color;
@@ -212,7 +226,7 @@ public class WrapLabel extends AbstractComponent<String> {
   public void setColor(Color color) {
     this.color = color;
   }
-  
+
   @EditableProperty(name = "Horizontal Alignment")
   public HorizontalAlignment getHorizontalAlignment() {
     if (horizontalAlignment == null) {

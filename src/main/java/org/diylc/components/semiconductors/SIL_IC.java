@@ -32,7 +32,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -54,9 +53,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "SIP IC", author = "Branislav Stojkovic", category = "Semiconductors",
-    instanceNamePrefix = "IC", description = "Single-in-line package IC",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE, transformer = SIL_ICTransformer.class)
+@ComponentDescriptor(
+    name = "SIP IC",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    instanceNamePrefix = "IC",
+    description = "Single-in-line package IC",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
+    transformer = SIL_ICTransformer.class)
 public class SIL_IC extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -92,7 +97,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
   // pinSpacing.convertToPixels()),
   // new Point(3 * pinSpacing.convertToPixels(), 3 *
   // pinSpacing.convertToPixels()) };
-  transient private Area[] body;
+  private transient Area[] body;
 
   public SIL_IC() {
     super();
@@ -144,7 +149,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
     // Reset body shape;
     body = null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
@@ -239,8 +244,12 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
           x -= thickness / 2;
           y -= pinSpacing / 2;
           indentation =
-              new Area(new Ellipse2D.Double(x + width / 2 - indentationSize / 2, y - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width / 2 - indentationSize / 2,
+                      y - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _90:
           width = pinCount.getValue() * pinSpacing;
@@ -248,8 +257,12 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
           x -= (pinSpacing / 2) + width - pinSpacing;
           y -= thickness / 2;
           indentation =
-              new Area(new Ellipse2D.Double(x + width - indentationSize / 2, y + height / 2 - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width - indentationSize / 2,
+                      y + height / 2 - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _180:
           width = thickness;
@@ -257,8 +270,12 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
           x -= thickness / 2;
           y -= (pinSpacing / 2) + height - pinSpacing;
           indentation =
-              new Area(new Ellipse2D.Double(x + width / 2 - indentationSize / 2, y + height - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width / 2 - indentationSize / 2,
+                      y + height - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _270:
           width = pinCount.getValue() * pinSpacing;
@@ -266,13 +283,18 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
           x -= pinSpacing / 2;
           y -= thickness / 2;
           indentation =
-              new Area(new Ellipse2D.Double(x - indentationSize / 2, y + height / 2 - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x - indentationSize / 2,
+                      y + height / 2 - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      body[0] = new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
+      body[0] =
+          new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
       body[1] = indentation;
       if (indentation != null) {
         indentation.intersect(body[0]);
@@ -282,24 +304,28 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     Area mainArea = getBody()[0];
-    
+
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
     if (!outlineMode) {
       int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
       for (Point point : controlPoints) {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);        
+        g2d.setColor(PIN_BORDER_COLOR);
         g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
     }
-    
+
     Composite oldComposite = g2d.getComposite();
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
@@ -311,13 +337,17 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : getBorderColor();
     }
     g2d.setColor(finalBorderColor);
@@ -338,13 +368,17 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -432,8 +466,25 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
   }
 
   public static enum PinCount {
-
-    _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20;
+    _2,
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    _10,
+    _11,
+    _12,
+    _13,
+    _14,
+    _15,
+    _16,
+    _17,
+    _18,
+    _19,
+    _20;
 
     @Override
     public String toString() {

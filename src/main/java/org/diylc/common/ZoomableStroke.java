@@ -23,9 +23,9 @@ package org.diylc.common;
 
 import java.awt.BasicStroke;
 
-/***
- * {@link BasicStroke} that will always be zoomed in when rendered.
- * 
+/**
+ * * {@link BasicStroke} that will always be zoomed in when rendered.
+ *
  * @author Branislav Stojkovic
  */
 public class ZoomableStroke extends BasicStroke {
@@ -49,9 +49,9 @@ public class ZoomableStroke extends BasicStroke {
     // TODO Auto-generated constructor stub
   }
 
-  public ZoomableStroke(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase) {
+  public ZoomableStroke(
+      float width, int cap, int join, float miterlimit, float[] dash, float dash_phase) {
     super(width, cap, join, miterlimit, dash, dash_phase);
     // TODO Auto-generated constructor stub
   }
-
 }

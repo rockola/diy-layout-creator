@@ -23,13 +23,12 @@ package org.diylc.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.diylc.core.IPropertyValidator;
 
 /**
  * Entity class for editable properties extracted from component objects. Represents a single
  * editable property together with it's current value.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class PropertyWrapper implements Cloneable {
@@ -46,8 +45,14 @@ public class PropertyWrapper implements Cloneable {
   private int sortOrder;
   private Object ownerObject;
 
-  public PropertyWrapper(String name, Class<?> type, String getter, String setter, boolean defaultable,
-      IPropertyValidator validator, int sortOrder) {
+  public PropertyWrapper(
+      String name,
+      Class<?> type,
+      String getter,
+      String setter,
+      boolean defaultable,
+      IPropertyValidator validator,
+      int sortOrder) {
     super();
     this.name = name;
     this.type = type;
@@ -59,8 +64,9 @@ public class PropertyWrapper implements Cloneable {
     this.ownerObject = null;
   }
 
-  public void readFrom(Object object) throws IllegalArgumentException, IllegalAccessException,
-      InvocationTargetException, SecurityException, NoSuchMethodException {
+  public void readFrom(Object object)
+      throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
+          SecurityException, NoSuchMethodException {
     this.ownerObject = object;
     this.value = getGetter().invoke(object);
   }
@@ -74,8 +80,9 @@ public class PropertyWrapper implements Cloneable {
   // }
   // }
 
-  public void writeTo(Object object) throws IllegalArgumentException, IllegalAccessException,
-      InvocationTargetException, SecurityException, NoSuchMethodException {
+  public void writeTo(Object object)
+      throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
+          SecurityException, NoSuchMethodException {
     object.getClass().getMethod(setter, type).invoke(object, this.value);
   }
 
@@ -144,7 +151,13 @@ public class PropertyWrapper implements Cloneable {
   @Override
   public Object clone() throws CloneNotSupportedException {
     PropertyWrapper clone =
-        new PropertyWrapper(this.name, this.type, this.getter, this.setter, this.defaultable, this.validator,
+        new PropertyWrapper(
+            this.name,
+            this.type,
+            this.getter,
+            this.setter,
+            this.defaultable,
+            this.validator,
             this.sortOrder);
     clone.value = this.value;
     clone.changed = this.changed;
@@ -164,35 +177,23 @@ public class PropertyWrapper implements Cloneable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     PropertyWrapper other = (PropertyWrapper) obj;
-    if (defaultable != other.defaultable)
-      return false;
+    if (defaultable != other.defaultable) return false;
     if (getter == null) {
-      if (other.getter != null)
-        return false;
-    } else if (!getter.equals(other.getter))
-      return false;
+      if (other.getter != null) return false;
+    } else if (!getter.equals(other.getter)) return false;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (setter == null) {
-      if (other.setter != null)
-        return false;
-    } else if (!setter.equals(other.setter))
-      return false;
+      if (other.setter != null) return false;
+    } else if (!setter.equals(other.setter)) return false;
     if (type == null) {
-      if (other.type != null)
-        return false;
-    } else if (!type.equals(other.type))
-      return false;
+      if (other.type != null) return false;
+    } else if (!type.equals(other.type)) return false;
     return true;
   }
 

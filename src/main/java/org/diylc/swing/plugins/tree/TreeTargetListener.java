@@ -26,13 +26,11 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-
 import org.diylc.common.IPlugInPort;
-
 
 /**
  * {@link DropTargetListener} for {@link TreePanel}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 class TreeTargetListener implements DropTargetListener {
@@ -51,8 +49,8 @@ class TreeTargetListener implements DropTargetListener {
   public void dragExit(DropTargetEvent dte) {}
 
   @Override
-  public void dragOver(DropTargetDragEvent dtde) {   
-    dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);   
+  public void dragOver(DropTargetDragEvent dtde) {
+    dtde.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
   @Override
@@ -61,6 +59,5 @@ class TreeTargetListener implements DropTargetListener {
   }
 
   @Override
-  public void dropActionChanged(DropTargetDragEvent dtde) {
-  }
+  public void dropActionChanged(DropTargetDragEvent dtde) {}
 }

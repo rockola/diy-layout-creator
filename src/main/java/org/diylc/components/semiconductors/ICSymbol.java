@@ -31,7 +31,6 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -53,9 +52,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "IC", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    instanceNamePrefix = "IC", description = "IC symbol with 3 or 5 contacts",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "IC",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "IC",
+    description = "IC symbol with 3 or 5 contacts",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
+    keywordTag = "Schematic")
 public class ICSymbol extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -66,12 +71,14 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
 
   protected ICPointCount icPointCount = ICPointCount._5;
   protected String value = "";
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0),
-      new Point(0, 0)};
+  protected Point[] controlPoints =
+      new Point[] {
+        new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)
+      };
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
   protected Display display = Display.NAME;
-  transient private Shape[] body;
+  private transient Shape[] body;
   private Boolean flip;
 
   public ICSymbol() {
@@ -80,7 +87,11 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -99,7 +110,9 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = borderColor;
@@ -116,13 +129,17 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -135,12 +152,27 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     if (display == Display.BOTH) {
       label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
     }
-    StringUtils.drawCenteredText(g2d, label, x, controlPoints[0].y + pinSpacing, HorizontalAlignment.CENTER,
+    StringUtils.drawCenteredText(
+        g2d,
+        label,
+        x,
+        controlPoints[0].y + pinSpacing,
+        HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
-    // Draw +/- markers    
-    StringUtils.drawCenteredText(g2d, getFlip() ? "+" : "-", controlPoints[0].x + pinSpacing, controlPoints[0].y, HorizontalAlignment.CENTER,
+    // Draw +/- markers
+    StringUtils.drawCenteredText(
+        g2d,
+        getFlip() ? "+" : "-",
+        controlPoints[0].x + pinSpacing,
+        controlPoints[0].y,
+        HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
-    StringUtils.drawCenteredText(g2d, getFlip() ? "-" : "+", controlPoints[1].x + pinSpacing, controlPoints[1].y, HorizontalAlignment.CENTER,
+    StringUtils.drawCenteredText(
+        g2d,
+        getFlip() ? "-" : "+",
+        controlPoints[1].x + pinSpacing,
+        controlPoints[1].y,
+        HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
   }
 
@@ -148,8 +180,11 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = 3 * width / 32;
     Area area =
-        new Area(new Polygon(new int[] {margin, margin, width - margin},
-            new int[] {margin, height - margin, height / 2}, 3));
+        new Area(
+            new Polygon(
+                new int[] {margin, margin, width - margin},
+                new int[] {margin, height - margin, height / 2},
+                3));
     // area.subtract(new Area(new Rectangle2D.Double(0, 0, 2 * margin,
     // height)));
     area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)));
@@ -157,8 +192,15 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     g2d.fill(area);
     g2d.setColor(BORDER_COLOR);
     g2d.setFont(LABEL_FONT.deriveFont(8f));
-    StringUtils.drawCenteredText(g2d, "-", 3 * margin, height / 3, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    StringUtils.drawCenteredText(g2d, "+", 3 * margin + 1, height * 2 / 3, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    StringUtils.drawCenteredText(
+        g2d, "-", 3 * margin, height / 3, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    StringUtils.drawCenteredText(
+        g2d,
+        "+",
+        3 * margin + 1,
+        height * 2 / 3,
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
     // g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
     // BasicStroke.JOIN_ROUND));
     g2d.draw(area);
@@ -200,8 +242,10 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
       Shape triangle =
-          new Polygon(new int[] {x + pinSpacing / 2, x + pinSpacing * 11 / 2, x + pinSpacing / 2}, new int[] {
-              y - pinSpacing * 3 / 2, y + pinSpacing, y + pinSpacing * 7 / 2}, 3);
+          new Polygon(
+              new int[] {x + pinSpacing / 2, x + pinSpacing * 11 / 2, x + pinSpacing / 2},
+              new int[] {y - pinSpacing * 3 / 2, y + pinSpacing, y + pinSpacing * 7 / 2},
+              3);
       body[0] = triangle;
 
       GeneralPath polyline = new GeneralPath();
@@ -277,14 +321,13 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
   public void setBorderColor(Color borderColor) {
     this.borderColor = borderColor;
   }
-  
+
   @EditableProperty
   public Boolean getFlip() {
-    if (flip == null)
-      flip = false;
+    if (flip == null) flip = false;
     return flip;
   }
-  
+
   public void setFlip(Boolean flip) {
     this.flip = flip;
   }
@@ -297,7 +340,7 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
   public void setDisplay(Display display) {
     this.display = display;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

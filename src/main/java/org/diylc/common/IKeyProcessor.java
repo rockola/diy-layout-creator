@@ -32,12 +32,11 @@ public interface IKeyProcessor {
 
   /**
    * Notifies the presenter that a key hes been pressed on the canvas.
-   * 
+   *
    * @param key
    * @param ctrlDown
    * @param shiftDown
    * @param altDown
-   * 
    * @return true if the event should be consumed
    */
   boolean keyPressed(int key, boolean ctrlDown, boolean shiftDown, boolean altDown);

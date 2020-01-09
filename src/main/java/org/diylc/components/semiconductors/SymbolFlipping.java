@@ -22,8 +22,9 @@
 package org.diylc.components.semiconductors;
 
 public enum SymbolFlipping {
-
-  NONE, X, Y;
+  NONE,
+  X,
+  Y;
 
   @Override
   public String toString() {

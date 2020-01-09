@@ -23,13 +23,12 @@ package org.diylc.common;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-
 import org.diylc.core.Project;
 
 /**
  * Enumerates all possible events between {@link IPlugInPort} and {@link IPlugIn}. Some events
  * overlap so be careful which ones you subscribe for and how you process them.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public enum EventType {
@@ -85,8 +84,8 @@ public enum EventType {
   AVAILABLE_CTRL_POINTS_CHANGED,
   /**
    * Called when mouse cursor is moved. Point object is passed, containing the current cursor
-   * location (not taking zoom into account) in pixels and two {@link Point2D} objects with coordinates in
-   * inches and mm
+   * location (not taking zoom into account) in pixels and two {@link Point2D} objects with
+   * coordinates in inches and mm
    */
   MOUSE_MOVED,
   /**
@@ -99,8 +98,6 @@ public enum EventType {
    * layers. All layers not included are considered visible.
    */
   LAYER_VISIBILITY_CHANGED,
-  /**
-   * Called to update the status message. New status message is passed as a first parameter.
-   */
+  /** Called to update the status message. New status message is passed as a first parameter. */
   STATUS_MESSAGE_CHANGED;
 }

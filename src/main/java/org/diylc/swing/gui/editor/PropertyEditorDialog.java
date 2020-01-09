@@ -33,7 +33,6 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -41,9 +40,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ValidationException;
 import org.diylc.swingframework.ButtonDialog;
@@ -62,7 +60,8 @@ public class PropertyEditorDialog extends ButtonDialog {
   private Component componentToFocus = null;
   private boolean saveDefaults;
 
-  public PropertyEditorDialog(JFrame owner, List<PropertyWrapper> properties, String title, boolean saveDefaults) {
+  public PropertyEditorDialog(
+      JFrame owner, List<PropertyWrapper> properties, String title, boolean saveDefaults) {
     super(owner, title, new String[] {ButtonDialog.OK, ButtonDialog.CANCEL});
     this.saveDefaults = saveDefaults;
 
@@ -84,8 +83,11 @@ public class PropertyEditorDialog extends ButtonDialog {
         try {
           property.getValidator().validate(property.getValue());
         } catch (ValidationException ve) {
-          JOptionPane.showMessageDialog(PropertyEditorDialog.this, "Input error for \"" + property.getName() + "\": "
-              + ve.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(
+              PropertyEditorDialog.this,
+              "Input error for \"" + property.getName() + "\": " + ve.getMessage(),
+              "Error",
+              JOptionPane.ERROR_MESSAGE);
           return false;
         }
       }
@@ -100,7 +102,7 @@ public class PropertyEditorDialog extends ButtonDialog {
     GridBagConstraints gbc = new GridBagConstraints();
 
     gbc.gridy = 0;
-    
+
     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
     for (PropertyWrapper property : properties) {
@@ -117,17 +119,18 @@ public class PropertyEditorDialog extends ButtonDialog {
       gbc.insets = new Insets(2, 2, 2, 2);
 
       Component editor = FieldEditorFactory.createFieldEditor(property);
-      editor.addKeyListener(new KeyAdapter() {
+      editor.addKeyListener(
+          new KeyAdapter() {
 
-        @Override
-        public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            getButton(OK).doClick();
-          } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            getButton(CANCEL).doClick();
-          }
-        }
-      });
+            @Override
+            public void keyPressed(KeyEvent e) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                getButton(OK).doClick();
+              } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                getButton(CANCEL).doClick();
+              }
+            }
+          });
       editorPanel.add(editor, gbc);
 
       if (property.isDefaultable()) {
@@ -139,14 +142,15 @@ public class PropertyEditorDialog extends ButtonDialog {
           editorPanel.add(createDefaultCheckBox(property), gbc);
         }
       }
-      
+
       if (property.getName().equalsIgnoreCase("value")) {
         componentToFocus = editor;
       }
 
       // Make value field focused
       try {
-        if (componentToFocus == null && property.getGetter().getName().equalsIgnoreCase("getValue")) {
+        if (componentToFocus == null
+            && property.getGetter().getName().equalsIgnoreCase("getValue")) {
           componentToFocus = editor;
         }
       } catch (Exception e1) {
@@ -162,17 +166,18 @@ public class PropertyEditorDialog extends ButtonDialog {
   private JCheckBox createDefaultCheckBox(final PropertyWrapper property) {
     final JCheckBox checkBox = new JCheckBox();
     checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);
-    checkBox.addActionListener(new ActionListener() {
+    checkBox.addActionListener(
+        new ActionListener() {
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (checkBox.isSelected()) {
-          defaultedProperties.add(property);
-        } else {
-          defaultedProperties.remove(property);
-        }
-      }
-    });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (checkBox.isSelected()) {
+              defaultedProperties.add(property);
+            } else {
+              defaultedProperties.remove(property);
+            }
+          }
+        });
     return checkBox;
   }
 

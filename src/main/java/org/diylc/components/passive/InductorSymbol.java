@@ -24,7 +24,6 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
@@ -39,10 +38,17 @@ import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Inductor", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "L",
-    description = "Inductor schematic symbol", zOrder = IDIYComponent.COMPONENT,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Inductor",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "L",
+    description = "Inductor schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic",
+    transformer = SimpleComponentTransformer.class)
 public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
 
   private static final long serialVersionUID = 1L;
@@ -97,8 +103,10 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
     GeneralPath polyline = new GeneralPath();
     polyline.moveTo(width / 8, height / 2);
     polyline.curveTo(width / 8, height / 4, width * 3 / 8, height / 4, width * 3 / 8, height / 2);
-    polyline.curveTo(width * 3 / 8, height / 4, width * 5 / 8, height / 4, width * 5 / 8, height / 2);
-    polyline.curveTo(width * 5 / 8, height / 4, width * 7 / 8, height / 4, width * 7 / 8, height / 2);
+    polyline.curveTo(
+        width * 3 / 8, height / 4, width * 5 / 8, height / 4, width * 5 / 8, height / 2);
+    polyline.curveTo(
+        width * 5 / 8, height / 4, width * 7 / 8, height / 4, width * 7 / 8, height / 2);
 
     polyline.moveTo(width / 8, height * 6 / 10);
     polyline.lineTo(width * 7 / 8, height * 6 / 10);

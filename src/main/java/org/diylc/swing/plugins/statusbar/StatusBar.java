@@ -39,7 +39,6 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -47,13 +46,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.styles.EdgedBalloonStyle;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.announcements.AnnouncementProvider;
 import org.diylc.appframework.miscutils.ConfigurationManager;
@@ -78,496 +74,530 @@ import org.diylc.swingframework.update.UpdateLabel;
 
 public class StatusBar extends JPanel implements IPlugIn {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LogManager.getLogger(StatusBar.class);
+  private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
-    private static final Format sizeFormat = new DecimalFormat("0.##");
+  private static final Format sizeFormat = new DecimalFormat("0.##");
 
-    private JComboBox zoomBox;
-    private UpdateLabel updateLabel;
-    private JLabel announcementLabel;
-    private JLabel recentChangesLabel;
-    private MemoryBar memoryPanel;
-    private JLabel statusLabel;
-    private JLabel positionLabel;
-    private JLabel sizeLabel;
+  private JComboBox zoomBox;
+  private UpdateLabel updateLabel;
+  private JLabel announcementLabel;
+  private JLabel recentChangesLabel;
+  private MemoryBar memoryPanel;
+  private JLabel statusLabel;
+  private JLabel positionLabel;
+  private JLabel sizeLabel;
 
-    private IPlugInPort plugInPort;
+  private IPlugInPort plugInPort;
 
-    // State variables
-    private ComponentType componentSlot;
-    private Point controlPointSlot;
-    private Boolean forceInstantiate;
-    private List<String> componentNamesUnderCursor;
-    private List<String> selectedComponentNames;
-    private List<String> stuckComponentNames;
-    private String statusMessage;
+  // State variables
+  private ComponentType componentSlot;
+  private Point controlPointSlot;
+  private Boolean forceInstantiate;
+  private List<String> componentNamesUnderCursor;
+  private List<String> selectedComponentNames;
+  private List<String> stuckComponentNames;
+  private String statusMessage;
 
-    private AnnouncementProvider announcementProvider;
+  private AnnouncementProvider announcementProvider;
 
-    private Point2D mousePositionIn;
+  private Point2D mousePositionIn;
 
-    private Point2D mousePositionMm;
+  private Point2D mousePositionMm;
 
-    private String getMsg(String name) { return Config.getString("message.statusbar." + name); }
+  private String getMsg(String name) {
+    return Config.getString("message.statusbar." + name);
+  }
 
-    public StatusBar() {
-	super();
+  public StatusBar() {
+    super();
 
-	this.announcementProvider = new AnnouncementProvider();
+    this.announcementProvider = new AnnouncementProvider();
 
-	setLayout(new GridBagLayout());
+    setLayout(new GridBagLayout());
 
-	try {
-	    DIYLC.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
-	} catch (BadPositionException e) {
-	    LOG.error("Could not install status bar", e);
-	}
-
-	DIYLC.ui().executeBackgroundTask(new ITask<String>() {
-
-		@Override
-		public String doInBackground() throws Exception {
-		    Thread.sleep(1000);
-		    String announcements = announcementProvider.getCurrentAnnouncements(false);
-
-		    String update = getUpdateLabel().getUpdateChecker().findNewVersionShort();
-
-		    if (update != null) {
-			String updateHtml =
-			    "<font size='4'><b>New version available:</b> " + update
-			    + "</font><br>Click the lighbulb icon in the bottom-right corner of the window for more info.";
-			if (announcements == null || announcements.length() == 0)
-			    return "<html>" + updateHtml + "</html>";
-			announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
-		    }
-
-		    return announcements;
-		}
-
-		@Override
-		public void failed(Exception e) {
-		    LOG.error("Error while fetching announcements", e);
-		}
-
-		@Override
-		public void complete(String result) {
-		    if (result != null && result.length() > 0) {
-			new BalloonTip(getUpdateLabel(),
-				       result,
-				       new EdgedBalloonStyle(UIManager.getColor("ToolTip.background"),
-							     UIManager.getColor("ToolTip.foreground")),
-				       true);
-			announcementProvider.dismissed();
-		    }
-		}
-
-	    }, false);
-
-	ConfigurationManager.addListener(IPlugInPort.METRIC_KEY, new IConfigListener() {
-
-		@Override
-		public void valueChanged(String key, Object value) {
-		    refreshPosition((Boolean)value);
-		}
-	    });
-
-	ConfigurationManager.addListener(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
-					 new IConfigListener() {
-
-		@Override
-		public void valueChanged(String key, Object value) {
-		    refreshStatusText();
-		}
-	    });
+    try {
+      DIYLC.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
+    } catch (BadPositionException e) {
+      LOG.error("Could not install status bar", e);
     }
 
-    private JComboBox getZoomBox() {
-	if (zoomBox == null) {
-	    zoomBox = new JComboBox(plugInPort.getAvailableZoomLevels());
-	    zoomBox.setSelectedItem(plugInPort.getZoomLevel());
-	    zoomBox.setFocusable(false);
-	    zoomBox.setRenderer(new PercentageListCellRenderer());
-	    zoomBox.addActionListener(new ActionListener() {
+    DIYLC
+        .ui()
+        .executeBackgroundTask(
+            new ITask<String>() {
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			plugInPort.setZoomLevel((Double) zoomBox.getSelectedItem());
-		    }
-		});
-	}
-	return zoomBox;
+              @Override
+              public String doInBackground() throws Exception {
+                Thread.sleep(1000);
+                String announcements = announcementProvider.getCurrentAnnouncements(false);
+
+                String update = getUpdateLabel().getUpdateChecker().findNewVersionShort();
+
+                if (update != null) {
+                  String updateHtml =
+                      "<font size='4'><b>New version available:</b> "
+                          + update
+                          + "</font><br>Click the lighbulb icon in the bottom-right corner of the window for more info.";
+                  if (announcements == null || announcements.length() == 0)
+                    return "<html>" + updateHtml + "</html>";
+                  announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
+                }
+
+                return announcements;
+              }
+
+              @Override
+              public void failed(Exception e) {
+                LOG.error("Error while fetching announcements", e);
+              }
+
+              @Override
+              public void complete(String result) {
+                if (result != null && result.length() > 0) {
+                  new BalloonTip(
+                      getUpdateLabel(),
+                      result,
+                      new EdgedBalloonStyle(
+                          UIManager.getColor("ToolTip.background"),
+                          UIManager.getColor("ToolTip.foreground")),
+                      true);
+                  announcementProvider.dismissed();
+                }
+              }
+            },
+            false);
+
+    ConfigurationManager.addListener(
+        IPlugInPort.METRIC_KEY,
+        new IConfigListener() {
+
+          @Override
+          public void valueChanged(String key, Object value) {
+            refreshPosition((Boolean) value);
+          }
+        });
+
+    ConfigurationManager.addListener(
+        IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
+        new IConfigListener() {
+
+          @Override
+          public void valueChanged(String key, Object value) {
+            refreshStatusText();
+          }
+        });
+  }
+
+  private JComboBox getZoomBox() {
+    if (zoomBox == null) {
+      zoomBox = new JComboBox(plugInPort.getAvailableZoomLevels());
+      zoomBox.setSelectedItem(plugInPort.getZoomLevel());
+      zoomBox.setFocusable(false);
+      zoomBox.setRenderer(new PercentageListCellRenderer());
+      zoomBox.addActionListener(
+          new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              plugInPort.setZoomLevel((Double) zoomBox.getSelectedItem());
+            }
+          });
+    }
+    return zoomBox;
+  }
+
+  private UpdateLabel getUpdateLabel() {
+    if (updateLabel == null) {
+      updateLabel =
+          new UpdateLabel(DIYLC.getVersionNumber(), Config.getURL("update").toString()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+              return new Point(0, -16);
+            }
+          };
+      updateLabel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+    }
+    return updateLabel;
+  }
+
+  public JLabel getAnnouncementLabel() {
+    if (announcementLabel == null) {
+      announcementLabel =
+          new JLabel(Icon.Megaphone.icon()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+              return new Point(0, -16);
+            }
+          };
+      announcementLabel.setToolTipText("Click to fetch the most recent public announcement");
+      announcementLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      announcementLabel.addMouseListener(
+          new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              DIYLC
+                  .ui()
+                  .executeBackgroundTask(
+                      new ITask<String>() {
+
+                        @Override
+                        public String doInBackground() throws Exception {
+                          return announcementProvider.getCurrentAnnouncements(true);
+                        }
+
+                        @Override
+                        public void failed(Exception e) {
+                          LOG.error("Error while fetching announcements", e);
+                          DIYLC.ui().error(getMsg("failed-announcements"));
+                        }
+
+                        @Override
+                        public void complete(String result) {
+                          final String pa = getMsg("public-announcement");
+                          if (result != null && result.length() > 0) {
+                            DIYLC.ui().info(pa, result);
+                            announcementProvider.dismissed();
+                          } else DIYLC.ui().info(pa, getMsg("no-announcements"));
+                        }
+                      },
+                      true);
+            }
+          });
+    }
+    return announcementLabel;
+  }
+
+  public JLabel getRecentChangesLabel() {
+    if (recentChangesLabel == null) {
+      recentChangesLabel =
+          new JLabel(Icon.ScrollInformation.icon()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+              return new Point(0, -16);
+            }
+          };
+      recentChangesLabel.setToolTipText(getMsg("recent-changes-tooltip"));
+      recentChangesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+      recentChangesLabel.addMouseListener(
+          new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              List<Version> updates = Version.getRecentUpdates();
+              if (updates == null) DIYLC.ui().info(getMsg("no-version-history"));
+              else {
+                String html = UpdateChecker.createUpdateHTML(updates);
+                UpdateDialog updateDialog =
+                    new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(), html, null);
+                updateDialog.setVisible(true);
+              }
+            }
+          });
+    }
+    return recentChangesLabel;
+  }
+
+  private MemoryBar getMemoryPanel() {
+    if (memoryPanel == null) {
+      memoryPanel =
+          new MemoryBar(false) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+              return new Point(0, -52);
+            }
+          };
+    }
+    return memoryPanel;
+  }
+
+  private JLabel getStatusLabel() {
+    if (statusLabel == null) {
+      statusLabel = new JLabel();
+      statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+    }
+    return statusLabel;
+  }
+
+  private JLabel getPositionLabel() {
+    if (positionLabel == null) {
+      positionLabel = new JLabel();
+      positionLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
+    }
+    return positionLabel;
+  }
+
+  public JLabel getSizeLabel() {
+    if (sizeLabel == null) {
+      sizeLabel =
+          new JLabel(Icon.Size.icon()) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+              return new Point(0, -16);
+            }
+          };
+      sizeLabel.setFocusable(true);
+      sizeLabel.setToolTipText(getMsg("selection-size-tooltip"));
+      sizeLabel.addMouseListener(
+          new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              Point2D[] sizes = plugInPort.calculateSelectionDimension();
+              String text;
+              if (sizes == null) {
+                text = getMsg("empty-selection");
+              } else {
+                text =
+                    sizeFormat.format(sizes[0].getX())
+                        + " x "
+                        + sizeFormat.format(sizes[0].getY())
+                        + " in\n"
+                        + sizeFormat.format(sizes[1].getX())
+                        + " x "
+                        + sizeFormat.format(sizes[1].getY())
+                        + " cm";
+              }
+              JOptionPane.showMessageDialog(
+                  SwingUtilities.getRootPane(StatusBar.this),
+                  text,
+                  "Selection Size",
+                  JOptionPane.INFORMATION_MESSAGE);
+            }
+          });
+    }
+    return sizeLabel;
+  }
+
+  private void layoutComponents() {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 1;
+    add(getStatusLabel(), gbc);
+
+    gbc.gridx++;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = 0;
+    add(getPositionLabel(), gbc);
+
+    JPanel zoomPanel = new JPanel(new BorderLayout());
+    zoomPanel.add(new JLabel(getMsg("zoom")), BorderLayout.WEST);
+    zoomPanel.add(getZoomBox(), BorderLayout.CENTER);
+    // zoomPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+    // .createEtchedBorder(), BorderFactory.createEmptyBorder(2, 4, 2,
+    // 4)));
+    zoomPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+
+    gbc.gridx++;
+    gbc.fill = GridBagConstraints.BOTH;
+    gbc.weightx = 0;
+    add(zoomPanel, gbc);
+
+    gbc.gridx++;
+    gbc.insets = new Insets(0, 2, 0, 2);
+    add(getSizeLabel(), gbc);
+
+    gbc.gridx++;
+    add(getAnnouncementLabel(), gbc);
+
+    gbc.gridx++;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    add(getUpdateLabel(), gbc);
+
+    gbc.gridx++;
+    gbc.insets = new Insets(0, 0, 0, 4);
+    add(getRecentChangesLabel(), gbc);
+
+    gbc.gridx++;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.insets = new Insets(0, 0, 0, 4);
+    add(getMemoryPanel(), gbc);
+
+    gbc.gridx = 5;
+    add(new JPanel(), gbc);
+  }
+
+  // IPlugIn
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+
+    layoutComponents();
+  }
+
+  @Override
+  public EnumSet<EventType> getSubscribedEventTypes() {
+    return EnumSet.of(
+        EventType.ZOOM_CHANGED,
+        EventType.SLOT_CHANGED,
+        EventType.AVAILABLE_CTRL_POINTS_CHANGED,
+        EventType.SELECTION_CHANGED,
+        EventType.STATUS_MESSAGE_CHANGED,
+        EventType.MOUSE_MOVED);
+  }
+
+  @SuppressWarnings({"unchecked", "incomplete-switch"})
+  @Override
+  public void processMessage(EventType eventType, Object... params) {
+    switch (eventType) {
+      case ZOOM_CHANGED:
+        if (!params[0].equals(getZoomBox().getSelectedItem())) {
+          final Double zoom = (Double) params[0];
+          SwingUtilities.invokeLater(
+              new Runnable() {
+
+                @Override
+                public void run() {
+                  getZoomBox().setSelectedItem(zoom);
+                }
+              });
+        }
+        break;
+      case SELECTION_CHANGED:
+        Collection<IDIYComponent<?>> selection = (Collection<IDIYComponent<?>>) params[0];
+        Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
+        Collection<String> componentNames = new HashSet<String>();
+        for (IDIYComponent<?> component : selection) {
+          componentNames.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        this.selectedComponentNames = new ArrayList<String>(componentNames);
+        Collections.sort(this.selectedComponentNames);
+        this.stuckComponentNames = new ArrayList<String>();
+        for (IDIYComponent<?> component : stuckComponents) {
+          this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        this.stuckComponentNames.removeAll(this.selectedComponentNames);
+        Collections.sort(this.stuckComponentNames);
+        refreshStatusText();
+        break;
+      case SLOT_CHANGED:
+        componentSlot = (ComponentType) params[0];
+        controlPointSlot = (Point) params[1];
+        forceInstantiate = params.length > 2 ? (Boolean) params[2] : null;
+        refreshStatusText();
+        break;
+      case AVAILABLE_CTRL_POINTS_CHANGED:
+        componentNamesUnderCursor = new ArrayList<String>();
+        for (IDIYComponent<?> component : ((Map<IDIYComponent<?>, Integer>) params[0]).keySet()) {
+          componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
+        }
+        Collections.sort(componentNamesUnderCursor);
+        refreshStatusText();
+        break;
+      case STATUS_MESSAGE_CHANGED:
+        statusMessage = (String) params[0];
+        refreshStatusText();
+        break;
+      case MOUSE_MOVED:
+        mousePositionIn = (Point2D) params[1];
+        mousePositionMm = (Point2D) params[2];
+        refreshPosition(DIYLC.getBoolean(Presenter.METRIC_KEY, true));
+        break;
+    }
+  }
+
+  private void refreshPosition(boolean metric) {
+    Point2D mousePosition = metric ? mousePositionMm : mousePositionIn;
+    String unit = metric ? "mm" : "in";
+
+    getPositionLabel()
+        .setText(
+            mousePosition == null
+                ? null
+                : String.format(
+                    "x:%.2f%s y:%.2f%s", mousePosition.getX(), unit, mousePosition.getY(), unit));
+  }
+
+  private void refreshStatusText() {
+    String statusText = this.statusMessage;
+    if (componentSlot == null) {
+      if (componentNamesUnderCursor != null && !componentNamesUnderCursor.isEmpty()) {
+        String formattedNames = Utils.toCommaString(componentNamesUnderCursor);
+        statusText = "<html>Drag control point(s) of " + formattedNames + "</html>";
+      } else if (selectedComponentNames != null && !selectedComponentNames.isEmpty()) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(
+            Utils.toCommaString(
+                selectedComponentNames.subList(0, Math.min(20, selectedComponentNames.size()))));
+        if (selectedComponentNames.size() > 15) {
+          builder.append(" and " + (selectedComponentNames.size() - 15) + " more");
+        }
+        if (!stuckComponentNames.isEmpty()) {
+          builder.append(" (hold <b>Ctrl</b> and drag to unstuck from ");
+          builder.append(
+              Utils.toCommaString(
+                  stuckComponentNames.subList(0, Math.min(5, stuckComponentNames.size()))));
+          if (stuckComponentNames.size() > 5) {
+            builder.append(" and " + (stuckComponentNames.size() - 5) + " more");
+          }
+          builder.append(")");
+        }
+        statusText = "<html>Selection: " + builder.toString() + "</html>";
+      }
+    } else {
+      if (forceInstantiate != null && forceInstantiate)
+        statusText =
+            "<html>Drag the mouse over the canvas to place a new <font color='blue'>"
+                + componentSlot.getName()
+                + "</font></html>";
+      else
+        switch (componentSlot.getCreationMethod()) {
+          case POINT_BY_POINT:
+            String count;
+            if (controlPointSlot == null) {
+              count = "first";
+            } else {
+              count = "second";
+            }
+            statusText =
+                "<html>Click on the canvas to set the "
+                    + count
+                    + " control point of a new <font color='blue'>"
+                    + componentSlot.getName()
+                    + "</font> or press <b>Esc</b> to cancel</html>";
+            break;
+          case SINGLE_CLICK:
+            statusText =
+                "<html>Click on the canvas to create a new <font color='blue'>"
+                    + componentSlot.getName()
+                    + "</font> or press <b>Esc</b> to cancel</html>";
+            break;
+        }
     }
 
-    private UpdateLabel getUpdateLabel() {
-	if (updateLabel == null) {
-	    updateLabel = new UpdateLabel(DIYLC.getVersionNumber(),
-					  Config.getURL("update").toString()) {
+    // override any other status with this when in highlight mode,
+    // as we cannot do anything else
+    if (DIYLC.highlightContinuityArea()) statusText = getMsg("highlight-connected");
 
-		    private static final long serialVersionUID = 1L;
+    final String finalStatus = statusText;
+    SwingUtilities.invokeLater(
+        new Runnable() {
 
-		    @Override
-		    public Point getToolTipLocation(MouseEvent event) {
-			return new Point(0, -16);
-		    }
-		};
-	    updateLabel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-	}
-	return updateLabel;
-    }
-
-    public JLabel getAnnouncementLabel() {
-	if (announcementLabel == null) {
-	    announcementLabel = new JLabel(Icon.Megaphone.icon()) {
-
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public Point getToolTipLocation(MouseEvent event) {
-			return new Point(0, -16);
-		    }
-		};
-	    announcementLabel.setToolTipText("Click to fetch the most recent public announcement");
-	    announcementLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	    announcementLabel.addMouseListener(new MouseAdapter() {
-
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-			DIYLC.ui().executeBackgroundTask(new ITask<String>() {
-
-				@Override
-				public String doInBackground() throws Exception {
-				    return announcementProvider.getCurrentAnnouncements(true);
-				}
-
-				@Override
-				public void failed(Exception e) {
-				    LOG.error("Error while fetching announcements", e);
-				    DIYLC.ui().error(getMsg("failed-announcements"));
-				}
-
-				@Override
-				public void complete(String result) {
-				    final String pa = getMsg("public-announcement");
-				    if (result != null && result.length() > 0) {
-					DIYLC.ui().info(pa, result);
-					announcementProvider.dismissed();
-				    } else
-					DIYLC.ui().info(pa, getMsg("no-announcements"));
-				}
-
-			    }, true);
-		    }
-		});
-	}
-	return announcementLabel;
-    }
-
-    public JLabel getRecentChangesLabel() {
-	if (recentChangesLabel == null) {
-	    recentChangesLabel = new JLabel(Icon.ScrollInformation.icon()){
-
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public Point getToolTipLocation(MouseEvent event) {
-			return new Point(0, -16);
-		    }
-		};
-	    recentChangesLabel.setToolTipText(getMsg("recent-changes-tooltip"));
-	    recentChangesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-	    recentChangesLabel.addMouseListener(new MouseAdapter() {
-
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-			List<Version> updates = Version.getRecentUpdates();
-			if (updates == null)
-			    DIYLC.ui().info(getMsg("no-version-history"));
-			else {
-			    String html = UpdateChecker.createUpdateHTML(updates);
-			    UpdateDialog updateDialog = new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(),
-									 html,
-									 null);
-			    updateDialog.setVisible(true);
-			}
-		    }
-		});
-	}
-	return recentChangesLabel;
-    }
-
-    private MemoryBar getMemoryPanel() {
-	if (memoryPanel == null) {
-	    memoryPanel = new MemoryBar(false) {
-
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public Point getToolTipLocation(MouseEvent event) {
-			return new Point(0, -52);
-		    }
-		};
-	}
-	return memoryPanel;
-    }
-
-    private JLabel getStatusLabel() {
-	if (statusLabel == null) {
-	    statusLabel = new JLabel();
-	    statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-	}
-	return statusLabel;
-    }
-
-    private JLabel getPositionLabel() {
-	if (positionLabel == null) {
-	    positionLabel = new JLabel();
-	    positionLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
-	}
-	return positionLabel;
-    }
-
-    public JLabel getSizeLabel() {
-	if (sizeLabel == null) {
-	    sizeLabel = new JLabel(Icon.Size.icon()) {
-
-		    private static final long serialVersionUID = 1L;
-
-		    @Override
-		    public Point getToolTipLocation(MouseEvent event) {
-			return new Point(0, -16);
-		    }
-		};
-	    sizeLabel.setFocusable(true);
-	    sizeLabel.setToolTipText(getMsg("selection-size-tooltip"));
-	    sizeLabel.addMouseListener(new MouseAdapter() {
-
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-			Point2D[] sizes = plugInPort.calculateSelectionDimension();
-			String text;
-			if (sizes == null) {
-			    text = getMsg("empty-selection");
-			} else {
-			    text = sizeFormat.format(sizes[0].getX()) + " x "
-				+ sizeFormat.format(sizes[0].getY()) + " in\n"
-				+ sizeFormat.format(sizes[1].getX()) + " x "
-				+ sizeFormat.format(sizes[1].getY()) + " cm";
-			}
-			JOptionPane.showMessageDialog(SwingUtilities.getRootPane(StatusBar.this),
-						      text,
-						      "Selection Size",
-						      JOptionPane.INFORMATION_MESSAGE);
-		    }
-		});
-	}
-	return sizeLabel;
-    }
-
-    private void layoutComponents() {
-	GridBagConstraints gbc = new GridBagConstraints();
-	gbc.gridx = 0;
-	gbc.gridy = 0;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	gbc.weightx = 1;
-	add(getStatusLabel(), gbc);
-
-	gbc.gridx++;
-	gbc.fill = GridBagConstraints.BOTH;
-	gbc.weightx = 0;
-	add(getPositionLabel(), gbc);
-
-	JPanel zoomPanel = new JPanel(new BorderLayout());
-	zoomPanel.add(new JLabel(getMsg("zoom")), BorderLayout.WEST);
-	zoomPanel.add(getZoomBox(), BorderLayout.CENTER);
-	// zoomPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-	// .createEtchedBorder(), BorderFactory.createEmptyBorder(2, 4, 2,
-	// 4)));
-	zoomPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-
-	gbc.gridx++;
-	gbc.fill = GridBagConstraints.BOTH;
-	gbc.weightx = 0;
-	add(zoomPanel, gbc);
-
-	gbc.gridx++;
-	gbc.insets = new Insets(0, 2, 0, 2);
-	add(getSizeLabel(), gbc);
-
-	gbc.gridx++;
-	add(getAnnouncementLabel(), gbc);
-
-	gbc.gridx++;
-	gbc.insets = new Insets(0, 0, 0, 0);
-	add(getUpdateLabel(), gbc);
-
-	gbc.gridx++;
-	gbc.insets = new Insets(0, 0, 0, 4);
-	add(getRecentChangesLabel(), gbc);
-
-	gbc.gridx++;
-	gbc.fill = GridBagConstraints.NONE;
-	gbc.insets = new Insets(0, 0, 0, 4);
-	add(getMemoryPanel(), gbc);
-
-	gbc.gridx = 5;
-	add(new JPanel(), gbc);
-    }
-
-    // IPlugIn
-
-    @Override
-    public void connect(IPlugInPort plugInPort) {
-	this.plugInPort = plugInPort;
-
-	layoutComponents();
-    }
-
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-	return EnumSet.of(EventType.ZOOM_CHANGED,
-			  EventType.SLOT_CHANGED,
-			  EventType.AVAILABLE_CTRL_POINTS_CHANGED,
-			  EventType.SELECTION_CHANGED,
-			  EventType.STATUS_MESSAGE_CHANGED,
-			  EventType.MOUSE_MOVED);
-    }
-
-    @SuppressWarnings({"unchecked", "incomplete-switch"})
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-	switch (eventType) {
-	case ZOOM_CHANGED:
-	    if (!params[0].equals(getZoomBox().getSelectedItem())) {
-		final Double zoom = (Double) params[0];
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-			    getZoomBox().setSelectedItem(zoom);
-			}
-		    });
-	    }
-	    break;
-	case SELECTION_CHANGED:
-	    Collection<IDIYComponent<?>> selection = (Collection<IDIYComponent<?>>) params[0];
-	    Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
-	    Collection<String> componentNames = new HashSet<String>();
-	    for (IDIYComponent<?> component : selection) {
-		componentNames.add("<font color='blue'>" + component.getName() + "</font>");
-	    }
-	    this.selectedComponentNames = new ArrayList<String>(componentNames);
-	    Collections.sort(this.selectedComponentNames);
-	    this.stuckComponentNames = new ArrayList<String>();
-	    for (IDIYComponent<?> component : stuckComponents) {
-		this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
-	    }
-	    this.stuckComponentNames.removeAll(this.selectedComponentNames);
-	    Collections.sort(this.stuckComponentNames);
-	    refreshStatusText();
-	    break;
-	case SLOT_CHANGED:
-	    componentSlot = (ComponentType) params[0];
-	    controlPointSlot = (Point) params[1];
-	    forceInstantiate = params.length > 2 ? (Boolean)params[2] : null;
-	    refreshStatusText();
-	    break;
-	case AVAILABLE_CTRL_POINTS_CHANGED:
-	    componentNamesUnderCursor = new ArrayList<String>();
-	    for (IDIYComponent<?> component : ((Map<IDIYComponent<?>, Integer>) params[0]).keySet()) {
-		componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
-	    }
-	    Collections.sort(componentNamesUnderCursor);
-	    refreshStatusText();
-	    break;
-	case STATUS_MESSAGE_CHANGED:
-	    statusMessage = (String) params[0];
-	    refreshStatusText();
-	    break;
-	case MOUSE_MOVED:
-	    mousePositionIn = (Point2D) params[1];
-	    mousePositionMm = (Point2D) params[2];
-	    refreshPosition(DIYLC.getBoolean(Presenter.METRIC_KEY, true));
-	    break;
-	}
-    }
-
-    private void refreshPosition(boolean metric) {
-	Point2D mousePosition = metric ? mousePositionMm : mousePositionIn;
-	String unit = metric ? "mm" : "in";
-
-	getPositionLabel().setText(mousePosition == null
-				   ? null
-				   : String.format("x:%.2f%s y:%.2f%s",
-						   mousePosition.getX(), unit,
-						   mousePosition.getY(), unit));
-    }
-
-    private void refreshStatusText() {
-	String statusText = this.statusMessage;
-	if (componentSlot == null) {
-	    if (componentNamesUnderCursor != null && !componentNamesUnderCursor.isEmpty()) {
-		String formattedNames = Utils.toCommaString(componentNamesUnderCursor);
-		statusText = "<html>Drag control point(s) of " + formattedNames + "</html>";
-	    } else if (selectedComponentNames != null && !selectedComponentNames.isEmpty()) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(Utils.toCommaString(selectedComponentNames.subList(0,
-										  Math.min(20, selectedComponentNames.size()))));
-		if (selectedComponentNames.size() > 15) {
-		    builder.append(" and " + (selectedComponentNames.size() - 15) + " more");
-		}
-		if (!stuckComponentNames.isEmpty()) {
-		    builder.append(" (hold <b>Ctrl</b> and drag to unstuck from ");
-		    builder.append(Utils.toCommaString(stuckComponentNames.subList(0, Math.min(5, stuckComponentNames.size()))));
-		    if (stuckComponentNames.size() > 5) {
-			builder.append(" and " + (stuckComponentNames.size() - 5) + " more");
-		    }
-		    builder.append(")");
-		}
-		statusText = "<html>Selection: " + builder.toString() + "</html>";
-	    }
-	} else {
-	    if (forceInstantiate != null && forceInstantiate)
-		statusText =  "<html>Drag the mouse over the canvas to place a new <font color='blue'>"
-		    + componentSlot.getName()
-		    + "</font></html>";
-	    else
-		switch (componentSlot.getCreationMethod()) {
-		case POINT_BY_POINT:
-		    String count;
-		    if (controlPointSlot == null) {
-			count = "first";
-		    } else {
-			count = "second";
-		    }
-		    statusText =
-			"<html>Click on the canvas to set the "
-			+ count + " control point of a new <font color='blue'>"
-			+ componentSlot.getName() + "</font> or press <b>Esc</b> to cancel</html>";
-		    break;
-		case SINGLE_CLICK:
-		    statusText =
-			"<html>Click on the canvas to create a new <font color='blue'>"
-			+ componentSlot.getName()
-			+ "</font> or press <b>Esc</b> to cancel</html>";
-		    break;
-		}
-	}
-
-	// override any other status with this when in highlight mode,
-	// as we cannot do anything else
-	if (DIYLC.highlightContinuityArea())
-	    statusText = getMsg("highlight-connected");
-
-	final String finalStatus = statusText;
-	SwingUtilities.invokeLater(new Runnable() {
-
-		@Override
-		public void run() {
-		    getStatusLabel().setText(finalStatus);
-		}
-	    });
-    }
+          @Override
+          public void run() {
+            getStatusLabel().setText(finalStatus);
+          }
+        });
+  }
 }

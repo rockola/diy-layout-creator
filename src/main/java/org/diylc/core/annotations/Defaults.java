@@ -56,10 +56,10 @@ public final class Defaults {
   }
 
   /**
-   * Returns the default value of {@code type} as defined by JLS --- {@code 0} for numbers,
-   * {@code false} for {@code boolean} and {@code '\0'} for {@code char}. For non-primitive types
-   * and {@code void}, {@code null} is returned.
-   * 
+   * Returns the default value of {@code type} as defined by JLS --- {@code 0} for numbers, {@code
+   * false} for {@code boolean} and {@code '\0'} for {@code char}. For non-primitive types and
+   * {@code void}, {@code null} is returned.
+   *
    * @throws Exception
    */
   @SuppressWarnings("unchecked")

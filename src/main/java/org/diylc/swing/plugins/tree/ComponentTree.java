@@ -23,13 +23,10 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.util.EnumSet;
-
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -42,70 +39,78 @@ import org.diylc.swing.plugins.statusbar.StatusBar;
 
 public class ComponentTree implements IPlugIn {
 
-    private static final Logger LOG = LogManager.getLogger(StatusBar.class);
+  private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
-    private IPlugInPort plugInPort;
-    private TreePanel treePanel;
-    private JComponent canvasPanel;
+  private IPlugInPort plugInPort;
+  private TreePanel treePanel;
+  private JComponent canvasPanel;
 
-    public ComponentTree(JComponent canvasPanel) {
-	this.canvasPanel = canvasPanel;
+  public ComponentTree(JComponent canvasPanel) {
+    this.canvasPanel = canvasPanel;
+  }
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+    try {
+      DIYLC.ui().injectGUIComponent(getTreePanel(), SwingConstants.LEFT);
+    } catch (BadPositionException e) {
+      LOG.error("Could not install the component tree", e);
     }
+    ConfigurationManager.addListener(
+        ConfigPlugin.COMPONENT_BROWSER,
+        new IConfigListener() {
 
-    @Override
-    public void connect(IPlugInPort plugInPort) {
-	this.plugInPort = plugInPort;
-	try {
-	    DIYLC.ui().injectGUIComponent(getTreePanel(), SwingConstants.LEFT);
-	} catch (BadPositionException e) {
-	    LOG.error("Could not install the component tree", e);
-	}
-	ConfigurationManager.addListener(ConfigPlugin.COMPONENT_BROWSER,
-					 new IConfigListener() {
+          @Override
+          public void valueChanged(String key, Object value) {
+            getTreePanel()
+                .setVisible(
+                    ConfigPlugin.COMPONENT_BROWSER.equals(key)
+                        && ConfigPlugin.SEARCHABLE_TREE.equals(value));
+          }
+        });
 
-		@Override
-		public void valueChanged(String key, Object value) {
-		    getTreePanel().setVisible(ConfigPlugin.COMPONENT_BROWSER.equals(key)
-					      && ConfigPlugin.SEARCHABLE_TREE.equals(value));
-		}
-	    });
+    getTreePanel()
+        .setVisible(
+            DIYLC
+                .getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
+                .equals(ConfigPlugin.SEARCHABLE_TREE));
 
-	getTreePanel().setVisible(DIYLC.getString(ConfigPlugin.COMPONENT_BROWSER,
-						  ConfigPlugin.SEARCHABLE_TREE)
-				  .equals(ConfigPlugin.SEARCHABLE_TREE));
+    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+        .addKeyEventDispatcher(
+            new KeyEventDispatcher() {
 
-	KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+              @Override
+              public boolean dispatchKeyEvent(KeyEvent e) {
+                if ((canvasPanel.hasFocus() || treePanel.hasFocus())
+                    && e.getKeyChar() == 'q'
+                    && DIYLC
+                        .getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
+                        .equals(ConfigPlugin.SEARCHABLE_TREE)) {
+                  getTreePanel().getSearchField().requestFocusInWindow();
+                  return true;
+                }
+                return false;
+              }
+            });
+  }
 
-		@Override
-		public boolean dispatchKeyEvent(KeyEvent e) {
-		    if ((canvasPanel.hasFocus() || treePanel.hasFocus())
-			&& e.getKeyChar() == 'q'
-			&& DIYLC.getString(ConfigPlugin.COMPONENT_BROWSER,
-					   ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
-			getTreePanel().getSearchField().requestFocusInWindow();
-			return true;
-		    }
-		    return false;
-		}
-	    });
+  public TreePanel getTreePanel() {
+    if (treePanel == null) {
+      treePanel = new TreePanel(plugInPort);
     }
+    return treePanel;
+  }
 
-    public TreePanel getTreePanel() {
-	if (treePanel == null) {
-	    treePanel = new TreePanel(plugInPort);
-	}
-	return treePanel;
-    }
+  @Override
+  public EnumSet<EventType> getSubscribedEventTypes() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-	// TODO Auto-generated method stub
-	return null;
-    }
+  @Override
+  public void processMessage(EventType eventType, Object... params) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void processMessage(EventType eventType, Object... params) {
-	// TODO Auto-generated method stub
-
-    }
+  }
 }

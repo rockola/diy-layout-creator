@@ -28,11 +28,11 @@ public class MeasureList<T extends Enum<? extends Unit>> extends ArrayList<Abstr
   private static final long serialVersionUID = 1L;
 
   private String name;
-  
+
   public MeasureList(String name) {
     this.name = name;
   }
-  
+
   public String getName() {
     return name;
   }

@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.SimpleComponentTransformer;
@@ -39,9 +38,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Diode (glass)", author = "Branislav Stojkovic", category = "Semiconductors",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "D",
-    description = "Glass diode, like most small signal diodes.", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Diode (glass)",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "D",
+    description = "Glass diode, like most small signal diodes.",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class DiodeGlass extends AbstractLeadedComponent<String> {
 
@@ -118,7 +122,8 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
 
   @Override
   protected Shape getBodyShape() {
-    return new Rectangle2D.Double(0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
+    return new Rectangle2D.Double(
+        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
   }
 
   @Override
@@ -126,7 +131,9 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
     Color finalMarkerColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalMarkerColor = theme.getOutlineColor();
     } else {
       finalMarkerColor = markerColor;
@@ -139,12 +146,17 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
       int width = getClosestOdd(getWidth().convertToPixels());
       int insideLength = getClosestOdd(length - 0.2 * width);
       int insideWidth = getClosestOdd(width * 0.8);
-      g2d.fillRect((int) (length - insideLength) / 2, (int) (width - insideWidth) / 2, insideLength, insideWidth);
+      g2d.fillRect(
+          (int) (length - insideLength) / 2,
+          (int) (width - insideWidth) / 2,
+          insideLength,
+          insideWidth);
     }
 
     g2d.setColor(finalMarkerColor);
     int markerWidth = (int) MARKER_WIDTH.convertToPixels();
-    g2d.fillRect((int) (length - markerWidth), 0, markerWidth, getClosestOdd(getWidth().convertToPixels()));
+    g2d.fillRect(
+        (int) (length - markerWidth), 0, markerWidth, getClosestOdd(getWidth().convertToPixels()));
   }
 
   @EditableProperty(name = "Marker")
@@ -158,8 +170,7 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
 
   @EditableProperty(name = "Inside color")
   public Color getInsideColor() {
-    if (insideColor == null)
-      insideColor = INSIDE_COLOR;
+    if (insideColor == null) insideColor = INSIDE_COLOR;
     return insideColor;
   }
 

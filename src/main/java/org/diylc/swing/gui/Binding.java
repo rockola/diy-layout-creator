@@ -21,122 +21,122 @@ package org.diylc.swing.gui;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-
 import java.io.Serializable;
-
 import javax.swing.KeyStroke;
-
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement( name = "binding" )
+@XmlRootElement(name = "binding")
 public class Binding implements Serializable {
 
-    @XmlElement( name = "keycode" )
-    @XmlJavaTypeAdapter( KeyCodeAdapter.class )
-    private Integer keycode;
+  @XmlElement(name = "keycode")
+  @XmlJavaTypeAdapter(KeyCodeAdapter.class)
+  private Integer keycode;
 
-    @XmlElement( name = "modifier" )
-    @XmlJavaTypeAdapter( KeyModifierAdapter.class )
-    private Integer modifier;
+  @XmlElement(name = "modifier")
+  @XmlJavaTypeAdapter(KeyModifierAdapter.class)
+  private Integer modifier;
 
-    @XmlElement( name = "action" )
-    private String action;
+  @XmlElement(name = "action")
+  private String action;
 
-    public Binding() { }
+  public Binding() {}
 
-    public Binding(Integer keycode, Integer modifier, String action) {
-        this.keycode = keycode;
-        this.modifier = modifier;
-        this.action = action;
+  public Binding(Integer keycode, Integer modifier, String action) {
+    this.keycode = keycode;
+    this.modifier = modifier;
+    this.action = action;
+  }
+
+  public static String modifierToString(Integer m) {
+    if (m == null) return "";
+
+    int i = m.intValue();
+    StringBuilder b = new StringBuilder();
+    boolean empty = true;
+    // if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0) {
+    if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
+      b.append("Menu");
+      empty = false;
     }
-
-    public static String modifierToString(Integer m) {
-        if (m == null)
-            return "";
-
-        int i = m.intValue();
-        StringBuilder b = new StringBuilder();
-        boolean empty = true;
-        // if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0) {
-        if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
-            b.append("Menu");
-            empty = false;
-        }
-        if ((i & KeyEvent.ALT_DOWN_MASK) != 0) {
-            if (!empty) { b.append(" "); }
-            b.append("Alt");
-            empty = false;
-        }
-        if ((i & KeyEvent.SHIFT_DOWN_MASK) != 0) {
-            if (!empty) { b.append(" "); }
-            b.append("Shift");
-            empty = false;
-        }
-        return b.toString();
+    if ((i & KeyEvent.ALT_DOWN_MASK) != 0) {
+      if (!empty) {
+        b.append(" ");
+      }
+      b.append("Alt");
+      empty = false;
     }
-
-    public String toString() {
-        return String.format("<Binding keycode %d modifier %s action %s />",
-                             this.getKeyCode(),
-                             modifierToString(this.getModifier()),
-                             this.getAction());
+    if ((i & KeyEvent.SHIFT_DOWN_MASK) != 0) {
+      if (!empty) {
+        b.append(" ");
+      }
+      b.append("Shift");
+      empty = false;
     }
+    return b.toString();
+  }
 
-    public void setKeyCode(Integer keycode) {
-        this.keycode = keycode;
-    }
+  public String toString() {
+    return String.format(
+        "<Binding keycode %d modifier %s action %s />",
+        this.getKeyCode(), modifierToString(this.getModifier()), this.getAction());
+  }
 
-    public int getKeyCode() {
-        if (this.keycode == null)
-            return -1; // ONLY WHILE DEBUGGING
+  public void setKeyCode(Integer keycode) {
+    this.keycode = keycode;
+  }
 
-        return this.keycode.intValue();
-    }
+  public int getKeyCode() {
+    if (this.keycode == null) return -1; // ONLY WHILE DEBUGGING
 
-    public boolean hasKeyCode(int c) {
-        return getKeyCode() == c;
-    }
-    public boolean hasKeyCode(KeyEvent e) {
-        return getKeyCode() == e.getKeyCode();
-    }
+    return this.keycode.intValue();
+  }
 
-    public void setModifier(Integer modifier) {
-        this.modifier = modifier;
-    }
+  public boolean hasKeyCode(int c) {
+    return getKeyCode() == c;
+  }
 
-    public int getModifier() {
-        if (this.modifier == null)
-            return -1; // ONLY WHILE DEBUGGING
+  public boolean hasKeyCode(KeyEvent e) {
+    return getKeyCode() == e.getKeyCode();
+  }
 
-        return this.modifier.intValue();
-    }
+  public void setModifier(Integer modifier) {
+    this.modifier = modifier;
+  }
 
-    /**
-       Compare modifier to this modifier.
-       Should not be compared with == in case new modifier flags are added.
+  public int getModifier() {
+    if (this.modifier == null) return -1; // ONLY WHILE DEBUGGING
 
-       @param m Other modifier
-     */
-    public boolean hasModifier(int m) {
-        return (this.getModifier() & m) == this.getModifier();
-    }
+    return this.modifier.intValue();
+  }
 
-    public boolean hasModifier(KeyEvent e) {
-        return hasModifier(e.getModifiersEx());
-    }
+  /**
+   * Compare modifier to this modifier. Should not be compared with == in case new modifier flags
+   * are added.
+   *
+   * @param m Other modifier
+   */
+  public boolean hasModifier(int m) {
+    return (this.getModifier() & m) == this.getModifier();
+  }
 
-    public void setAction(String action) {
-        this.action = action;
-    }
+  public boolean hasModifier(KeyEvent e) {
+    return hasModifier(e.getModifiersEx());
+  }
 
-    public String getAction() { return this.action; }
+  public void setAction(String action) {
+    this.action = action;
+  }
 
-    public KeyStroke getKeyStroke() {
-        return KeyStroke.getKeyStroke(getKeyCode(), getModifier());
-    }
+  public String getAction() {
+    return this.action;
+  }
+
+  public KeyStroke getKeyStroke() {
+    return KeyStroke.getKeyStroke(getKeyCode(), getModifier());
+  }
 }

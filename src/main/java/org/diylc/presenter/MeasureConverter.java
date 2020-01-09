@@ -19,82 +19,73 @@
 */
 package org.diylc.presenter;
 
-import org.diylc.core.measures.AbstractMeasure;
-
-// import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
-import java.lang.reflect.Type;
-import java.lang.reflect.ParameterizedType;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import org.diylc.core.measures.AbstractMeasure;
 
 /**
-  Serializes objects of types derived from {@link AbstractMeasure}
-  objects in a compact format. Backwards compatible when
-  unmarshalling.
-
-  @author Branislav Stojkovic
-*/
+ * Serializes objects of types derived from {@link AbstractMeasure} objects in a compact format.
+ * Backwards compatible when unmarshalling.
+ *
+ * @author Branislav Stojkovic
+ */
 public class MeasureConverter implements Converter {
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
-	AbstractMeasure m = (AbstractMeasure) object;
-	if (m.getValue() != null)
-	    writer.addAttribute("value", Double.toString(m.getValue()));
-	if (m.getUnit() != null)
-	    writer.addAttribute("unit", m.getUnit().name());
-    }
+  @SuppressWarnings("rawtypes")
+  @Override
+  public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+    AbstractMeasure m = (AbstractMeasure) object;
+    if (m.getValue() != null) writer.addAttribute("value", Double.toString(m.getValue()));
+    if (m.getUnit() != null) writer.addAttribute("unit", m.getUnit().name());
+  }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override
-    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-	Double value = null;
-	String unitStr = null;
-	if (reader.getAttribute("value") != null) {
-	    value = Double.parseDouble(reader.getAttribute("value"));
-	    unitStr = reader.getAttribute("unit");
-	} else {
-	    if (reader.hasMoreChildren()) {        
-		reader.moveDown();
-		if (reader.getNodeName().equals("value"))
-		    value = Double.parseDouble(reader.getValue());
-		else if (reader.getNodeName().equals("unit"))
-		    unitStr = reader.getValue();
-		reader.moveUp();
-	    }
-	    if (reader.hasMoreChildren()) {
-		reader.moveDown();
-		if (reader.getNodeName().equals("value"))
-		    value = Double.parseDouble(reader.getValue());
-		else if (reader.getNodeName().equals("unit"))
-		    unitStr = reader.getValue();
-		reader.moveUp();
-	    }
-	}    
-	try {
-	    Class requiredType = context.getRequiredType();
-	    Type generic = requiredType.getGenericSuperclass();
-	    //ParameterizedTypeImpl generic = (ParameterizedTypeImpl) requiredType.getGenericSuperclass();
-	    if (generic instanceof ParameterizedType) {
-		Class unitType = (Class) ((ParameterizedType) generic).getActualTypeArguments()[0];
-		Object unit = unitStr == null ? null : Enum.valueOf(unitType, unitStr);
-		return requiredType.getConstructor(Double.class, unitType).newInstance(value, unit);
-	    }
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	return null;
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+    Double value = null;
+    String unitStr = null;
+    if (reader.getAttribute("value") != null) {
+      value = Double.parseDouble(reader.getAttribute("value"));
+      unitStr = reader.getAttribute("unit");
+    } else {
+      if (reader.hasMoreChildren()) {
+        reader.moveDown();
+        if (reader.getNodeName().equals("value")) value = Double.parseDouble(reader.getValue());
+        else if (reader.getNodeName().equals("unit")) unitStr = reader.getValue();
+        reader.moveUp();
+      }
+      if (reader.hasMoreChildren()) {
+        reader.moveDown();
+        if (reader.getNodeName().equals("value")) value = Double.parseDouble(reader.getValue());
+        else if (reader.getNodeName().equals("unit")) unitStr = reader.getValue();
+        reader.moveUp();
+      }
     }
+    try {
+      Class requiredType = context.getRequiredType();
+      Type generic = requiredType.getGenericSuperclass();
+      // ParameterizedTypeImpl generic = (ParameterizedTypeImpl)
+      // requiredType.getGenericSuperclass();
+      if (generic instanceof ParameterizedType) {
+        Class unitType = (Class) ((ParameterizedType) generic).getActualTypeArguments()[0];
+        Object unit = unitStr == null ? null : Enum.valueOf(unitType, unitStr);
+        return requiredType.getConstructor(Double.class, unitType).newInstance(value, unit);
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean canConvert(Class clazz) {
-	return AbstractMeasure.class.isAssignableFrom(clazz);
-    }
+  @SuppressWarnings("rawtypes")
+  @Override
+  public boolean canConvert(Class clazz) {
+    return AbstractMeasure.class.isAssignableFrom(clazz);
+  }
 }

@@ -25,11 +25,10 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.Format;
 
-/***
- * Immutable measure class.
- * 
- * @author bancika
+/**
+ * * Immutable measure class.
  *
+ * @author bancika
  * @param <T>
  */
 public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializable, Cloneable {
@@ -82,23 +81,16 @@ public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializ
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     AbstractMeasure<?> other = (AbstractMeasure<?>) obj;
     if (unit == null) {
-      if (other.unit != null)
-        return false;
-    } else if (!unit.equals(other.unit))
-      return false;
+      if (other.unit != null) return false;
+    } else if (!unit.equals(other.unit)) return false;
     if (value == null) {
-      if (other.value != null)
-        return false;
-    } else if (!value.equals(other.value))
-      return false;
+      if (other.value != null) return false;
+    } else if (!value.equals(other.value)) return false;
     return true;
   }
 
@@ -106,10 +98,9 @@ public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializ
   public String toString() {
     return format.format(value) + unit;
   }
-  
+
   protected static double parse(String value) {
-    if (value.startsWith("."))
-      value = "0" + value;
+    if (value.startsWith(".")) value = "0" + value;
     value = value.replace(",", ".").replace("*", "");
     return Double.parseDouble(value);
   }

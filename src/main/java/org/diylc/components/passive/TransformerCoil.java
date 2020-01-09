@@ -26,7 +26,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -46,9 +45,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Transformer Coil", author = "Branislav Stojkovic", category = "Schematic Symbols", instanceNamePrefix = "L",
-    description = "Transformer coil symbol. Use multiple instances together with \"Transformer Core Symbol\"<br>to draw transformer schematics.",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG,
+@ComponentDescriptor(
+    name = "Transformer Coil",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "L",
+    description =
+        "Transformer coil symbol. Use multiple instances together with \"Transformer Core Symbol\"<br>to draw transformer schematics.",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic")
 public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.Voltage> {
 
@@ -98,7 +103,8 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
 
     Point refPoint = this.controlPoints[0];
     for (int i = 1; i < controlPoints.length; i++) {
-      this.controlPoints[i].setLocation(refPoint.x + i * fx * spacing, refPoint.y + i * fy * spacing);
+      this.controlPoints[i].setLocation(
+          refPoint.x + i * fx * spacing, refPoint.y + i * fy * spacing);
     }
   }
 
@@ -171,7 +177,11 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -184,7 +194,9 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       finalColor = SELECTION_COLOR;
     } else if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalColor = theme.getOutlineColor();
     } else {
       finalColor = color;
@@ -210,8 +222,10 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
     GeneralPath polyline = new GeneralPath();
     polyline.moveTo(width / 8, height / 2);
     polyline.curveTo(width / 8, height / 4, width * 3 / 8, height / 4, width * 3 / 8, height / 2);
-    polyline.curveTo(width * 3 / 8, height / 4, width * 5 / 8, height / 4, width * 5 / 8, height / 2);
-    polyline.curveTo(width * 5 / 8, height / 4, width * 7 / 8, height / 4, width * 7 / 8, height / 2);
+    polyline.curveTo(
+        width * 3 / 8, height / 4, width * 5 / 8, height / 4, width * 5 / 8, height / 2);
+    polyline.curveTo(
+        width * 5 / 8, height / 4, width * 7 / 8, height / 4, width * 7 / 8, height / 2);
 
     g2d.draw(polyline);
   }
@@ -243,17 +257,20 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       GeneralPath leads = new GeneralPath();
       GeneralPath coil = new GeneralPath();
 
-      int coilsPerTap = (int) Math.round(4 * tapSpacing.convertToPixels() / TAP_SPACING.convertToPixels());
+      int coilsPerTap =
+          (int) Math.round(4 * tapSpacing.convertToPixels() / TAP_SPACING.convertToPixels());
 
       double offset = OFFSET.convertToPixels();
 
       int i = 0;
       leads.moveTo(this.controlPoints[i].x, this.controlPoints[i].y);
-      leads
-          .lineTo(this.controlPoints[i].x + fx * (spacing + offset), this.controlPoints[i].y + fy * (spacing + offset));
+      leads.lineTo(
+          this.controlPoints[i].x + fx * (spacing + offset),
+          this.controlPoints[i].y + fy * (spacing + offset));
       leads.moveTo(this.controlPoints[i + 1].x, this.controlPoints[i + 1].y);
-      leads.lineTo(this.controlPoints[i + 1].x + fx * (spacing + offset), this.controlPoints[i + 1].y + fy
-          * (spacing + offset));
+      leads.lineTo(
+          this.controlPoints[i + 1].x + fx * (spacing + offset),
+          this.controlPoints[i + 1].y + fy * (spacing + offset));
 
       double dx = this.controlPoints[i + 1].getX() - this.controlPoints[i].getX();
       double dy = this.controlPoints[i + 1].getY() - this.controlPoints[i].getY();
@@ -266,23 +283,27 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       double dxa = x2 - x1;
       double dya = y2 - y1;
 
-      coil.moveTo(this.controlPoints[i].getX() + fx * (spacing + offset), this.controlPoints[i].getY() + fy
-          * (spacing + offset));
+      coil.moveTo(
+          this.controlPoints[i].getX() + fx * (spacing + offset),
+          this.controlPoints[i].getY() + fy * (spacing + offset));
 
       for (int j = 0; j < coilsPerTap; j++) {
-        coil.curveTo(x1 + dxa / coilsPerTap * j, y1 + dya / coilsPerTap * j, x1 + dxa / coilsPerTap * (j + 1), y1 + dya
-            / coilsPerTap * (j + 1), this.controlPoints[i].getX() + fx * (spacing + offset) + dx / coilsPerTap
-            * (j + 1), this.controlPoints[i].getY() + fy * (spacing + offset) + dy / coilsPerTap * (j + 1));
+        coil.curveTo(
+            x1 + dxa / coilsPerTap * j,
+            y1 + dya / coilsPerTap * j,
+            x1 + dxa / coilsPerTap * (j + 1),
+            y1 + dya / coilsPerTap * (j + 1),
+            this.controlPoints[i].getX() + fx * (spacing + offset) + dx / coilsPerTap * (j + 1),
+            this.controlPoints[i].getY() + fy * (spacing + offset) + dy / coilsPerTap * (j + 1));
       }
       body = new Shape[2];
 
       body[0] = leads;
       body[1] = coil;
-
     }
     return body;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

@@ -29,16 +29,21 @@ import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.components.semiconductors.SymbolFlipping;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 
-@ComponentDescriptor(name = "Potentiometer", author = "MCbx", category = "Schematic Symbols",
-    instanceNamePrefix = "VR", description = "Potentiometer symbol",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "Potentiometer",
+    author = "MCbx",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "VR",
+    description = "Potentiometer symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Schematic")
 public class PotentiometerSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
@@ -57,18 +62,28 @@ public class PotentiometerSymbol extends Abstract3LegSymbol {
     GeneralPath polyline = new GeneralPath();
     polyline.moveTo(x + pinSpacing * 2, y - pinSpacing * 2);
     polyline.lineTo(x + pinSpacing * 2, y - pinSpacing * 2 + pinSpacing / 2);
-    polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 4, (y - pinSpacing * 2) + pinSpacing / 2 + pinSpacing / 4);
+    polyline.lineTo(
+        x + pinSpacing * 2 - pinSpacing / 4,
+        (y - pinSpacing * 2) + pinSpacing / 2 + pinSpacing / 4);
     polyline.lineTo(x + pinSpacing * 2 + pinSpacing / 4, (y - pinSpacing * 2) + 2 * pinSpacing / 2);
-    polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 4, (y - pinSpacing * 2) + 3 * pinSpacing / 2 - pinSpacing / 8);
-    polyline.lineTo(x + pinSpacing * 2 + pinSpacing / 4, (y - pinSpacing * 2) + 4 * pinSpacing / 2 - pinSpacing / 4);
-    polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 4, (y - pinSpacing * 2) + 5 * pinSpacing / 2 - pinSpacing / 3
-        - pinSpacing / 16);
-    polyline.lineTo(x + pinSpacing * 2 + pinSpacing / 4, (y - pinSpacing * 2) + 6 * pinSpacing / 2 - pinSpacing / 2
-        + pinSpacing / 16);
-    polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 4, (y - pinSpacing * 2) + 7 * pinSpacing / 2 - pinSpacing / 2
-        - pinSpacing / 16);
-    polyline.lineTo(x + pinSpacing * 2 + pinSpacing / 4, (y - pinSpacing * 2) + 7 * pinSpacing / 2 - pinSpacing / 2
-        + pinSpacing / 4);
+    polyline.lineTo(
+        x + pinSpacing * 2 - pinSpacing / 4,
+        (y - pinSpacing * 2) + 3 * pinSpacing / 2 - pinSpacing / 8);
+    polyline.lineTo(
+        x + pinSpacing * 2 + pinSpacing / 4,
+        (y - pinSpacing * 2) + 4 * pinSpacing / 2 - pinSpacing / 4);
+    polyline.lineTo(
+        x + pinSpacing * 2 - pinSpacing / 4,
+        (y - pinSpacing * 2) + 5 * pinSpacing / 2 - pinSpacing / 3 - pinSpacing / 16);
+    polyline.lineTo(
+        x + pinSpacing * 2 + pinSpacing / 4,
+        (y - pinSpacing * 2) + 6 * pinSpacing / 2 - pinSpacing / 2 + pinSpacing / 16);
+    polyline.lineTo(
+        x + pinSpacing * 2 - pinSpacing / 4,
+        (y - pinSpacing * 2) + 7 * pinSpacing / 2 - pinSpacing / 2 - pinSpacing / 16);
+    polyline.lineTo(
+        x + pinSpacing * 2 + pinSpacing / 4,
+        (y - pinSpacing * 2) + 7 * pinSpacing / 2 - pinSpacing / 2 + pinSpacing / 4);
     polyline.lineTo(x + pinSpacing * 2, (y - pinSpacing * 2) + 7 * pinSpacing / 2);
     polyline.lineTo(x + pinSpacing * 2, y + pinSpacing * 2);
     polyline.moveTo(x, y);
@@ -85,15 +100,15 @@ public class PotentiometerSymbol extends Abstract3LegSymbol {
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing * 2 / 3, y + pinSpacing / 3);
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 3, y);
     body[2] = polyline;
-    
+
     return body;
   }
 
   @Override
-  protected int getLabelX(Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
+  protected int getLabelX(
+      Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
     int x = super.getLabelX(shapeRect, textRect, fontMetrics, outlineMode);
-    if (getFlip() == SymbolFlipping.X)
-      return x - (int) (PIN_SPACING.convertToPixels() / 2);
+    if (getFlip() == SymbolFlipping.X) return x - (int) (PIN_SPACING.convertToPixels() / 2);
     return x + (int) PIN_SPACING.convertToPixels();
   }
 
@@ -135,13 +150,26 @@ public class PotentiometerSymbol extends Abstract3LegSymbol {
     g2d.setColor(Color.blue);
     g2d.drawLine(0, height / 2, 4, height / 2);
     g2d.drawLine(width - 4, height / 2, width, height / 2);
-    g2d.drawPolyline(new int[] {4, 6, 10, 14, 18, 22, 26, 28}, new int[] {height / 2, height / 2 + 2, height / 2 - 2,
-        height / 2 + 2, height / 2 - 2, height / 2 + 2, height / 2 - 2, height / 2}, 8);
+    g2d.drawPolyline(
+        new int[] {4, 6, 10, 14, 18, 22, 26, 28},
+        new int[] {
+          height / 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2 + 2,
+          height / 2 - 2,
+          height / 2
+        },
+        8);
 
     g2d.drawPolyline(new int[] {width / 2, width / 2 - 2}, new int[] {height, height / 2 + 2}, 2);
 
-    g2d.fill(new Polygon(new int[] {width / 2 - 4, width / 2 + 2, width / 2 - 2}, new int[] {height / 2 + 6,
-        height / 2 + 6, height / 2 + 2}, 3));
+    g2d.fill(
+        new Polygon(
+            new int[] {width / 2 - 4, width / 2 + 2, width / 2 - 2},
+            new int[] {height / 2 + 6, height / 2 + 6, height / 2 + 2},
+            3));
   }
-
 }

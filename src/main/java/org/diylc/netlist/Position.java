@@ -26,7 +26,7 @@ import org.diylc.core.ISwitch;
 
 /**
  * Represents a single position of a switch, uniquely defined by the switch and the position.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class Position implements Comparable<Position> {
@@ -59,32 +59,31 @@ public class Position implements Comparable<Position> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Position other = (Position) obj;
-    if (position != other.position)
-      return false;
+    if (position != other.position) return false;
     if (theSwitch == null) {
-      if (other.theSwitch != null)
-        return false;
-    } else if (!theSwitch.equals(other.theSwitch))
-      return false;
+      if (other.theSwitch != null) return false;
+    } else if (!theSwitch.equals(other.theSwitch)) return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return (theSwitch instanceof IDIYComponent<?> ? ((IDIYComponent<?>) theSwitch).getName() + "." : "") + theSwitch.getPositionName(position);
+    return (theSwitch instanceof IDIYComponent<?>
+            ? ((IDIYComponent<?>) theSwitch).getName() + "."
+            : "")
+        + theSwitch.getPositionName(position);
   }
 
   @Override
   public int compareTo(Position o) {
     if (theSwitch instanceof IDIYComponent<?> && o.theSwitch instanceof IDIYComponent<?>)
-      return ((IDIYComponent<?>) theSwitch).getName().compareToIgnoreCase(((IDIYComponent<?>) o.theSwitch).getName());
+      return ((IDIYComponent<?>) theSwitch)
+          .getName()
+          .compareToIgnoreCase(((IDIYComponent<?>) o.theSwitch).getName());
     return 0;
   }
 }

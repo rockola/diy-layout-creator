@@ -6,13 +6,18 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-
 import javax.imageio.ImageIO;
 
 public enum CursorLoader {
-  
-  ScrollCenter("scroll_center.png"), ScrollN("scroll_n.png"), ScrollNE("scroll_ne.png"), ScrollE("scroll_e.png"), ScrollSE("scroll_se.png"), 
-  ScrollS("scroll_s.png"), ScrollSW("scroll_sw.png"), ScrollW("scroll_w.png"), ScrollNW("scroll_nw.png");
+  ScrollCenter("scroll_center.png"),
+  ScrollN("scroll_n.png"),
+  ScrollNE("scroll_ne.png"),
+  ScrollE("scroll_e.png"),
+  ScrollSE("scroll_se.png"),
+  ScrollS("scroll_s.png"),
+  ScrollSW("scroll_sw.png"),
+  ScrollW("scroll_w.png"),
+  ScrollNW("scroll_nw.png");
 
   private String name;
   private Cursor cursor = null;
@@ -34,7 +39,8 @@ public enum CursorLoader {
       }
       int width = image.getWidth(null);
       int height = image.getHeight(null);
-      cursor = toolkit.createCustomCursor(image , new Point(width / 2, height / 2), "custom:" + name);
+      cursor =
+          toolkit.createCustomCursor(image, new Point(width / 2, height / 2), "custom:" + name);
     }
     return cursor;
   }

@@ -27,7 +27,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -58,14 +57,18 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   protected Color color = COLOR;
   protected Display display = Display.NAME;
-  transient protected Shape[] body;
+  protected transient Shape[] body;
   protected boolean showHeaters;
   protected Orientation orientation = Orientation.DEFAULT;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
   protected Point[] controlPoints;
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -75,7 +78,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
       finalColor = SELECTION_COLOR;
     } else if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalColor = theme.getOutlineColor();
     } else {
       finalColor = color;
@@ -101,13 +106,17 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -122,7 +131,12 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     if (display == Display.BOTH) {
       label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
     }
-    StringUtils.drawCenteredText(g2d, label, rect.x + rect.width, rect.y + rect.height, HorizontalAlignment.RIGHT,
+    StringUtils.drawCenteredText(
+        g2d,
+        label,
+        rect.x + rect.width,
+        rect.y + rect.height,
+        HorizontalAlignment.RIGHT,
         VerticalAlignment.BOTTOM);
   }
 
@@ -140,8 +154,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
 
-    if (index == controlPoints.length - 1)
-      this.body = null;
+    if (index == controlPoints.length - 1) this.body = null;
   }
 
   @EditableProperty
@@ -186,8 +199,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   @EditableProperty
   public Orientation getOrientation() {
-    if (orientation == null)
-      orientation = Orientation.DEFAULT;
+    if (orientation == null) orientation = Orientation.DEFAULT;
 
     return orientation;
   }
@@ -201,8 +213,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   @EditableProperty
   public SymbolFlipping getFlip() {
-    if (flip == null)
-      flip = SymbolFlipping.NONE;
+    if (flip == null) flip = SymbolFlipping.NONE;
     return flip;
   }
 
@@ -215,7 +226,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   /**
    * Returns transistor shape consisting of 3 parts, in this order: electrodes, connectors, bulb.
-   * 
+   *
    * @return
    */
   protected abstract Shape[] initializeBody();
@@ -223,9 +234,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   protected Shape[] getBody() {
     if (this.body == null) {
       Shape[] newBody = initializeBody();
-      
-//      int pinSpacing = (int) PIN_SPACING.convertToPixels();
-      int centerX = this.controlPoints[0].x;// + pinSpacing * 3;
+
+      //      int pinSpacing = (int) PIN_SPACING.convertToPixels();
+      int centerX = this.controlPoints[0].x; // + pinSpacing * 3;
       int centerY = this.controlPoints[0].y;
 
       if (getFlip() == SymbolFlipping.X) {
@@ -250,7 +261,8 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
         Point first = this.controlPoints[0];
         double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-        AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
+        AffineTransform rotate =
+            AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
         if (newBody != null) {
           for (int i = 0; i < newBody.length; i++) {
             newBody[i] = rotate.createTransformedShape(newBody[i]);
@@ -270,8 +282,8 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     Point[] newPoints = initializeControlPoints(this.controlPoints[0]);
     this.controlPoints = newPoints;
 
-//    int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    int centerX = this.controlPoints[0].x;// + pinSpacing * 3;
+    //    int pinSpacing = (int) PIN_SPACING.convertToPixels();
+    int centerX = this.controlPoints[0].x; // + pinSpacing * 3;
     int centerY = this.controlPoints[0].y;
 
     if (getFlip() == SymbolFlipping.X) {
@@ -288,17 +300,17 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
       }
     }
 
-    if (getOrientation() == Orientation.DEFAULT)
-      return;
+    if (getOrientation() == Orientation.DEFAULT) return;
 
     Point first = this.controlPoints[0];
     double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
     for (int i = 1; i < this.controlPoints.length; i++) {
       rotate.transform(this.controlPoints[i], this.controlPoints[i]);
     }
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

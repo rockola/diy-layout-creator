@@ -31,7 +31,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.text.Format;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -55,9 +54,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Multi-Section Capacitor", author = "Branislav Stojkovic", category = "Passive",
-    instanceNamePrefix = "C", description = "Multi-section vertically mounted electrolytic capacitor, similar to JJ, CE and others",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE)
+@ComponentDescriptor(
+    name = "Multi-Section Capacitor",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    instanceNamePrefix = "C",
+    description =
+        "Multi-section vertically mounted electrolytic capacitor, similar to JJ, CE and others",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE)
 public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacitance[]> {
 
   private static final long serialVersionUID = 1L;
@@ -65,13 +70,13 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public static Color BODY_COLOR = Color.decode("#6B6DCE");
   public static Color BASE_COLOR = Color.decode("#333333");
   public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = METAL_COLOR;// Color.decode("#00B2EE");
-//  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static Color PIN_COLOR = METAL_COLOR; // Color.decode("#00B2EE");
+  //  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
   public static Color LABEL_COLOR = Color.white;
   public static Size PIN_SIZE = new Size(0.08d, SizeUnit.in);
-//  public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
+  //  public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
   public static Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
-  private static double[] RELATIVE_DIAMETERS = new double[] { 0.4d, 0.6d };
+  private static double[] RELATIVE_DIAMETERS = new double[] {0.4d, 0.6d};
   private static final Format format = new DecimalFormat("0.#####");
 
   private Capacitance[] value = new Capacitance[3];
@@ -79,14 +84,14 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
 
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  transient private Area[] body;
+  private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color baseColor = BASE_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
-  private Color pinColor = PIN_COLOR;  
+  private Color pinColor = PIN_COLOR;
   protected Display display = Display.NAME;
-//  private Size pinSpacing = PIN_SPACING;
+  //  private Size pinSpacing = PIN_SPACING;
   private Size diameter = BODY_DIAMETER;
 
   public MultiSectionCapacitor() {
@@ -103,29 +108,25 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     boolean needsUpdate = false;
     if ((this.value == null ? 0 : this.value.length) != (value == null ? 0 : value.length))
       needsUpdate = true;
-    
+
     this.value = value;
-    
+
     if (needsUpdate) {
       updateControlPoints();
       body = null;
     }
   }
-  
+
   private String getStringValue() {
-    if (value == null || value.length == 0)
-      return "";
+    if (value == null || value.length == 0) return "";
     StringBuilder sb = new StringBuilder();
-    boolean isFirst = true;    
+    boolean isFirst = true;
     for (Capacitance c : value) {
-      if (isFirst)
-        isFirst = false;
-      else
-        sb.append("/");
+      if (isFirst) isFirst = false;
+      else sb.append("/");
       sb.append(c == null || c.getValue() == null ? "" : format.format(c.getValue()));
     }
-    if (value[0] != null)
-      sb.append(" " + value[0].getUnit() == null ? "" : value[0].getUnit());
+    if (value[0] != null) sb.append(" " + value[0].getUnit() == null ? "" : value[0].getUnit());
     return sb.toString();
   }
 
@@ -142,10 +143,10 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public Size getDiameter() {
     return diameter;
   }
-  
+
   public void setDiameter(Size diameter) {
     this.diameter = diameter;
-    // Reset body shape;    
+    // Reset body shape;
     updateControlPoints();
     body = null;
   }
@@ -189,8 +190,11 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   }
 
   private void updateControlPoints() {
-    int pinSpacing = (int) (getDiameter().convertToPixels() * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
-    
+    int pinSpacing =
+        (int)
+            (getDiameter().convertToPixels()
+                * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+
     int newCount = value.length + 1;
     if (newCount != controlPoints.length) {
       // need new control points
@@ -201,21 +205,21 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       }
       controlPoints = newPoints;
     }
-    
+
     // Update control points.
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
-    
-    if (newCount == 2) {      
+
+    if (newCount == 2) {
       switch (orientation) {
-        case DEFAULT:        
+        case DEFAULT:
           controlPoints[1].setLocation(x, y + pinSpacing);
           break;
         case _90:
           controlPoints[1].setLocation(x - pinSpacing, y);
           break;
         case _180:
-          controlPoints[1].setLocation(x, y- pinSpacing);
+          controlPoints[1].setLocation(x, y - pinSpacing);
           break;
         case _270:
           controlPoints[1].setLocation(x + pinSpacing, y);
@@ -225,15 +229,15 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       }
     } else if (newCount == 3) {
       switch (orientation) {
-        case DEFAULT:                  
+        case DEFAULT:
           controlPoints[1].setLocation(x + pinSpacing / 2, y + pinSpacing / 2);
           controlPoints[2].setLocation(x - pinSpacing / 2, y + pinSpacing / 2);
           break;
-        case _90:          
+        case _90:
           controlPoints[1].setLocation(x - pinSpacing / 2, y - pinSpacing / 2);
           controlPoints[2].setLocation(x - pinSpacing / 2, y + pinSpacing / 2);
           break;
-        case _180:          
+        case _180:
           controlPoints[1].setLocation(x - pinSpacing / 2, y - pinSpacing / 2);
           controlPoints[2].setLocation(x + pinSpacing / 2, y - pinSpacing / 2);
           break;
@@ -245,23 +249,23 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
     } else {
-      double theta = Math.PI * 2 / newCount;      
+      double theta = Math.PI * 2 / newCount;
       double centerX;
-      double centerY;      
+      double centerY;
       double theta0;
-      
+
       switch (orientation) {
-        case DEFAULT:                  
+        case DEFAULT:
           centerX = x;
           centerY = y + pinSpacing / 2;
           theta0 = -Math.PI / 2;
           break;
-        case _90:          
+        case _90:
           centerX = x - pinSpacing / 2;
           centerY = y;
           theta0 = 0;
           break;
-        case _180:          
+        case _180:
           centerX = x;
           centerY = y - pinSpacing / 2;
           theta0 = Math.PI / 2;
@@ -274,10 +278,12 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-          
+
       for (int i = 1; i < newCount; i++) {
-        controlPoints[i].setLocation(centerX + Math.cos(theta0 + theta * i) * pinSpacing / 2, centerY + Math.sin(theta0 + theta * i) * pinSpacing / 2);
-      }   
+        controlPoints[i].setLocation(
+            centerX + Math.cos(theta0 + theta * i) * pinSpacing / 2,
+            centerY + Math.sin(theta0 + theta * i) * pinSpacing / 2);
+      }
     }
   }
 
@@ -287,18 +293,21 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       double centerY;
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      int pinSpacing = (int) (getDiameter().convertToPixels() * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
-      if (controlPoints.length == 2 || controlPoints.length == 3) {       
+      int pinSpacing =
+          (int)
+              (getDiameter().convertToPixels()
+                  * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+      if (controlPoints.length == 2 || controlPoints.length == 3) {
         switch (orientation) {
-          case DEFAULT:                    
+          case DEFAULT:
             centerX = x;
             centerY = y + pinSpacing / 2;
             break;
-          case _90:            
+          case _90:
             centerX = x - pinSpacing / 2;
             centerY = y;
             break;
-          case _180:            
+          case _180:
             centerX = x;
             centerY = y - pinSpacing / 2;
             break;
@@ -311,15 +320,15 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         }
       } else {
         switch (orientation) {
-          case DEFAULT:                    
+          case DEFAULT:
             centerX = x;
             centerY = y + pinSpacing / 2;
             break;
-          case _90:            
+          case _90:
             centerX = x - pinSpacing / 2;
             centerY = y;
             break;
-          case _180:            
+          case _180:
             centerX = x;
             centerY = y - pinSpacing / 2;
             break;
@@ -334,15 +343,31 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       int bodyDiameter = getClosestOdd(getDiameter().convertToPixels());
       int innerDiameter = getClosestOdd(getDiameter().convertToPixels() * 0.85);
 
-      body = new Area[] { new Area(new Ellipse2D.Double(centerX - bodyDiameter / 2, centerY - bodyDiameter / 2, bodyDiameter, bodyDiameter)),
-          new Area(new Ellipse2D.Double(centerX - innerDiameter / 2, centerY - innerDiameter / 2, innerDiameter, innerDiameter))};
-
+      body =
+          new Area[] {
+            new Area(
+                new Ellipse2D.Double(
+                    centerX - bodyDiameter / 2,
+                    centerY - bodyDiameter / 2,
+                    bodyDiameter,
+                    bodyDiameter)),
+            new Area(
+                new Ellipse2D.Double(
+                    centerX - innerDiameter / 2,
+                    centerY - innerDiameter / 2,
+                    innerDiameter,
+                    innerDiameter))
+          };
     }
     return body;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -358,24 +383,29 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     drawingObserver.startTracking();
     g2d.setComposite(oldComposite);
     Color finalBorderColor;
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     if (outlineMode) {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : borderColor;
     }
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(area[0]);
-    
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : baseColor);    
+
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : baseColor);
     g2d.fill(area[1]);
     if (outlineMode) {
-      g2d.setColor(baseColor.darker());    
+      g2d.setColor(baseColor.darker());
       g2d.draw(area[1]);
     }
 
@@ -393,11 +423,13 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -412,11 +444,17 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     } else if (getDisplay() == Display.BOTH) {
       label = getName() + "\n" + getStringValue();
     }
-    
+
     Rectangle bounds = area[0].getBounds();
 
-    StringUtils.drawCenteredText(g2d, label, bounds.x + bounds.width / 2, bounds.y + bounds.height / 2, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    
+    StringUtils.drawCenteredText(
+        g2d,
+        label,
+        bounds.x + bounds.width / 2,
+        bounds.y + bounds.height / 2,
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
+
     // draw polarity markers
     g2d.setColor(pinColor.darker());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2f));
@@ -424,28 +462,34 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     for (int i = 0; i < controlPoints.length; i++) {
       int x = controlPoints[i].x;
       int y = controlPoints[i].y;
-      g2d.drawLine((int)(x - markerSize / 2), y, (int)(x + markerSize / 2), y);
-      if (i > 0)
-        g2d.drawLine(x, (int)(y - markerSize / 2), x, (int)(y + markerSize / 2));
+      g2d.drawLine((int) (x - markerSize / 2), y, (int) (x + markerSize / 2), y);
+      if (i > 0) g2d.drawLine(x, (int) (y - markerSize / 2), x, (int) (y + markerSize / 2));
     }
   }
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = 2 * width / 32;
-    Area area = new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
+    Area area =
+        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
     g2d.setColor(BODY_COLOR);
     g2d.fill(area);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(area);
     g2d.setColor(BASE_COLOR);
     margin = 6 * width / 32;
-    area = new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
+    area =
+        new Area(
+            new Ellipse2D.Double(margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
     g2d.fill(area);
     g2d.setColor(PIN_COLOR);
     int pinSize = 2 * width / 32;
     for (int i = 0; i < 3; i++) {
-      g2d.fillOval((i == 1 ? width * 3 / 8 : width / 2) - pinSize / 2, height / 2 + (i - 1) * (height / 5), pinSize, pinSize);
+      g2d.fillOval(
+          (i == 1 ? width * 3 / 8 : width / 2) - pinSize / 2,
+          height / 2 + (i - 1) * (height / 5),
+          pinSize,
+          pinSize);
     }
   }
 
@@ -457,27 +501,27 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public void setBodyColor(Color bodyColor) {
     this.bodyColor = bodyColor;
   }
-  
+
   @EditableProperty(name = "Base")
   public Color getBaseColor() {
     return baseColor;
   }
-  
+
   public void setBaseColor(Color baseColor) {
     this.baseColor = baseColor;
   }
 
-//  @EditableProperty(name = "Pin spacing")
-//  public Size getPinSpacing() {
-//    return pinSpacing;
-//  }
-//
-//  public void setPinSpacing(Size pinSpacing) {
-//    this.pinSpacing = pinSpacing;
-//    updateControlPoints();
-//    // Reset body shape;
-//    body = null;
-//  }
+  //  @EditableProperty(name = "Pin spacing")
+  //  public Size getPinSpacing() {
+  //    return pinSpacing;
+  //  }
+  //
+  //  public void setPinSpacing(Size pinSpacing) {
+  //    this.pinSpacing = pinSpacing;
+  //    updateControlPoints();
+  //    // Reset body shape;
+  //    body = null;
+  //  }
 
   @EditableProperty(name = "Border")
   public Color getBorderColor() {
@@ -508,16 +552,16 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public void setDisplay(Display display) {
     this.display = display;
   }
-  
+
   @EditableProperty(name = "Pin Color")
   public Color getPinColor() {
     return pinColor;
   }
-  
+
   public void setPinColor(Color pinColor) {
     this.pinColor = pinColor;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

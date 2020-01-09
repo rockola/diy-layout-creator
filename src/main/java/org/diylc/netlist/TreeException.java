@@ -22,5 +22,4 @@ public class TreeException extends Exception {
     super(message, cause);
     // TODO Auto-generated constructor stub
   }
-
 }

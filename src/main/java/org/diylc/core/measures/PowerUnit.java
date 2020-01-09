@@ -22,8 +22,9 @@
 package org.diylc.core.measures;
 
 public enum PowerUnit implements Unit {
-
-  MW(1e-1, "mW"), W(1, "W"), KW(1e3, "KW");
+  MW(1e-1, "mW"),
+  W(1, "W"),
+  KW(1e3, "KW");
 
   double factor;
   String display;

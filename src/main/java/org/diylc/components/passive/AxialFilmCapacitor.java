@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.CreationMethod;
@@ -37,9 +36,14 @@ import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Film Capacitor (Axial)", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Axial film capacitor, similar to Mallory 150s", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Film Capacitor (Axial)",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Axial film capacitor, similar to Mallory 150s",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
 
@@ -51,8 +55,7 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
   public static Color BORDER_COLOR = BODY_COLOR.darker();
 
   private Capacitance value = null;
-  @Deprecated
-  private Voltage voltage = Voltage._63V;
+  @Deprecated private Voltage voltage = Voltage._63V;
   private org.diylc.core.measures.Voltage voltageNew = null;
 
   public AxialFilmCapacitor() {
@@ -87,7 +90,8 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @EditableProperty(name = "Voltage")
@@ -121,7 +125,8 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
 
   @Override
   protected Shape getBodyShape() {
-    return new Rectangle2D.Double(0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
+    return new Rectangle2D.Double(
+        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
   }
 
   @EditableProperty(name = "Reverse (standing)")

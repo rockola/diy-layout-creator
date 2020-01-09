@@ -3,7 +3,6 @@ package org.diylc.swingframework;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -18,26 +17,25 @@ public class CheckBoxList extends JList {
 
   public CheckBoxList(CheckListItem[] items) {
     super(items);
-    
+
     setCellRenderer(new CheckListRenderer());
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent event) {
-        JList list = (JList) event.getSource();
-        int index = list.locationToIndex(event.getPoint());
-                                                          
-        if (index < 0)
-          return;
-        
-        CheckListItem item = (CheckListItem) list.getModel()
-            .getElementAt(index);
-        item.setSelected(!item.isSelected()); // Toggle selected state
-        list.repaint(list.getCellBounds(index, index));// Repaint cell
-      }
-    });
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent event) {
+            JList list = (JList) event.getSource();
+            int index = list.locationToIndex(event.getPoint());
+
+            if (index < 0) return;
+
+            CheckListItem item = (CheckListItem) list.getModel().getElementAt(index);
+            item.setSelected(!item.isSelected()); // Toggle selected state
+            list.repaint(list.getCellBounds(index, index)); // Repaint cell
+          }
+        });
   }
-  
+
   public static class CheckListItem {
 
     private Object value;
@@ -69,8 +67,8 @@ public class CheckBoxList extends JList {
 
     private static final long serialVersionUID = 1L;
 
-    public Component getListCellRendererComponent(JList list, Object value,
-        int index, boolean isSelected, boolean hasFocus) {
+    public Component getListCellRendererComponent(
+        JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
       setEnabled(list.isEnabled());
       setSelected(((CheckListItem) value).isSelected());
       setFont(list.getFont());

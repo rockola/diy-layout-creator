@@ -26,9 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.swing.JButton;
-
 import org.apache.poi.util.IOUtils;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.swing.gui.DialogFactory;
@@ -42,33 +40,37 @@ public class ImageEditor extends JButton {
 
   public ImageEditor(final PropertyWrapper property) {
     super(property.isUnique() ? title : ("(multi value) " + title));
-    addActionListener(new ActionListener() {
+    addActionListener(
+        new ActionListener() {
 
-      @Override
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        File file =
-            DialogFactory.getInstance().showOpenDialog(FileFilterEnum.IMAGES.getFilter(), null,
-                FileFilterEnum.IMAGES.getExtensions()[0], null);
-        if (file != null) {
-          property.setChanged(true);
-          FileInputStream fis;
-          try {
-            fis = new FileInputStream(file);
-            byte[] byteArray = IOUtils.toByteArray(fis);
-//            ImageIcon image = new ImageIcon(file.getAbsolutePath());
-            property.setValue(byteArray);
-            fis.close();
-          } catch (FileNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-          } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+            File file =
+                DialogFactory.getInstance()
+                    .showOpenDialog(
+                        FileFilterEnum.IMAGES.getFilter(),
+                        null,
+                        FileFilterEnum.IMAGES.getExtensions()[0],
+                        null);
+            if (file != null) {
+              property.setChanged(true);
+              FileInputStream fis;
+              try {
+                fis = new FileInputStream(file);
+                byte[] byteArray = IOUtils.toByteArray(fis);
+                //            ImageIcon image = new ImageIcon(file.getAbsolutePath());
+                property.setValue(byteArray);
+                fis.close();
+              } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+            }
           }
-                  
-        }
-      }
-    });
+        });
   }
 
   // @Override

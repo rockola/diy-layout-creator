@@ -19,45 +19,36 @@
 */
 package org.diylc.presenter;
 
-import java.awt.Color;
-
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.awt.Color;
 
 /**
-  Serializes {@link Color} objects as hex values instead of
-  r/g/b. Backwards compatible when unmarshalling.
-  
-  @author Branislav Stojkovic
-*/
-public class ColorConverter
-    extends com.thoughtworks.xstream.converters.extended.ColorConverter {
+ * Serializes {@link Color} objects as hex values instead of r/g/b. Backwards compatible when
+ * unmarshalling.
+ *
+ * @author Branislav Stojkovic
+ */
+public class ColorConverter extends com.thoughtworks.xstream.converters.extended.ColorConverter {
 
-    @Override
-    public void marshal(Object object,
-			HierarchicalStreamWriter writer,
-			MarshallingContext context) {
-	Color c = (Color) object;
-	writer.addAttribute("hex",
-			    String.format("%02x%02x%02x",
-					  c.getRed(),
-					  c.getGreen(),
-					  c.getBlue()));
-    }
+  @Override
+  public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+    Color c = (Color) object;
+    writer.addAttribute(
+        "hex", String.format("%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()));
+  }
 
-    @Override
-    public Object unmarshal(HierarchicalStreamReader reader,
-			    UnmarshallingContext context) {
-	if (reader.getAttribute("hex") != null)
-	    return Color.decode("#" + reader.getAttribute("hex"));
-	return super.unmarshal(reader, context);
-    }
+  @Override
+  public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+    if (reader.getAttribute("hex") != null) return Color.decode("#" + reader.getAttribute("hex"));
+    return super.unmarshal(reader, context);
+  }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean canConvert(Class clazz) {
-	return Color.class.isAssignableFrom(clazz);
-    }
+  @SuppressWarnings("rawtypes")
+  @Override
+  public boolean canConvert(Class clazz) {
+    return Color.class.isAssignableFrom(clazz);
+  }
 }

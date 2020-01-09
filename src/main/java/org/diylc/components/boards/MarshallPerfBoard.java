@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -41,11 +40,18 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Marshall Style Perf Board", category = "Boards", author = "Branislav Stojkovic",
-    zOrder = IDIYComponent.BOARD, instanceNamePrefix = "Board",
+@ComponentDescriptor(
+    name = "Marshall Style Perf Board",
+    category = "Boards",
+    author = "Branislav Stojkovic",
+    zOrder = IDIYComponent.BOARD,
+    instanceNamePrefix = "Board",
     description = "Perforated board as found on some Marshall and Trainwreck amps",
-    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false, keywordPolicy = KeywordPolicy.SHOW_TAG,
-    keywordTag = "Perf Board", transformer = SimpleComponentTransformer.class)
+    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Perf Board",
+    transformer = SimpleComponentTransformer.class)
 public class MarshallPerfBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
@@ -65,17 +71,23 @@ public class MarshallPerfBoard extends AbstractBoard {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape clip = g2d.getClip();
-    if (checkPointsClipped(clip) && !clip.contains(firstPoint.x, secondPoint.y)
+    if (checkPointsClipped(clip)
+        && !clip.contains(firstPoint.x, secondPoint.y)
         && !clip.contains(secondPoint.x, firstPoint.y)) {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
     if (componentState != ComponentState.DRAGGING) {
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       Point p = new Point(firstPoint);
       int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels());
@@ -104,7 +116,7 @@ public class MarshallPerfBoard extends AbstractBoard {
   public void setSpacing(Size spacing) {
     this.spacing = spacing;
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;
@@ -119,31 +131,55 @@ public class MarshallPerfBoard extends AbstractBoard {
     g2d.drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
 
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.fillOval(
+        width / 3 - 2 / factor,
+        width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
     g2d.setColor(BORDER_COLOR);
-    g2d.drawOval(width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.drawOval(
+        width / 3 - 2 / factor,
+        width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
 
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(2 * width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.fillOval(
+        2 * width / 3 - 2 / factor,
+        width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
     g2d.setColor(BORDER_COLOR);
-    g2d.drawOval(2 * width / 3 - 2 / factor, width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.drawOval(
+        2 * width / 3 - 2 / factor,
+        width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
 
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.fillOval(
+        width / 3 - 2 / factor,
+        2 * width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
     g2d.setColor(BORDER_COLOR);
-    g2d.drawOval(width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.drawOval(
+        width / 3 - 2 / factor,
+        2 * width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
 
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.fillOval(
+        2 * width / 3 - 2 / factor,
+        2 * width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
     g2d.setColor(BORDER_COLOR);
-    g2d.drawOval(2 * width / 3 - 2 / factor, 2 * width / 3 - 2 / factor, getClosestOdd(5.0 / factor),
+    g2d.drawOval(
+        2 * width / 3 - 2 / factor,
+        2 * width / 3 - 2 / factor,
+        getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
   }
 }

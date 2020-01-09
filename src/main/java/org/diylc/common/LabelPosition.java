@@ -22,8 +22,8 @@
 package org.diylc.common;
 
 public enum LabelPosition {
-
-  ABOVE, BELOW;
+  ABOVE,
+  BELOW;
 
   @Override
   public String toString() {

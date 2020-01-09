@@ -22,8 +22,10 @@
 package org.diylc.common;
 
 public enum Display {
-
-  NAME, VALUE, NONE, BOTH;
+  NAME,
+  VALUE,
+  NONE,
+  BOTH;
 
   @Override
   public String toString() {

@@ -23,14 +23,14 @@ package org.diylc.netlist;
 
 /**
  * Maps DIYLC component control points to spice-compatible node indices.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public interface ISpiceMapper {
 
-  int mapToSpiceNode(int pontIndex); 
-  
+  int mapToSpiceNode(int pontIndex);
+
   String getComment();
-  
+
   String getPrefix();
 }

@@ -29,9 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -83,6 +82,7 @@ public class V1FileParser implements IOldFileParser {
 
   private static final Size V1_GRID_SPACING = new Size(0.1d, SizeUnit.in);
   private static final Map<String, Color> V1_COLOR_MAP = new HashMap<String, Color>();
+
   static {
     V1_COLOR_MAP.put("red", Color.red);
     V1_COLOR_MAP.put("blue", Color.blue);
@@ -128,11 +128,14 @@ public class V1FileParser implements IOldFileParser {
     }
     board.setName("Main board");
     Point referencePoint =
-        new Point(CalcUtils.roundToGrid(x, V1_GRID_SPACING), CalcUtils.roundToGrid(y, V1_GRID_SPACING));
+        new Point(
+            CalcUtils.roundToGrid(x, V1_GRID_SPACING), CalcUtils.roundToGrid(y, V1_GRID_SPACING));
     board.setControlPoint(referencePoint, 0);
     board.setControlPoint(
-        new Point(CalcUtils.roundToGrid(x + boardWidth, V1_GRID_SPACING), CalcUtils.roundToGrid(y + boardHeight,
-            V1_GRID_SPACING)), 1);
+        new Point(
+            CalcUtils.roundToGrid(x + boardWidth, V1_GRID_SPACING),
+            CalcUtils.roundToGrid(y + boardHeight, V1_GRID_SPACING)),
+        1);
     project.getComponents().add(board);
 
     NodeList childNodes = root.getChildNodes();
@@ -154,7 +157,8 @@ public class V1FileParser implements IOldFileParser {
           String colorAttr = node.getAttributes().getNamedItem("Color").getNodeValue();
           color = V1_COLOR_MAP.get(colorAttr.toLowerCase());
         }
-        if (node.getAttributes().getNamedItem("X2") != null && node.getAttributes().getNamedItem("Y2") != null) {
+        if (node.getAttributes().getNamedItem("X2") != null
+            && node.getAttributes().getNamedItem("Y2") != null) {
           x2Attr = Integer.parseInt(node.getAttributes().getNamedItem("X2").getNodeValue());
           y2Attr = Integer.parseInt(node.getAttributes().getNamedItem("Y2").getNodeValue());
           point2 = convertV1CoordinatesToV3Point(referencePoint, x2Attr, y2Attr);
@@ -211,7 +215,11 @@ public class V1FileParser implements IOldFileParser {
           long seed = Long.parseLong(node.getAttributes().getNamedItem("Seed").getNodeValue());
           Random r = new Random(seed);
           randSeed = seed;
-          int d = (int) Math.round(Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2)) / 2);
+          int d =
+              (int)
+                  Math.round(
+                      Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2))
+                          / 2);
           int x2 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.40) + myRandom(d, r));
           int y2 = (int) (point1.y + Math.round((point2.y - point1.y) * 0.40) + myRandom(d, r));
           int x3 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.60) + myRandom(d, r));
@@ -408,10 +416,8 @@ public class V1FileParser implements IOldFileParser {
             int dy = 0;
             for (int j = 0; j < sw.getControlPointCount(); j++) {
               Point p = new Point(sw.getControlPoint(j));
-              if (p.x < 0 && p.x < dx)
-                dx = p.x;
-              if (p.y < 0 && p.y < dy)
-                dy = p.y;
+              if (p.x < 0 && p.x < dx) dx = p.x;
+              if (p.y < 0 && p.y < dy) dy = p.y;
             }
             // Translate control points.
             for (int j = 0; j < sw.getControlPointCount(); j++) {
@@ -496,7 +502,8 @@ public class V1FileParser implements IOldFileParser {
               Point p = new Point(pot.getControlPoint(j));
               p.translate(point1.x, point1.y + delta);
               pot.setControlPoint(p, j);
-            };
+            }
+            ;
           }
           component = pot;
         } else if (nodeName.equalsIgnoreCase("trimmer")) {
@@ -684,8 +691,7 @@ public class V1FileParser implements IOldFileParser {
     for (IDIYComponent<?> c : project.getComponents()) {
       for (int i = 0; i < c.getControlPointCount(); i++) {
         Point p = c.getControlPoint(i);
-        if (p.y < minY)
-          minY = p.y;
+        if (p.y < minY) minY = p.y;
       }
     }
 
@@ -696,8 +702,12 @@ public class V1FileParser implements IOldFileParser {
     titleLabel.setValue(project.getTitle());
     titleLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     titleLabel.setControlPoint(
-        new Point(CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING), CalcUtils.roundToGrid(
-            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5), V1_GRID_SPACING)), 0);
+        new Point(
+            CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING),
+            CalcUtils.roundToGrid(
+                (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5),
+                V1_GRID_SPACING)),
+        0);
     project.getComponents().add(titleLabel);
 
     Label creditsLabel = new Label();
@@ -705,33 +715,41 @@ public class V1FileParser implements IOldFileParser {
     creditsLabel.setValue(project.getAuthor());
     creditsLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     creditsLabel.setControlPoint(
-        new Point(CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING), CalcUtils.roundToGrid(
-            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4), V1_GRID_SPACING)), 0);
+        new Point(
+            CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING),
+            CalcUtils.roundToGrid(
+                (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4),
+                V1_GRID_SPACING)),
+        0);
     project.getComponents().add(creditsLabel);
 
     // Add BOM at the bottom
     BOM bom = new BOM();
     int bomSize = (int) bom.getSize().convertToPixels();
     bom.setControlPoint(
-        new Point(CalcUtils.roundToGrid(x + (boardWidth - bomSize) / 2, V1_GRID_SPACING), CalcUtils.roundToGrid(
-            (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()), V1_GRID_SPACING)), 0);
+        new Point(
+            CalcUtils.roundToGrid(x + (boardWidth - bomSize) / 2, V1_GRID_SPACING),
+            CalcUtils.roundToGrid(
+                (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()), V1_GRID_SPACING)),
+        0);
     project.getComponents().add(bom);
 
     // Sort by z-order
-    Collections.sort(project.getComponents(), ComparatorFactory.getInstance().getComponentZOrderComparator());
+    Collections.sort(
+        project.getComponents(), ComparatorFactory.getInstance().getComponentZOrderComparator());
     return project;
   }
 
   private Point convertV1CoordinatesToV3Point(Point reference, int x, int y) {
     Point point = new Point(reference);
-    point.translate((int) (x * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()), (int) (y
-        * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()));
+    point.translate(
+        (int) (x * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()),
+        (int) (y * Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue()));
     return point;
   }
 
   private Color parseV1Color(String color) {
-    if ("brown".equals(color.toLowerCase()))
-      return new Color(139, 69, 19);
+    if ("brown".equals(color.toLowerCase())) return new Color(139, 69, 19);
     try {
       Field field = Color.class.getDeclaredField(color.toLowerCase());
       return (Color) field.get(null);
@@ -744,8 +762,7 @@ public class V1FileParser implements IOldFileParser {
   private int myRandom(int range, Random r) {
     range = (range * 2) / 3;
     int rand = r.nextInt(range) - range / 2;
-    if (Math.abs(rand) < range / 3)
-      rand = myRandom(range, r);
+    if (Math.abs(rand) < range / 3) rand = myRandom(range, r);
     return rand;
   }
 
@@ -755,7 +772,6 @@ public class V1FileParser implements IOldFileParser {
   private int randInt(int range) {
     long newSeed = randSeed * 0x08088405 + 1;
     randSeed = newSeed;
-    return (int) ((long)newSeed * range >> 32);
+    return (int) ((long) newSeed * range >> 32);
   }
-
 }

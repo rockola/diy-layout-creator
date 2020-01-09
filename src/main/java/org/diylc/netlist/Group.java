@@ -26,27 +26,24 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.diylc.core.IDIYComponent;
 
 /**
  * Represents a group of {@link Node}s that are connected together.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class Group implements Comparable<Group> {
-  
+
   private Set<Node> nodes = new HashSet<Node>();
-  
-  public Group() {
-    
-  }
+
+  public Group() {}
 
   public Group(Node node1, Node node2) {
     nodes.add(node1);
     nodes.add(node2);
   }
-  
+
   public Group connect(IDIYComponent<?> component, int index) {
     getNodes().add(new Node(component, index));
     return this;
@@ -55,13 +52,13 @@ public class Group implements Comparable<Group> {
   public Set<Node> getNodes() {
     return nodes;
   }
-  
+
   public List<Node> getSortedNodes() {
     List<Node> list = new ArrayList<Node>(nodes);
     Collections.sort(list);
     return list;
   }
- 
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -72,18 +69,13 @@ public class Group implements Comparable<Group> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Group other = (Group) obj;
     if (nodes == null) {
-      if (other.nodes != null)
-        return false;
-    } else if (!nodes.equals(other.nodes))
-      return false;
+      if (other.nodes != null) return false;
+    } else if (!nodes.equals(other.nodes)) return false;
     return true;
   }
 
@@ -92,8 +84,7 @@ public class Group implements Comparable<Group> {
     StringBuilder sb = new StringBuilder();
     List<Node> list = getSortedNodes();
     for (Node n : list) {
-      if (sb.length() > 0)
-        sb.append(" <-> ");
+      if (sb.length() > 0) sb.append(" <-> ");
       sb.append(n);
     }
     return sb.toString();
@@ -103,7 +94,7 @@ public class Group implements Comparable<Group> {
   public int compareTo(Group o) {
     return toString().compareToIgnoreCase(o.toString());
   }
-  
+
   @Override
   public Group clone() {
     Group g = new Group();

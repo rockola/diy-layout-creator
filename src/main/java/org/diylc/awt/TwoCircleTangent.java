@@ -27,8 +27,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 /**
- * Creates an are covered by the two circles and the area between them bordered by the two external common tangents.
- * 
+ * Creates an are covered by the two circles and the area between them bordered by the two external
+ * common tangents.
+ *
  * @author Branislav Stojkovic
  */
 public class TwoCircleTangent extends Area {
@@ -37,9 +38,13 @@ public class TwoCircleTangent extends Area {
     double d = p1.distance(p2);
     double h = Math.sqrt(d * d - (r1 - r2) * (r1 - r2));
     double y = Math.sqrt(h * h + r2 * r2);
-    double theta1 = Math.acos((r1 * r1 + d * d - y * y) / (2 * r1 * d)) + Math.atan2(p2.getY() - p1.getY(), p2.getX() - p1.getX());
-    double theta2 = -Math.acos((r1 * r1 + d * d - y * y) / (2 * r1 * d)) + Math.atan2(p2.getY() - p1.getY(), p2.getX() - p1.getX());
-    
+    double theta1 =
+        Math.acos((r1 * r1 + d * d - y * y) / (2 * r1 * d))
+            + Math.atan2(p2.getY() - p1.getY(), p2.getX() - p1.getX());
+    double theta2 =
+        -Math.acos((r1 * r1 + d * d - y * y) / (2 * r1 * d))
+            + Math.atan2(p2.getY() - p1.getY(), p2.getX() - p1.getX());
+
     Area a = new Area(new Ellipse2D.Double(p1.getX() - r1, p1.getY() - r1, r1 * 2, r1 * 2));
     a.add(new Area(new Ellipse2D.Double(p2.getX() - r2, p2.getY() - r2, r2 * 2, r2 * 2)));
     Path2D path = new Path2D.Double();

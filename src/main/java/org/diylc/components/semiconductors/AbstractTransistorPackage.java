@@ -24,7 +24,6 @@ package org.diylc.components.semiconductors;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Area;
-
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
@@ -32,31 +31,30 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.netlist.ISpiceMapper;
 
-public abstract class AbstractTransistorPackage extends AbstractTransparentComponent<String> implements ISpiceMapper {
-  
+public abstract class AbstractTransistorPackage extends AbstractTransparentComponent<String>
+    implements ISpiceMapper {
+
   private static final long serialVersionUID = 1L;
-  
+
   protected String value = "";
   protected TransistorPinout pinout;
   protected Orientation orientation = Orientation.DEFAULT;
   protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  transient protected Area[] body;
-  
+  protected transient Area[] body;
+
   protected Color bodyColor;
   protected Color borderColor;
   protected Color labelColor = LABEL_COLOR;
-  protected Display display = Display.NAME;  
+  protected Display display = Display.NAME;
 
-  public AbstractTransistorPackage() {
-  }
-  
+  public AbstractTransistorPackage() {}
+
   protected abstract void updateControlPoints();
-  
+
   @Override
   public int mapToSpiceNode(int index) {
-    if (getPinout() == null)
-      return index;
-    
+    if (getPinout() == null) return index;
+
     switch (getPinout()) {
       case BJT_CBE:
         return index;
@@ -68,37 +66,44 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
       case JFET_DSG:
       case MOSFET_DSG:
         switch (index) {
-          case 0: return 0;
-          case 1: return 2;
-          case 2: return 1;
-        }        
+          case 0:
+            return 0;
+          case 1:
+            return 2;
+          case 2:
+            return 1;
+        }
       case JFET_GSD:
       case MOSFET_GSD:
         switch (index) {
-          case 0: return 1;
-          case 1: return 2;
-          case 2: return 0;
+          case 0:
+            return 1;
+          case 1:
+            return 2;
+          case 2:
+            return 0;
         }
       case JFET_SGD:
       case MOSFET_SGD:
         return 2 - index;
     }
-    
+
     return index;
   }
-  
+
   @Override
   public String getComment() {
-    return getPinout() == null ? "Pinout not configured, validate this line" : (getPinout().toString() + " pinout");
+    return getPinout() == null
+        ? "Pinout not configured, validate this line"
+        : (getPinout().toString() + " pinout");
   }
-  
+
   @Override
   public String getPrefix() {
-    if (getPinout() == null)
-      return null;    
+    if (getPinout() == null) return null;
     return getPinout().name().substring(0, 1);
   }
-  
+
   @EditableProperty
   public String getValue() {
     return value;
@@ -119,7 +124,7 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
     // Reset body shape;
     body = null;
   }
-  
+
   @Override
   public int getControlPointCount() {
     return controlPoints.length;
@@ -145,7 +150,7 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
     controlPoints[index].setLocation(point);
     body = null;
   }
-  
+
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
     return bodyColor;
@@ -186,26 +191,25 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   public void setDisplay(Display display) {
     this.display = display;
-  }  
-  
+  }
+
   @EditableProperty
   public TransistorPinout getPinout() {
     return pinout;
   }
-  
+
   public void setPinout(TransistorPinout pinout) {
     this.pinout = pinout;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
-    if (index >= 3)
-      return null;
+    if (index >= 3) return null;
     return Integer.toString(index + 1);
   }
 }

@@ -1,5 +1,5 @@
 /*
-  DIY Layout Creator (DIYLC). 
+  DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
@@ -21,42 +21,32 @@ package org.diylc.swing;
 
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
-
 import org.diylc.DIYLC;
 import org.diylc.common.IPlugInPort;
 
 public abstract class ActionFactoryAction extends AbstractAction {
 
-    protected IPlugInPort plugInPort;
+  protected IPlugInPort plugInPort;
 
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  String name,
-				  KeyStroke actionKeyStroke,
-				  Object icon) {
-	super();
-	this.plugInPort = plugInPort;
-	putValue(AbstractAction.NAME, name);
-	if (actionKeyStroke != null)
-	    putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
-	if (icon != null)
-	    putValue(AbstractAction.SMALL_ICON, icon);
-    }
+  protected ActionFactoryAction(
+      IPlugInPort plugInPort, String name, KeyStroke actionKeyStroke, Object icon) {
+    super();
+    this.plugInPort = plugInPort;
+    putValue(AbstractAction.NAME, name);
+    if (actionKeyStroke != null) putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
+    if (icon != null) putValue(AbstractAction.SMALL_ICON, icon);
+  }
 
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  String name,
-				  String actionName,
-				  Object icon) {
-	this(plugInPort, name, DIYLC.getKeyStroke(actionName), icon);
-    }
+  protected ActionFactoryAction(
+      IPlugInPort plugInPort, String name, String actionName, Object icon) {
+    this(plugInPort, name, DIYLC.getKeyStroke(actionName), icon);
+  }
 
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  String name,
-				  Object icon) {
-	this(plugInPort, name, (KeyStroke) null, icon);
-    }
+  protected ActionFactoryAction(IPlugInPort plugInPort, String name, Object icon) {
+    this(plugInPort, name, (KeyStroke) null, icon);
+  }
 
-    protected ActionFactoryAction(IPlugInPort plugInPort,
-				  String name) {
-	this(plugInPort, name, (KeyStroke) null, null);
-    }
+  protected ActionFactoryAction(IPlugInPort plugInPort, String name) {
+    this(plugInPort, name, (KeyStroke) null, null);
+  }
 }

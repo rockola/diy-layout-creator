@@ -23,61 +23,61 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
-
 import org.diylc.DIYLC;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
-  {@link IDrawingProvider} implementation that uses {@link
-  IPlugInPort} to draw a project onto the canvas.
-  
-  @author Branislav Stojkovic
-*/
+ * {@link IDrawingProvider} implementation that uses {@link IPlugInPort} to draw a project onto the
+ * canvas.
+ *
+ * @author Branislav Stojkovic
+ */
 public class ProjectDrawingProvider implements IDrawingProvider {
 
-    private IPlugInPort plugInPort;
-    private boolean useZoom;
-    private boolean showGridWhenNeeded;
-    private boolean includeExtraSpace;
+  private IPlugInPort plugInPort;
+  private boolean useZoom;
+  private boolean showGridWhenNeeded;
+  private boolean includeExtraSpace;
 
-    public ProjectDrawingProvider(IPlugInPort plugInPort,
-				  boolean useZoom,
-				  boolean showGridWhenNeeded,
-				  boolean includeExtraSpace) {
-	super();
-	this.plugInPort = plugInPort;
-	this.useZoom = useZoom;
-	this.showGridWhenNeeded = showGridWhenNeeded;
-	this.includeExtraSpace = includeExtraSpace;
-    }
+  public ProjectDrawingProvider(
+      IPlugInPort plugInPort,
+      boolean useZoom,
+      boolean showGridWhenNeeded,
+      boolean includeExtraSpace) {
+    super();
+    this.plugInPort = plugInPort;
+    this.useZoom = useZoom;
+    this.showGridWhenNeeded = showGridWhenNeeded;
+    this.includeExtraSpace = includeExtraSpace;
+  }
 
-    @Override
-    public Dimension getSize() {    
-	return plugInPort.getCanvasDimensions(useZoom, includeExtraSpace);
-    }
+  @Override
+  public Dimension getSize() {
+    return plugInPort.getCanvasDimensions(useZoom, includeExtraSpace);
+  }
 
-    @Override
-    public void draw(int page, Graphics g, double zoomFactor) {
-	EnumSet<DrawOption> drawOptions = EnumSet.of(DrawOption.ANTIALIASING);
-	if (useZoom) {
-	    drawOptions.add(DrawOption.ZOOM);
-	}
-	if (showGridWhenNeeded && DIYLC.exportGrid()) {
-	    drawOptions.add(DrawOption.GRID);
-	}
-	if (DIYLC.outlineMode()) {
-	    drawOptions.add(DrawOption.OUTLINE_MODE);
-	}
-	if (includeExtraSpace) {
-	    drawOptions.add(DrawOption.EXTRA_SPACE);
-	}
-	plugInPort.draw((Graphics2D) g, drawOptions, null, zoomFactor);
+  @Override
+  public void draw(int page, Graphics g, double zoomFactor) {
+    EnumSet<DrawOption> drawOptions = EnumSet.of(DrawOption.ANTIALIASING);
+    if (useZoom) {
+      drawOptions.add(DrawOption.ZOOM);
     }
+    if (showGridWhenNeeded && DIYLC.exportGrid()) {
+      drawOptions.add(DrawOption.GRID);
+    }
+    if (DIYLC.outlineMode()) {
+      drawOptions.add(DrawOption.OUTLINE_MODE);
+    }
+    if (includeExtraSpace) {
+      drawOptions.add(DrawOption.EXTRA_SPACE);
+    }
+    plugInPort.draw((Graphics2D) g, drawOptions, null, zoomFactor);
+  }
 
-    @Override
-    public int getPageCount() {
-	return 1;
-    }
+  @Override
+  public int getPageCount() {
+    return 1;
+  }
 }

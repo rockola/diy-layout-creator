@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -44,9 +43,17 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Transformer Core", author = "Branislav Stojkovic", category = "Schematic Symbols", instanceNamePrefix = "T",
-    description = "Transformer core symbol. Use multiple instances together with \"Transformer Coil Symbol\"<br>to draw transformer schematics.",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG, creationMethod = CreationMethod.POINT_BY_POINT, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "Transformer Core",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "T",
+    description =
+        "Transformer core symbol. Use multiple instances together with \"Transformer Coil Symbol\"<br>to draw transformer schematics.",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    keywordTag = "Schematic")
 public class TransformerCore extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
@@ -97,7 +104,11 @@ public class TransformerCore extends AbstractComponent<Void> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -108,14 +119,18 @@ public class TransformerCore extends AbstractComponent<Void> {
       finalColor = SELECTION_COLOR;
     } else if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalColor = theme.getOutlineColor();
     } else {
       finalColor = color;
     }
 
     double theta =
-        Math.atan2(this.controlPoints[1].y - this.controlPoints[0].y, this.controlPoints[1].x - this.controlPoints[0].x)
+        Math.atan2(
+                this.controlPoints[1].y - this.controlPoints[0].y,
+                this.controlPoints[1].x - this.controlPoints[0].x)
             + Math.PI / 2;
     double spacing = SPACING.convertToPixels();
     // System.out.println(theta);
@@ -124,9 +139,17 @@ public class TransformerCore extends AbstractComponent<Void> {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
     g2d.translate(spacing * Math.cos(theta) / 2, spacing * Math.sin(theta) / 2);
-    g2d.drawLine(this.controlPoints[0].x, this.controlPoints[0].y, this.controlPoints[1].x, this.controlPoints[1].y);
+    g2d.drawLine(
+        this.controlPoints[0].x,
+        this.controlPoints[0].y,
+        this.controlPoints[1].x,
+        this.controlPoints[1].y);
     g2d.translate(-spacing * Math.cos(theta), -spacing * Math.sin(theta));
-    g2d.drawLine(this.controlPoints[0].x, this.controlPoints[0].y, this.controlPoints[1].x, this.controlPoints[1].y);
+    g2d.drawLine(
+        this.controlPoints[0].x,
+        this.controlPoints[0].y,
+        this.controlPoints[1].x,
+        this.controlPoints[1].y);
   }
 
   @Override
@@ -149,12 +172,11 @@ public class TransformerCore extends AbstractComponent<Void> {
     return null;
   }
 
-
   @Override
   public void setValue(Void value) {
     // TODO Auto-generated method stub
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

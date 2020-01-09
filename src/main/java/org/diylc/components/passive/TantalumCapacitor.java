@@ -28,7 +28,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -45,9 +44,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Tantalum Capacitor", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "C",
-    description = "Vertically mounted tantalum capacitor", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "Tantalum Capacitor",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "C",
+    description = "Vertically mounted tantalum capacitor",
+    zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
 public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
 
@@ -58,7 +62,7 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
   public static Color BORDER_COLOR = BODY_COLOR.darker();
   public static Color MARKER_COLOR = BODY_COLOR.darker();
   public static Color TICK_COLOR = Color.white;
-  public static Size HEIGHT = new Size(0.4d, SizeUnit.in);  
+  public static Size HEIGHT = new Size(0.4d, SizeUnit.in);
 
   private Capacitance value = null;
   private org.diylc.core.measures.Voltage voltageNew = null;
@@ -87,7 +91,8 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString()
+        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
   }
 
   @EditableProperty(name = "Voltage")
@@ -103,16 +108,18 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
     g2d.setColor(BODY_COLOR);
     int margin = 3;
     Ellipse2D body =
-        new Ellipse2D.Double(margin, margin, getClosestOdd(width - 2 * margin), getClosestOdd(width - 2 * margin));
+        new Ellipse2D.Double(
+            margin, margin, getClosestOdd(width - 2 * margin), getClosestOdd(width - 2 * margin));
     g2d.fill(body);
     Area marker = new Area(body);
-    marker.subtract(new Area(new Rectangle2D.Double(4 * margin, margin, width, getClosestOdd(width - 2
-        * margin))));
+    marker.subtract(
+        new Area(
+            new Rectangle2D.Double(4 * margin, margin, width, getClosestOdd(width - 2 * margin))));
     g2d.setColor(MARKER_COLOR);
     g2d.fill(marker);
     g2d.setColor(TICK_COLOR);
     g2d.drawLine(2 * margin + 1, height / 2 - 2, 2 * margin + 1, height / 2 + 2);
-    g2d.drawLine(2 * margin - 2 + 1, height / 2,  2 * margin + 2 + 1, height / 2);
+    g2d.drawLine(2 * margin - 2 + 1, height / 2, 2 * margin + 2 + 1, height / 2);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(body);
   }
@@ -126,16 +133,21 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
       if (folded) {
         Area area = new Area(getBodyShape());
         if (!invert) {
-          area.subtract(new Area(new Rectangle2D.Double(totalDiameter * 0.2, -height, totalDiameter, height * 2)));
+          area.subtract(
+              new Area(
+                  new Rectangle2D.Double(totalDiameter * 0.2, -height, totalDiameter, height * 2)));
         } else {
-          area.subtract(new Area(new Rectangle2D.Double(0, -height, totalDiameter * 0.8, height * 2)));
+          area.subtract(
+              new Area(new Rectangle2D.Double(0, -height, totalDiameter * 0.8, height * 2)));
         }
         g2d.setColor(markerColor);
         g2d.fill(area);
       } else {
         Area area = new Area(getBodyShape());
         if (!invert) {
-          area.subtract(new Area(new Rectangle2D.Double(totalDiameter * 0.2, 0, totalDiameter, totalDiameter)));
+          area.subtract(
+              new Area(
+                  new Rectangle2D.Double(totalDiameter * 0.2, 0, totalDiameter, totalDiameter)));
         } else {
           area.subtract(new Area(new Rectangle2D.Double(0, 0, totalDiameter * 0.8, totalDiameter)));
         }
@@ -146,7 +158,9 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
     Color finalTickColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalTickColor = theme.getOutlineColor();
     } else {
       finalTickColor = tickColor;
@@ -156,9 +170,9 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
     int tickLength = (int) (totalDiameter * 0.12);
     int centerX = (int) (totalDiameter * (!invert ? 0.1 : 0.9));
     int centerY;
-    if (folded) {      
+    if (folded) {
       centerY = (int) (-height / 2 + tickLength * 3.5);
-    } else {      
+    } else {
       centerY = totalDiameter / 2;
     }
     g2d.drawLine(centerX - tickLength / 2, centerY, centerX + tickLength / 2, centerY);
@@ -240,8 +254,13 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
     double height = (int) getHeight().convertToPixels();
     double diameter = (int) getLength().convertToPixels();
     if (folded) {
-      return new RoundRectangle2D.Double(0f, -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-          getClosestOdd(diameter), getClosestOdd(height), diameter / 2, diameter / 2);
+      return new RoundRectangle2D.Double(
+          0f,
+          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+          getClosestOdd(diameter),
+          getClosestOdd(height),
+          diameter / 2,
+          diameter / 2);
     }
     return new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter));
   }

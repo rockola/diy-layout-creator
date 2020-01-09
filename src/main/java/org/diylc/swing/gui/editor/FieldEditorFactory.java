@@ -24,11 +24,9 @@ package org.diylc.swing.gui.editor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-
 import javax.swing.JLabel;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.annotations.DynamicList;
 import org.diylc.core.annotations.MultiLineText;
@@ -37,7 +35,7 @@ import org.diylc.core.measures.AbstractMeasure;
 /**
  * Based on {@link PropertyWrapper#getType()}, creates an appropriate {@link Component} that can
  * edit that type.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class FieldEditorFactory {
@@ -46,7 +44,8 @@ public class FieldEditorFactory {
 
   public static Component createFieldEditor(PropertyWrapper property) {
     try {
-      if (property.getType().equals(String.class) && property.getGetter().isAnnotationPresent(DynamicList.class)) {
+      if (property.getType().equals(String.class)
+          && property.getGetter().isAnnotationPresent(DynamicList.class)) {
         StringListEditor editor = new StringListEditor(property);
         return editor;
       }
@@ -54,7 +53,8 @@ public class FieldEditorFactory {
       LOG.error("Could not determine if a function is annotated with DynamicList", e);
     }
     try {
-      if (property.getType().equals(String.class) && property.getGetter().isAnnotationPresent(MultiLineText.class)) {
+      if (property.getType().equals(String.class)
+          && property.getGetter().isAnnotationPresent(MultiLineText.class)) {
         MultiLineStringEditor editor = new MultiLineStringEditor(property);
         return editor;
       }
@@ -74,9 +74,9 @@ public class FieldEditorFactory {
       return editor;
     }
     if (AbstractMeasure[].class.isAssignableFrom(property.getType())) {
-        MeasureArrayEditor editor = new MeasureArrayEditor(property);
-        return editor;
-      }
+      MeasureArrayEditor editor = new MeasureArrayEditor(property);
+      return editor;
+    }
     if (byte[].class.isAssignableFrom(property.getType())) {
       ImageEditor editor = new ImageEditor(property);
       return editor;
@@ -85,11 +85,13 @@ public class FieldEditorFactory {
       EnumEditor editor = new EnumEditor(property);
       return editor;
     }
-    if (Byte.class.isAssignableFrom(property.getType()) || byte.class.isAssignableFrom(property.getType())) {
+    if (Byte.class.isAssignableFrom(property.getType())
+        || byte.class.isAssignableFrom(property.getType())) {
       ByteEditor editor = new ByteEditor(property);
       return editor;
     }
-    if (Boolean.class.isAssignableFrom(property.getType()) || boolean.class.isAssignableFrom(property.getType())) {
+    if (Boolean.class.isAssignableFrom(property.getType())
+        || boolean.class.isAssignableFrom(property.getType())) {
       BooleanEditor editor = new BooleanEditor(property);
       return editor;
     }
@@ -97,7 +99,8 @@ public class FieldEditorFactory {
       FontEditor editor = new FontEditor(property);
       return editor;
     }
-    if (Integer.class.isAssignableFrom(property.getType()) || int.class.isAssignableFrom(property.getType())) {
+    if (Integer.class.isAssignableFrom(property.getType())
+        || int.class.isAssignableFrom(property.getType())) {
       IntEditor editor = new IntEditor(property);
       return editor;
     }

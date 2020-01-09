@@ -25,13 +25,11 @@ import java.awt.Cursor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
-
 import org.diylc.common.IPlugInPort;
-
 
 /**
  * {@link DragGestureListener} for {@link CanvasPanel}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 class ToolboxGestureListener implements DragGestureListener {
@@ -48,6 +46,9 @@ class ToolboxGestureListener implements DragGestureListener {
   @Override
   public void dragGestureRecognized(DragGestureEvent dge) {
     // presenter.dragStarted(dge.getDragOrigin());
-    dge.startDrag(Cursor.getDefaultCursor(), new StringSelection(className), new ToolboxSourceListener(presenter));
+    dge.startDrag(
+        Cursor.getDefaultCursor(),
+        new StringSelection(className),
+        new ToolboxSourceListener(presenter));
   }
 }

@@ -9,7 +9,7 @@ import java.net.URLClassLoader;
 /**
  * FileClassLoader extends URLClassLoader to provide functionality for loading a class from a file
  * or byte array.
- * 
+ *
  * @author Darryl
  * @see URLClassLoader
  */
@@ -18,9 +18,9 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Constructs a new FileClassLoader with the default delegation parent ClassLoader. URLs can be
    * added to the FileClassLoader using the addURL(URL) method.
-   * <P>
-   * This constructor invokes FileClassLoader(URL[]) with an empty URL array.
-   * 
+   *
+   * <p>This constructor invokes FileClassLoader(URL[]) with an empty URL array.
+   *
    * @see #addURL(URL)
    * @see #FileClassLoader(URL[])
    */
@@ -31,9 +31,10 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Constructs a new FileClassLoader for the specified URLs with the default delegation parent
    * ClassLoader.
-   * <P>
-   * This constructor invokes FileClassLoader(URL[], ClassLoader) with the URLs and a null parent.
-   * 
+   *
+   * <p>This constructor invokes FileClassLoader(URL[], ClassLoader) with the URLs and a null
+   * parent.
+   *
    * @param urls the URLs from which to load classes and resources
    * @see #FileClassLoader(URL[] urls, ClassLoader)
    */
@@ -44,13 +45,13 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Constructs a new FileClassLoader using the specified delegation parent ClassLoader. URLs can be
    * added to the FileClassLoader using the addURL(URL) method.
-   * <P>
-   * When loading resources, this ClassLoader will be searched after first searching in the
+   *
+   * <p>When loading resources, this ClassLoader will be searched after first searching in the
    * specified parent class loader.
-   * <P>
-   * This constructor invokes FileClassLoader(URL[], ClassLoader) with an empty URL array and the
+   *
+   * <p>This constructor invokes FileClassLoader(URL[], ClassLoader) with an empty URL array and the
    * specified parent.
-   * 
+   *
    * @param parent the parent class loader for delegation
    * @see #addURL(URL)
    * @see #FileClassLoader(URL[], ClassLoader)
@@ -65,7 +66,7 @@ public class FileClassLoader extends URLClassLoader {
    * first searching in the specified parent class loader. Any URL that ends with a '/' is assumed
    * to refer to a directory. Otherwise, the URL is assumed to refer to a JAR file which will be
    * downloaded and opened as needed.
-   * 
+   *
    * @param urls the URLs from which to load classes and resources
    * @param parent the parent class loader for delegation
    * @see URLClassLoader#URLClassLoader(URL[], ClassLoader)
@@ -77,7 +78,7 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Appends the specified URL to the list of URLs to search for classes and resources. Overrides
    * the super method to provide public access.
-   * 
+   *
    * @param url the URL to be added to the search path of URLs
    * @see URLClassLoader#addURL(URL)
    */
@@ -89,13 +90,13 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Converts a file into an instance of class Class and resolves the Class so it can be used. This
    * method extracts the file content as a byte array and invokes createClass(byte[]).
-   * <P>
-   * The file content should have the format of a valid class file as defined by the <a
-   * href="http://java.sun.com/docs/books/vmspec/"> Java Virtual Machine Specification</a>.
-   * 
+   *
+   * <p>The file content should have the format of a valid class file as defined by the <a
+   * href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a>.
+   *
    * @param file the file to be loaded as a class
    * @return The Class object that was created from the file, or null if any exception was
-   *         encountered
+   *     encountered
    * @see #createClass(byte[])
    */
   public Class<?> createClass(File file) throws IOException {
@@ -116,10 +117,10 @@ public class FileClassLoader extends URLClassLoader {
   /**
    * Converts an array of bytes into an instance of class Class and resolves the Class so it can be
    * used.
-   * <P>
-   * The byte array should have the format of a valid class file as defined by the <a
-   * href="http://java.sun.com/docs/books/vmspec/"> Java Virtual Machine Specification</a>.
-   * 
+   *
+   * <p>The byte array should have the format of a valid class file as defined by the <a
+   * href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a>.
+   *
    * @param bytes The bytes that make up the class data
    * @return The Class object that was created from the byte array
    * @see ClassLoader#defineClass(String, byte[], int, int)

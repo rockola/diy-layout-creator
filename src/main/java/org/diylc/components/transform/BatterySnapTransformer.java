@@ -23,7 +23,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.electromechanical.BatterySnap9V;
@@ -48,7 +47,8 @@ public class BatterySnapTransformer implements IComponentTransformer {
 
   @Override
   public void rotate(IDIYComponent<?> component, Point center, int direction) {
-    AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
       Point p = new Point(component.getControlPoint(index));
       rotate.transform(p, p);
@@ -59,10 +59,8 @@ public class BatterySnapTransformer implements IComponentTransformer {
     Orientation o = snap.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0)
-      oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length)
-      oValue = 0;
+    if (oValue < 0) oValue = Orientation.values().length - 1;
+    if (oValue >= Orientation.values().length) oValue = 0;
     o = Orientation.values()[oValue];
     snap.setOrientation(o);
   }
@@ -76,7 +74,7 @@ public class BatterySnapTransformer implements IComponentTransformer {
       int dy = 0;
       Orientation o = snap.getOrientation();
       switch (o) {
-        case DEFAULT:        
+        case DEFAULT:
           o = Orientation._180;
           break;
         case _90:
@@ -99,17 +97,17 @@ public class BatterySnapTransformer implements IComponentTransformer {
       int dy = 2 * (center.y - snap.getControlPoint(1).y);
       Orientation o = snap.getOrientation();
       switch (o) {
-        case DEFAULT:          
+        case DEFAULT:
           break;
         case _90:
-          o = Orientation._270;          
+          o = Orientation._270;
           break;
-        case _180:          
+        case _180:
           break;
-        case _270:          
+        case _270:
           o = Orientation._90;
           break;
-      }     
+      }
 
       for (int i = 0; i < snap.getControlPointCount(); i++) {
         Point p = snap.getControlPoint(i);

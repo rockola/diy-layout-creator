@@ -1,5 +1,5 @@
 /*
-  DIY Layout Creator (DIYLC). 
+  DIY Layout Creator (DIYLC).
   Copyright (c) 2010-2019 held jointly by the individual authors.
 
   This file is part of DIYLC.
@@ -20,57 +20,52 @@
 package org.diylc.common;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 public final class Message {
-    private static Logger LOG = LogManager.getLogger(Message.class);
-    private static Parser parser = Parser.builder().build();
-    private static HtmlRenderer defaultRenderer = HtmlRenderer.builder().build();
+  private static Logger LOG = LogManager.getLogger(Message.class);
+  private static Parser parser = Parser.builder().build();
+  private static HtmlRenderer defaultRenderer = HtmlRenderer.builder().build();
 
-    private Message() { }
+  private Message() {}
 
-    public static String getHTML(String name, boolean wrapInHtmlTags, String softbreak) {
-	ClassLoader loader = Message.class.getClassLoader();
-	try {
-	    // look for 'name' in configuration first
-	    String markdownString = Config.getString(name);
-	    if (markdownString == null) {
-		// 'name' was not found in configuration,
-		// let's try it as a file in resources
-		String markdownResource = String.format("org/diylc/messages/%s.md", name);
-		LOG.trace("getHtml({}) looking for {}", name, markdownResource);
-		BufferedReader reader =
-		    new BufferedReader(new InputStreamReader(loader.getResourceAsStream(markdownResource)));
-		markdownString = reader.lines().collect(Collectors.joining("\n"));
-	    }
-	    Node document = parser.parse(markdownString);
-	    HtmlRenderer renderer = defaultRenderer;
-	    if (softbreak != null) {
-		renderer = HtmlRenderer.builder().softbreak(softbreak).build();
-	    }
-	    String ret = renderer.render(document);
-	    LOG.info("getHtml({}) returns [{}]", name, ret);
-	    if (wrapInHtmlTags && ret != null)
-		ret = "<html>" + ret + "</html>";
-	    return ret;
-	} catch (Exception e) {
-	    LOG.error("getHtml(" + name + ") failed", e);
-	}
-	return "";
+  public static String getHTML(String name, boolean wrapInHtmlTags, String softbreak) {
+    ClassLoader loader = Message.class.getClassLoader();
+    try {
+      // look for 'name' in configuration first
+      String markdownString = Config.getString(name);
+      if (markdownString == null) {
+        // 'name' was not found in configuration,
+        // let's try it as a file in resources
+        String markdownResource = String.format("org/diylc/messages/%s.md", name);
+        LOG.trace("getHtml({}) looking for {}", name, markdownResource);
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(loader.getResourceAsStream(markdownResource)));
+        markdownString = reader.lines().collect(Collectors.joining("\n"));
+      }
+      Node document = parser.parse(markdownString);
+      HtmlRenderer renderer = defaultRenderer;
+      if (softbreak != null) {
+        renderer = HtmlRenderer.builder().softbreak(softbreak).build();
+      }
+      String ret = renderer.render(document);
+      LOG.info("getHtml({}) returns [{}]", name, ret);
+      if (wrapInHtmlTags && ret != null) ret = "<html>" + ret + "</html>";
+      return ret;
+    } catch (Exception e) {
+      LOG.error("getHtml(" + name + ") failed", e);
     }
+    return "";
+  }
 
-    public static String getHTML(String name) {
-	// wrap result in <html>...</html> by default
-	return getHTML(name, true, null);
-    }
+  public static String getHTML(String name) {
+    // wrap result in <html>...</html> by default
+    return getHTML(name, true, null);
+  }
 }

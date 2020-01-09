@@ -22,13 +22,8 @@ package org.diylc.swing.plugins.help;
 import java.awt.event.ActionEvent;
 import java.util.EnumSet;
 import java.util.List;
-
 import javax.swing.AbstractAction;
-//import javax.swing.Icon;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
 import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
@@ -37,163 +32,161 @@ import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.common.Message;
-import org.diylc.core.IView;
 import org.diylc.images.Icon;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.AboutDialog;
 import org.diylc.swingframework.update.UpdateDialog;
 
 /**
-   Entry point class for help-related utilities.
-    
-   @author Branislav Stojkovic
-*/
+ * Entry point class for help-related utilities.
+ *
+ * @author Branislav Stojkovic
+ */
 public class HelpMenuPlugin implements IPlugIn {
 
-    private static final String HELP_TITLE = Config.getString("menu.help.title");
+  private static final String HELP_TITLE = Config.getString("menu.help.title");
 
-    private IPlugInPort plugInPort;
-    private AboutDialog aboutDialog;
+  private IPlugInPort plugInPort;
+  private AboutDialog aboutDialog;
 
-    private void navigateURL(String menuEntry, Icon icon, String key) {
-	DIYLC.ui().injectMenuAction(new NavigateURLAction(Config.getString("menu.help."
-									   + menuEntry),
-							  icon,
-							  Config.getURL(key).toString()),
-				    HELP_TITLE);
+  private void navigateURL(String menuEntry, Icon icon, String key) {
+    DIYLC
+        .ui()
+        .injectMenuAction(
+            new NavigateURLAction(
+                Config.getString("menu.help." + menuEntry), icon, Config.getURL(key).toString()),
+            HELP_TITLE);
+  }
+
+  private void separator() {
+    DIYLC.ui().injectMenuAction(null, HELP_TITLE);
+  }
+
+  public HelpMenuPlugin() {
+    navigateURL("user-manual", Icon.Manual, "manual");
+    navigateURL("faq", Icon.Faq, "faq");
+    navigateURL("component-api", Icon.CoffeebeanEdit, "component");
+    // navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
+    navigateURL("bug-report", Icon.Bug, "bug");
+    separator();
+    DIYLC.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
+    separator();
+    navigateURL("donate", Icon.Donate, "donate");
+    DIYLC.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
+  }
+
+  @Override
+  public void connect(IPlugInPort plugInPort) {
+    this.plugInPort = plugInPort;
+  }
+
+  @Override
+  public EnumSet<EventType> getSubscribedEventTypes() {
+    return null;
+  }
+
+  @Override
+  public void processMessage(EventType eventType, Object... params) {}
+
+  public class AboutTextAction extends AbstractAction {
+    private String textKey;
+    private AboutDialog about;
+
+    public AboutTextAction(AboutDialog about, String textKey) {
+      super(textKey, null);
+      this.about = about;
+      this.textKey = textKey;
     }
 
-    private void separator() {
-	DIYLC.ui().injectMenuAction(null, HELP_TITLE);
+    public void actionPerformed(ActionEvent e) {
+      about.setEditorText(DIYLC.getHTML(this.textKey));
     }
+  }
 
-    public HelpMenuPlugin() {
-	navigateURL("user-manual", Icon.Manual, "manual");
-	navigateURL("faq", Icon.Faq, "faq");
-	navigateURL("component-api", Icon.CoffeebeanEdit, "component");
-	//navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
-	navigateURL("bug-report", Icon.Bug, "bug");
-	separator();
-	DIYLC.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
-	separator();
-	navigateURL("donate", Icon.Donate, "donate");
-	DIYLC.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
+  private String defaultAboutText() {
+    return DIYLC.getHTML("interactive-license");
+  }
+
+  private AboutDialog getAboutDialog() {
+    if (aboutDialog == null) {
+      aboutDialog =
+          DialogFactory.getInstance()
+              .createAboutDialog(
+                  Config.getString("app.title"),
+                  Icon.App.icon(),
+                  Config.getString("app.version"),
+                  Config.getString("app.author"),
+                  Config.getURL("website"),
+                  defaultAboutText());
+
+      aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
+      aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));
+      aboutDialog.addAction("C", "conditions", new AboutTextAction(aboutDialog, "conditions"));
+    }
+    return aboutDialog;
+  }
+
+  class AboutAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public AboutAction() {
+      super();
+      putValue(AbstractAction.NAME, "About");
+      putValue(AbstractAction.SMALL_ICON, Icon.About.icon());
     }
 
     @Override
-    public void connect(IPlugInPort plugInPort) {
-	this.plugInPort = plugInPort;
+    public void actionPerformed(ActionEvent e) {
+      // reset About dialog text when making visible
+      getAboutDialog().setEditorText(defaultAboutText());
+      getAboutDialog().setVisible(true);
+    }
+  }
+
+  class RecentUpdatesAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    public RecentUpdatesAction() {
+      super();
+      putValue(AbstractAction.NAME, "Recent Updates");
+      putValue(AbstractAction.SMALL_ICON, Icon.ScrollInformation.icon());
     }
 
     @Override
-    public EnumSet<EventType> getSubscribedEventTypes() {
-	return null;
+    public void actionPerformed(ActionEvent e) {
+      List<Version> updates = Version.getRecentUpdates();
+      if (updates == null) DIYLC.ui().info("Version history is not available.");
+      else {
+        String html = UpdateChecker.createUpdateHTML(updates);
+        UpdateDialog updateDialog =
+            new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(), html, (String) null);
+        updateDialog.setVisible(true);
+      }
+    }
+  }
+
+  class NavigateURLAction extends AbstractAction {
+
+    private static final long serialVersionUID = 1L;
+
+    private String url;
+
+    public NavigateURLAction(String name, Icon icon, String url) {
+      super();
+      this.url = url;
+      putValue(AbstractAction.NAME, name);
+      putValue(AbstractAction.SMALL_ICON, icon.icon());
     }
 
     @Override
-    public void processMessage(EventType eventType, Object... params) {}
-
-    public class AboutTextAction extends AbstractAction {
-	private String textKey;
-	private AboutDialog about;
-
-	public AboutTextAction(AboutDialog about, String textKey) {
-	    super(textKey, null);
-	    this.about = about;
-	    this.textKey = textKey;
-	}
-
-	public void actionPerformed(ActionEvent e) {
-	    about.setEditorText(DIYLC.getHTML(this.textKey));
-	}
+    public void actionPerformed(ActionEvent e) {
+      try {
+        Utils.openURL(url);
+      } catch (Exception e1) {
+        LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
+      }
     }
-
-    private String defaultAboutText() {
-	return DIYLC.getHTML("interactive-license");
-    }
-
-    private AboutDialog getAboutDialog() {
-	if (aboutDialog == null) {
-	    aboutDialog =
-		DialogFactory.getInstance().createAboutDialog(Config.getString("app.title"),
-							      Icon.App.icon(),
-							      Config.getString("app.version"),
-							      Config.getString("app.author"),
-							      Config.getURL("website"),
-							      defaultAboutText());
-
-	    aboutDialog.setSize(aboutDialog.getSize().width + 30,
-				aboutDialog.getSize().height + 200);
-	    aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));
-	    aboutDialog.addAction("C", "conditions", new AboutTextAction(aboutDialog, "conditions"));
-	}
-	return aboutDialog;
-    }
-
-    class AboutAction extends AbstractAction {
-
-	private static final long serialVersionUID = 1L;
-
-	public AboutAction() {
-	    super();
-	    putValue(AbstractAction.NAME, "About");
-	    putValue(AbstractAction.SMALL_ICON, Icon.About.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    // reset About dialog text when making visible
-	    getAboutDialog().setEditorText(defaultAboutText());
-	    getAboutDialog().setVisible(true);
-	}
-    }
-  
-    class RecentUpdatesAction extends AbstractAction {
-
-	private static final long serialVersionUID = 1L;
-
-	public RecentUpdatesAction() {
-	    super();
-	    putValue(AbstractAction.NAME, "Recent Updates");
-	    putValue(AbstractAction.SMALL_ICON, Icon.ScrollInformation.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    List<Version> updates = Version.getRecentUpdates();
-	    if (updates == null)
-		DIYLC.ui().info("Version history is not available.");
-	    else {
-		String html = UpdateChecker.createUpdateHTML(updates);
-		UpdateDialog updateDialog = new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(),
-							     html,
-							     (String) null);
-		updateDialog.setVisible(true);
-	    }
-	}
-    }
-
-    class NavigateURLAction extends AbstractAction {
-
-	private static final long serialVersionUID = 1L;
-
-	private String url;
-
-	public NavigateURLAction(String name, Icon icon, String url) {
-	    super();
-	    this.url = url;
-	    putValue(AbstractAction.NAME, name);
-	    putValue(AbstractAction.SMALL_ICON, icon.icon());
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    try {
-		Utils.openURL(url);
-	    } catch (Exception e1) {
-		LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
-	    }
-	}
-    }
+  }
 }

@@ -30,20 +30,18 @@ public interface IBlockProcessor {
   void saveSelectionAsBlock(String blockName);
 
   void loadBlock(String blockName) throws InvalidBlockException;
-  
+
   void deleteBlock(String blockName);
-  
+
   int importBlocks(String fileName) throws IOException;
 
   public class BlockAlreadyExistsException extends Exception {
 
     private static final long serialVersionUID = 1L;
-
   }
 
   public class InvalidBlockException extends Exception {
 
     private static final long serialVersionUID = 1L;
-
   }
 }

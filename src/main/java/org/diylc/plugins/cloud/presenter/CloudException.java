@@ -32,5 +32,4 @@ public class CloudException extends Exception {
   public CloudException(String string) {
     super(string);
   }
-
 }

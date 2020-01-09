@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
-
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
@@ -46,10 +45,14 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
   // for backward compatibility
   protected Point[] controlPoints = null;
 
-  protected Point[] controlPoints2 = new Point[] {new Point(0, 0),
-      new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
-      new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), (int) (DEFAULT_SIZE.convertToPixels())),
-      new Point((int) DEFAULT_SIZE.convertToPixels(), (int) DEFAULT_SIZE.convertToPixels())};
+  protected Point[] controlPoints2 =
+      new Point[] {
+        new Point(0, 0),
+        new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
+        new Point(
+            (int) (DEFAULT_SIZE.convertToPixels() / 2), (int) (DEFAULT_SIZE.convertToPixels())),
+        new Point((int) DEFAULT_SIZE.convertToPixels(), (int) DEFAULT_SIZE.convertToPixels())
+      };
 
   protected Color color = getDefaultColor();
   protected PointCount pointCount = PointCount.FOUR;
@@ -60,18 +63,19 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   /**
    * Draws the specified curve onto graphics.
-   * 
+   *
    * @param curve
    * @param g2d
    * @param componentState
    * @param theme
    */
-  protected abstract void drawCurve(Path2D curve, Graphics2D g2d, ComponentState componentState,
+  protected abstract void drawCurve(
+      Path2D curve,
+      Graphics2D g2d,
+      ComponentState componentState,
       IDrawingObserver drawingObserver);
 
-  /**
-   * @return default color.
-   */
+  /** @return default color. */
   protected abstract Color getDefaultColor();
 
   @Override
@@ -79,7 +83,8 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
     g2d.setColor(getDefaultColor().darker());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(3));
     CubicCurve2D curve =
-        new CubicCurve2D.Double(1, height - 1, width / 4, height / 3, 3 * width / 4, 2 * height / 3, width - 1, 1);
+        new CubicCurve2D.Double(
+            1, height - 1, width / 4, height / 3, 3 * width / 4, 2 * height / 3, width - 1, 1);
     g2d.draw(curve);
     g2d.setColor(getDefaultColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -87,7 +92,11 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -97,13 +106,15 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
     // smoothen the curve if needed
     if (getSmooth() && lastUpdatePointIndex >= 0) {
-      if (getPointCount() == PointCount.FIVE && (lastUpdatePointIndex == 1 || lastUpdatePointIndex == 2)) {
+      if (getPointCount() == PointCount.FIVE
+          && (lastUpdatePointIndex == 1 || lastUpdatePointIndex == 2)) {
         p[3] = findThirdPoint(p[2], p[1]);
       }
       if (getPointCount() == PointCount.FIVE && lastUpdatePointIndex == 3) {
         p[1] = findThirdPoint(p[2], p[3]);
       }
-      if (getPointCount() == PointCount.SEVEN && (lastUpdatePointIndex == 2 || lastUpdatePointIndex == 3)) {
+      if (getPointCount() == PointCount.SEVEN
+          && (lastUpdatePointIndex == 2 || lastUpdatePointIndex == 3)) {
         p[4] = findThirdPoint(p[3], p[2]);
       }
       if (getPointCount() == PointCount.SEVEN && lastUpdatePointIndex == 4) {
@@ -196,34 +207,45 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
     if (pointCount == PointCount.THREE) {
       newPoints[1] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
     } else if (pointCount == PointCount.FOUR) {
       newPoints[1] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
       newPoints[2] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
     } else if (pointCount == PointCount.FIVE) {
       newPoints[2] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
-      newPoints[1] = new Point((newPoints[2].x + newPoints[0].x) / 2, (newPoints[2].y + newPoints[0].y) / 2);
+      newPoints[1] =
+          new Point((newPoints[2].x + newPoints[0].x) / 2, (newPoints[2].y + newPoints[0].y) / 2);
       newPoints[3] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[2].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[2].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[2].y) / 2);
     } else if (pointCount == PointCount.SEVEN) {
       newPoints[3] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
-      newPoints[2] = new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
-      newPoints[1] = new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
+      newPoints[2] =
+          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
+      newPoints[1] =
+          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
       newPoints[4] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[3].y) / 2);
       newPoints[5] =
-          new Point((newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,
+          new Point(
+              (newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[3].y) / 2);
     }
 
@@ -292,8 +314,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   @EditableProperty(name = "Style")
   public LineStyle getStyle() {
-    if (style == null)
-      style = LineStyle.SOLID;
+    if (style == null) style = LineStyle.SOLID;
     return style;
   }
 
@@ -303,8 +324,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   @EditableProperty
   public Boolean getSmooth() {
-    if (smooth == null)
-      this.smooth = true;
+    if (smooth == null) this.smooth = true;
     return this.smooth;
   }
 
@@ -323,7 +343,11 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
   }
 
   public enum PointCount {
-    TWO(2), THREE(3), FOUR(4), FIVE(5), SEVEN(7);
+    TWO(2),
+    THREE(3),
+    FOUR(4),
+    FIVE(5),
+    SEVEN(7);
 
     private int count;
 

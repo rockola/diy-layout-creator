@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -53,18 +53,17 @@ import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ZoomableStroke;
 import org.diylc.core.IDrawingObserver;
 
 /**
  * {@link Graphics2D} wrapper that keeps track of all drawing actions and creates an {@link Area}
- * that corresponds to drawn objects. Before each component is drawn,
- * {@link #startedDrawingComponent()} should be called. After the component is drawn, area may be
- * retrieved using {@link #finishedDrawingComponent()}. Graphics configuration (color, font, etc) is
- * reset between each two components.
- * 
+ * that corresponds to drawn objects. Before each component is drawn, {@link
+ * #startedDrawingComponent()} should be called. After the component is drawn, area may be retrieved
+ * using {@link #finishedDrawingComponent()}. Graphics configuration (color, font, etc) is reset
+ * between each two components.
+ *
  * @author Branislav Stojkovic
  */
 class G2DWrapper extends Graphics2D implements IDrawingObserver {
@@ -94,7 +93,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
 
   /**
    * Creates a wrapper around specified {@link Graphics2D} object.
-   * 
+   *
    * @param canvasGraphics
    */
   public G2DWrapper(Graphics2D canvasGraphics, double zoom) {
@@ -107,9 +106,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     currentTx = new AffineTransform();
   }
 
-  /**
-   * Clears out the current area and caches canvas settings.
-   */
+  /** Clears out the current area and caches canvas settings. */
   public void startedDrawingComponent() {
     drawingComponent = true;
     currentArea = new Area();
@@ -128,7 +125,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
 
   /**
    * Reverts {@link Graphics2D} settings and returns area drawn by component in the meantime.
-   * 
+   *
    * @return
    */
   public ComponentArea finishedDrawingComponent() {
@@ -163,13 +160,13 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public boolean isTrackingContinuityArea() {   
+  public boolean isTrackingContinuityArea() {
     return trackingContinuityAllowed;
   }
 
   /**
    * Appends shape interior to the current component area.
-   * 
+   *
    * @param s
    */
   private void appendShape(Shape s) {
@@ -182,14 +179,11 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       Area area = new Area(s);
       area.transform(currentTx);
 
-      if (trackingAllowed)
-        currentArea.add(area);
+      if (trackingAllowed) currentArea.add(area);
 
       if (trackingContinuityAllowed) {
-        if (trackingContinuityPositive)
-          continuityPositiveAreas.add(area);
-        else
-          continuityNegativeAreas.add(area);
+        if (trackingContinuityPositive) continuityPositiveAreas.add(area);
+        else continuityNegativeAreas.add(area);
       }
       lastShape = s;
     }
@@ -197,7 +191,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
 
   /**
    * Appends shape outline to the current component area.
-   * 
+   *
    * @param s
    */
   private void appendShapeOutline(Shape s) {
@@ -274,7 +268,10 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       Point2D point = new Point2D.Double(x, y);
       // currentTx.transform(point, point);
       Rectangle2D finalRec =
-          new Rectangle2D.Double(rect.getX() + point.getX(), rect.getY() + point.getY(), rect.getWidth(),
+          new Rectangle2D.Double(
+              rect.getX() + point.getX(),
+              rect.getY() + point.getY(),
+              rect.getWidth(),
               rect.getHeight());
       appendShape(finalRec);
     }
@@ -286,7 +283,9 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     if (drawingComponent && trackingAllowed) {
       FontMetrics fontMetrics = canvasGraphics.getFontMetrics();
       Rectangle2D rect = fontMetrics.getStringBounds(str, canvasGraphics);
-      appendShape(new Rectangle2D.Double(rect.getX() + x, rect.getY() + y, rect.getWidth(), rect.getHeight()));
+      appendShape(
+          new Rectangle2D.Double(
+              rect.getX() + x, rect.getY() + y, rect.getWidth(), rect.getHeight()));
     }
   }
 
@@ -412,7 +411,13 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       BasicStroke bs = (BasicStroke) s;
       // make thin lines even thinner to compensate for zoom factor
       if (bs.getLineWidth() <= 2 && !(s instanceof ZoomableStroke))
-        s = ObjectCache.getInstance().fetchStroke((float) (bs.getLineWidth() / zoom), bs.getDashArray(), bs.getDashPhase(), bs.getEndCap());
+        s =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    (float) (bs.getLineWidth() / zoom),
+                    bs.getDashArray(),
+                    bs.getDashPhase(),
+                    bs.getEndCap());
     }
     canvasGraphics.setStroke(s);
   }
@@ -509,21 +514,41 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(
+      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, width, height, bgcolor, observer);
   }
 
   @Override
-  public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
+  public boolean drawImage(
+      Image img,
+      int dx1,
+      int dy1,
+      int dx2,
+      int dy2,
+      int sx1,
+      int sy1,
+      int sx2,
+      int sy2,
       ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
   }
 
   @Override
-  public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
-      Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(
+      Image img,
+      int dx1,
+      int dy1,
+      int dx2,
+      int dy2,
+      int sx1,
+      int sy1,
+      int sx2,
+      int sy2,
+      Color bgcolor,
+      ImageObserver observer) {
     // FIXME: map
     return drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
   }

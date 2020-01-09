@@ -31,7 +31,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -53,9 +52,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Tube Socket", author = "Branislav Stojkovic", category = "Tubes",
-    instanceNamePrefix = "V", description = "Various types of tube/valve sockets",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE)
+@ComponentDescriptor(
+    name = "Tube Socket",
+    author = "Branislav Stojkovic",
+    category = "Tubes",
+    instanceNamePrefix = "V",
+    description = "Various types of tube/valve sockets",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE)
 public class TubeSocket extends AbstractTransparentComponent<String> {
 
   private static final Size B9A_PIN_SPACING_CHASSIS = new Size(12.5d, SizeUnit.mm);
@@ -83,18 +87,17 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 
   private Base base = Base.B9A;
   private String type = "";
-  @Deprecated
-  private Orientation orientation;
+  @Deprecated private Orientation orientation;
   // private Mount mount = Mount.CHASSIS;
   private int angle;
   private Color color = BODY_COLOR;
-  private String electrodeLabels = null; 
+  private String electrodeLabels = null;
   private Mount mount = null;
   private Color labelColor = LABEL_COLOR;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
 
-  transient private Shape body;
+  private transient Shape body;
 
   public TubeSocket() {
     super();
@@ -139,7 +142,7 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     // Reset body shape
     body = null;
   }
-  
+
   @EditableProperty
   public Color getColor() {
     if (color == null) {
@@ -147,7 +150,7 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     }
     return color;
   }
-  
+
   public void setColor(Color color) {
     this.color = color;
   }
@@ -179,7 +182,11 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         break;
       case B9A:
         pinCount = 9;
-        pinSpacing = getClosestOdd(getMount() == Mount.PCB ? B9A_PIN_SPACING_PCB.convertToPixels() : B9A_PIN_SPACING_CHASSIS.convertToPixels());
+        pinSpacing =
+            getClosestOdd(
+                getMount() == Mount.PCB
+                    ? B9A_PIN_SPACING_PCB.convertToPixels()
+                    : B9A_PIN_SPACING_CHASSIS.convertToPixels());
         hasEmptySpace = true;
         break;
       default:
@@ -193,7 +200,8 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     controlPoints[0] = firstPoint;
     for (int i = 0; i < pinCount; i++) {
       controlPoints[i + 1] =
-          new Point((int) (firstPoint.getX() + Math.cos(theta) * pinSpacing / 2),
+          new Point(
+              (int) (firstPoint.getX() + Math.cos(theta) * pinSpacing / 2),
               (int) (firstPoint.getY() + Math.sin(theta) * pinSpacing / 2));
       theta += angleIncrement;
     }
@@ -215,41 +223,79 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         default:
           throw new RuntimeException("Unexpected base: " + base);
       }
-      
+
       body =
-          new Ellipse2D.Double(controlPoints[0].x - bodyDiameter / 2, controlPoints[0].y - bodyDiameter / 2,
-              bodyDiameter, bodyDiameter);
+          new Ellipse2D.Double(
+              controlPoints[0].x - bodyDiameter / 2,
+              controlPoints[0].y - bodyDiameter / 2,
+              bodyDiameter,
+              bodyDiameter);
       Area bodyArea = new Area(body);
       int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
-      bodyArea.subtract(new Area(new Ellipse2D.Double(controlPoints[0].x - holeSize / 2, controlPoints[0].y - holeSize
-          / 2, holeSize, holeSize)));
-      
+      bodyArea.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  controlPoints[0].x - holeSize / 2,
+                  controlPoints[0].y - holeSize / 2,
+                  holeSize,
+                  holeSize)));
+
       if (base == Base.OCTAL) {
         int tickSize = getClosestOdd(OCTAL_TICK_SIZE.convertToPixels());
         double theta = Math.toRadians(getAngle());
         int centerX = (int) (controlPoints[0].x + Math.cos(theta) * holeSize / 2);
         int centerY = (int) (controlPoints[0].y + Math.sin(theta) * holeSize / 2);
-        bodyArea.subtract(new Area(new Ellipse2D.Double(centerX - tickSize / 2, centerY - tickSize / 2, tickSize,
-            tickSize)));        
+        bodyArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    centerX - tickSize / 2, centerY - tickSize / 2, tickSize, tickSize)));
       } else if (base == Base.B9A && getMount() == Mount.CHASSIS) {
         double cutoutDiameter = getClosestOdd(B9A_CUTOUT_DIAMETER.convertToPixels());
-        bodyArea.subtract(new Area(new Ellipse2D.Double(controlPoints[0].x - cutoutDiameter / 2, controlPoints[0].y - bodyDiameter / 2 - cutoutDiameter * 3 / 4, cutoutDiameter, cutoutDiameter)));
-        bodyArea.subtract(new Area(new Ellipse2D.Double(controlPoints[0].x - cutoutDiameter / 2, controlPoints[0].y + bodyDiameter / 2 - cutoutDiameter / 4, cutoutDiameter, cutoutDiameter)));
+        bodyArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    controlPoints[0].x - cutoutDiameter / 2,
+                    controlPoints[0].y - bodyDiameter / 2 - cutoutDiameter * 3 / 4,
+                    cutoutDiameter,
+                    cutoutDiameter)));
+        bodyArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    controlPoints[0].x - cutoutDiameter / 2,
+                    controlPoints[0].y + bodyDiameter / 2 - cutoutDiameter / 4,
+                    cutoutDiameter,
+                    cutoutDiameter)));
       } else if (base == Base.B7G && getMount() == Mount.CHASSIS) {
         double cutoutDiameter = getClosestOdd(B7G_CUTOUT_DIAMETER.convertToPixels());
-        bodyArea.subtract(new Area(new Ellipse2D.Double(controlPoints[0].x - cutoutDiameter / 2, controlPoints[0].y - bodyDiameter / 2 - cutoutDiameter * 3 / 4, cutoutDiameter, cutoutDiameter)));
-        bodyArea.subtract(new Area(new Ellipse2D.Double(controlPoints[0].x - cutoutDiameter / 2, controlPoints[0].y + bodyDiameter / 2 - cutoutDiameter / 4, cutoutDiameter, cutoutDiameter)));
-      }      
-      
+        bodyArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    controlPoints[0].x - cutoutDiameter / 2,
+                    controlPoints[0].y - bodyDiameter / 2 - cutoutDiameter * 3 / 4,
+                    cutoutDiameter,
+                    cutoutDiameter)));
+        bodyArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    controlPoints[0].x - cutoutDiameter / 2,
+                    controlPoints[0].y + bodyDiameter / 2 - cutoutDiameter / 4,
+                    cutoutDiameter,
+                    cutoutDiameter)));
+      }
+
       body = bodyArea;
     }
     return body;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
-    
+
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
     // Draw body
@@ -266,34 +312,53 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : getColor().darker();
     }
     g2d.setColor(finalBorderColor);
     g2d.draw(body);
-    
+
     drawingObserver.stopTracking();
-    
+
     // Draw pins
-    if (!outlineMode) {      
+    if (!outlineMode) {
       for (int i = 1; i < controlPoints.length; i++) {
         Shape pinShape;
         if (getMount() == Mount.PCB) {
           int pinSize = getClosestOdd(PIN_DIAMETER.convertToPixels());
-          pinShape = new Ellipse2D.Double(controlPoints[i].x - pinSize / 2, controlPoints[i].y - pinSize / 2, pinSize, pinSize);
+          pinShape =
+              new Ellipse2D.Double(
+                  controlPoints[i].x - pinSize / 2,
+                  controlPoints[i].y - pinSize / 2,
+                  pinSize,
+                  pinSize);
         } else {
           int pinWidth = getClosestOdd(PIN_WIDTH.convertToPixels());
           int pinThickness = getClosestOdd(PIN_THICKNESS.convertToPixels());
-          pinShape = new Rectangle2D.Double(controlPoints[i].x - pinWidth / 2, controlPoints[i].y - pinThickness / 2, pinWidth, pinThickness);
-          double theta = Math.atan2(controlPoints[i].y - controlPoints[0].y, controlPoints[i].x - controlPoints[0].x) + Math.PI / 2;
+          pinShape =
+              new Rectangle2D.Double(
+                  controlPoints[i].x - pinWidth / 2,
+                  controlPoints[i].y - pinThickness / 2,
+                  pinWidth,
+                  pinThickness);
+          double theta =
+              Math.atan2(
+                      controlPoints[i].y - controlPoints[0].y,
+                      controlPoints[i].x - controlPoints[0].x)
+                  + Math.PI / 2;
           Area rotatedPin = new Area(pinShape);
-          rotatedPin.transform(AffineTransform.getRotateInstance(theta, controlPoints[i].x, controlPoints[i].y));
+          rotatedPin.transform(
+              AffineTransform.getRotateInstance(theta, controlPoints[i].x, controlPoints[i].y));
           pinShape = rotatedPin;
         }
         g2d.setColor(PIN_COLOR);
@@ -302,20 +367,26 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         g2d.fill(pinShape);
       }
     }
-    
+
     // draw electrode labels
     if (electrodeLabels != null) {
       g2d.setColor(getLabelColor());
       g2d.setFont(project.getFont().deriveFont((float) (project.getFont().getSize2D() * 0.8)));
       String[] labels = electrodeLabels.split(",");
-      double electrodeLabelOffset = project.getFont().getSize2D() * (getBase() == Base.B9A && getMount() == Mount.PCB ? 1.5 : 1);
+      double electrodeLabelOffset =
+          project.getFont().getSize2D()
+              * (getBase() == Base.B9A && getMount() == Mount.PCB ? 1.5 : 1);
       for (int i = 0; i < labels.length; i++) {
         if (i < controlPoints.length - 1) {
           String label = labels[i];
-          double theta = Math.atan2(controlPoints[i + 1].y - controlPoints[0].y, controlPoints[i + 1].x - controlPoints[0].x);
+          double theta =
+              Math.atan2(
+                  controlPoints[i + 1].y - controlPoints[0].y,
+                  controlPoints[i + 1].x - controlPoints[0].x);
           double x = controlPoints[i + 1].x - Math.cos(theta) * electrodeLabelOffset;
           double y = controlPoints[i + 1].y - Math.sin(theta) * electrodeLabelOffset;
-          StringUtils.drawCenteredText(g2d, label, (int)x, (int)y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+          StringUtils.drawCenteredText(
+              g2d, label, (int) x, (int) y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         }
       }
     }
@@ -376,49 +447,48 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
   @Override
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
-    
+
     body = null;
   }
-  
+
   @EditableProperty(name = "Electrode Labels")
   public String getElectrodeLabels() {
-    if (electrodeLabels == null)
-      electrodeLabels = "1,2,3,4,5,6,7,8,9";
+    if (electrodeLabels == null) electrodeLabels = "1,2,3,4,5,6,7,8,9";
     return electrodeLabels;
   }
-  
+
   public void setElectrodeLabels(String electrodeLabels) {
     this.electrodeLabels = electrodeLabels;
   }
-  
+
   @EditableProperty(name = "Label")
   public Color getLabelColor() {
-    if (labelColor == null)
-      labelColor = LABEL_COLOR;
+    if (labelColor == null) labelColor = LABEL_COLOR;
     return labelColor;
   }
-  
+
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
   }
-  
+
   @EditableProperty(name = "Mount")
   public Mount getMount() {
-    if (mount == null)
-      mount = Mount.PCB;
+    if (mount == null) mount = Mount.PCB;
     return mount;
   }
-  
+
   public void setMount(Mount mount) {
     this.mount = mount;
-    
+
     updateControlPoints();
     // Reset body shape
     body = null;
   }
 
   public static enum Base {
-    B9A("Noval B9A"), OCTAL("Octal"), B7G("Small-button B7G");
+    B9A("Noval B9A"),
+    OCTAL("Octal"),
+    B7G("Small-button B7G");
 
     String name;
 
@@ -433,7 +503,8 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
   }
 
   static enum Mount {
-    CHASSIS("Chassis"), PCB("PCB");
+    CHASSIS("Chassis"),
+    PCB("PCB");
 
     String name;
 

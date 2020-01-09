@@ -24,7 +24,6 @@ package org.diylc.components.chassis;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.shapes.AbstractShape;
@@ -38,42 +37,66 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Chassis Panel", author = "Branislav Stojkovic", category = "Electro-Mechanical",
-    instanceNamePrefix = "CP", description = "One side of a chassis, with or withouth rounded edges",
-    zOrder = IDIYComponent.CHASSIS, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false,
+@ComponentDescriptor(
+    name = "Chassis Panel",
+    author = "Branislav Stojkovic",
+    category = "Electro-Mechanical",
+    instanceNamePrefix = "CP",
+    description = "One side of a chassis, with or withouth rounded edges",
+    zOrder = IDIYComponent.CHASSIS,
+    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
+    autoEdit = false,
     transformer = SimpleComponentTransformer.class)
 public class ChassisPanel extends AbstractShape {
 
   private static final long serialVersionUID = 1L;
 
   protected Size edgeRadius = new Size(0d, SizeUnit.mm);
-  
+
   public ChassisPanel() {
     this.color = LIGHT_METAL_COLOR;
     this.borderColor = LIGHT_METAL_COLOR.darker();
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
-    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
+    g2d.setStroke(
+        ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
     if (componentState != ComponentState.DRAGGING) {
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(color);
-      g2d.fillRoundRect(firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y, radius,
+      g2d.fillRoundRect(
+          firstPoint.x,
+          firstPoint.y,
+          secondPoint.x - firstPoint.x,
+          secondPoint.y - firstPoint.y,
+          radius,
           radius);
       g2d.setComposite(oldComposite);
     }
     // Do not track any changes that follow because the whole rect has been
     // tracked so far.
     drawingObserver.stopTracking();
-    g2d.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-        : borderColor);
-    g2d.drawRoundRect(firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y, radius,
+    g2d.setColor(
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : borderColor);
+    g2d.drawRoundRect(
+        firstPoint.x,
+        firstPoint.y,
+        secondPoint.x - firstPoint.x,
+        secondPoint.y - firstPoint.y,
+        radius,
         radius);
   }
 

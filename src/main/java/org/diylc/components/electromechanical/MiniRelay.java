@@ -31,7 +31,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -52,8 +51,12 @@ import org.diylc.core.measures.Voltage;
 import org.diylc.core.measures.VoltageUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Mini Relay", author = "Branislav Stojkovic", category = "Electro-Mechanical",
-    instanceNamePrefix = "RY", description = "Miniature PCB mount relay, like Omron G5V-1 or G5V-2",
+@ComponentDescriptor(
+    name = "Mini Relay",
+    author = "Branislav Stojkovic",
+    category = "Electro-Mechanical",
+    instanceNamePrefix = "RY",
+    description = "Miniature PCB mount relay, like Omron G5V-1 or G5V-2",
     zOrder = IDIYComponent.COMPONENT)
 public class MiniRelay extends AbstractTransparentComponent<String> {
 
@@ -90,7 +93,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   private RelayType type = RelayType.DPDT;
   private RelaySize size = RelaySize.Miniature;
   private Voltage voltage = new Voltage(12d, VoltageUnit.V);
-  transient private Area[] body;
+  private transient Area[] body;
 
   public MiniRelay() {
     super();
@@ -172,11 +175,13 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     controlPoints = new Point[pinCount];
     controlPoints[0] = firstPoint;
     int pinSpacing =
-        size == RelaySize.Miniature ? (int) MINI_PIN_SPACING.convertToPixels() : (int) ULTRA_PIN_SPACING
-            .convertToPixels();
+        size == RelaySize.Miniature
+            ? (int) MINI_PIN_SPACING.convertToPixels()
+            : (int) ULTRA_PIN_SPACING.convertToPixels();
     int rowSpacing =
-        size == RelaySize.Miniature ? (int) MINI_ROW_SPACING.convertToPixels() : (int) ULTRA_ROW_SPACING
-            .convertToPixels();
+        size == RelaySize.Miniature
+            ? (int) MINI_ROW_SPACING.convertToPixels()
+            : (int) ULTRA_ROW_SPACING.convertToPixels();
     // Update control points.
     int dx1;
     int dy1;
@@ -185,7 +190,10 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     int delta = 0;
     for (int i = 0; i < pinCount / 2; i++) {
       if (i == 1) {
-        delta = size == RelaySize.Miniature ? (int) MINI_GAP.convertToPixels() : (int) ULTRA_GAP.convertToPixels();
+        delta =
+            size == RelaySize.Miniature
+                ? (int) MINI_GAP.convertToPixels()
+                : (int) ULTRA_GAP.convertToPixels();
         if (type == RelayType.SPDT) {
           delta += pinSpacing;
         }
@@ -234,53 +242,108 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
       int width = 0;
       int height = 0;
       int rowSpacing =
-          size == RelaySize.Miniature ? (int) MINI_ROW_SPACING.convertToPixels() : (int) ULTRA_ROW_SPACING
-              .convertToPixels();
+          size == RelaySize.Miniature
+              ? (int) MINI_ROW_SPACING.convertToPixels()
+              : (int) ULTRA_ROW_SPACING.convertToPixels();
       Area indentation = null;
       int indentationSize = getClosestOdd(INDENT_SIZE.convertToPixels());
       switch (orientation) {
         case DEFAULT:
-          width = (int) (size == RelaySize.Miniature ? MINI_HEIGHT.convertToPixels() : ULTRA_HEIGHT.convertToPixels());
-          height = (int) (size == RelaySize.Miniature ? MINI_WIDTH.convertToPixels() : ULTRA_WIDTH.convertToPixels());
+          width =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_HEIGHT.convertToPixels()
+                      : ULTRA_HEIGHT.convertToPixels());
+          height =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_WIDTH.convertToPixels()
+                      : ULTRA_WIDTH.convertToPixels());
           x -= bodyMargin;
           y -= bodyMargin;
           indentation =
-              new Area(new Rectangle2D.Double(centerX - indentationSize / 2, y - indentationSize / 2, indentationSize,
-                  indentationSize));
+              new Area(
+                  new Rectangle2D.Double(
+                      centerX - indentationSize / 2,
+                      y - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _90:
-          width = (int) (size == RelaySize.Miniature ? MINI_WIDTH.convertToPixels() : ULTRA_WIDTH.convertToPixels());
-          height = (int) (size == RelaySize.Miniature ? MINI_HEIGHT.convertToPixels() : ULTRA_HEIGHT.convertToPixels());
+          width =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_WIDTH.convertToPixels()
+                      : ULTRA_WIDTH.convertToPixels());
+          height =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_HEIGHT.convertToPixels()
+                      : ULTRA_HEIGHT.convertToPixels());
           x -= -bodyMargin + width;
           y -= bodyMargin;
           indentation =
-              new Area(new Rectangle2D.Double(x + width - indentationSize / 2, centerY - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Rectangle2D.Double(
+                      x + width - indentationSize / 2,
+                      centerY - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _180:
-          width = (int) (size == RelaySize.Miniature ? MINI_HEIGHT.convertToPixels() : ULTRA_HEIGHT.convertToPixels());
-          height = (int) (size == RelaySize.Miniature ? MINI_WIDTH.convertToPixels() : ULTRA_WIDTH.convertToPixels());
+          width =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_HEIGHT.convertToPixels()
+                      : ULTRA_HEIGHT.convertToPixels());
+          height =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_WIDTH.convertToPixels()
+                      : ULTRA_WIDTH.convertToPixels());
           x -= rowSpacing + bodyMargin;
           y -= -bodyMargin + height;
           indentation =
-              new Area(new Rectangle2D.Double(centerX - indentationSize / 2, y + height - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Rectangle2D.Double(
+                      centerX - indentationSize / 2,
+                      y + height - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _270:
-          width = (int) (size == RelaySize.Miniature ? MINI_WIDTH.convertToPixels() : ULTRA_WIDTH.convertToPixels());
-          height = (int) (size == RelaySize.Miniature ? MINI_HEIGHT.convertToPixels() : ULTRA_HEIGHT.convertToPixels());
+          width =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_WIDTH.convertToPixels()
+                      : ULTRA_WIDTH.convertToPixels());
+          height =
+              (int)
+                  (size == RelaySize.Miniature
+                      ? MINI_HEIGHT.convertToPixels()
+                      : ULTRA_HEIGHT.convertToPixels());
           x -= bodyMargin;
           y -= bodyMargin + rowSpacing;
           indentation =
-              new Area(new Rectangle2D.Double(x - indentationSize / 2, centerY - indentationSize / 2, indentationSize,
-                  indentationSize));
+              new Area(
+                  new Rectangle2D.Double(
+                      x - indentationSize / 2,
+                      centerY - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
       body[0] =
-          new Area(new RoundRectangle2D.Double(centerX - width / 2, centerY - height / 2, width, height, EDGE_RADIUS,
-              EDGE_RADIUS));
+          new Area(
+              new RoundRectangle2D.Double(
+                  centerX - width / 2,
+                  centerY - height / 2,
+                  width,
+                  height,
+                  EDGE_RADIUS,
+                  EDGE_RADIUS));
       body[1] = indentation;
       if (indentation != null) {
         indentation.intersect(body[0]);
@@ -290,7 +353,11 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -303,10 +370,13 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
-    
+
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     for (Point point : controlPoints) {
       if (!outlineMode) {
@@ -320,11 +390,13 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : BORDER_COLOR;
     }
     g2d.setColor(finalBorderColor);
@@ -345,11 +417,13 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
@@ -382,8 +456,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     int pinSize = 2 * width / 32;
     g2d.setColor(PIN_COLOR);
     for (int i = 0; i < 4; i++) {
-      if (i == 1)
-        continue;
+      if (i == 1) continue;
       g2d.fillOval(width / 4, (height / 5) * (i + 1) - 1, pinSize, pinSize);
       g2d.fillOval(3 * width / 4 - pinSize, (height / 5) * (i + 1) - 1, pinSize, pinSize);
     }
@@ -426,19 +499,20 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     // Invalidate body
     this.body = null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public static enum RelayType {
-    SPDT, DPDT;
+    SPDT,
+    DPDT;
   }
 
   public static enum RelaySize {
-
-    Miniature, Ultra_miniature;
+    Miniature,
+    Ultra_miniature;
 
     public String toString() {
       return name().replace('_', '-');

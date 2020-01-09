@@ -22,7 +22,8 @@
 package org.diylc.components.semiconductors;
 
 public enum ICPointCount {
-  _3("3", 3), _5("5", 5);
+  _3("3", 3),
+  _5("5", 5);
 
   private String title;
   private int value;

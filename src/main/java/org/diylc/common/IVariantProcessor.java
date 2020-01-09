@@ -23,7 +23,6 @@ package org.diylc.common;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.diylc.core.Template;
 
 public interface IVariantProcessor {
@@ -42,14 +41,13 @@ public interface IVariantProcessor {
   void deleteVariant(ComponentType type, String variantName);
 
   void setDefaultVariant(ComponentType type, String variantName);
-  
+
   int importVariants(String fileName) throws IOException;
-  
+
   String getDefaultVariant(ComponentType type);
 
   public class VariantAlreadyExistsException extends Exception {
 
     private static final long serialVersionUID = 1L;
-
   }
 }

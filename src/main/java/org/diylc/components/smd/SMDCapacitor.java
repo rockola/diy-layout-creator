@@ -22,7 +22,6 @@
 package org.diylc.components.smd;
 
 import java.awt.Color;
-
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -30,9 +29,14 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 
-@ComponentDescriptor(name = "SMD Capacitor", author = "Branislav Stojkovic", category = "SMD",
-    instanceNamePrefix = "C", description = "Surface mount capacitor", 
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE)
+@ComponentDescriptor(
+    name = "SMD Capacitor",
+    author = "Branislav Stojkovic",
+    category = "SMD",
+    instanceNamePrefix = "C",
+    description = "Surface mount capacitor",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE)
 public class SMDCapacitor extends PassiveSMDComponent<Capacitance> {
 
   public static Color BODY_COLOR = Color.decode("#BD9347");

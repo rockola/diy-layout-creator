@@ -29,7 +29,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ResistorColorCode;
 import org.diylc.common.SimpleComponentTransformer;
@@ -43,9 +42,15 @@ import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Resistor", author = "Branislav Stojkovic", category = "Passive",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "R", description = "Resistor layout symbol",
-    zOrder = IDIYComponent.COMPONENT, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Resistor",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "R",
+    description = "Resistor layout symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    transformer = SimpleComponentTransformer.class)
 public class Resistor extends AbstractLeadedComponent<Resistance> {
 
   private static final long serialVersionUID = 1L;
@@ -58,8 +63,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
   public static int FIRST_BAND = -4;
 
   private Resistance value = null;
-  @Deprecated
-  private Power power = Power.HALF;
+  @Deprecated private Power power = Power.HALF;
   private org.diylc.core.measures.Power powerNew = null;
   private ResistorColorCode colorCode = ResistorColorCode._5_BAND;
   private ResistorShape shape = ResistorShape.Standard;
@@ -148,8 +152,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
 
   @EditableProperty
   public ResistorShape getShape() {
-    if (shape == null)
-      shape = ResistorShape.Standard;
+    if (shape == null) shape = ResistorShape.Standard;
     return shape;
   }
 
@@ -162,13 +165,15 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
     if (getShape() == ResistorShape.Standard) {
       double length = getLength().convertToPixels();
       double width = getClosestOdd(getWidth().convertToPixels());
-      Rectangle2D rect = new Rectangle2D.Double(width / 2, width / 10, length - width, width * 8 / 10);
+      Rectangle2D rect =
+          new Rectangle2D.Double(width / 2, width / 10, length - width, width * 8 / 10);
       Area a = new Area(rect);
       a.add(new Area(new Ellipse2D.Double(0, 0, width, width)));
       a.add(new Area(new Ellipse2D.Double(length - width, 0, width, width)));
       return a;
     }
-    return new Rectangle2D.Double(0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
+    return new Rectangle2D.Double(
+        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
   }
 
   @Override
@@ -182,30 +187,29 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
     int x = getShape() == ResistorShape.Standard ? width + FIRST_BAND : -FIRST_BAND;
     Color[] bands = value.getColorCode(colorCode);
     for (int i = 0; i < bands.length; i++) {
-      g2d.setColor(bands[i]);        
+      g2d.setColor(bands[i]);
       Area line = new Area(stroke.createStrokedShape(new Line2D.Double(x, 0, x, width)));
       line.intersect(body);
       g2d.fill(line);
       x += BAND_SPACING;
-    }   
+    }
   }
 
   @Override
   protected int getLabelOffset(int bodyLength, int bodyWidth, int labelLength) {
-    if (value == null || getColorCode() == ResistorColorCode.NONE || getLabelOriantation() != AbstractLeadedComponent.LabelOriantation.Directional)
-      return 0;
+    if (value == null
+        || getColorCode() == ResistorColorCode.NONE
+        || getLabelOriantation() != AbstractLeadedComponent.LabelOriantation.Directional) return 0;
     Color[] bands = value.getColorCode(colorCode);
-    
+
     int bandLenght = FIRST_BAND + BAND_SPACING * (bands.length - 1);
-    
+
     if (getShape() == ResistorShape.Standard) {
-      if (labelLength < bodyLength - 2 * bodyWidth - bandLenght)
-        return bandLenght;
+      if (labelLength < bodyLength - 2 * bodyWidth - bandLenght) return bandLenght;
     } else {
-      if (labelLength < bodyLength - bandLenght)
-        return bandLenght;
+      if (labelLength < bodyLength - bandLenght) return bandLenght;
     }
-    
+
     int bandArea = getShape() == ResistorShape.Standard ? bodyWidth + bandLenght : -bandLenght;
 
     return bandArea / 2;
@@ -217,6 +221,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
   }
 
   public enum ResistorShape {
-    Tubular, Standard
+    Tubular,
+    Standard
   }
 }

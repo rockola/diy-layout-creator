@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.LabelPosition;
 import org.diylc.core.ComponentState;
 import org.diylc.core.annotations.EditableProperty;
@@ -61,16 +60,17 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
   protected float getLeadThickness() {
     return 1;
   }
-  
+
   @Override
-  protected int calculateLabelYOffset(Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics) {
+  protected int calculateLabelYOffset(
+      Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics) {
     if (labelPosition == LabelPosition.ABOVE) {
       return -5;
     } else {
       return (int) (shapeRect.getHeight() + textRect.getHeight());
     }
   }
-  
+
   @Override
   protected Point calculateLabelPosition(Point point1, Point point2) {
     double x = (point1.x + point2.x) / 2.0;
@@ -97,7 +97,8 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
 
   @Override
   protected Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+        ? SELECTION_COLOR
         : getLeadColor();
   }
 }

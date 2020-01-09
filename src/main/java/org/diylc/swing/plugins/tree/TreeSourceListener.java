@@ -26,13 +26,11 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-
 import org.diylc.common.IPlugInPort;
-
 
 /**
  * {@link DragSourceListener} for {@link TreePanel}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 class TreeSourceListener implements DragSourceListener {
@@ -47,8 +45,8 @@ class TreeSourceListener implements DragSourceListener {
 
   @Override
   public void dragDropEnd(DragSourceDropEvent dsde) {
-//    if (!dsde.getDropSuccess())
-//      presenter.setNewComponentTypeSlot(null, null, false);
+    //    if (!dsde.getDropSuccess())
+    //      presenter.setNewComponentTypeSlot(null, null, false);
   }
 
   @Override

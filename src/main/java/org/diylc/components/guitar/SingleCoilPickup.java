@@ -32,7 +32,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -51,21 +50,27 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Single Coil Pickup", category = "Guitar", author = "Branislav Stojkovic",
+@ComponentDescriptor(
+    name = "Single Coil Pickup",
+    category = "Guitar",
+    author = "Branislav Stojkovic",
     description = "Single coil guitar pickup, both Strat and Tele style",
-    zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Guitar Wiring Diagram")
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "PKP",
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Guitar Wiring Diagram")
 public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
-  private static final long serialVersionUID = 1L;  
+  private static final long serialVersionUID = 1L;
 
   private static Color BODY_COLOR = Color.white;
   private static Color BASE_COLOR = Color.gray;
   public static Color LUG_COLOR = Color.decode("#E0C04C");
-//  private static Color POINT_COLOR = Color.lightGray;
+  //  private static Color POINT_COLOR = Color.lightGray;
   private static Size WIDTH = new Size(15.5d, SizeUnit.mm);
   private static Size LENGTH = new Size(83d, SizeUnit.mm);
-  private static Size BASE_RADIUS = new Size(0.15d, SizeUnit.in);  
+  private static Size BASE_RADIUS = new Size(0.15d, SizeUnit.in);
   private static Size LUG_DIAMETER = new Size(0.06d, SizeUnit.in);
 
   // strat-specific
@@ -78,7 +83,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
   private static Size TELE_LIP_LENGTH = new Size(1.735d, SizeUnit.in);
   private static Size TELE_LENGTH = new Size(2.87d, SizeUnit.in);
   private static Size TELE_HOLE_SPACING = new Size(1.135d, SizeUnit.in);
-  
+
   private static Size HOLE_SIZE = new Size(2d, SizeUnit.mm);
   private static Size HOLE_MARGIN = new Size(4d, SizeUnit.mm);
   private static Size POLE_SIZE = new Size(4d, SizeUnit.mm);
@@ -87,21 +92,25 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
   private static Size RAIL_WIDTH = new Size(1.5d, SizeUnit.mm);
   private static Size RAIL_LENGTH = new Size(60d, SizeUnit.mm);
   private static Size COIL_SPACING = new Size(7.5d, SizeUnit.mm);
-  
+
   private Color color = BODY_COLOR;
   private Color poleColor = METAL_COLOR;
   private Color baseColor = BASE_COLOR;
   private SingleCoilType type = SingleCoilType.Stratocaster;
   private PolePieceType polePieceType = PolePieceType.Rods;
-  private Color lugColor = LUG_COLOR;  
-  
+  private Color lugColor = LUG_COLOR;
+
   @Override
-  protected OrientationHV getControlPointDirection() {   
+  protected OrientationHV getControlPointDirection() {
     return OrientationHV.HORIZONTAL;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
@@ -111,18 +120,18 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
-    
+
     Theme theme =
-        (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
 
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBaseColor());
     g2d.fill(body[4]);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getColor());
-    if (body[3] == null)
-      g2d.fill(body[0]);
-    else
-      g2d.fill(body[3]);
-    
+    if (body[3] == null) g2d.fill(body[0]);
+    else g2d.fill(body[3]);
+
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getLugColor());
     g2d.fill(body[1]);
     g2d.setColor(outlineMode ? theme.getOutlineColor() : darkerOrLighter(LUG_COLOR));
@@ -130,36 +139,39 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
     // g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
     // g2d.fill(body[3]);
-    g2d.setComposite(oldComposite);   
+    g2d.setComposite(oldComposite);
 
     Color finalBorderColor;
     if (outlineMode) {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : darkerOrLighter(getBaseColor());
     }
 
     g2d.setColor(finalBorderColor);
     g2d.draw(body[4]);
 
-    if (outlineMode) {     
+    if (outlineMode) {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : darkerOrLighter(color);
     }
 
-    g2d.setColor(finalBorderColor);    
+    g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
-    if (body[3] != null)
-      g2d.draw(body[3]);
+    if (body[3] != null) g2d.draw(body[3]);
 
     if (!outlineMode) {
       g2d.setColor(getPoleColor());
@@ -169,14 +181,15 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     }
 
     drawMainLabel(g2d, project, outlineMode, componentState);
-    
+
     drawlTerminalLabels(g2d, finalBorderColor, project);
-  }  
-  
+  }
+
   @Override
   protected int getMainLabelYOffset() {
-    if (getPolePieceType() == PolePieceType.RailHumbucker || getPolePieceType() == PolePieceType.RodHumbucker || getPolePieceType() == PolePieceType.None)
-      return 0;
+    if (getPolePieceType() == PolePieceType.RailHumbucker
+        || getPolePieceType() == PolePieceType.RodHumbucker
+        || getPolePieceType() == PolePieceType.None) return 0;
     return (int) (WIDTH.convertToPixels() / 2 - 20);
   }
 
@@ -188,7 +201,8 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
       Point[] points = getControlPoints();
       int x = (points[0].x + points[3].x) / 2;
-      int y = (points[0].y + points[3].y) / 2;;
+      int y = (points[0].y + points[3].y) / 2;
+      ;
       int width = (int) WIDTH.convertToPixels();
       int length = (int) LENGTH.convertToPixels();
       int stratInnerLength = (int) STRAT_INNER_LENGTH.convertToPixels();
@@ -203,18 +217,30 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
       int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
       int holeMargin = getClosestOdd(HOLE_MARGIN.convertToPixels());
       int baseRadius = (int) BASE_RADIUS.convertToPixels();
-      int coilOffset = 0;     
+      int coilOffset = 0;
 
       if (getType() == SingleCoilType.Stratocaster) {
         coilOffset = lipWidth / 2;
 
         Area mainArea =
-            new Area(new RoundRectangle2D.Double(x - length / 2, y - lipWidth / 2 - width, length, width, width, width));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x - length / 2, y - lipWidth / 2 - width, length, width, width, width));
         // Cutout holes
-        mainArea.subtract(new Area(new Ellipse2D.Double(x - length / 2 + holeMargin - holeSize / 2, y - lipWidth / 2
-            - width / 2 - holeSize / 2, holeSize, holeSize)));
-        mainArea.subtract(new Area(new Ellipse2D.Double(x + length / 2 - holeMargin - holeSize / 2, y - lipWidth / 2
-            - width / 2 - holeSize / 2, holeSize, holeSize)));
+        mainArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x - length / 2 + holeMargin - holeSize / 2,
+                    y - lipWidth / 2 - width / 2 - holeSize / 2,
+                    holeSize,
+                    holeSize)));
+        mainArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x + length / 2 - holeMargin - holeSize / 2,
+                    y - lipWidth / 2 - width / 2 - holeSize / 2,
+                    holeSize,
+                    holeSize)));
 
         body[3] = mainArea;
         RoundedPath basePath = new RoundedPath(baseRadius);
@@ -244,16 +270,27 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         basePath.lineTo(x, y + coilOffset);
 
         Area base = new Area(basePath.getPath());
-        base.intersect(new Area(new Rectangle2D.Double(x - coilLength * 0.48, y - teleBaseWidth, coilLength * 0.96,
-            teleBaseWidth * 2)));
+        base.intersect(
+            new Area(
+                new Rectangle2D.Double(
+                    x - coilLength * 0.48,
+                    y - teleBaseWidth,
+                    coilLength * 0.96,
+                    teleBaseWidth * 2)));
 
         // Cutout holes
-        base.subtract(new Area(new Ellipse2D.Double(x - teleLipLength / 2 - holeSize / 2, y, holeSize, holeSize)));
-        base.subtract(new Area(new Ellipse2D.Double(x + teleLipLength / 2 - holeSize / 2, y, holeSize, holeSize)));
-        base.subtract(new Area(new Ellipse2D.Double(x - holeSize / 2, y - teleHoleSpacing, holeSize, holeSize)));
-        
+        base.subtract(
+            new Area(
+                new Ellipse2D.Double(x - teleLipLength / 2 - holeSize / 2, y, holeSize, holeSize)));
+        base.subtract(
+            new Area(
+                new Ellipse2D.Double(x + teleLipLength / 2 - holeSize / 2, y, holeSize, holeSize)));
+        base.subtract(
+            new Area(
+                new Ellipse2D.Double(x - holeSize / 2, y - teleHoleSpacing, holeSize, holeSize)));
+
         body[4] = base;
-      }      
+      }
 
       Area poleArea = new Area();
       if (getPolePieceType() == PolePieceType.Rods) {
@@ -262,8 +299,11 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         int poleMargin = (length - poleSpacing * 5) / 2;
         for (int i = 0; i < 6; i++) {
           Ellipse2D pole =
-              new Ellipse2D.Double(x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2, y - coilOffset - width
-                  / 2 - poleSize / 2, poleSize, poleSize);
+              new Ellipse2D.Double(
+                  x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - coilOffset - width / 2 - poleSize / 2,
+                  poleSize,
+                  poleSize);
           poleArea.add(new Area(pole));
         }
       } else if (getPolePieceType() == PolePieceType.RodHumbucker) {
@@ -272,34 +312,62 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         int poleMargin = (length - poleSpacing * 5) / 2;
         int coilSpacing = (int) COIL_SPACING.convertToPixels();
         for (int i = 0; i < 6; i++) {
-          poleArea.add(new Area(new Ellipse2D.Double(x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2, y
-              - coilOffset - width / 2 - poleSize / 2 - coilSpacing / 2, poleSize, poleSize)));
-          poleArea.add(new Area(new Ellipse2D.Double(x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2, y
-              - coilOffset - width / 2 - poleSize / 2 + coilSpacing / 2, poleSize, poleSize)));
+          poleArea.add(
+              new Area(
+                  new Ellipse2D.Double(
+                      x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2,
+                      y - coilOffset - width / 2 - poleSize / 2 - coilSpacing / 2,
+                      poleSize,
+                      poleSize)));
+          poleArea.add(
+              new Area(
+                  new Ellipse2D.Double(
+                      x - length / 2 + poleMargin + i * poleSpacing - poleSize / 2,
+                      y - coilOffset - width / 2 - poleSize / 2 + coilSpacing / 2,
+                      poleSize,
+                      poleSize)));
         }
       } else if (getPolePieceType() == PolePieceType.RailHumbucker) {
         int railWidth = (int) RAIL_WIDTH.convertToPixels();
         int railSpacing = (int) COIL_SPACING.convertToPixels();
         int railLength = (int) RAIL_LENGTH.convertToPixels();
-        poleArea.add(new Area(new Rectangle2D.Double(x - railLength / 2, y - coilOffset - width / 2 - railSpacing / 2
-            - railWidth / 2, railLength, railWidth)));
-        poleArea.add(new Area(new Rectangle2D.Double(x - railLength / 2, y - coilOffset - width / 2 + railSpacing / 2
-            - railWidth / 2, railLength, railWidth)));
+        poleArea.add(
+            new Area(
+                new Rectangle2D.Double(
+                    x - railLength / 2,
+                    y - coilOffset - width / 2 - railSpacing / 2 - railWidth / 2,
+                    railLength,
+                    railWidth)));
+        poleArea.add(
+            new Area(
+                new Rectangle2D.Double(
+                    x - railLength / 2,
+                    y - coilOffset - width / 2 + railSpacing / 2 - railWidth / 2,
+                    railLength,
+                    railWidth)));
       } else if (getPolePieceType() == PolePieceType.Rail) {
         int railWidth = 2 * (int) RAIL_WIDTH.convertToPixels();
         int railLength = (int) RAIL_LENGTH.convertToPixels();
-        poleArea.add(new Area(new RoundRectangle2D.Double(x - railLength / 2, y - coilOffset - width / 2 - railWidth
-            / 2, railLength, railWidth, railWidth / 2, railWidth / 2)));
+        poleArea.add(
+            new Area(
+                new RoundRectangle2D.Double(
+                    x - railLength / 2,
+                    y - coilOffset - width / 2 - railWidth / 2,
+                    railLength,
+                    railWidth,
+                    railWidth / 2,
+                    railWidth / 2)));
       }
-      
-      body[0] =
-          new Area(new RoundRectangle2D.Double(x - coilLength / 2, y - coilOffset - width, coilLength, width, width,
-              width));
 
-      body[2] = poleArea;          
-      
+      body[0] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - coilLength / 2, y - coilOffset - width, coilLength, width, width, width));
+
+      body[2] = poleArea;
+
       if (body[3] == null) {
-        ((Area)body[4]).subtract((Area) body[0]);
+        ((Area) body[4]).subtract((Area) body[0]);
       }
 
       // Rotate if needed
@@ -319,18 +387,26 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
-          if (area != null)
-            area.transform(rotation);
+          if (area != null) area.transform(rotation);
         }
       }
-      
+
       body[1] = new Area();
       double lugHole = getClosestOdd(lugDiameter * 0.4);
-      for (int i = getPolarity() == Polarity.Humbucking ? 0 : 1; i < (getPolarity() == Polarity.Humbucking ? 4 : 3); i++) {
+      for (int i = getPolarity() == Polarity.Humbucking ? 0 : 1;
+          i < (getPolarity() == Polarity.Humbucking ? 4 : 3);
+          i++) {
         Point p = points[i];
-        ((Area)body[1]).add(new Area(new Ellipse2D.Double(p.x - lugDiameter / 2, p.y - lugDiameter / 2, lugDiameter, lugDiameter)));
-        ((Area)body[1]).subtract(new Area(new Ellipse2D.Double(p.x - lugHole / 2, p.y - lugHole / 2, lugHole, lugHole)));
-      } 
+        ((Area) body[1])
+            .add(
+                new Area(
+                    new Ellipse2D.Double(
+                        p.x - lugDiameter / 2, p.y - lugDiameter / 2, lugDiameter, lugDiameter)));
+        ((Area) body[1])
+            .subtract(
+                new Area(
+                    new Ellipse2D.Double(p.x - lugHole / 2, p.y - lugHole / 2, lugHole, lugHole)));
+      }
     }
     return body;
   }
@@ -344,13 +420,29 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
     g2d.setColor(BASE_COLOR);
-    g2d.fillPolygon(new int[] {width * 9 / 16, width * 9 / 16, width * 11 / 16, width * 11 / 16}, new int[] {
-        (height - bodyLength) / 2, (height + bodyLength) / 2, height * 5 / 8, height * 3 / 8}, 4);
+    g2d.fillPolygon(
+        new int[] {width * 9 / 16, width * 9 / 16, width * 11 / 16, width * 11 / 16},
+        new int[] {
+          (height - bodyLength) / 2, (height + bodyLength) / 2, height * 5 / 8, height * 3 / 8
+        },
+        4);
     g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect((width - bodyWidth) / 2, (height - bodyLength) / 2, bodyWidth, bodyLength, bodyWidth, bodyWidth);
+    g2d.fillRoundRect(
+        (width - bodyWidth) / 2,
+        (height - bodyLength) / 2,
+        bodyWidth,
+        bodyLength,
+        bodyWidth,
+        bodyWidth);
 
     g2d.setColor(Color.gray);
-    g2d.drawRoundRect((width - bodyWidth) / 2, (height - bodyLength) / 2, bodyWidth, bodyLength, bodyWidth, bodyWidth);
+    g2d.drawRoundRect(
+        (width - bodyWidth) / 2,
+        (height - bodyLength) / 2,
+        bodyWidth,
+        bodyLength,
+        bodyWidth,
+        bodyWidth);
 
     // g2d.setColor(Color.gray);
     // g2d.drawLine(width / 2, 4 * width / 32, width / 2, 4 * width / 32);
@@ -360,14 +452,17 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     int poleSize = 2;
     int poleSpacing = 17 * width / 32;
     for (int i = 0; i < 6; i++) {
-      g2d.fillOval((width - poleSize) / 2, (height - poleSpacing) / 2 + (i * poleSpacing / 5), poleSize, poleSize);
+      g2d.fillOval(
+          (width - poleSize) / 2,
+          (height - poleSpacing) / 2 + (i * poleSpacing / 5),
+          poleSize,
+          poleSize);
     }
   }
 
   @EditableProperty
   public SingleCoilType getType() {
-    if (type == null)
-      type = SingleCoilType.Stratocaster;
+    if (type == null) type = SingleCoilType.Stratocaster;
     return type;
   }
 
@@ -379,8 +474,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
   @EditableProperty(name = "Pole Pieces")
   public PolePieceType getPolePieceType() {
-    if (polePieceType == null)
-      polePieceType = PolePieceType.Rods;
+    if (polePieceType == null) polePieceType = PolePieceType.Rods;
     return polePieceType;
   }
 
@@ -401,8 +495,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
   @EditableProperty(name = "Base")
   public Color getBaseColor() {
-    if (baseColor == null)
-      baseColor = BASE_COLOR;
+    if (baseColor == null) baseColor = BASE_COLOR;
     return baseColor;
   }
 
@@ -412,15 +505,14 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
   @EditableProperty(name = "Pole Color")
   public Color getPoleColor() {
-    if (poleColor == null)
-      poleColor = METAL_COLOR;
+    if (poleColor == null) poleColor = METAL_COLOR;
     return poleColor;
   }
 
   public void setPoleColor(Color poleColor) {
     this.poleColor = poleColor;
   }
-  
+
   @EditableProperty(name = "Lugs")
   public Color getLugColor() {
     if (lugColor == null) {
@@ -428,18 +520,22 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     }
     return lugColor;
   }
-  
+
   public void setLugColor(Color lugColor) {
     this.lugColor = lugColor;
   }
-   
 
   public enum SingleCoilType {
-    Stratocaster, Telecaster;
+    Stratocaster,
+    Telecaster;
   }
 
   public enum PolePieceType {
-    Rods("Single Rods"), Rail("Single Rail"), RailHumbucker("Dual Rail Humbucker"), RodHumbucker("Dual Rods"), None("None");
+    Rods("Single Rods"),
+    Rail("Single Rail"),
+    RailHumbucker("Dual Rail Humbucker"),
+    RodHumbucker("Dual Rods"),
+    None("None");
 
     private String label;
 

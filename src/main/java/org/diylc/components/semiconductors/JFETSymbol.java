@@ -26,7 +26,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.core.IDIYComponent;
@@ -34,16 +33,22 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 
-@ComponentDescriptor(name = "JFET", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    instanceNamePrefix = "Q", description = "JFET transistor schematic symbol", 
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE, keywordTag = "Schematic")
+@ComponentDescriptor(
+    name = "JFET",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    instanceNamePrefix = "Q",
+    description = "JFET transistor schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
+    keywordTag = "Schematic")
 public class JFETSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
 
   protected FETPolarity polarity = FETPolarity.NEGATIVE;
 
-  public Shape[] getBody() {    
+  public Shape[] getBody() {
     Shape[] body = new Shape[3];
     Point[] controlPoints = getControlPoints();
     int x = controlPoints[0].x;
@@ -72,15 +77,19 @@ public class JFETSymbol extends Abstract3LegSymbol {
     Polygon arrow;
     if (polarity == FETPolarity.NEGATIVE) {
       arrow =
-          new Polygon(new int[] {x + pinSpacing * 2 / 6, x + pinSpacing * 2 / 6, x + pinSpacing * 6 / 6}, new int[] {
-              y - pinSpacing / 5, y + pinSpacing / 5, y}, 3);
+          new Polygon(
+              new int[] {x + pinSpacing * 2 / 6, x + pinSpacing * 2 / 6, x + pinSpacing * 6 / 6},
+              new int[] {y - pinSpacing / 5, y + pinSpacing / 5, y},
+              3);
     } else {
       arrow =
-          new Polygon(new int[] {x + pinSpacing / 6, x + pinSpacing * 5 / 6, x + pinSpacing * 5 / 6}, new int[] {y,
-              y + pinSpacing / 5, y - pinSpacing / 5}, 3);
+          new Polygon(
+              new int[] {x + pinSpacing / 6, x + pinSpacing * 5 / 6, x + pinSpacing * 5 / 6},
+              new int[] {y, y + pinSpacing / 5, y - pinSpacing / 5},
+              3);
     }
     body[2] = arrow;
-    
+
     return body;
   }
 

@@ -30,7 +30,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -50,10 +49,16 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Mini Toggle Switch", category = "Electro-Mechanical", author = "Branislav Stojkovic",
-    description = "Panel mounted mini toggle switch", zOrder = IDIYComponent.COMPONENT,
-    instanceNamePrefix = "SW", autoEdit = false)
-public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchType> implements ISwitch {
+@ComponentDescriptor(
+    name = "Mini Toggle Switch",
+    category = "Electro-Mechanical",
+    author = "Branislav Stojkovic",
+    description = "Panel mounted mini toggle switch",
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "SW",
+    autoEdit = false)
+public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchType>
+    implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -68,7 +73,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   private static Color CIRCLE_COLOR = Color.decode("#FFFFAA");
 
   protected Point[] controlPoints = new Point[] {new Point(0, 0)};
-  transient protected Shape body;
+  protected transient Shape body;
   protected String name;
   protected ToggleSwitchType switchType = ToggleSwitchType.DPDT;
   private OrientationHV orientation = OrientationHV.VERTICAL;
@@ -92,72 +97,94 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       case SPDT:
       case SPDT_off:
         controlPoints =
-            new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing),
-                new Point(firstPoint.x, firstPoint.y + 2 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing)
+            };
         break;
       case DPDT:
       case DPDT_off:
         controlPoints =
-            new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing),
-                new Point(firstPoint.x, firstPoint.y + 2 * spacing), new Point(firstPoint.x + spacing, firstPoint.y),
-                new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y),
+              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing)
+            };
         break;
       case _DP3T_mustang:
         controlPoints =
-                new Point[] {firstPoint,
-                        new Point(firstPoint.x, firstPoint.y + spacing),
-                        new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-                        new Point(firstPoint.x, firstPoint.y + 3 * spacing),
-                        new Point(firstPoint.x + spacing, firstPoint.y),
-                        new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-                        new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-                        new Point(firstPoint.x + spacing, firstPoint.y + 3 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x, firstPoint.y + 3 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y),
+              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 3 * spacing)
+            };
         break;
       case _3PDT:
       case _3PDT_off:
         controlPoints =
-            new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing),
-                new Point(firstPoint.x, firstPoint.y + 2 * spacing), new Point(firstPoint.x + spacing, firstPoint.y),
-                new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y),
+              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing)
+            };
         break;
       case _4PDT:
       case _4PDT_off:
         controlPoints =
-            new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing),
-                new Point(firstPoint.x, firstPoint.y + 2 * spacing), new Point(firstPoint.x + spacing, firstPoint.y),
-                new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y),
+              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing)
+            };
         break;
       case _5PDT:
       case _5PDT_off:
         controlPoints =
-            new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing),
-                new Point(firstPoint.x, firstPoint.y + 2 * spacing), new Point(firstPoint.x + spacing, firstPoint.y),
-                new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing),
-                new Point(firstPoint.x + 4 * spacing, firstPoint.y),
-                new Point(firstPoint.x + 4 * spacing, firstPoint.y + spacing),
-                new Point(firstPoint.x + 4 * spacing, firstPoint.y + 2 * spacing)};
+            new Point[] {
+              firstPoint,
+              new Point(firstPoint.x, firstPoint.y + spacing),
+              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y),
+              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing),
+              new Point(firstPoint.x + 4 * spacing, firstPoint.y),
+              new Point(firstPoint.x + 4 * spacing, firstPoint.y + spacing),
+              new Point(firstPoint.x + 4 * spacing, firstPoint.y + 2 * spacing)
+            };
         break;
     }
-    AffineTransform xform = AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
+    AffineTransform xform =
+        AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
     if (getOrientation() == OrientationHV.HORIZONTAL) {
       for (int i = 1; i < controlPoints.length; i++) {
         xform.transform(controlPoints[i], controlPoints[i]);
@@ -248,18 +275,26 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     Shape body = getBody();
-    Theme theme = (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme =
+        (Theme)
+            ConfigurationManager.getInstance()
+                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
       g2d.fill(body);
@@ -268,11 +303,13 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       Color finalBorderColor;
       if (outlineMode) {
         finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                ? SELECTION_COLOR
                 : theme.getOutlineColor();
       } else {
         finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+                ? SELECTION_COLOR
                 : getBorderColor();
       }
       g2d.setColor(finalBorderColor);
@@ -291,7 +328,8 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
         g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       } else {
         g2d.setColor(CIRCLE_COLOR);
-        g2d.fillOval(p.x - circleDiameter / 2, p.y - circleDiameter / 2, circleDiameter, circleDiameter);
+        g2d.fillOval(
+            p.x - circleDiameter / 2, p.y - circleDiameter / 2, circleDiameter, circleDiameter);
         g2d.setColor(METAL_COLOR);
         g2d.fillRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       }
@@ -306,47 +344,83 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       switch (switchType) {
         case SPST:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin, 2 * margin
-                  + spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin,
+                  2 * margin + spacing,
+                  margin,
+                  margin);
           break;
         case SPDT:
         case SPDT_off:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin, 2 * margin + 2
-                  * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
         case DPDT:
         case DPDT_off:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin + spacing, 2
-                  * margin + 2 * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + spacing,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
         case _DP3T_mustang:
           body =
-                  new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin + spacing, 2
-                          * margin + 3 * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + spacing,
+                  2 * margin + 3 * spacing,
+                  margin,
+                  margin);
           break;
         case _3PDT:
         case _3PDT_off:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin + 2 * spacing, 2
-                  * margin + 2 * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 2 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
         case _4PDT:
         case _4PDT_off:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin + 3 * spacing, 2
-                  * margin + 2 * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 3 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
         case _5PDT:
         case _5PDT_off:
           body =
-              new RoundRectangle2D.Double(firstPoint.x - margin, firstPoint.y - margin, 2 * margin + 4 * spacing, 2
-                  * margin + 2 * spacing, margin, margin);
+              new RoundRectangle2D.Double(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 4 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
       }
       if (getOrientation() == OrientationHV.HORIZONTAL) {
-        AffineTransform xform = AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
+        AffineTransform xform =
+            AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
         body = new Area(body);
         ((Area) body).transform(xform);
       }
@@ -365,15 +439,17 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       g2d.setColor(CIRCLE_COLOR);
       g2d.fillOval(width / 2 - circleSize / 2, i * height / 4 - 3, circleSize, circleSize);
       g2d.setColor(METAL_COLOR);
-      g2d.drawLine(width / 2 - circleSize / 2 + 1, i * height / 4 - 1, width / 2 + circleSize / 2 - 1, i * height / 4
-          - 1);
+      g2d.drawLine(
+          width / 2 - circleSize / 2 + 1,
+          i * height / 4 - 1,
+          width / 2 + circleSize / 2 - 1,
+          i * height / 4 - 1);
     }
   }
 
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
-    if (bodyColor == null)
-      bodyColor = BODY_COLOR;
+    if (bodyColor == null) bodyColor = BODY_COLOR;
     return bodyColor;
   }
 
@@ -383,23 +459,22 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
 
   @EditableProperty(name = "Border")
   public Color getBorderColor() {
-    if (borderColor == null)
-      borderColor = BORDER_COLOR;
+    if (borderColor == null) borderColor = BORDER_COLOR;
     return borderColor;
   }
 
   public void setBorderColor(Color borderColor) {
     this.borderColor = borderColor;
   }
-  
+
   // switch stuff
-//  
-//  @Override
-//  public String getControlPointNodeName(int index) {
-//    // we don't want the switch to produce any nodes, it just makes connections
-//    return null;
-//  }
-  
+  //
+  //  @Override
+  //  public String getControlPointNodeName(int index) {
+  //    // we don't want the switch to produce any nodes, it just makes connections
+  //    return null;
+  //  }
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
@@ -408,28 +483,27 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   @Override
   public int getPositionCount() {
     switch (switchType) {
-      case SPST:        
+      case SPST:
       case SPDT:
       case DPDT:
       case _3PDT:
       case _4PDT:
       case _5PDT:
-        return 2;        
-      case _DP3T_mustang:             
+        return 2;
+      case _DP3T_mustang:
       case SPDT_off:
       case DPDT_off:
       case _3PDT_off:
       case _4PDT_off:
       case _5PDT_off:
-        return 3;      
+        return 3;
     }
     return 2;
   }
 
   @Override
   public String getPositionName(int position) {
-    if (switchType.name().endsWith("_off") && position == 2)
-      return "OFF";
+    if (switchType.name().endsWith("_off") && position == 2) return "OFF";
     return "ON" + Integer.toString(position + 1);
   }
 
@@ -438,20 +512,23 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     switch (switchType) {
       case SPST:
         return position == 0;
-      case SPDT:        
+      case SPDT:
       case DPDT:
       case _3PDT:
       case _4PDT:
       case _5PDT:
-        return (index2 - index1) < 3 && index1 % 3 == position && index2 % 3 == position + 1;        
-      case SPDT_off:        
+        return (index2 - index1) < 3 && index1 % 3 == position && index2 % 3 == position + 1;
+      case SPDT_off:
       case DPDT_off:
       case _3PDT_off:
       case _4PDT_off:
       case _5PDT_off:
-        return position != 2 && (index2 - index1) < 3 && index1 % 3 == position && index2 % 3 == position + 1; 
+        return position != 2
+            && (index2 - index1) < 3
+            && index1 % 3 == position
+            && index2 % 3 == position + 1;
       case _DP3T_mustang:
-        return (index2 - index1) < 3 && index1 % 3 == 0 && index2 % 3 == position + 1;      
+        return (index2 - index1) < 3 && index1 % 3 == 0 && index2 % 3 == position + 1;
     }
     return false;
   }

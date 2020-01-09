@@ -27,7 +27,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
@@ -42,10 +41,16 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "TriPad Board", category = "Boards", author = "Hauke Juhls", zOrder = IDIYComponent.BOARD,
+@ComponentDescriptor(
+    name = "TriPad Board",
+    category = "Boards",
+    author = "Hauke Juhls",
+    zOrder = IDIYComponent.BOARD,
     instanceNamePrefix = "Board",
-    description = "Perforated FR4 board with copper strips connecting 3 holes in a row (aka TriPad Board)",
-    keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME, transformer = SimpleComponentTransformer.class)
+    description =
+        "Perforated FR4 board with copper strips connecting 3 holes in a row (aka TriPad Board)",
+    keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
+    transformer = SimpleComponentTransformer.class)
 public class TriPadBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
@@ -63,10 +68,15 @@ public class TriPadBoard extends AbstractBoard {
   protected OrientationHV orientation = OrientationHV.HORIZONTAL;
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape clip = g2d.getClip();
-    if (checkPointsClipped(clip) && !clip.contains(firstPoint.x, secondPoint.y)
+    if (checkPointsClipped(clip)
+        && !clip.contains(firstPoint.x, secondPoint.y)
         && !clip.contains(secondPoint.x, firstPoint.y)) {
       return;
     }
@@ -74,7 +84,8 @@ public class TriPadBoard extends AbstractBoard {
     if (componentState != ComponentState.DRAGGING) {
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       Point p = new Point(firstPoint);
       int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels());
@@ -96,13 +107,19 @@ public class TriPadBoard extends AbstractBoard {
             }
 
             g2d.setColor(stripColor);
-            drawingObserver.startTrackingContinuityArea(true);  
-            g2d.fillRect(p.x + spacing - stripSize / 2, p.y - stripSize / 2, spacing * (spacesToDraw - 1) + stripSize,
+            drawingObserver.startTrackingContinuityArea(true);
+            g2d.fillRect(
+                p.x + spacing - stripSize / 2,
+                p.y - stripSize / 2,
+                spacing * (spacesToDraw - 1) + stripSize,
                 stripSize);
             drawingObserver.stopTrackingContinuityArea();
             g2d.setColor(stripColor.darker());
 
-            g2d.drawRect(p.x + spacing - stripSize / 2, p.y - stripSize / 2, spacing * (spacesToDraw - 1) + stripSize,
+            g2d.drawRect(
+                p.x + spacing - stripSize / 2,
+                p.y - stripSize / 2,
+                spacing * (spacesToDraw - 1) + stripSize,
                 stripSize);
 
             p.x += spacing * spacesToDraw;
@@ -134,13 +151,19 @@ public class TriPadBoard extends AbstractBoard {
             }
 
             g2d.setColor(stripColor);
-            drawingObserver.startTrackingContinuityArea(true);  
-            g2d.fillRect(p.x - stripSize / 2, p.y + spacing - stripSize / 2, stripSize, spacing * (spacesToDraw - 1)
-                + stripSize);
+            drawingObserver.startTrackingContinuityArea(true);
+            g2d.fillRect(
+                p.x - stripSize / 2,
+                p.y + spacing - stripSize / 2,
+                stripSize,
+                spacing * (spacesToDraw - 1) + stripSize);
             drawingObserver.stopTrackingContinuityArea();
             g2d.setColor(stripColor.darker());
-            g2d.drawRect(p.x - stripSize / 2, p.y + spacing - stripSize / 2, stripSize, spacing * (spacesToDraw - 1)
-                + stripSize);
+            g2d.drawRect(
+                p.x - stripSize / 2,
+                p.y + spacing - stripSize / 2,
+                stripSize,
+                spacing * (spacesToDraw - 1) + stripSize);
 
             p.y += spacing * spacesToDraw;
           }
@@ -203,12 +226,23 @@ public class TriPadBoard extends AbstractBoard {
 
     for (int row = 0; row < 5; row++) {
       g2d.setColor(COPPER_COLOR);
-      g2d.fillRect(0, row * verticalSpacing + 2, horizontalIndent / 2 + horizontalSpacing, verticalSpacing - 1);
+      g2d.fillRect(
+          0,
+          row * verticalSpacing + 2,
+          horizontalIndent / 2 + horizontalSpacing,
+          verticalSpacing - 1);
 
       g2d.setColor(COPPER_COLOR);
-      g2d.fillRect(horizontalSpacing + 2, row * verticalSpacing + 2, horizontalSpacing * 3 - 1, verticalSpacing - 1);
+      g2d.fillRect(
+          horizontalSpacing + 2,
+          row * verticalSpacing + 2,
+          horizontalSpacing * 3 - 1,
+          verticalSpacing - 1);
 
-      g2d.fillRect(horizontalSpacing * 4 + 2, row * verticalSpacing + 2, horizontalIndent / 2 + horizontalSpacing,
+      g2d.fillRect(
+          horizontalSpacing * 4 + 2,
+          row * verticalSpacing + 2,
+          horizontalIndent / 2 + horizontalSpacing,
           verticalSpacing - 1);
     }
 
@@ -237,7 +271,7 @@ public class TriPadBoard extends AbstractBoard {
       this.stripSpan = stripSpan;
     }
   }
-  
+
   @Override
   public String getControlPointNodeName(int index) {
     return null;

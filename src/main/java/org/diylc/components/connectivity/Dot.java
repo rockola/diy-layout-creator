@@ -24,7 +24,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
@@ -39,9 +38,16 @@ import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Dot", category = "Connectivity", author = "Branislav Stojkovic",
-    description = "Connector dot", instanceNamePrefix = "Dot", zOrder = IDIYComponent.COMPONENT,
-    bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Dot",
+    category = "Connectivity",
+    author = "Branislav Stojkovic",
+    description = "Connector dot",
+    instanceNamePrefix = "Dot",
+    zOrder = IDIYComponent.COMPONENT,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
+    transformer = SimpleComponentTransformer.class)
 public class Dot extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
@@ -54,14 +60,20 @@ public class Dot extends AbstractComponent<Void> {
   private Point point = new Point(0, 0);
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     int diameter = getClosestOdd((int) getSize().convertToPixels());
-    g2d.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-        : color);
+    g2d.setColor(
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color);
     g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
   }
 
@@ -127,9 +139,9 @@ public class Dot extends AbstractComponent<Void> {
 
   @Override
   public void setValue(Void value) {}
-  
+
   @Override
-  public String getControlPointNodeName(int index) {   
+  public String getControlPointNodeName(int index) {
     return null;
   }
 }

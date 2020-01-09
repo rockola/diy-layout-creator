@@ -32,7 +32,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.EnumSet;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -46,7 +45,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
@@ -59,14 +57,19 @@ public class UploadDialog extends ButtonDialog {
   private static final long serialVersionUID = 1L;
 
   private static final String BULLET = "&nbsp;&nbsp;&nbsp;&#8226;&nbsp;";
-  private static final String TERMS_HTML = "<html>" + BULLET
-      + "All content uploaded to DIY Cloud is shared under Creative Commons 3.0 Licence.<br>" + BULLET
-      + "Only finished and resonably verified projects may be uploaded to the DIY Cloud.<br>" + BULLET
-      + "Please provide a meaningful project description to make it possible for others to find the project.<br>"
-      + BULLET + "If you are building on top of someone else's work, please leave credits in the description.<br>"
-      + BULLET
-      + "Uploaded content may be reviewed, edited and removed by the administrators if it is not up to standards.<br>"
-      + "</html>";
+  private static final String TERMS_HTML =
+      "<html>"
+          + BULLET
+          + "All content uploaded to DIY Cloud is shared under Creative Commons 3.0 Licence.<br>"
+          + BULLET
+          + "Only finished and resonably verified projects may be uploaded to the DIY Cloud.<br>"
+          + BULLET
+          + "Please provide a meaningful project description to make it possible for others to find the project.<br>"
+          + BULLET
+          + "If you are building on top of someone else's work, please leave credits in the description.<br>"
+          + BULLET
+          + "Uploaded content may be reviewed, edited and removed by the administrators if it is not up to standards.<br>"
+          + "</html>";
 
   private JPanel mainPanel;
   private JLabel termsLabel;
@@ -162,13 +165,14 @@ public class UploadDialog extends ButtonDialog {
   private JCheckBox getAgreeBox() {
     if (agreeBox == null) {
       agreeBox = new JCheckBox("I agree to these terms");
-      agreeBox.addChangeListener(new ChangeListener() {
+      agreeBox.addChangeListener(
+          new ChangeListener() {
 
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          getButton(OK).setEnabled(getAgreeBox().isSelected());
-        }
-      });
+            @Override
+            public void stateChanged(ChangeEvent e) {
+              getButton(OK).setEnabled(getAgreeBox().isSelected());
+            }
+          });
     }
     return agreeBox;
   }
@@ -178,8 +182,9 @@ public class UploadDialog extends ButtonDialog {
       termsLabel = new JLabel();
       termsLabel.setOpaque(true);
       termsLabel.setBackground(UIManager.getColor("ToolTip.background"));
-      termsLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
-          BorderFactory.createEmptyBorder(2, 2, 2, 2)));
+      termsLabel.setBorder(
+          BorderFactory.createCompoundBorder(
+              BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
       termsLabel.setText(TERMS_HTML);
     }
     return termsLabel;
@@ -197,17 +202,19 @@ public class UploadDialog extends ButtonDialog {
       gbc.weighty = 1;
       gbc.fill = GridBagConstraints.BOTH;
 
-      thumbnailPanel.add(new JComponent() {
+      thumbnailPanel.add(
+          new JComponent() {
 
-        private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-        @Override
-        public void paint(Graphics g) {
-          super.paint(g);
+            @Override
+            public void paint(Graphics g) {
+              super.paint(g);
 
-          paintThumbnail(g, getBounds());
-        }
-      }, gbc);
+              paintThumbnail(g, getBounds());
+            }
+          },
+          gbc);
 
       thumbnailPanel.setPreferredSize(getThumbnailSize());
       thumbnailPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -217,10 +224,8 @@ public class UploadDialog extends ButtonDialog {
 
   private Dimension getThumbnailSize() {
     Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
-    if (d.height > d.width)
-      return new Dimension(192 * d.width / d.height, 192);
-    else
-      return new Dimension(192, 192 * d.height / d.width);
+    if (d.height > d.width) return new Dimension(192 * d.width / d.height, 192);
+    else return new Dimension(192, 192 * d.height / d.width);
   }
 
   private JTextField getNameField() {
@@ -276,7 +281,8 @@ public class UploadDialog extends ButtonDialog {
     if (keywordsField == null) {
       keywordsField = new JTextField();
       keywordsField.setColumns(32);
-      keywordsField.setText(KeywordExtractor.getInstance().extractKeywords(plugInPort.getCurrentProject()));
+      keywordsField.setText(
+          KeywordExtractor.getInstance().extractKeywords(plugInPort.getCurrentProject()));
     }
     return keywordsField;
   }
@@ -318,7 +324,7 @@ public class UploadDialog extends ButtonDialog {
       zoomRatio = rect.getHeight() / d.getHeight();
     }
 
-//    g2d.scale(zoomRatio, zoomRatio);
+    //    g2d.scale(zoomRatio, zoomRatio);
     UploadDialog.this.plugInPort.draw(g2d, EnumSet.of(DrawOption.ANTIALIASING), null, zoomRatio);
   }
 

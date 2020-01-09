@@ -22,7 +22,6 @@
 package org.diylc.components;
 
 import java.awt.Rectangle;
-
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
@@ -30,9 +29,8 @@ import org.diylc.core.measures.SizeUnit;
 /**
  * Base class for radial components. The same as {@link AbstractRadialComponent} but with added pin
  * spacing.
- * 
+ *
  * @author bancika
- * 
  * @param <T>
  */
 public abstract class AbstractRadialComponent<T> extends AbstractLeadedComponent<T> {
@@ -59,5 +57,4 @@ public abstract class AbstractRadialComponent<T> extends AbstractLeadedComponent
   public void setPinSpacing(Size pinSpacing) {
     this.pinSpacing = pinSpacing;
   }
-
 }

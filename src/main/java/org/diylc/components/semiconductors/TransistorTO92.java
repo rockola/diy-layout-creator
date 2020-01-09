@@ -32,7 +32,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -50,9 +49,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Transistor (TO-92)", author = "Branislav Stojkovic", category = "Semiconductors",
-    instanceNamePrefix = "Q", description = "Transistor with small plastic or epoxy body",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE, transformer = TO92Transformer.class)
+@ComponentDescriptor(
+    name = "Transistor (TO-92)",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    instanceNamePrefix = "Q",
+    description = "Transistor with small plastic or epoxy body",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
+    transformer = TO92Transformer.class)
 public class TransistorTO92 extends AbstractTransistorPackage {
 
   private static final long serialVersionUID = 1L;
@@ -67,7 +72,7 @@ public class TransistorTO92 extends AbstractTransistorPackage {
   public static Size BODY_DIAMETER = new Size(0.2d, SizeUnit.in);
 
   private boolean folded = false;
-  private Size pinSpacing = PIN_SPACING;  
+  private Size pinSpacing = PIN_SPACING;
 
   public TransistorTO92() {
     super();
@@ -102,7 +107,7 @@ public class TransistorTO92 extends AbstractTransistorPackage {
     // Reset body shape;
     body = null;
   }
- 
+
   @Override
   protected void updateControlPoints() {
     int pinSpacing = (int) getPinSpacing().convertToPixels();
@@ -136,22 +141,32 @@ public class TransistorTO92 extends AbstractTransistorPackage {
       int x = (controlPoints[0].x + controlPoints[1].x + controlPoints[2].x) / 3;
       int y = (controlPoints[0].y + controlPoints[1].y + controlPoints[2].y) / 3;
       int bodyDiameter = getClosestOdd(BODY_DIAMETER.convertToPixels());
-      
+
       Area newBody = null;
 
       if (folded) {
         switch (orientation) {
           case DEFAULT:
-            newBody = new Area(new Rectangle2D.Double(x - bodyDiameter, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody =
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
             break;
           case _90:
-            newBody = new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y - bodyDiameter, bodyDiameter, bodyDiameter));
+            newBody =
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter / 2, y - bodyDiameter, bodyDiameter, bodyDiameter));
             break;
           case _180:
-            newBody = new Area(new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody =
+                new Area(
+                    new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
             break;
           case _270:
-            newBody = new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyDiameter));
+            newBody =
+                new Area(
+                    new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyDiameter));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
@@ -160,56 +175,88 @@ public class TransistorTO92 extends AbstractTransistorPackage {
         switch (orientation) {
           case DEFAULT:
             newBody =
-                new Area(new Ellipse2D.Double(x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(new Area(new Rectangle2D.Double(x - bodyDiameter, y - bodyDiameter / 2, 3 * bodyDiameter / 4,
-                bodyDiameter)));
+                new Area(
+                    new Ellipse2D.Double(
+                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody.subtract(
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter,
+                        y - bodyDiameter / 2,
+                        3 * bodyDiameter / 4,
+                        bodyDiameter)));
             break;
           case _90:
             newBody =
-                new Area(new Ellipse2D.Double(x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y - bodyDiameter, bodyDiameter,
-                3 * bodyDiameter / 4)));
+                new Area(
+                    new Ellipse2D.Double(
+                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody.subtract(
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter / 2,
+                        y - bodyDiameter,
+                        bodyDiameter,
+                        3 * bodyDiameter / 4)));
             break;
           case _180:
             newBody =
-                new Area(new Ellipse2D.Double(x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(new Area(new Rectangle2D.Double(x + bodyDiameter / 4, y - bodyDiameter / 2,
-                3 * bodyDiameter / 4, bodyDiameter)));
+                new Area(
+                    new Ellipse2D.Double(
+                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody.subtract(
+                new Area(
+                    new Rectangle2D.Double(
+                        x + bodyDiameter / 4,
+                        y - bodyDiameter / 2,
+                        3 * bodyDiameter / 4,
+                        bodyDiameter)));
             break;
           case _270:
             newBody =
-                new Area(new Ellipse2D.Double(x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(new Area(new Rectangle2D.Double(x - bodyDiameter / 2, y + bodyDiameter / 4, bodyDiameter,
-                3 * bodyDiameter / 4)));
+                new Area(
+                    new Ellipse2D.Double(
+                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody.subtract(
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter / 2,
+                        y + bodyDiameter / 4,
+                        bodyDiameter,
+                        3 * bodyDiameter / 4)));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
         }
       }
-      
-      body = new Area[] { newBody };
+
+      body = new Area[] {newBody};
     }
     return body;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-    
+
     if (!outlineMode) {
       for (Point point : controlPoints) {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);        
+        g2d.setColor(PIN_BORDER_COLOR);
         g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
     }
-    
+
     Area mainArea = getBody()[0];
     Composite oldComposite = g2d.getComposite();
     if (alpha < MAX_ALPHA) {
@@ -221,13 +268,17 @@ public class TransistorTO92 extends AbstractTransistorPackage {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : borderColor;
     }
     g2d.setColor(finalBorderColor);
@@ -239,13 +290,17 @@ public class TransistorTO92 extends AbstractTransistorPackage {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -272,7 +327,8 @@ public class TransistorTO92 extends AbstractTransistorPackage {
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     int margin = 3 * width / 32;
-    Area area = new Area(new Ellipse2D.Double(margin / 2, margin, width - 2 * margin, width - 2 * margin));
+    Area area =
+        new Area(new Ellipse2D.Double(margin / 2, margin, width - 2 * margin, width - 2 * margin));
     // area.subtract(new Area(new Rectangle2D.Double(0, 0, 2 * margin,
     // height)));
     area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)));

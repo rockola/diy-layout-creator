@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.PCBLayer;
 import org.diylc.common.SimpleComponentTransformer;
@@ -36,10 +35,18 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Copper Trace", author = "Branislav Stojkovic", category = "Connectivity",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "Trace",
-    description = "Straight copper trace", zOrder = IDIYComponent.TRACE, bomPolicy = BomPolicy.NEVER_SHOW,
-    autoEdit = false, keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "PCB",
+@ComponentDescriptor(
+    name = "Copper Trace",
+    author = "Branislav Stojkovic",
+    category = "Connectivity",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "Trace",
+    description = "Straight copper trace",
+    zOrder = IDIYComponent.TRACE,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "PCB",
     transformer = SimpleComponentTransformer.class)
 public class CopperTrace extends AbstractLeadedComponent<Void> {
 
@@ -65,7 +72,8 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 
   @Override
   protected Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+        ? SELECTION_COLOR
         : getLeadColor();
   }
 
@@ -162,12 +170,12 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   protected boolean IsCopperArea() {
     return true;
   }
-  
+
   @Override
-  public String getControlPointNodeName(int index) {   
+  public String getControlPointNodeName(int index) {
     return null;
   }
-  
+
   public boolean getMoveLabel() {
     // override to disable edit
     return false;

@@ -23,120 +23,116 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.diylc.images.Icon;
 
 public class SearchHeaderPanel extends JPanel {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private JTextField searchField;
-    private JComboBox categoryBox;
-    private JComboBox sortBox;
-    private JButton goButton;
+  private JTextField searchField;
+  private JComboBox categoryBox;
+  private JComboBox sortBox;
+  private JButton goButton;
 
-    private boolean initialized = false;
+  private boolean initialized = false;
 
-    public SearchHeaderPanel() {
-	setLayout(new GridBagLayout());
+  public SearchHeaderPanel() {
+    setLayout(new GridBagLayout());
 
-	this.setBackground(Color.white);
-	GridBagConstraints gbc = new GridBagConstraints();
-	gbc.anchor = GridBagConstraints.LINE_START;
-	gbc.insets = new Insets(2, 2, 2, 2);
+    this.setBackground(Color.white);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.anchor = GridBagConstraints.LINE_START;
+    gbc.insets = new Insets(2, 2, 2, 2);
 
-	gbc.gridx = 0;
-	gbc.gridy = 0;
-	gbc.fill = GridBagConstraints.HORIZONTAL;
-	gbc.weightx = 0;
-	this.add(new JLabel("Search For:"), gbc);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 0;
+    this.add(new JLabel("Search For:"), gbc);
 
-	gbc.gridx = 1;
-	gbc.weightx = 1;
-	this.add(getSearchField(), gbc);
+    gbc.gridx = 1;
+    gbc.weightx = 1;
+    this.add(getSearchField(), gbc);
 
-	gbc.gridx = 2;
-	gbc.weightx = 0;
-	this.add(new JLabel("Filter By Category:"), gbc);
+    gbc.gridx = 2;
+    gbc.weightx = 0;
+    this.add(new JLabel("Filter By Category:"), gbc);
 
-	gbc.gridx = 3;
-	gbc.weightx = 0.5;
-	this.add(getCategoryBox(), gbc);
+    gbc.gridx = 3;
+    gbc.weightx = 0.5;
+    this.add(getCategoryBox(), gbc);
 
-	gbc.gridx = 4;
-	gbc.weightx = 0;
-	this.add(new JLabel("Sort By:"), gbc);
+    gbc.gridx = 4;
+    gbc.weightx = 0;
+    this.add(new JLabel("Sort By:"), gbc);
 
-	gbc.gridx = 5;
-	this.add(getSortBox(), gbc);
+    gbc.gridx = 5;
+    this.add(getSortBox(), gbc);
 
-	gbc.gridx = 6;
-	gbc.weighty = 1;
-	this.add(getGoButton(), gbc);
+    gbc.gridx = 6;
+    gbc.weighty = 1;
+    this.add(getGoButton(), gbc);
+  }
+
+  public void setFocus() {
+    getSearchField().requestFocusInWindow();
+  }
+
+  public void initializeLists(String[] categories, String[] sortings) {
+    getCategoryBox().setModel(new DefaultComboBoxModel(categories));
+    getSortBox().setModel(new DefaultComboBoxModel(sortings));
+    initialized = true;
+  }
+
+  public boolean isInitialized() {
+    return initialized;
+  }
+
+  private JTextField getSearchField() {
+    if (searchField == null) {
+      searchField = new JTextField(60);
     }
+    return searchField;
+  }
 
-    public void setFocus() {
-	getSearchField().requestFocusInWindow();
+  private JComboBox getCategoryBox() {
+    if (categoryBox == null) {
+      categoryBox = new JComboBox();
     }
+    return categoryBox;
+  }
 
-    public void initializeLists(String[] categories, String[] sortings) {
-	getCategoryBox().setModel(new DefaultComboBoxModel(categories));
-	getSortBox().setModel(new DefaultComboBoxModel(sortings));
-	initialized = true;
+  private JComboBox getSortBox() {
+    if (sortBox == null) {
+      sortBox = new JComboBox();
     }
+    return sortBox;
+  }
 
-    public boolean isInitialized() {
-	return initialized;
+  public JButton getGoButton() {
+    if (goButton == null) {
+      goButton = new JButton("Go", Icon.DataFind.icon());
     }
+    return goButton;
+  }
 
-    private JTextField getSearchField() {
-	if (searchField == null) {
-	    searchField = new JTextField(60);
-	}
-	return searchField;
-    }
+  public String getSearchText() {
+    return getSearchField().getText();
+  }
 
-    private JComboBox getCategoryBox() {
-	if (categoryBox == null) {
-	    categoryBox = new JComboBox();
-	}
-	return categoryBox;
-    }
+  public String getCategory() {
+    return getCategoryBox().getSelectedItem() == null
+        ? ""
+        : getCategoryBox().getSelectedItem().toString();
+  }
 
-    private JComboBox getSortBox() {
-	if (sortBox == null) {
-	    sortBox = new JComboBox();
-	}
-	return sortBox;
-    }
-
-    public JButton getGoButton() {
-	if (goButton == null) {
-	    goButton = new JButton("Go", Icon.DataFind.icon());
-	}
-	return goButton;
-    }
-
-    public String getSearchText() {
-	return getSearchField().getText();
-    }
-
-    public String getCategory() {
-	return getCategoryBox().getSelectedItem() == null
-	    ? ""
-	    : getCategoryBox().getSelectedItem().toString();
-    }
-
-    public String getSorting() {
-	return getSortBox().getSelectedItem() == null
-	    ? ""
-	    : getSortBox().getSelectedItem().toString();
-    }
+  public String getSorting() {
+    return getSortBox().getSelectedItem() == null ? "" : getSortBox().getSelectedItem().toString();
+  }
 }

@@ -24,7 +24,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -41,10 +40,17 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Turret Lug", category = "Connectivity", author = "Branislav Stojkovic",
-    description = "Turret terminal lug", instanceNamePrefix = "Turret",
-    zOrder = IDIYComponent.TRACE + 0.1, bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME, autoEdit = false,
-    keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Turret Lug",
+    category = "Connectivity",
+    author = "Branislav Stojkovic",
+    description = "Turret terminal lug",
+    instanceNamePrefix = "Turret",
+    zOrder = IDIYComponent.TRACE + 0.1,
+    bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
+    transformer = SimpleComponentTransformer.class)
 public class Turret extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -60,7 +66,11 @@ public class Turret extends AbstractComponent<String> {
   private String value = "";
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -72,14 +82,20 @@ public class Turret extends AbstractComponent<String> {
     drawingObserver.startTrackingContinuityArea(true);
     g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
     drawingObserver.stopTrackingContinuityArea();
-    g2d.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-        : color.darker());
+    g2d.setColor(
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color.darker());
     g2d.drawOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval(point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
-    g2d.setColor(componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
-        : color.darker());
-    g2d.drawOval(point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
+    g2d.fillOval(
+        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
+    g2d.setColor(
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color.darker());
+    g2d.drawOval(
+        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
   }
 
   @Override
@@ -91,9 +107,11 @@ public class Turret extends AbstractComponent<String> {
     g2d.setColor(COLOR.darker());
     g2d.drawOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
     g2d.setColor(Constants.CANVAS_COLOR);
-    g2d.fillOval((width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    g2d.fillOval(
+        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
     g2d.setColor(COLOR.darker());
-    g2d.drawOval((width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    g2d.drawOval(
+        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
   }
 
   @EditableProperty
@@ -163,9 +181,9 @@ public class Turret extends AbstractComponent<String> {
   public void setValue(String value) {
     this.value = value;
   }
-  
+
   @Override
-  public String getControlPointNodeName(int index) {   
+  public String getControlPointNodeName(int index) {
     return null;
   }
 }

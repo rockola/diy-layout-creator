@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
  * Represents a single post in the comment section of a cloud project.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class CommentEntity implements Serializable {
@@ -92,32 +92,21 @@ public class CommentEntity implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     CommentEntity other = (CommentEntity) obj;
     if (comment == null) {
-      if (other.comment != null)
-        return false;
-    } else if (!comment.equals(other.comment))
-      return false;
-    if (id != other.id)
-      return false;
-    if (parentId != other.parentId)
-      return false;
+      if (other.comment != null) return false;
+    } else if (!comment.equals(other.comment)) return false;
+    if (id != other.id) return false;
+    if (parentId != other.parentId) return false;
     if (postedAt == null) {
-      if (other.postedAt != null)
-        return false;
-    } else if (!postedAt.equals(other.postedAt))
-      return false;
+      if (other.postedAt != null) return false;
+    } else if (!postedAt.equals(other.postedAt)) return false;
     if (username == null) {
-      if (other.username != null)
-        return false;
-    } else if (!username.equals(other.username))
-      return false;
+      if (other.username != null) return false;
+    } else if (!username.equals(other.username)) return false;
     return true;
   }
 

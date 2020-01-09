@@ -27,13 +27,11 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-
 import org.diylc.common.IPlugInPort;
-
 
 /**
  * {@link DropTargetListener} for {@link CanvasPanel}.
- * 
+ *
  * @author Branislav Stojkovic
  */
 class CanvasTargetListener implements DropTargetListener {

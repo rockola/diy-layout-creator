@@ -55,5 +55,4 @@ public class PointTransferable implements Transferable {
   public boolean isDataFlavorSupported(DataFlavor flavor) {
     return flavor.equals(pointFlavor);
   }
-
 }

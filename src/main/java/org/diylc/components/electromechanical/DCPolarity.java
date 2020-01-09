@@ -22,8 +22,9 @@
 package org.diylc.components.electromechanical;
 
 public enum DCPolarity {
-
-  NONE("None"), CENTER_POSITIVE("Center Positive"), CENTER_NEGATIVE("Center Negative");
+  NONE("None"),
+  CENTER_POSITIVE("Center Positive"),
+  CENTER_NEGATIVE("Center Negative");
 
   private String title;
 

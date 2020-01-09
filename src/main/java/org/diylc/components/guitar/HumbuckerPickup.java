@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -30,7 +30,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -48,18 +47,24 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Humbucker Pickup", category = "Guitar", author = "Branislav Stojkovic",
+@ComponentDescriptor(
+    name = "Humbucker Pickup",
+    category = "Guitar",
+    author = "Branislav Stojkovic",
     description = "Double-coil humbucker guitar pickup (PAF, Mini Humbuckers, Filtertrons)",
-    zOrder = IDIYComponent.COMPONENT, instanceNamePrefix = "PKP", autoEdit = false,
-    keywordPolicy = KeywordPolicy.SHOW_TAG, keywordTag = "Guitar Wiring Diagram")
+    zOrder = IDIYComponent.COMPONENT,
+    instanceNamePrefix = "PKP",
+    autoEdit = false,
+    keywordPolicy = KeywordPolicy.SHOW_TAG,
+    keywordTag = "Guitar Wiring Diagram")
 public class HumbuckerPickup extends AbstractGuitarPickup {
 
-  private static final long serialVersionUID = 1L;  
+  private static final long serialVersionUID = 1L;
 
   private static Color BASE_COLOR = Color.lightGray;
   private static Color BOBIN_COLOR1 = Color.decode("#EAE3C6");
   private static Color BOBIN_COLOR2 = Color.black;
-//  private static Color POINT_COLOR = Color.darkGray;
+  //  private static Color POINT_COLOR = Color.darkGray;
   private static Size WIDTH = new Size(36.5d, SizeUnit.mm);
   private static Size LENGTH = new Size(68.58d, SizeUnit.mm);
   private static Size WIDTH_MINI = new Size(29.3d, SizeUnit.mm);
@@ -70,14 +75,14 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   private static Size LIP_WIDTH = new Size(12.7d, SizeUnit.mm);
   private static Size LIP_LENGTH = new Size(7.9d, SizeUnit.mm);
   private static Size EDGE_RADIUS = new Size(4d, SizeUnit.mm);
-  private static Size POINT_MARGIN = new Size(1.5d, SizeUnit.mm);  
+  private static Size POINT_MARGIN = new Size(1.5d, SizeUnit.mm);
   private static Size SCREW_LINE = new Size(1d, SizeUnit.mm);
   private static Size POINT_SIZE = new Size(2d, SizeUnit.mm);
   private static Size LIP_HOLE_SIZE = new Size(2d, SizeUnit.mm);
   private static Size POLE_SIZE = new Size(4d, SizeUnit.mm);
   private static Size POLE_SIZE_FILTERTRON = new Size(5d, SizeUnit.mm);
   private static Size POLE_SPACING = new Size(10.1d, SizeUnit.mm);
-  
+
   private Color color = BASE_COLOR;
   private Color poleColor = METAL_COLOR;
   private HumbuckerType type;
@@ -86,10 +91,14 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   private Color bobinColor1 = BOBIN_COLOR1;
   private Color bobinColor2 = BOBIN_COLOR2;
   private PolePieceType coilType1;
-  private PolePieceType coilType2;  
- 
+  private PolePieceType coilType2;
+
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
@@ -100,10 +109,8 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
-    if (getType() != HumbuckerType.Filtertron)
-      g2d.fill(body[0]);
-    if (body[1] != null)
-      g2d.fill(body[1]);
+    if (getType() != HumbuckerType.Filtertron) g2d.fill(body[0]);
+    if (body[1] != null) g2d.fill(body[1]);
 
     if (!outlineMode) {
       if (body[4] != null) {
@@ -126,33 +133,33 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
     g2d.setComposite(oldComposite);
 
-
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : color.darker();
     }
 
     g2d.setColor(finalBorderColor);
-    if (getType() != HumbuckerType.Filtertron)
-      g2d.draw(body[0]);
-    if (body[1] != null)
-      g2d.draw(body[1]);
+    if (getType() != HumbuckerType.Filtertron) g2d.draw(body[0]);
+    if (body[1] != null) g2d.draw(body[1]);
 
     if (!outlineMode) {
       g2d.setColor(getPoleColor());
       g2d.fill(body[3]);
       g2d.setColor(darkerOrLighter(getPoleColor()));
       g2d.draw(body[3]);
-      if (body[6] != null)
-        g2d.draw(body[6]);
+      if (body[6] != null) g2d.draw(body[6]);
 
       if (getType() != HumbuckerType.Filtertron) {
         if (body[4] != null) {
@@ -170,14 +177,14 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
       g2d.setColor(finalBorderColor);
       g2d.draw(body[0]);
     }
-    
+
     drawMainLabel(g2d, project, outlineMode, componentState);
-    
-    drawlTerminalLabels(g2d, finalBorderColor, project);  
+
+    drawlTerminalLabels(g2d, finalBorderColor, project);
   }
- 
+
   @Override
-  protected OrientationHV getControlPointDirection() {   
+  protected OrientationHV getControlPointDirection() {
     return OrientationHV.VERTICAL;
   }
 
@@ -205,8 +212,14 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
       int poleMargin = (length - poleSpacing * 5) / 2;
 
       Area base =
-          new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length, y - pointMargin, length, width,
-              edgeRadius, edgeRadius));
+          new Area(
+              new RoundRectangle2D.Double(
+                  x /* + pointMargin */ - length,
+                  y - pointMargin,
+                  length,
+                  width,
+                  edgeRadius,
+                  edgeRadius));
 
       // base or cover
       body[0] = new Area(base);
@@ -215,28 +228,50 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
         int cutoutHeight = poleSize + 2 * cutoutMargin;
         int cutoutWidth = 5 * poleSpacing + poleSize + 2 * cutoutMargin;
         Area cutout =
-            new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length + poleMargin - poleSize / 2
-                - cutoutMargin, y - pointMargin + coilMargin - poleSize / 2 - cutoutMargin, cutoutWidth, cutoutHeight,
-                cutoutHeight, cutoutHeight));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
+                    y - pointMargin + coilMargin - poleSize / 2 - cutoutMargin,
+                    cutoutWidth,
+                    cutoutHeight,
+                    cutoutHeight,
+                    cutoutHeight));
         ((Area) body[0]).subtract(cutout);
         cutout =
-            new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length + poleMargin - poleSize / 2
-                - cutoutMargin, y - pointMargin + width - coilMargin - poleSize / 2 - cutoutMargin, cutoutWidth,
-                cutoutHeight, cutoutHeight, cutoutHeight));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
+                    y - pointMargin + width - coilMargin - poleSize / 2 - cutoutMargin,
+                    cutoutWidth,
+                    cutoutHeight,
+                    cutoutHeight,
+                    cutoutHeight));
         ((Area) body[0]).subtract(cutout);
         int middleCutoutWidth = poleSpacing / 5;
         cutout =
-            new Area(new Rectangle2D.Double(x /* + pointMargin */- length / 2 - middleCutoutWidth / 2, y - pointMargin
-                + width / 4, middleCutoutWidth, width / 2));
+            new Area(
+                new Rectangle2D.Double(
+                    x /* + pointMargin */ - length / 2 - middleCutoutWidth / 2,
+                    y - pointMargin + width / 4,
+                    middleCutoutWidth,
+                    width / 2));
         ((Area) body[0]).subtract(cutout);
         if (!getLegs()) {
           cutout =
-              new Area(new Ellipse2D.Double(x /* + pointMargin */- length + lipHoleSize * 2, y - pointMargin + width
-                  / 2 - lipHoleSize * 0.75, lipHoleSize * 1.5, lipHoleSize * 1.5));
+              new Area(
+                  new Ellipse2D.Double(
+                      x /* + pointMargin */ - length + lipHoleSize * 2,
+                      y - pointMargin + width / 2 - lipHoleSize * 0.75,
+                      lipHoleSize * 1.5,
+                      lipHoleSize * 1.5));
           ((Area) body[0]).subtract(cutout);
           cutout =
-              new Area(new Ellipse2D.Double(x /* + pointMargin */- lipHoleSize * 3, y - pointMargin + width / 2
-                  - lipHoleSize * 0.75, lipHoleSize * 1.5, lipHoleSize * 1.5));
+              new Area(
+                  new Ellipse2D.Double(
+                      x /* + pointMargin */ - lipHoleSize * 3,
+                      y - pointMargin + width / 2 - lipHoleSize * 0.75,
+                      lipHoleSize * 1.5,
+                      lipHoleSize * 1.5));
           ((Area) body[0]).subtract(cutout);
         }
       }
@@ -244,62 +279,117 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
       // bobins
       if (!getCover() || getType() == HumbuckerType.Filtertron) {
         int bobinWidth = width / 2;
-        int bobinRadius = (int) (getType() == HumbuckerType.Filtertron ? edgeRadius * 1.1f : bobinWidth);
+        int bobinRadius =
+            (int) (getType() == HumbuckerType.Filtertron ? edgeRadius * 1.1f : bobinWidth);
         body[4] =
-            new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length, y - pointMargin, length, bobinWidth,
-                bobinRadius, bobinRadius));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length,
+                    y - pointMargin,
+                    length,
+                    bobinWidth,
+                    bobinRadius,
+                    bobinRadius));
         body[5] =
-            new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length, y - pointMargin + bobinWidth, length,
-                bobinWidth, bobinRadius, bobinRadius));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length,
+                    y - pointMargin + bobinWidth,
+                    length,
+                    bobinWidth,
+                    bobinRadius,
+                    bobinRadius));
       }
 
       // legs
       if (getLegs()) {
         Area legArea =
-            new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length - lipLength, y - pointMargin + width / 2
-                - lipWidth / 2, length + 2 * lipLength, lipWidth, edgeRadius / 2, edgeRadius / 2));
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length - lipLength,
+                    y - pointMargin + width / 2 - lipWidth / 2,
+                    length + 2 * lipLength,
+                    lipWidth,
+                    edgeRadius / 2,
+                    edgeRadius / 2));
         legArea.subtract((Area) (body[0]));
-        legArea.subtract(new Area(new Ellipse2D.Double(x /* + pointMargin */- length - lipLength / 2, y - pointMargin
-            + width / 2 - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
-        legArea.subtract(new Area(new Ellipse2D.Double(x /* + pointMargin */+ lipLength / 2, y - pointMargin + width
-            / 2 - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
+        legArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /* + pointMargin */ - length - lipLength / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
+        legArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /* + pointMargin */ + lipLength / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
         legArea.subtract(base);
         body[1] = legArea;
       }
 
       // contact point
-      body[2] = new Area(new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] =
+          new Area(
+              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       Area poleArea = new Area();
       Area poleDecorationArea = new Area();
 
       if (getCoilType1() == PolePieceType.Rail) {
-        poleArea.add(new Area(
-            new RoundRectangle2D.Double(x /* + pointMargin */- length + poleMargin - poleSize / 2, y - pointMargin
-                + coilMargin - poleSize / 2, poleSpacing * 5 + poleSize, poleSize, poleSize / 2, poleSize / 2)));
+        poleArea.add(
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2,
+                    y - pointMargin + coilMargin - poleSize / 2,
+                    poleSpacing * 5 + poleSize,
+                    poleSize,
+                    poleSize / 2,
+                    poleSize / 2)));
       } else if (getCoilType1() == PolePieceType.Rods || getCoilType1() == PolePieceType.Screws) {
         Path2D screwPath = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
           Ellipse2D pole =
-              new Ellipse2D.Double(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + coilMargin - poleSize / 2, poleSize, poleSize);
+              new Ellipse2D.Double(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + coilMargin - poleSize / 2,
+                  poleSize,
+                  poleSize);
           poleArea.add(new Area(pole));
           if (getCoilType1() == PolePieceType.Screws) {
             if (i % 2 == 0) {
-              screwPath.moveTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + coilMargin - poleSize / 2);
-              screwPath.lineTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+              screwPath.moveTo(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + coilMargin - poleSize / 2);
+              screwPath.lineTo(
+                  x /* + pointMargin */
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + coilMargin - poleSize / 2 + poleSize);
             } else {
-              screwPath.moveTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + coilMargin - poleSize / 2 + poleSize);
-              screwPath.lineTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+              screwPath.moveTo(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + coilMargin - poleSize / 2 + poleSize);
+              screwPath.lineTo(
+                  x /* + pointMargin */
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + coilMargin - poleSize / 2);
             }
           }
         }
         if (getCoilType1() == PolePieceType.Screws) {
-          Stroke pathStroke = ObjectCache.getInstance().fetchBasicStroke((float) SCREW_LINE.convertToPixels());
+          Stroke pathStroke =
+              ObjectCache.getInstance().fetchBasicStroke((float) SCREW_LINE.convertToPixels());
           Area screwArea = new Area(pathStroke.createStrokedShape(screwPath));
           screwArea.intersect(poleArea);
           poleDecorationArea.add(screwArea);
@@ -307,32 +397,56 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
       }
 
       if (getCoilType2() == PolePieceType.Rail) {
-        poleArea.add(new Area(new RoundRectangle2D.Double(x /* + pointMargin */- length + poleMargin - poleSize / 2, y
-            - pointMargin + width - coilMargin - poleSize / 2, poleSpacing * 5 + poleSize, poleSize, poleSize / 2,
-            poleSize / 2)));
+        poleArea.add(
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2,
+                    y - pointMargin + width - coilMargin - poleSize / 2,
+                    poleSpacing * 5 + poleSize,
+                    poleSize,
+                    poleSize / 2,
+                    poleSize / 2)));
       } else if (getCoilType2() == PolePieceType.Rods || getCoilType2() == PolePieceType.Screws) {
         Path2D screwPath = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
           Ellipse2D pole =
-              new Ellipse2D.Double(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + width - coilMargin - poleSize / 2, poleSize, poleSize);
+              new Ellipse2D.Double(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + width - coilMargin - poleSize / 2,
+                  poleSize,
+                  poleSize);
           poleArea.add(new Area(pole));
           if (getCoilType1() == PolePieceType.Screws) {
             if (i % 2 == 1) {
-              screwPath.moveTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + width - coilMargin - poleSize / 2);
-              screwPath.lineTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+              screwPath.moveTo(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + width - coilMargin - poleSize / 2);
+              screwPath.lineTo(
+                  x /* + pointMargin */
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + width - coilMargin - poleSize / 2 + poleSize);
             } else {
-              screwPath.moveTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2, y
-                  - pointMargin + width - coilMargin - poleSize / 2 + poleSize);
-              screwPath.lineTo(x /* + pointMargin */- length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+              screwPath.moveTo(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + width - coilMargin - poleSize / 2 + poleSize);
+              screwPath.lineTo(
+                  x /* + pointMargin */
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + width - coilMargin - poleSize / 2);
             }
           }
         }
         if (getCoilType2() == PolePieceType.Screws) {
-          Stroke pathStroke = ObjectCache.getInstance().fetchBasicStroke((float) SCREW_LINE.convertToPixels());
+          Stroke pathStroke =
+              ObjectCache.getInstance().fetchBasicStroke((float) SCREW_LINE.convertToPixels());
           Area screwArea = new Area(pathStroke.createStrokedShape(screwPath));
           screwArea.intersect(poleArea);
           poleDecorationArea.add(screwArea);
@@ -359,21 +473,20 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
         AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
-          if (area != null)
-            area.transform(rotation);
+          if (area != null) area.transform(rotation);
         }
       }
     }
     return body;
   }
-  
+
   @Override
   protected int getMainLabelYOffset() {
     return (int) (getType().getWidth().convertToPixels() / 2 - 20);
   }
-  
+
   @Override
-  public boolean isHumbucker() {   
+  public boolean isHumbucker() {
     return true;
   }
 
@@ -385,38 +498,66 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
     int baseLength = 27 * width / 32;
 
     g2d.setColor(BASE_COLOR);
-    g2d.fillRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1, 2 * width / 32, 2 * width / 32);
+    g2d.fillRoundRect(
+        (width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1, 2 * width / 32, 2 * width / 32);
     g2d.setColor(BASE_COLOR.darker());
-    g2d.drawRoundRect((width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1, 2 * width / 32, 2 * width / 32);
+    g2d.drawRoundRect(
+        (width - baseWidth / 4) / 2, 0, baseWidth / 4, height - 1, 2 * width / 32, 2 * width / 32);
 
     g2d.setColor(BASE_COLOR);
-    g2d.fillRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, 4 * width / 32,
+    g2d.fillRoundRect(
+        (width - baseWidth) / 2,
+        (height - baseLength) / 2,
+        baseWidth,
+        baseLength,
+        4 * width / 32,
         4 * width / 32);
     g2d.setColor(BASE_COLOR.darker());
-    g2d.drawRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, 4 * width / 32,
+    g2d.drawRoundRect(
+        (width - baseWidth) / 2,
+        (height - baseLength) / 2,
+        baseWidth,
+        baseLength,
+        4 * width / 32,
         4 * width / 32);
 
     g2d.setColor(BOBIN_COLOR1);
-    g2d.fillRoundRect((width - baseWidth) / 2, (height - baseLength) / 2, baseWidth / 2, baseLength, baseWidth / 2,
+    g2d.fillRoundRect(
+        (width - baseWidth) / 2,
+        (height - baseLength) / 2,
+        baseWidth / 2,
+        baseLength,
+        baseWidth / 2,
         baseWidth / 2);
     g2d.setColor(BOBIN_COLOR2);
-    g2d.fillRoundRect(width / 2, (height - baseLength) / 2, baseWidth / 2, baseLength, baseWidth / 2, baseWidth / 2);
+    g2d.fillRoundRect(
+        width / 2,
+        (height - baseLength) / 2,
+        baseWidth / 2,
+        baseLength,
+        baseWidth / 2,
+        baseWidth / 2);
 
     g2d.setColor(METAL_COLOR);
     int poleSize = 2;
     int poleSpacing = 17 * width / 32;
     for (int i = 0; i < 6; i++) {
-      g2d.fillOval((width - poleSize - baseWidth / 2) / 2, (height - poleSpacing) / 2 + (i * poleSpacing / 5),
-          poleSize, poleSize);
-      g2d.fillOval((width - poleSize + baseWidth / 2) / 2, (height - poleSpacing) / 2 + (i * poleSpacing / 5),
-          poleSize, poleSize);
+      g2d.fillOval(
+          (width - poleSize - baseWidth / 2) / 2,
+          (height - poleSpacing) / 2 + (i * poleSpacing / 5),
+          poleSize,
+          poleSize);
+      g2d.fillOval(
+          (width - poleSize + baseWidth / 2) / 2,
+          (height - poleSpacing) / 2 + (i * poleSpacing / 5),
+          poleSize,
+          poleSize);
     }
   }
 
   @EditableProperty
   public HumbuckerType getType() {
-    if (type == null)
-      type = HumbuckerType.PAF;
+    if (type == null) type = HumbuckerType.PAF;
     return type;
   }
 
@@ -428,8 +569,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
   @EditableProperty(name = "Bobin 1")
   public Color getBobinColor1() {
-    if (bobinColor1 == null)
-      bobinColor1 = BOBIN_COLOR1;
+    if (bobinColor1 == null) bobinColor1 = BOBIN_COLOR1;
     return bobinColor1;
   }
 
@@ -439,8 +579,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
   @EditableProperty(name = "Bobin 2")
   public Color getBobinColor2() {
-    if (bobinColor2 == null)
-      bobinColor2 = BOBIN_COLOR2;
+    if (bobinColor2 == null) bobinColor2 = BOBIN_COLOR2;
     return bobinColor2;
   }
 
@@ -461,8 +600,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
   @EditableProperty
   public Boolean getLegs() {
-    if (legs == null)
-      legs = true;
+    if (legs == null) legs = true;
     return legs;
   }
 
@@ -475,7 +613,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  } 
+  }
 
   @EditableProperty
   public Color getColor() {
@@ -488,8 +626,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
   @EditableProperty(name = "Pole Color")
   public Color getPoleColor() {
-    if (poleColor == null)
-      poleColor = METAL_COLOR;
+    if (poleColor == null) poleColor = METAL_COLOR;
     return poleColor;
   }
 
@@ -529,7 +666,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   public String getControlPointNodeName(int index) {
     switch (index) {
       case 0:
-        return"North Start";
+        return "North Start";
       case 1:
         return "North Finish";
       case 2:
@@ -539,21 +676,17 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
     }
     return null;
   }
-  
+
   @Override
   public String getInternalLinkName(int index1, int index2) {
-    if (index1 == 0 && index2 == 1)
-      return Polarity.North.toString() + "->";
-    else if (index1 == 2 && index2 == 3)
-      return Polarity.South.toString() + "->";
-    else if (index1 == 1 && index2 == 0)
-      return Polarity.North.toString() + "<-";
-    else if (index1 == 3 && index2 == 2)
-      return Polarity.South.toString() + "<-";
-    
+    if (index1 == 0 && index2 == 1) return Polarity.North.toString() + "->";
+    else if (index1 == 2 && index2 == 3) return Polarity.South.toString() + "->";
+    else if (index1 == 1 && index2 == 0) return Polarity.North.toString() + "<-";
+    else if (index1 == 3 && index2 == 2) return Polarity.South.toString() + "<-";
+
     return null;
   }
-  
+
   @Override
   public Polarity getPolarity() {
     // just to disable editor
@@ -561,9 +694,9 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   }
 
   public static enum HumbuckerType {
-
-    PAF(WIDTH, LENGTH, POLE_SIZE), Mini(WIDTH_MINI, LENGTH_MINI, POLE_SIZE), Filtertron(WIDTH_FILTERTRON,
-        LENGTH_FILTERTRON, POLE_SIZE_FILTERTRON);
+    PAF(WIDTH, LENGTH, POLE_SIZE),
+    Mini(WIDTH_MINI, LENGTH_MINI, POLE_SIZE),
+    Filtertron(WIDTH_FILTERTRON, LENGTH_FILTERTRON, POLE_SIZE_FILTERTRON);
 
     private Size width;
     private Size length;
@@ -594,6 +727,9 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
   }
 
   public enum PolePieceType {
-    Rods, Rail, Screws, None;
+    Rods,
+    Rail,
+    Screws,
+    None;
   }
 }

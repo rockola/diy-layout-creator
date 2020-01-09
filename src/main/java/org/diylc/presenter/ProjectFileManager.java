@@ -19,6 +19,9 @@
 */
 package org.diylc.presenter;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,14 +38,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
@@ -50,286 +50,272 @@ import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.EventType;
 import org.diylc.core.Project;
 import org.diylc.parsing.IOldFileParser;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
-
 public class ProjectFileManager {
 
-    private static final Logger LOG = LogManager.getLogger(ProjectFileManager.class);
+  private static final Logger LOG = LogManager.getLogger(ProjectFileManager.class);
 
-    // Deserializer for 3.0.7 < DIYLC version < 3.x.y
-    private static XStream xStream;
-    // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in
-    // pixels.
-    private static XStream xStreamOld;
+  // Deserializer for 3.0.7 < DIYLC version < 3.x.y
+  private static XStream xStream;
+  // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in
+  // pixels.
+  private static XStream xStreamOld;
 
-    private String currentFileName = null;
-    private boolean modified = false;
+  private String currentFileName = null;
+  private boolean modified = false;
 
-    private MessageDispatcher<EventType> messageDispatcher;
+  private MessageDispatcher<EventType> messageDispatcher;
 
-    private static List<IOldFileParser> parsers;
-  
-    private static Set<String> missingFields = new HashSet<String>();
+  private static List<IOldFileParser> parsers;
 
-    static {
-	xStream = new XStream(new DomDriver("UTF-8")) {
+  private static Set<String> missingFields = new HashSet<String>();
 
-		@Override
-		protected MapperWrapper wrapMapper(MapperWrapper next) {
-		    return new MapperWrapper(next) {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-			    if (definedIn == Object.class) {
-				missingFields.add(definedIn.getName() + "." + fieldName);
-				return false;
-			    }
-			    return super.shouldSerializeMember(definedIn, fieldName);
-			}
-		    };
-		}
-	    };
+  static {
+    xStream =
+        new XStream(new DomDriver("UTF-8")) {
 
-	XStream.setupDefaultSecurity(xStream);
-	String[] allowTypes = new String[] {
-	    "org.diylc.**",
-	    "java.awt.**"
-	};
-	xStream.allowTypesByWildcard(allowTypes);
+          @Override
+          protected MapperWrapper wrapMapper(MapperWrapper next) {
+            return new MapperWrapper(next) {
+              @SuppressWarnings("rawtypes")
+              @Override
+              public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                if (definedIn == Object.class) {
+                  missingFields.add(definedIn.getName() + "." + fieldName);
+                  return false;
+                }
+                return super.shouldSerializeMember(definedIn, fieldName);
+              }
+            };
+          }
+        };
 
-	xStream.autodetectAnnotations(true);
-	xStream.alias("point", java.awt.Point.class);
-	xStream.alias("font", java.awt.Font.class);
-	xStream.alias("project", Project.class);
-	xStream.aliasPackage("diylc", "org.diylc.components");
-	xStream.registerConverter(new PointConverter());
-	xStream.registerConverter(new ColorConverter());
-	xStream.registerConverter(new FontConverter());
-	xStream.registerConverter(new MeasureConverter());
-	/*
-	  NOTE: XStream.addImmutableType(java.lang.Class type) has
-	  been deprecated.  My best guess is that
-	  XStream.addImmutableType(java.lang.Class type, boolean
-	  isReferenceable) with isReferenceable set to true will do
-	  the trick. //ola 20191230
-	*/
-	ArrayList<Class> immutables =
-	    new ArrayList<Class>(Arrays.asList(Color.class,
-					       java.awt.Point.class,
-					       org.diylc.core.measures.Voltage.class,
-					       org.diylc.core.measures.Resistance.class,
-					       org.diylc.core.measures.Capacitance.class,
-					       org.diylc.core.measures.Current.class,
-					       org.diylc.core.measures.Power.class,
-					       org.diylc.core.measures.Inductance.class,
-					       org.diylc.core.measures.Size.class));
-	for (Class c : immutables) {
-	    xStream.addImmutableType(c, true);
-	}
+    XStream.setupDefaultSecurity(xStream);
+    String[] allowTypes = new String[] {"org.diylc.**", "java.awt.**"};
+    xStream.allowTypesByWildcard(allowTypes);
 
-	xStreamOld = new XStream(new DomDriver());
-	xStreamOld.autodetectAnnotations(true);
-	XStream.setupDefaultSecurity(xStreamOld);
-	xStreamOld.allowTypesByWildcard(allowTypes);
+    xStream.autodetectAnnotations(true);
+    xStream.alias("point", java.awt.Point.class);
+    xStream.alias("font", java.awt.Font.class);
+    xStream.alias("project", Project.class);
+    xStream.aliasPackage("diylc", "org.diylc.components");
+    xStream.registerConverter(new PointConverter());
+    xStream.registerConverter(new ColorConverter());
+    xStream.registerConverter(new FontConverter());
+    xStream.registerConverter(new MeasureConverter());
+    /*
+      NOTE: XStream.addImmutableType(java.lang.Class type) has
+      been deprecated.  My best guess is that
+      XStream.addImmutableType(java.lang.Class type, boolean
+      isReferenceable) with isReferenceable set to true will do
+      the trick. //ola 20191230
+    */
+    ArrayList<Class> immutables =
+        new ArrayList<Class>(
+            Arrays.asList(
+                Color.class,
+                java.awt.Point.class,
+                org.diylc.core.measures.Voltage.class,
+                org.diylc.core.measures.Resistance.class,
+                org.diylc.core.measures.Capacitance.class,
+                org.diylc.core.measures.Current.class,
+                org.diylc.core.measures.Power.class,
+                org.diylc.core.measures.Inductance.class,
+                org.diylc.core.measures.Size.class));
+    for (Class c : immutables) {
+      xStream.addImmutableType(c, true);
     }
 
+    xStreamOld = new XStream(new DomDriver());
+    xStreamOld.autodetectAnnotations(true);
+    XStream.setupDefaultSecurity(xStreamOld);
+    xStreamOld.allowTypesByWildcard(allowTypes);
+  }
 
-    public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
-	super();
-	this.messageDispatcher = messageDispatcher;
+  public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
+    super();
+    this.messageDispatcher = messageDispatcher;
+  }
+
+  public void startNewFile() {
+    currentFileName = null;
+    modified = false;
+    fireFileStatusChanged();
+  }
+
+  public static List<IOldFileParser> getParsers() {
+    if (parsers == null) {
+      parsers = new ArrayList<IOldFileParser>();
+      Set<Class<?>> componentTypeClasses = null;
+      try {
+        componentTypeClasses = Utils.getClasses("org.diylc.parsing");
+        for (Class<?> clazz : componentTypeClasses) {
+          if (!Modifier.isAbstract(clazz.getModifiers())
+              && IOldFileParser.class.isAssignableFrom(clazz)) {
+
+            IOldFileParser instance = (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
+            parsers.add(instance);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Could not find old version parsers", e);
+      }
     }
+    return parsers;
+  }
 
-    public void startNewFile() {
-	currentFileName = null;
-	modified = false;
-	fireFileStatusChanged();
+  public synchronized void serializeProjectToFile(
+      Project project, String fileName, boolean isBackup) throws IOException {
+    if (!isBackup) {
+      LOG.info(String.format("serializeProjectToFile(%s)", fileName));
     }
-
-    public static List<IOldFileParser> getParsers() {
-	if (parsers == null) {
-	    parsers = new ArrayList<IOldFileParser>();
-	    Set<Class<?>> componentTypeClasses = null;
-	    try {
-		componentTypeClasses = Utils.getClasses("org.diylc.parsing");
-		for (Class<?> clazz : componentTypeClasses) {
-		    if (!Modifier.isAbstract(clazz.getModifiers())
-			&& IOldFileParser.class.isAssignableFrom(clazz)) {
-
-			IOldFileParser instance =
-			    (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
-			parsers.add(instance);
-		    }
-		}
-	    } catch (Exception e) {
-		LOG.error("Could not find old version parsers", e);
-	    }
-	}
-	return parsers;
+    FileOutputStream fos;
+    fos = new FileOutputStream(fileName);
+    Writer writer = new OutputStreamWriter(fos, "UTF-8");
+    writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+    xStream.toXML(project, writer);
+    fos.close();
+    if (!isBackup) {
+      this.currentFileName = fileName;
+      this.modified = false;
+      fireFileStatusChanged();
     }
+  }
 
-    public synchronized void serializeProjectToFile(Project project,
-						    String fileName,
-						    boolean isBackup)
-	throws IOException {
-	if (!isBackup) {
-	    LOG.info(String.format("serializeProjectToFile(%s)", fileName));
-	}
-	FileOutputStream fos;
-	fos = new FileOutputStream(fileName);
-	Writer writer = new OutputStreamWriter(fos, "UTF-8");
-	writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-	xStream.toXML(project, writer);
-	fos.close();
-	if (!isBackup) {
-	    this.currentFileName = fileName;
-	    this.modified = false;
-	    fireFileStatusChanged();
-	}
+  public static Project getProjectFromFile(String fileName) {
+    LOG.trace("getProjectFromFile({})", fileName);
+    Project project = null;
+    List<String> warnings = new ArrayList<String>();
+    try {
+      project = (Project) deserializeProjectFromFileInternal(fileName, warnings);
+    } catch (Exception e) {
+      for (String w : warnings) {
+        LOG.warn(w);
+      }
+      DIYLC
+          .ui()
+          .error(String.format(DIYLC.getString("message.presenter.could-not-open"), fileName), e);
     }
+    return project;
+  }
 
-    public static Project getProjectFromFile(String fileName) {
-	LOG.trace("getProjectFromFile({})", fileName);
-	Project project = null;
-	List<String> warnings = new ArrayList<String>();
-	try {
-	    project = (Project) deserializeProjectFromFileInternal(fileName, warnings);
-	} catch (Exception e) {
-	    for (String w : warnings) {
-		LOG.warn(w);
-	    }
-	    DIYLC.ui().error(String.format(DIYLC.getString("message.presenter.could-not-open"),
-					   fileName), e);
-	}
-	return project;
+  public Project deserializeProjectFromFile(String fileName, List<String> warnings)
+      throws SAXException, IOException, ParserConfigurationException {
+    Project p = deserializeProjectFromFileInternal(fileName, warnings);
+    this.currentFileName = fileName;
+    this.modified = false;
+    return p;
+  }
+
+  private static Project deserializeProjectFromFileInternal(String fileName, List<String> warnings)
+      throws SAXException, IOException, ParserConfigurationException {
+    LOG.info(String.format("loadProjectFromFile(%s)", fileName));
+    Project project = null;
+    File file = new File(fileName);
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    DocumentBuilder db = dbf.newDocumentBuilder();
+    Document doc = db.parse(new InputSource(new InputStreamReader(new FileInputStream(file))));
+    doc.getDocumentElement().normalize();
+    if (doc.getDocumentElement().getNodeName().equals(Project.class.getName())
+        || doc.getDocumentElement().getNodeName().equals("project")) {
+      project = parseV3File(fileName, warnings);
+    } else {
+      if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase("layout")) {
+        throw new IllegalArgumentException(
+            "Could not open DIY file. Root node is not named 'Layout'.");
+      }
+      String formatVersion = doc.getDocumentElement().getAttribute("formatVersion");
+
+      // try to find a parser for an older version
+      List<IOldFileParser> parsers = getParsers();
+      for (int i = 0; i < parsers.size(); i++) {
+        if (parsers.get(i).canParse(formatVersion))
+          project = parsers.get(i).parseFile(doc.getDocumentElement(), warnings);
+      }
+
+      if (project == null)
+        throw new IllegalArgumentException("Unknown file format version: " + formatVersion);
     }
+    Collections.sort(warnings);
+    return project;
+  }
 
-    public Project deserializeProjectFromFile(String fileName,
-					      List<String> warnings)
-	throws SAXException,
-	       IOException,
-	       ParserConfigurationException {
-	Project p = deserializeProjectFromFileInternal(fileName, warnings);
-	this.currentFileName = fileName;
-	this.modified = false;
-	return p;
+  public void notifyFileChange() {
+    this.modified = true;
+    fireFileStatusChanged();
+  }
+
+  public String getCurrentFileName() {
+    return currentFileName;
+  }
+
+  public boolean isModified() {
+    return modified;
+  }
+
+  public void fireFileStatusChanged() {
+    messageDispatcher.dispatchMessage(
+        EventType.FILE_STATUS_CHANGED, getCurrentFileName(), isModified());
+  }
+
+  private static Project parseV3File(String fileName, List<String> warnings) throws IOException {
+
+    Project project;
+    VersionNumber fileVersion;
+    try {
+      fileVersion = readV3Version(fileName);
+      if (fileVersion.compareTo(DIYLC.getVersionNumber()) > 0)
+        warnings.add(
+            "The file is created with a newer version of DIYLC and may contain features that are not supported by your version of DIYLC. Please update.");
+    } catch (Exception e) {
+      warnings.add("Could not read file version number, the file may be corrupted.");
     }
-
-    private static Project deserializeProjectFromFileInternal(String fileName,
-							      List<String> warnings)
-	throws SAXException,
-	       IOException,
-	       ParserConfigurationException {
-	LOG.info(String.format("loadProjectFromFile(%s)", fileName));
-	Project project = null;
-	File file = new File(fileName);
-	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	DocumentBuilder db = dbf.newDocumentBuilder();
-	Document doc = db.parse(new InputSource(new InputStreamReader(new FileInputStream(file))));
-	doc.getDocumentElement().normalize();
-	if (doc.getDocumentElement().getNodeName().equals(Project.class.getName())
-	    || doc.getDocumentElement().getNodeName().equals("project")) {
-	    project = parseV3File(fileName, warnings);
-	} else {
-	    if (!doc.getDocumentElement().getNodeName().equalsIgnoreCase("layout")) {
-		throw new IllegalArgumentException("Could not open DIY file. Root node is not named 'Layout'.");
-	    }
-	    String formatVersion = doc.getDocumentElement().getAttribute("formatVersion");
-
-	    // try to find a parser for an older version
-	    List<IOldFileParser> parsers = getParsers();
-	    for (int i = 0; i < parsers.size(); i++) {
-		if (parsers.get(i).canParse(formatVersion))
-		    project = parsers.get(i).parseFile(doc.getDocumentElement(), warnings);
-	    }
-
-	    if (project == null)
-		throw new IllegalArgumentException("Unknown file format version: " + formatVersion);
-	}
-	Collections.sort(warnings);
-	return project;
+    FileInputStream fis = new FileInputStream(fileName);
+    missingFields.clear();
+    try {
+      Reader reader = new InputStreamReader(fis, "UTF-8");
+      project = (Project) xStream.fromXML(reader);
+    } catch (Exception e) {
+      LOG.warn("Could not open with the new xStream, trying the old one", e);
+      fis.close();
+      fis = new FileInputStream(fileName);
+      project = (Project) xStreamOld.fromXML(fis);
     }
-
-    public void notifyFileChange() {
-	this.modified = true;
-	fireFileStatusChanged();
+    if (!missingFields.isEmpty()) {
+      warnings.add(
+          "The project references unknown component properties, most likely because it was created with a newer version of DIYLC.");
     }
+    fis.close();
+    return project;
+  }
 
-    public String getCurrentFileName() {
-	return currentFileName;
-    }
+  private static VersionNumber readV3Version(String fileName) throws Exception {
+    File fXmlFile = new File(fileName);
+    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    Document doc = dBuilder.parse(fXmlFile);
 
-    public boolean isModified() {
-	return modified;
-    }
+    doc.getDocumentElement().normalize();
 
-    public void fireFileStatusChanged() {
-	messageDispatcher.dispatchMessage(EventType.FILE_STATUS_CHANGED,
-					  getCurrentFileName(),
-					  isModified());
-    }
+    NodeList nList = doc.getElementsByTagName("fileVersion");
 
-    private static Project parseV3File(String fileName, List<String> warnings)
-	throws IOException {
+    int items = nList.getLength();
 
-	Project project;
-	VersionNumber fileVersion;
-	try { 
-	    fileVersion = readV3Version(fileName);
-	    if (fileVersion.compareTo(DIYLC.getVersionNumber()) > 0)
-		warnings.add("The file is created with a newer version of DIYLC and may contain features that are not supported by your version of DIYLC. Please update.");
-	} catch (Exception e) {
-	    warnings.add("Could not read file version number, the file may be corrupted.");
-	}
-	FileInputStream fis = new FileInputStream(fileName);
-	missingFields.clear();
-	try {
-	    Reader reader = new InputStreamReader(fis, "UTF-8");
-	    project = (Project) xStream.fromXML(reader);
-	} catch (Exception e) {
-	    LOG.warn("Could not open with the new xStream, trying the old one", e);
-	    fis.close();
-	    fis = new FileInputStream(fileName);
-	    project = (Project) xStreamOld.fromXML(fis);
-	}
-	if (!missingFields.isEmpty()) {
-	    warnings.add("The project references unknown component properties, most likely because it was created with a newer version of DIYLC.");
-	}
-	fis.close();
-	return project;
-    }
-  
-    private static VersionNumber readV3Version(String fileName) throws Exception {
-	File fXmlFile = new File(fileName);
-	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-	Document doc = dBuilder.parse(fXmlFile);
-            
-	doc.getDocumentElement().normalize();
-    
-	NodeList nList = doc.getElementsByTagName("fileVersion");
-    
-	int items = nList.getLength();
-    
-	if (items != 1)
-	    throw new Exception("File version information could not be read from the XML.");
-    
-	Node versionNode = nList.item(0);    
-	Node n = versionNode.getFirstChild().getNextSibling();
-	int major = Integer.parseInt(n.getFirstChild().getNodeValue());
-	n = n.getNextSibling().getNextSibling();
-	int minor = Integer.parseInt(n.getFirstChild().getNodeValue());
-	n = n.getNextSibling().getNextSibling();
-	int build = Integer.parseInt(n.getFirstChild().getNodeValue());
-    
-	return new VersionNumber(major, minor, build);
-    }
+    if (items != 1) throw new Exception("File version information could not be read from the XML.");
+
+    Node versionNode = nList.item(0);
+    Node n = versionNode.getFirstChild().getNextSibling();
+    int major = Integer.parseInt(n.getFirstChild().getNodeValue());
+    n = n.getNextSibling().getNextSibling();
+    int minor = Integer.parseInt(n.getFirstChild().getNodeValue());
+    n = n.getNextSibling().getNextSibling();
+    int build = Integer.parseInt(n.getFirstChild().getNodeValue());
+
+    return new VersionNumber(major, minor, build);
+  }
 }

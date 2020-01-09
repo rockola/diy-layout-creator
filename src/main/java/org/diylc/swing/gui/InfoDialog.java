@@ -1,9 +1,9 @@
 /*
-  DIY Layout Creator (DIYLC). 
+  DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2020 held jointly by the individual authors.
 
   This file is part of DIYLC.
- 
+
   DIYLC is free software: you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -22,12 +22,10 @@ package org.diylc.swing.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Arrays;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
 import org.diylc.DIYLC;
 import org.diylc.common.IPlugInPort;
 import org.diylc.images.Icon;
@@ -35,46 +33,47 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class InfoDialog extends ButtonDialog {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private String message;
-    private String tipKey;
+  private String message;
+  private String tipKey;
 
-    public InfoDialog(JFrame owner, String tipKey) {
-	super(owner, "Usage Tip", new String[] {"OK", "Dismiss"});
-	this.tipKey = tipKey;
-	int index = Arrays.asList(tipKeys).indexOf(tipKey);
-	this.message = messages[index];   
+  public InfoDialog(JFrame owner, String tipKey) {
+    super(owner, "Usage Tip", new String[] {"OK", "Dismiss"});
+    this.tipKey = tipKey;
+    int index = Arrays.asList(tipKeys).indexOf(tipKey);
+    this.message = messages[index];
 
-	setMinimumSize(new Dimension(240, 40));
+    setMinimumSize(new Dimension(240, 40));
 
-	layoutGui();
-	setLocationRelativeTo(owner);
+    layoutGui();
+    setLocationRelativeTo(owner);
+  }
+
+  @Override
+  protected JComponent getMainComponent() {
+    JLabel label = new JLabel("<html>" + message + "</html>");
+    label.setIcon(Icon.Help.icon());
+    label.setBackground(Color.white);
+    label.setOpaque(true);
+    label.setBorder(
+        BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
+            BorderFactory.createEmptyBorder(16, 16, 16, 16)));
+    label.setIconTextGap(8);
+    return label;
+  }
+
+  @Override
+  public void setVisible(boolean b) {
+    if (!b && getSelectedButtonCaption() == "Dismiss") {
+      DIYLC.putValue(tipKey + ".dismissed", true);
     }
 
-    @Override
-    protected JComponent getMainComponent() {
-	JLabel label = new JLabel("<html>" + message + "</html>");
-	label.setIcon(Icon.Help.icon());
-	label.setBackground(Color.white);
-	label.setOpaque(true);
-	label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.lightGray),
-							   BorderFactory.createEmptyBorder(16, 16, 16, 16)));
-	label.setIconTextGap(8);
-	return label;
-    }
+    super.setVisible(b);
+  }
 
-    @Override
-    public void setVisible(boolean b) {
-	if (!b && getSelectedButtonCaption() == "Dismiss") {
-	    DIYLC.putValue(tipKey + ".dismissed", true);
-	}
-
-	super.setVisible(b);
-    }
-
-    private static String[] tipKeys =
-	new String[] { IPlugInPort.HIGHLIGHT_CONTINUITY_AREA };
-    private static String[] messages =
-	new String[] { DIYLC.getString("infoDialog.highlight-continuity") };
+  private static String[] tipKeys = new String[] {IPlugInPort.HIGHLIGHT_CONTINUITY_AREA};
+  private static String[] messages =
+      new String[] {DIYLC.getString("infoDialog.highlight-continuity")};
 }

@@ -19,43 +19,45 @@
     along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-//package org.diylc.components.smd;
+// package org.diylc.components.smd;
 //
-//import java.awt.AlphaComposite;
-//import java.awt.Color;
-//import java.awt.Composite;
-//import java.awt.FontMetrics;
-//import java.awt.Graphics2D;
-//import java.awt.Point;
-//import java.awt.Rectangle;
-//import java.awt.geom.Area;
-//import java.awt.geom.Rectangle2D;
-//import java.awt.geom.RoundRectangle2D;
+// import java.awt.AlphaComposite;
+// import java.awt.Color;
+// import java.awt.Composite;
+// import java.awt.FontMetrics;
+// import java.awt.Graphics2D;
+// import java.awt.Point;
+// import java.awt.Rectangle;
+// import java.awt.geom.Area;
+// import java.awt.geom.Rectangle2D;
+// import java.awt.geom.RoundRectangle2D;
 //
-//import org.diylc.appframework.miscutils.ConfigurationManager;
-//import org.diylc.common.Display;
-//import org.diylc.common.IPlugInPort;
-//import org.diylc.common.ObjectCache;
-//import org.diylc.common.Orientation;
-//import org.diylc.components.AbstractTransparentComponent;
-//import org.diylc.core.ComponentState;
-//import org.diylc.core.IDIYComponent;
-//import org.diylc.core.IDrawingObserver;
-//import org.diylc.core.Project;
-//import org.diylc.core.Theme;
-//import org.diylc.core.VisibilityPolicy;
-//import org.diylc.core.annotations.ComponentDescriptor;
-//import org.diylc.core.annotations.EditableProperty;
-//import org.diylc.core.annotations.KeywordPolicy;
-//import org.diylc.core.annotations.PositiveMeasureValidator;
-//import org.diylc.core.measures.Size;
-//import org.diylc.core.measures.SizeUnit;
-//import org.diylc.utils.Constants;
+// import org.diylc.appframework.miscutils.ConfigurationManager;
+// import org.diylc.common.Display;
+// import org.diylc.common.IPlugInPort;
+// import org.diylc.common.ObjectCache;
+// import org.diylc.common.Orientation;
+// import org.diylc.components.AbstractTransparentComponent;
+// import org.diylc.core.ComponentState;
+// import org.diylc.core.IDIYComponent;
+// import org.diylc.core.IDrawingObserver;
+// import org.diylc.core.Project;
+// import org.diylc.core.Theme;
+// import org.diylc.core.VisibilityPolicy;
+// import org.diylc.core.annotations.ComponentDescriptor;
+// import org.diylc.core.annotations.EditableProperty;
+// import org.diylc.core.annotations.KeywordPolicy;
+// import org.diylc.core.annotations.PositiveMeasureValidator;
+// import org.diylc.core.measures.Size;
+// import org.diylc.core.measures.SizeUnit;
+// import org.diylc.utils.Constants;
 //
-//@ComponentDescriptor(name = "SOT-23 Case", author = "Branislav Stojkovic", category = "SMD", instanceNamePrefix = "C",
-//    description = "Small outline transistor for SMD", stretchable = false, zOrder = IDIYComponent.COMPONENT,
+// @ComponentDescriptor(name = "SOT-23 Case", author = "Branislav Stojkovic", category = "SMD",
+// instanceNamePrefix = "C",
+//    description = "Small outline transistor for SMD", stretchable = false, zOrder =
+// IDIYComponent.COMPONENT,
 //    keywordPolicy = KeywordPolicy.SHOW_VALUE)
-//public class SOT23Package extends AbstractTransparentComponent<String> {
+// public class SOT23Package extends AbstractTransparentComponent<String> {
 //
 //  private static final long serialVersionUID = 1L;
 //
@@ -67,10 +69,10 @@
 //  public static Color LABEL_COLOR = Color.white;
 //  public static int EDGE_RADIUS = 4;
 //  public static Size PIN_SIZE = new Size(0.8d, SizeUnit.mm);
-//  
+//
 //  public static Size LENGTH = new Size(3d, SizeUnit.mm);
 //  public static Size WIDTH = new Size(1.4d, SizeUnit.mm);
-//  
+//
 //  public static Size PIN_LENGTH = new Size(0.6d, SizeUnit.mm);
 //  public static Size PIN_WIDTH = new Size(0.4d, SizeUnit.mm);
 //
@@ -198,7 +200,7 @@
 //    if (body == null) {
 //      body = new Area[2];
 //      int x = controlPoints[0].x;
-//      int y = controlPoints[0].y;      
+//      int y = controlPoints[0].y;
 //      int smdLength = (int) LENGTH.convertToPixels();
 //      int smdWidth = (int) WIDTH.convertToPixels();
 //      int pinSize = (int) PIN_SIZE.convertToPixels();
@@ -234,16 +236,19 @@
 //        default:
 //          throw new RuntimeException("Unexpected orientation: " + orientation);
 //      }
-//      Area mainArea = new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
+//      Area mainArea = new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS,
+// EDGE_RADIUS));
 //
 //      // create contact area
 //      Area contactArea = new Area();
 //      if (width > height) {
 //        contactArea.add(new Area(new Rectangle2D.Double(x, y, pinSize, height)));
-//        contactArea.add(new Area(new Rectangle2D.Double(x + width - pinSize, y, pinSize, height)));
+//        contactArea.add(new Area(new Rectangle2D.Double(x + width - pinSize, y, pinSize,
+// height)));
 //      } else {
 //        contactArea.add(new Area(new Rectangle2D.Double(x, y, width, pinSize)));
-//        contactArea.add(new Area(new Rectangle2D.Double(x, y + height - pinSize, width, pinSize)));
+//        contactArea.add(new Area(new Rectangle2D.Double(x, y + height - pinSize, width,
+// pinSize)));
 //      }
 //      contactArea.intersect(mainArea);
 //
@@ -256,7 +261,8 @@
 //  }
 //
 //  @Override
-//  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+//  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project
+// project,
 //      IDrawingObserver drawingObserver) {
 //    if (checkPointsClipped(g2d.getClip())) {
 //      return;
@@ -266,7 +272,8 @@
 //    Area mainArea = getBody()[0];
 //    Composite oldComposite = g2d.getComposite();
 //    if (alpha < MAX_ALPHA) {
-//      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+//      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha /
+// MAX_ALPHA));
 //    }
 //    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
 //    g2d.fill(mainArea);
@@ -275,13 +282,16 @@
 //    Color finalBorderColor;
 //    if (outlineMode) {
 //      Theme theme =
-//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY,
+// Constants.DEFAULT_THEME);
 //      finalBorderColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// SELECTION_COLOR
 //              : theme.getOutlineColor();
 //    } else {
 //      finalBorderColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// SELECTION_COLOR
 //              : getBorderColor();
 //    }
 //    g2d.setColor(finalBorderColor);
@@ -294,7 +304,8 @@
 //    if (!outlineMode) {
 //      g2d.setColor(PIN_COLOR);
 //      if (alpha < MAX_ALPHA) {
-//        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+//        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha /
+// MAX_ALPHA));
 //      }
 //      g2d.fill(contactArea);
 //      g2d.setComposite(oldComposite);
@@ -302,13 +313,16 @@
 //
 //    if (outlineMode) {
 //      Theme theme =
-//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY,
+// Constants.DEFAULT_THEME);
 //      finalBorderColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// SELECTION_COLOR
 //              : theme.getOutlineColor();
 //    } else {
 //      finalBorderColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// SELECTION_COLOR
 //              : PIN_BORDER_COLOR;
 //    }
 //    g2d.setColor(finalBorderColor);
@@ -319,13 +333,16 @@
 //    Color finalLabelColor;
 //    if (outlineMode) {
 //      Theme theme =
-//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+//          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY,
+// Constants.DEFAULT_THEME);
 //      finalLabelColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// LABEL_COLOR_SELECTED
 //              : theme.getOutlineColor();
 //    } else {
 //      finalLabelColor =
-//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+//          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ?
+// LABEL_COLOR_SELECTED
 //              : getLabelColor();
 //    }
 //    g2d.setColor(finalLabelColor);
@@ -387,15 +404,18 @@
 //    int thickness = getClosestOdd(width / 2);
 //    g2d.rotate(Math.PI / 4, width / 2, height / 2);
 //    RoundRectangle2D rect =
-//        new RoundRectangle2D.Double((width - thickness) / 2, 4 * width / 32, thickness, height - 8 * width / 32,
+//        new RoundRectangle2D.Double((width - thickness) / 2, 4 * width / 32, thickness, height - 8
+// * width / 32,
 //            radius, radius);
 //    g2d.setColor(getBodyColor());
 //    g2d.fill(rect);
 //    g2d.setColor(getBorderColor());
 //    g2d.draw(rect);
 //    Area contactArea = new Area();
-//    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, 4 * width / 32, thickness, contactSize)));
-//    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, height - 8 * width / 32, thickness,
+//    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, 4 * width / 32,
+// thickness, contactSize)));
+//    contactArea.add(new Area(new Rectangle2D.Double((width - thickness) / 2, height - 8 * width /
+// 32, thickness,
 //        contactSize)));
 //    contactArea.intersect(new Area(rect));
 //    g2d.setColor(PIN_COLOR);
@@ -445,4 +465,4 @@
 //      return Integer.parseInt(toString());
 //    }
 //  }
-//}
+// }

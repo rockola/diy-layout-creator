@@ -33,7 +33,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -55,9 +54,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "DIP IC", author = "Branislav Stojkovic", category = "Semiconductors",
-    instanceNamePrefix = "IC", description = "Dual-in-line package IC",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE, transformer = DIL_ICTransformer.class)
+@ComponentDescriptor(
+    name = "DIP IC",
+    author = "Branislav Stojkovic",
+    category = "Semiconductors",
+    instanceNamePrefix = "IC",
+    description = "Dual-in-line package IC",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
+    transformer = DIL_ICTransformer.class)
 public class DIL_IC extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -95,7 +100,7 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
   // pinSpacing.convertToPixels()),
   // new Point(3 * pinSpacing.convertToPixels(), 3 *
   // pinSpacing.convertToPixels()) };
-  transient private Area[] body;
+  private transient Area[] body;
 
   public DIL_IC() {
     super();
@@ -238,7 +243,8 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
       controlPoints[i] = new Point((int) (firstPoint.x + dx1), (int) (firstPoint.y + dy1));
-      controlPoints[i + pinCount.getValue() / 2] = new Point((int) (firstPoint.x + dx2), (int) (firstPoint.y + dy2));
+      controlPoints[i + pinCount.getValue() / 2] =
+          new Point((int) (firstPoint.x + dx2), (int) (firstPoint.y + dy2));
     }
   }
 
@@ -261,8 +267,12 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
           x += pinSize / 2;
           y -= pinSpacing / 2;
           indentation =
-              new Area(new Ellipse2D.Double(x + width / 2 - indentationSize / 2, y - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width / 2 - indentationSize / 2,
+                      y - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _90:
           width = (pinCount.getValue() / 2) * pinSpacing;
@@ -270,8 +280,12 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
           x -= (pinSpacing / 2) + width - pinSpacing;
           y += pinSize / 2;
           indentation =
-              new Area(new Ellipse2D.Double(x + width - indentationSize / 2, y + height / 2 - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width - indentationSize / 2,
+                      y + height / 2 - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _180:
           width = rowSpacing - pinSize;
@@ -279,8 +293,12 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
           x -= rowSpacing - pinSize / 2;
           y -= (pinSpacing / 2) + height - pinSpacing;
           indentation =
-              new Area(new Ellipse2D.Double(x + width / 2 - indentationSize / 2, y + height - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x + width / 2 - indentationSize / 2,
+                      y + height - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         case _270:
           width = (pinCount.getValue() / 2) * pinSpacing;
@@ -288,13 +306,18 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
           x -= pinSpacing / 2;
           y += pinSize / 2 - rowSpacing;
           indentation =
-              new Area(new Ellipse2D.Double(x - indentationSize / 2, y + height / 2 - indentationSize / 2,
-                  indentationSize, indentationSize));
+              new Area(
+                  new Ellipse2D.Double(
+                      x - indentationSize / 2,
+                      y + height / 2 - indentationSize / 2,
+                      indentationSize,
+                      indentationSize));
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      body[0] = new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
+      body[0] =
+          new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
       body[1] = indentation;
       if (indentation != null) {
         indentation.intersect(body[0]);
@@ -304,7 +327,11 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -316,7 +343,7 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
       for (Point point : controlPoints) {
         g2d.setColor(PIN_COLOR);
         g2d.fillRect(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);        
+        g2d.setColor(PIN_BORDER_COLOR);
         g2d.drawRect(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
     }
@@ -331,13 +358,17 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : getBorderColor();
     }
     g2d.setColor(finalBorderColor);
@@ -361,13 +392,17 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -403,10 +438,8 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
         }
 
         if (label.length == 2) {
-          if (i == 0)
-            g2d.translate(0, -textHeight / 2);
-          else if (i == 1)
-            g2d.translate(0, textHeight / 2);
+          if (i == 0) g2d.translate(0, -textHeight / 2);
+          else if (i == 1) g2d.translate(0, textHeight / 2);
         }
 
         g2d.drawString(l, x, y);
@@ -537,15 +570,37 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
   public void setDisplayNumbers(DisplayNumbers numbers) {
     this.displayNumbers = numbers;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
   public static enum PinCount {
-
-    _4, _6, _8, _10, _12, _14, _16, _18, _20, _22, _24, _26, _28, _30, _32, _34, _36, _38, _40, _42, _44, _46, _48, _50;
+    _4,
+    _6,
+    _8,
+    _10,
+    _12,
+    _14,
+    _16,
+    _18,
+    _20,
+    _22,
+    _24,
+    _26,
+    _28,
+    _30,
+    _32,
+    _34,
+    _36,
+    _38,
+    _40,
+    _42,
+    _44,
+    _46,
+    _48,
+    _50;
 
     @Override
     public String toString() {
@@ -558,8 +613,9 @@ public class DIL_IC extends AbstractTransparentComponent<String> {
   }
 
   public enum DisplayNumbers {
-
-    NO("No"), DIP("DIP"), CONNECTOR("Connector");
+    NO("No"),
+    DIP("DIP"),
+    CONNECTOR("Connector");
 
     private String label;
 

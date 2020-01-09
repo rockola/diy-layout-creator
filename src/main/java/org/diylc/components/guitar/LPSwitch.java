@@ -31,7 +31,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -50,8 +49,12 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "LP Toggle Switch", category = "Guitar", author = "Branislav Stojkovic",
-    description = "Les Paul style 3 position toggle switch", zOrder = IDIYComponent.COMPONENT,
+@ComponentDescriptor(
+    name = "LP Toggle Switch",
+    category = "Guitar",
+    author = "Branislav Stojkovic",
+    description = "Les Paul style 3 position toggle switch",
+    zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "SW")
 public class LPSwitch extends AbstractTransparentComponent<String> implements ISwitch {
 
@@ -66,7 +69,8 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
   private static Size TERMINAL_SPACING = new Size(0.2d, SizeUnit.in);
 
   private String value = "";
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  private Point[] controlPoints =
+      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   transient Shape[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
@@ -76,7 +80,11 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
@@ -84,7 +92,8 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
     if (componentState != ComponentState.DRAGGING) {
       Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
+        g2d.setComposite(
+            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
       g2d.fill(body[1]);
@@ -97,13 +106,17 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
 
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : WAFER_COLOR.darker();
     }
 
@@ -112,13 +125,17 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
 
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : theme.getOutlineColor();
     } else {
       finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? SELECTION_COLOR
               : BASE_COLOR.darker();
     }
 
@@ -142,19 +159,38 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
       int waferThickness = getClosestOdd(WAFER_THICKNESS.convertToPixels());
 
       Rectangle2D ground =
-          new Rectangle2D.Double(x - waferThickness / 2, y, waferThickness - 1, baseLength + (length - baseLength) / 2);
+          new Rectangle2D.Double(
+              x - waferThickness / 2,
+              y,
+              waferThickness - 1,
+              baseLength + (length - baseLength) / 2);
       body[0] = new Area(ground);
 
       int bodyY = y + (length - baseLength) / 2;
 
-      Area waferArea = new Area();//new Area(new Rectangle2D.Double(x - waferThickness * 3 / 2, bodyY, waferThickness, baseLength));
-      waferArea.add(new Area(new Rectangle2D.Double(x + waferThickness / 2, bodyY, waferThickness  *3, baseLength)));
+      Area waferArea =
+          new Area(); // new Area(new Rectangle2D.Double(x - waferThickness * 3 / 2, bodyY,
+      // waferThickness, baseLength));
+      waferArea.add(
+          new Area(
+              new Rectangle2D.Double(
+                  x + waferThickness / 2, bodyY, waferThickness * 3, baseLength)));
 
-      waferArea.add(new Area(new Rectangle2D.Double(x - waferThickness * 5 / 2, bodyY, waferThickness, baseLength)));
-      waferArea.add(new Area(new Rectangle2D.Double(x + waferThickness * 3 / 2, bodyY, waferThickness, baseLength)));
+      waferArea.add(
+          new Area(
+              new Rectangle2D.Double(
+                  x - waferThickness * 5 / 2, bodyY, waferThickness, baseLength)));
+      waferArea.add(
+          new Area(
+              new Rectangle2D.Double(
+                  x + waferThickness * 3 / 2, bodyY, waferThickness, baseLength)));
 
-      waferArea.add(new Area(new Rectangle2D.Double(x - waferThickness * 7 / 2, bodyY, waferThickness * 3, baseLength)));
-//      waferArea.add(new Area(new Rectangle2D.Double(x + waferThickness * 5 / 2, bodyY, waferThickness, baseLength)));
+      waferArea.add(
+          new Area(
+              new Rectangle2D.Double(
+                  x - waferThickness * 7 / 2, bodyY, waferThickness * 3, baseLength)));
+      //      waferArea.add(new Area(new Rectangle2D.Double(x + waferThickness * 5 / 2, bodyY,
+      // waferThickness, baseLength)));
 
       body[1] = waferArea;
 
@@ -257,21 +293,49 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
     g2d.fillRect(8 * width / 32, (width - baseLength) / 2, 16 * width / 32, baseLength);
     g2d.setColor(METAL_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-    g2d.drawLine(width / 2 - 2, (width - baseLength) / 2, width / 2 - 2, baseLength + (width - baseLength) / 2);
-    g2d.drawLine(width / 2 + 2, (width - baseLength) / 2, width / 2 + 2, baseLength + (width - baseLength) / 2);
-    g2d.drawLine(width / 2 - 5, (width - baseLength) / 2, width / 2 - 5, baseLength + (width - baseLength) / 2);
-    g2d.drawLine(width / 2 + 5, (width - baseLength) / 2, width / 2 + 5, baseLength + (width - baseLength) / 2);
+    g2d.drawLine(
+        width / 2 - 2,
+        (width - baseLength) / 2,
+        width / 2 - 2,
+        baseLength + (width - baseLength) / 2);
+    g2d.drawLine(
+        width / 2 + 2,
+        (width - baseLength) / 2,
+        width / 2 + 2,
+        baseLength + (width - baseLength) / 2);
+    g2d.drawLine(
+        width / 2 - 5,
+        (width - baseLength) / 2,
+        width / 2 - 5,
+        baseLength + (width - baseLength) / 2);
+    g2d.drawLine(
+        width / 2 + 5,
+        (width - baseLength) / 2,
+        width / 2 + 5,
+        baseLength + (width - baseLength) / 2);
     int dx = 2 * width / 32;
     int dy = 4 * width / 32;
-    g2d.drawLine(width / 2 - 2, baseLength + (width - baseLength) / 2, width / 2 - 2 + dx, baseLength
-        + (width - baseLength) / 2 + dy);
-    g2d.drawLine(width / 2 + 2, baseLength + (width - baseLength) / 2, width / 2 + 2 - dx, baseLength
-        + (width - baseLength) / 2 + dy);
+    g2d.drawLine(
+        width / 2 - 2,
+        baseLength + (width - baseLength) / 2,
+        width / 2 - 2 + dx,
+        baseLength + (width - baseLength) / 2 + dy);
+    g2d.drawLine(
+        width / 2 + 2,
+        baseLength + (width - baseLength) / 2,
+        width / 2 + 2 - dx,
+        baseLength + (width - baseLength) / 2 + dy);
 
-    g2d.drawLine(width / 2 - 5, baseLength + (width - baseLength) / 2, width / 2 - 5 - dx, baseLength
-        + (width - baseLength) / 2 + dy);
-    g2d.drawLine(width / 2 + 5, baseLength + (width - baseLength) / 2, width / 2 + 5 + dx, baseLength
-        + (width - baseLength) / 2 + dy);
+    g2d.drawLine(
+        width / 2 - 5,
+        baseLength + (width - baseLength) / 2,
+        width / 2 - 5 - dx,
+        baseLength + (width - baseLength) / 2 + dy);
+    g2d.drawLine(
+        width / 2 + 5,
+        baseLength + (width - baseLength) / 2,
+        width / 2 + 5 + dx,
+        baseLength + (width - baseLength) / 2 + dy);
   }
 
   @Override
@@ -300,7 +364,7 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
     // Invalidate the body
     body = null;
   }
-  
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
@@ -327,17 +391,17 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
     // Invalidate the body
     body = null;
   }
-  
-//  @Override
-//  public String getControlPointNodeName(int index) {
-//    // we don't want the switch to produce any nodes, it just makes connections
-//    return null;
-//  }
-//  
+
+  //  @Override
+  //  public String getControlPointNodeName(int index) {
+  //    // we don't want the switch to produce any nodes, it just makes connections
+  //    return null;
+  //  }
+  //
   // switch stuff
 
   @Override
-  public int getPositionCount() {    
+  public int getPositionCount() {
     return 3;
   }
 

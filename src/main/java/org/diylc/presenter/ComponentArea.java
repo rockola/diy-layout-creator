@@ -30,7 +30,8 @@ public class ComponentArea {
   private List<Area> continuityPositiveAreas;
   private List<Area> continuityNegativeAreas;
 
-  public ComponentArea(Area outlineArea, List<Area> continuityPositiveAreas, List<Area> continuityNegativeAreas) {
+  public ComponentArea(
+      Area outlineArea, List<Area> continuityPositiveAreas, List<Area> continuityNegativeAreas) {
     super();
     this.outlineArea = outlineArea;
     this.continuityPositiveAreas = continuityPositiveAreas;

@@ -22,8 +22,8 @@
 package org.diylc.components.electromechanical;
 
 public enum JackType {
-
-  MONO, STEREO;
+  MONO,
+  STEREO;
 
   @Override
   public String toString() {

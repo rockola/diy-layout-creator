@@ -22,14 +22,11 @@ package org.diylc.swing.plugins.cloud.view.browser;
 import java.awt.Dimension;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
@@ -42,120 +39,129 @@ import org.diylc.swing.ISimpleView;
 
 public class UploadManagerFrame extends JFrame implements ISimpleView {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LogManager.getLogger(UploadManagerFrame.class);
+  private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(UploadManagerFrame.class);
 
-    private static final String TITLE = "Manage My Uploads";
-    private ResultsScrollPanel resultsScrollPane;
-    private IPlugInPort plugInPort;
+  private static final String TITLE = "Manage My Uploads";
+  private ResultsScrollPanel resultsScrollPane;
+  private IPlugInPort plugInPort;
 
-    public UploadManagerFrame(IPlugInPort plugInPort) {
-	super(TITLE);
-	this.setIconImage(Icon.CloudGear.image());
-	this.setPreferredSize(new Dimension(700, 640));
-	this.plugInPort = plugInPort;
+  public UploadManagerFrame(IPlugInPort plugInPort) {
+    super(TITLE);
+    this.setIconImage(Icon.CloudGear.image());
+    this.setPreferredSize(new Dimension(700, 640));
+    this.plugInPort = plugInPort;
 
-	setContentPane(getResultsScrollPane());
-	this.pack();
-	this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
-	this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
+    setContentPane(getResultsScrollPane());
+    this.pack();
+    this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
+    this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
-	search();
+    search();
+  }
+
+  private ResultsScrollPanel getResultsScrollPane() {
+    if (resultsScrollPane == null) {
+      resultsScrollPane = new ResultsScrollPanel(this, plugInPort, null, true);
     }
+    return resultsScrollPane;
+  }
 
-    private ResultsScrollPanel getResultsScrollPane() {
-	if (resultsScrollPane == null) {
-	    resultsScrollPane = new ResultsScrollPanel(this, plugInPort, null, true);
-	}
-	return resultsScrollPane;
-    }
+  private void search() {
+    getResultsScrollPane().clearPrevious();
+    executeBackgroundTask(
+        new ITask<List<ProjectEntity>>() {
 
-    private void search() {
-	getResultsScrollPane().clearPrevious();
-	executeBackgroundTask(new ITask<List<ProjectEntity>>() {
+          @Override
+          public List<ProjectEntity> doInBackground() throws Exception {
+            return CloudPresenter.Instance.fetchUserUploads(null);
+          }
 
-		@Override
-		public List<ProjectEntity> doInBackground() throws Exception {
-		    return CloudPresenter.Instance.fetchUserUploads(null);
-		}
+          @Override
+          public void failed(Exception e) {
+            showMessage(
+                "Search failed! Detailed message is in the logs. Please report to the author.",
+                "Search Failed",
+                IView.ERROR_MESSAGE);
+          }
 
-		@Override
-		public void failed(Exception e) {
-		    showMessage("Search failed! Detailed message is in the logs. Please report to the author.", "Search Failed",
-				IView.ERROR_MESSAGE);
-		}
+          @Override
+          public void complete(List<ProjectEntity> result) {
+            //        setTitle(TITLE + " - " + result.size() + " Uploads Found");
+            getResultsScrollPane().startSearch(result);
+          }
+        });
+  }
 
-		@Override
-		public void complete(List<ProjectEntity> result) {
-		    //        setTitle(TITLE + " - " + result.size() + " Uploads Found");
-		    getResultsScrollPane().startSearch(result);
-		}
-	    });
-    }
+  @Override
+  public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
+    getGlassPane().setVisible(true);
+    SwingWorker<T, Void> worker =
+        new SwingWorker<T, Void>() {
 
-    @Override
-    public <T extends Object> void executeBackgroundTask(final ITask<T> task) {
-	getGlassPane().setVisible(true);
-	SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
+          @Override
+          protected T doInBackground() throws Exception {
+            return task.doInBackground();
+          }
 
-		@Override
-		protected T doInBackground() throws Exception {
-		    return task.doInBackground();
-		}
+          @Override
+          protected void done() {
+            getGlassPane().setVisible(false);
+            try {
+              T result = get();
+              task.complete(result);
+            } catch (ExecutionException e) {
+              LOG.error("Background task execution failed", e);
+              task.failed(e);
+            } catch (InterruptedException e) {
+              LOG.error("Background task execution interrupted", e);
+              task.failed(e);
+            }
+          }
+        };
+    worker.execute();
+  }
 
-		@Override
-		protected void done() {
-		    getGlassPane().setVisible(false);
-		    try {
-			T result = get();
-			task.complete(result);
-		    } catch (ExecutionException e) {
-			LOG.error("Background task execution failed", e);
-			task.failed(e);
-		    } catch (InterruptedException e) {
-			LOG.error("Background task execution interrupted", e);
-			task.failed(e);
-		    }
-		}
-	    };
-	worker.execute();
-    }
+  @Override
+  public void showMessage(String message, String title, int messageType) {
+    JOptionPane.showMessageDialog(this, message, title, messageType);
+  }
 
-    @Override
-    public void showMessage(String message, String title, int messageType) {
-	JOptionPane.showMessageDialog(this, message, title, messageType);
-    }
+  public void info(String title, String text) {
+    showMessage(text, title, IView.INFORMATION_MESSAGE);
+  }
 
-    public void info(String title, String text) {
-	showMessage(text, title, IView.INFORMATION_MESSAGE);
-    }
-    public void info(String text) {
-	info(Config.getString("message.info"), text);
-    }
-    public void error(String title, String text) {
-	showMessage(text, title, IView.ERROR_MESSAGE);
-    }
-    public void error(String text) {
-	error(Config.getString("message.error"), text);
-    }
-    public void error(String text, Exception e) {
-	error(Config.getString("message.error"),
-	      String.format("%s %s", text, e.getMessage()));
-    }
-    public void warn(String title, String text) {
-	showMessage(text, title, IView.WARNING_MESSAGE);
-    }
-    public void warn(String text) {
-	warn(Config.getString("message.warn"), text);
-    }
+  public void info(String text) {
+    info(Config.getString("message.info"), text);
+  }
 
-    @Override
-    public int showConfirmDialog(String message, String title, int optionType, int messageType) {
-	return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
-    }
-  
-    @Override
-    public JFrame getOwnerFrame() {
-	return this;
-    }
+  public void error(String title, String text) {
+    showMessage(text, title, IView.ERROR_MESSAGE);
+  }
+
+  public void error(String text) {
+    error(Config.getString("message.error"), text);
+  }
+
+  public void error(String text, Exception e) {
+    error(Config.getString("message.error"), String.format("%s %s", text, e.getMessage()));
+  }
+
+  public void warn(String title, String text) {
+    showMessage(text, title, IView.WARNING_MESSAGE);
+  }
+
+  public void warn(String text) {
+    warn(Config.getString("message.warn"), text);
+  }
+
+  @Override
+  public int showConfirmDialog(String message, String title, int optionType, int messageType) {
+    return JOptionPane.showConfirmDialog(this, message, title, optionType, messageType);
+  }
+
+  @Override
+  public JFrame getOwnerFrame() {
+    return this;
+  }
 }

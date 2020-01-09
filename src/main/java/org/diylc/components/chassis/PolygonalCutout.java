@@ -1,17 +1,17 @@
 /*
- * 
+ *
  * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- * 
+ *
  * This file is part of DIYLC.
- * 
+ *
  * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.shapes.AbstractShape;
@@ -35,9 +34,16 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 
-@ComponentDescriptor(name = "Polygonal Cutout", author = "Branislav Stojkovic", category = "Electro-Mechanical",
-    instanceNamePrefix = "POLYC", description = "Polygonal chassis cutout", zOrder = IDIYComponent.CHASSIS + 0.1,
-    bomPolicy = BomPolicy.NEVER_SHOW, autoEdit = false, transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Polygonal Cutout",
+    author = "Branislav Stojkovic",
+    category = "Electro-Mechanical",
+    instanceNamePrefix = "POLYC",
+    description = "Polygonal chassis cutout",
+    zOrder = IDIYComponent.CHASSIS + 0.1,
+    bomPolicy = BomPolicy.NEVER_SHOW,
+    autoEdit = false,
+    transformer = SimpleComponentTransformer.class)
 public class PolygonalCutout extends AbstractShape {
 
   private static final long serialVersionUID = 1L;
@@ -48,15 +54,23 @@ public class PolygonalCutout extends AbstractShape {
     super();
     this.borderColor = LIGHT_METAL_COLOR.darker();
     this.controlPoints =
-        new Point[] {new Point(0, 0), new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-            new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-            new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)};
+        new Point[] {
+          new Point(0, 0),
+          new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+        };
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
-    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
+    g2d.setStroke(
+        ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     g2d.setColor(color);
     int[] xPoints = new int[controlPoints.length];
     int[] yPoints = new int[controlPoints.length];
@@ -76,7 +90,8 @@ public class PolygonalCutout extends AbstractShape {
     // tracked so far.
     drawingObserver.stopTracking();
     Color lineColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? SELECTION_COLOR
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
             : borderColor;
     g2d.setColor(lineColor);
     g2d.drawPolygon(xPoints, yPoints, controlPoints.length);
@@ -88,8 +103,7 @@ public class PolygonalCutout extends AbstractShape {
   }
 
   public void setPointCount(PointCount pointCount) {
-    if (this.pointCount == pointCount)
-      return;
+    if (this.pointCount == pointCount) return;
     int oldPointCount = Integer.parseInt(this.pointCount.toString());
     int newPointCount = Integer.parseInt(pointCount.toString());
     this.controlPoints = Arrays.copyOf(this.controlPoints, newPointCount);
@@ -97,7 +111,8 @@ public class PolygonalCutout extends AbstractShape {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
         this.controlPoints[i] =
-            new Point((this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+            new Point(
+                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
                 (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
@@ -116,7 +131,12 @@ public class PolygonalCutout extends AbstractShape {
   }
 
   public enum PointCount {
-    _3, _4, _5, _6, _7, _8;
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8;
 
     public String toString() {
       return name().substring(1);

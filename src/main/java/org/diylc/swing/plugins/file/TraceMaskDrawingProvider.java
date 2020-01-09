@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PCBLayer;
@@ -41,7 +40,7 @@ import org.diylc.swingframework.IDrawingProvider;
 /**
  * {@link IDrawingProvider} implementation that uses {@link IPlugInPort} to draw a project onto the
  * canvas.
- * 
+ *
  * @author Branislav Stojkovic
  */
 public class TraceMaskDrawingProvider implements IDrawingProvider {
@@ -60,7 +59,11 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
 
   @Override
   public void draw(int page, Graphics g, double zoomFactor) {
-    plugInPort.draw((Graphics2D) g, EnumSet.of(DrawOption.ANTIALIASING), new PCBLayerFiler(getUsedLayers()[page]), zoomFactor);
+    plugInPort.draw(
+        (Graphics2D) g,
+        EnumSet.of(DrawOption.ANTIALIASING),
+        new PCBLayerFiler(getUsedLayers()[page]),
+        zoomFactor);
   }
 
   @Override

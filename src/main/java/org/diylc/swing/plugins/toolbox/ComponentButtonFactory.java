@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -42,7 +41,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
@@ -51,164 +49,173 @@ import org.diylc.core.Template;
 import org.diylc.images.Icon;
 
 /**
-  Factory that creates {@link JButton}s which display component type
-  icons and instantiates the component when clicked.
-
-  @author Branislav Stojkovic
-*/
+ * Factory that creates {@link JButton}s which display component type icons and instantiates the
+ * component when clicked.
+ *
+ * @author Branislav Stojkovic
+ */
 public class ComponentButtonFactory {
 
-    public static int MARGIN = 3;
+  public static int MARGIN = 3;
 
-    public static JButton create(final IPlugInPort plugInPort,
-				 final ComponentType componentType,
-				 final JPopupMenu menu) {
+  public static JButton create(
+      final IPlugInPort plugInPort, final ComponentType componentType, final JPopupMenu menu) {
 
-	JButton button = DropDownButtonFactory.createDropDownButton(componentType.getIcon(),
-								    menu);
+    JButton button = DropDownButtonFactory.createDropDownButton(componentType.getIcon(), menu);
 
-	button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1,
-							 MARGIN + 1,
-							 MARGIN,
-							 MARGIN));
+    button.setBorder(BorderFactory.createEmptyBorder(MARGIN + 1, MARGIN + 1, MARGIN, MARGIN));
 
-	button.setToolTipText("<html><b>" + componentType.getName()
-			      + "</b><br>" + componentType.getDescription()
-			      + "<br>Author: " + componentType.getAuthor()
-			      + "<br><br>Right click to select all components of this type"
-			      + "</html>");
-	button.addActionListener(new ActionListener() {
+    button.setToolTipText(
+        "<html><b>"
+            + componentType.getName()
+            + "</b><br>"
+            + componentType.getDescription()
+            + "<br>Author: "
+            + componentType.getAuthor()
+            + "<br><br>Right click to select all components of this type"
+            + "</html>");
+    button.addActionListener(
+        new ActionListener() {
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    plugInPort.setNewComponentTypeSlot(componentType, null, false);
-		}
-	    });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            plugInPort.setNewComponentTypeSlot(componentType, null, false);
+          }
+        });
 
-	button.addMouseListener(new MouseAdapter() {
+    button.addMouseListener(
+        new MouseAdapter() {
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-		    if (e.getButton() == MouseEvent.BUTTON3) {
-			List<IDIYComponent<?>> components = plugInPort.getCurrentProject().getComponents();
-			List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-			for (IDIYComponent<?> component : components) {
-			    if (componentType.getInstanceClass().equals(component.getClass())) {
-				newSelection.add(component);
-			    }
-			}
-			// Ctrl appends selection
-			if (Utils.isMac() ? e.isControlDown() : e.isMetaDown()) {
-			    newSelection.addAll(plugInPort.getSelectedComponents());
-			}
-			plugInPort.updateSelection(newSelection);
-			plugInPort.setNewComponentTypeSlot(null, null, false);
-			plugInPort.refresh();
-		    }
-		}
-	    });
+          @Override
+          public void mousePressed(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON3) {
+              List<IDIYComponent<?>> components = plugInPort.getCurrentProject().getComponents();
+              List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
+              for (IDIYComponent<?> component : components) {
+                if (componentType.getInstanceClass().equals(component.getClass())) {
+                  newSelection.add(component);
+                }
+              }
+              // Ctrl appends selection
+              if (Utils.isMac() ? e.isControlDown() : e.isMetaDown()) {
+                newSelection.addAll(plugInPort.getSelectedComponents());
+              }
+              plugInPort.updateSelection(newSelection);
+              plugInPort.setNewComponentTypeSlot(null, null, false);
+              plugInPort.refresh();
+            }
+          }
+        });
 
-	button.addKeyListener(new KeyAdapter() {
+    button.addKeyListener(
+        new KeyAdapter() {
 
-		@Override
-		public void keyPressed(KeyEvent e) {
-		    plugInPort.keyPressed(e.getKeyCode(),
-					  Utils.isMac() ? e.isControlDown() : e.isMetaDown(),
-					  e.isShiftDown(),
-					  e.isAltDown());
-		}
-	    });
-	return button;
+          @Override
+          public void keyPressed(KeyEvent e) {
+            plugInPort.keyPressed(
+                e.getKeyCode(),
+                Utils.isMac() ? e.isControlDown() : e.isMetaDown(),
+                e.isShiftDown(),
+                e.isAltDown());
+          }
+        });
+    return button;
+  }
+
+  private static final Pattern contributedPattern = Pattern.compile("^(.*)\\[(.*)\\]");
+
+  public static JMenuItem createVariantItem(
+      final IPlugInPort plugInPort, final Template variant, final ComponentType componentType) {
+
+    String display = variant.getName();
+
+    Matcher match = contributedPattern.matcher(display);
+    if (match.find()) {
+      String name = match.group(1);
+      String owner = match.group(2);
+      display = "<html>" + name + "<font color='gray'>[" + owner + "]</font></html>";
     }
-  
-    private static final Pattern contributedPattern = Pattern.compile("^(.*)\\[(.*)\\]");
 
-    public static JMenuItem createVariantItem(final IPlugInPort plugInPort, final Template variant,
-					      final ComponentType componentType) {
-    
-	String display = variant.getName();
-    
-	Matcher match = contributedPattern.matcher(display);
-	if (match.find()) {
-	    String name = match.group(1);
-	    String owner = match.group(2);
-	    display = "<html>" + name + "<font color='gray'>[" + owner + "]</font></html>";
-	}
-    
-	final JMenuItem item = new JMenuItem(display) {
+    final JMenuItem item =
+        new JMenuItem(display) {
 
-		private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-		// Customize item size to fit the delete button
-		public java.awt.Dimension getPreferredSize() {
-		    Dimension d = super.getPreferredSize();
-		    return new Dimension(d.width + 32, d.height);
-		}
-	    };
-	item.addActionListener(new ActionListener() {
+          // Customize item size to fit the delete button
+          public java.awt.Dimension getPreferredSize() {
+            Dimension d = super.getPreferredSize();
+            return new Dimension(d.width + 32, d.height);
+          }
+        };
+    item.addActionListener(
+        new ActionListener() {
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    plugInPort.setNewComponentTypeSlot(componentType, variant, false);
-		}
-	    });
-    
-	String defaultVariant = plugInPort.getDefaultVariant(componentType);
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            plugInPort.setNewComponentTypeSlot(componentType, variant, false);
+          }
+        });
 
-	JLabel label = new JLabel(variant.getName().equals(defaultVariant)
-				  ? Icon.PinGreen.icon()
-				  : Icon.PinGrey.icon());
-	label.setToolTipText(variant.getName().equals(defaultVariant)
-			     ? "Remove default variant"
-			     : "Set default variant");
-	label.addMouseListener(new MouseAdapter() {
+    String defaultVariant = plugInPort.getDefaultVariant(componentType);
 
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		    // Hide the menu
-		    Container c = item.getParent();
-		    if (c != null && c instanceof JPopupMenu) {
-			JPopupMenu m = (JPopupMenu) c;
-			m.setVisible(false);
-		    }
-		    plugInPort.setDefaultVariant(componentType, variant.getName());
-		    e.consume();
-		}
-	    });
-	Border margin = new EmptyBorder(4, 0, 0, 0);
-	label.setBorder(margin);
-	item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-	item.add(label);
+    JLabel label =
+        new JLabel(
+            variant.getName().equals(defaultVariant) ? Icon.PinGreen.icon() : Icon.PinGrey.icon());
+    label.setToolTipText(
+        variant.getName().equals(defaultVariant)
+            ? "Remove default variant"
+            : "Set default variant");
+    label.addMouseListener(
+        new MouseAdapter() {
 
-	label = new JLabel(Icon.Garbage.icon());
-	label.setToolTipText("Delete variant");
-	label.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            // Hide the menu
+            Container c = item.getParent();
+            if (c != null && c instanceof JPopupMenu) {
+              JPopupMenu m = (JPopupMenu) c;
+              m.setVisible(false);
+            }
+            plugInPort.setDefaultVariant(componentType, variant.getName());
+            e.consume();
+          }
+        });
+    Border margin = new EmptyBorder(4, 0, 0, 0);
+    label.setBorder(margin);
+    item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    item.add(label);
 
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		    // Hide the menu
-		    Container c = item.getParent();
-		    if (c != null && c instanceof JPopupMenu) {
-			JPopupMenu m = (JPopupMenu) c;
-			m.setVisible(false);
-		    }
-		    int result =
-			JOptionPane.showConfirmDialog(SwingUtilities.getRoot(item),
-						      "Are you sure you want to delete variant \""
-						      + variant.getName() + "\"",
-						      "Delete", JOptionPane.YES_NO_OPTION,
-						      JOptionPane.WARNING_MESSAGE);
-		    if (result != JOptionPane.YES_OPTION) {
-			return;
-		    }
-		    plugInPort.deleteVariant(componentType, variant.getName());
-		    e.consume();
-		}
-	    });
-	margin = new EmptyBorder(4, 2, 0, 0);
-	label.setBorder(margin);
-	item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-	item.add(label);
-	return item;
-    }
+    label = new JLabel(Icon.Garbage.icon());
+    label.setToolTipText("Delete variant");
+    label.addMouseListener(
+        new MouseAdapter() {
+
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            // Hide the menu
+            Container c = item.getParent();
+            if (c != null && c instanceof JPopupMenu) {
+              JPopupMenu m = (JPopupMenu) c;
+              m.setVisible(false);
+            }
+            int result =
+                JOptionPane.showConfirmDialog(
+                    SwingUtilities.getRoot(item),
+                    "Are you sure you want to delete variant \"" + variant.getName() + "\"",
+                    "Delete",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (result != JOptionPane.YES_OPTION) {
+              return;
+            }
+            plugInPort.deleteVariant(componentType, variant.getName());
+            e.consume();
+          }
+        });
+    margin = new EmptyBorder(4, 2, 0, 0);
+    label.setBorder(margin);
+    item.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    item.add(label);
+    return item;
+  }
 }

@@ -22,8 +22,8 @@
 package org.diylc.components.semiconductors;
 
 public enum FETPolarity {
-
-  NEGATIVE, POSITIVE;
+  NEGATIVE,
+  POSITIVE;
 
   @Override
   public String toString() {

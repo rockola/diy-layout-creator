@@ -22,8 +22,9 @@
 package org.diylc.core.measures;
 
 public enum CurrentUnit implements Unit {
-
-  uA(1e-6, "uA"), mA(1e-3, "mA"), A(1, "A");
+  uA(1e-6, "uA"),
+  mA(1e-3, "mA"),
+  A(1, "A");
 
   double factor;
   String display;

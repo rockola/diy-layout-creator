@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
@@ -37,10 +36,17 @@ import org.diylc.core.measures.Current;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
-@ComponentDescriptor(name = "Fuse", author = "Branislav Stojkovic", category = "Schematic Symbols",
-    creationMethod = CreationMethod.POINT_BY_POINT, instanceNamePrefix = "F",
-    description = "Fuse schematic symbol", zOrder = IDIYComponent.COMPONENT,
-    keywordPolicy = KeywordPolicy.SHOW_VALUE, keywordTag = "Schematic", transformer = SimpleComponentTransformer.class)
+@ComponentDescriptor(
+    name = "Fuse",
+    author = "Branislav Stojkovic",
+    category = "Schematic Symbols",
+    creationMethod = CreationMethod.POINT_BY_POINT,
+    instanceNamePrefix = "F",
+    description = "Fuse schematic symbol",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
+    keywordTag = "Schematic",
+    transformer = SimpleComponentTransformer.class)
 public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
 
   private static final long serialVersionUID = 1L;
@@ -61,7 +67,8 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString();// + (getPowerNew() == null ? "" : " " + getPowerNew().toString());
+    return getValue()
+        .toString(); // + (getPowerNew() == null ? "" : " " + getPowerNew().toString());
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -75,9 +82,15 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
     g2d.drawOval(width - 4 - d, height / 2 - 1, d, d);
     Path2D path = new Path2D.Double();
     path.moveTo(4 + d, height / 2);
-    double w = 5;   
+    double w = 5;
     path.curveTo(4 + 2 * d, height / 2 + w, width / 2 - d, height / 2 + w, width / 2, height / 2);
-    path.curveTo(width / 2 + d, height / 2 - w, width - 4 - 2 * d, height / 2 - w, width - 4 - d, height / 2);
+    path.curveTo(
+        width / 2 + d,
+        height / 2 - w,
+        width - 4 - 2 * d,
+        height / 2 - w,
+        width - 4 - d,
+        height / 2);
     g2d.draw(path);
   }
 
@@ -99,12 +112,15 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
     double radius = width / 6;
     polyline.moveTo(2 * radius, width / 2);
     polyline.curveTo(3 * radius, width, length / 2 - radius, width, length / 2, width / 2);
-    polyline.curveTo(length / 2 + radius, 0, length - 3 * radius, 0, length - 2 * radius, width / 2);
+    polyline.curveTo(
+        length / 2 + radius, 0, length - 3 * radius, 0, length - 2 * radius, width / 2);
     polyline.append(new Ellipse2D.Double(0, width / 2 - radius, radius * 2, radius * 2), false);
-    polyline.append(new Ellipse2D.Double(length - radius * 2, width / 2 - radius, radius * 2, radius * 2), false);
+    polyline.append(
+        new Ellipse2D.Double(length - radius * 2, width / 2 - radius, radius * 2, radius * 2),
+        false);
     return polyline;
   }
-  
+
   @Override
   protected boolean useShapeRectAsPosition() {
     return false;

@@ -22,18 +22,37 @@
 package org.diylc.core.measures;
 
 import java.awt.Color;
-
 import org.diylc.common.ResistorColorCode;
 
 public class Resistance extends AbstractMeasure<ResistanceUnit> {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Color[] COLOR_DIGITS = new Color[] {Color.black, Color.decode("#8B4513"), Color.red,
-      Color.orange, Color.yellow, Color.decode("#76EE00"), Color.blue, Color.decode("#91219E"), Color.lightGray,
-      Color.white};
-  private static final Color[] COLOR_MULTIPLIER = new Color[] {Color.lightGray.brighter(), Color.decode("#FFB90F"),
-      Color.black, Color.decode("#8B4513"), Color.red, Color.orange, Color.yellow, Color.decode("#76EE00"), Color.blue};
+  private static final Color[] COLOR_DIGITS =
+      new Color[] {
+        Color.black,
+        Color.decode("#8B4513"),
+        Color.red,
+        Color.orange,
+        Color.yellow,
+        Color.decode("#76EE00"),
+        Color.blue,
+        Color.decode("#91219E"),
+        Color.lightGray,
+        Color.white
+      };
+  private static final Color[] COLOR_MULTIPLIER =
+      new Color[] {
+        Color.lightGray.brighter(),
+        Color.decode("#FFB90F"),
+        Color.black,
+        Color.decode("#8B4513"),
+        Color.red,
+        Color.orange,
+        Color.yellow,
+        Color.decode("#76EE00"),
+        Color.blue
+      };
 
   // public Resistance() {
   // super();
@@ -71,8 +90,7 @@ public class Resistance extends AbstractMeasure<ResistanceUnit> {
           bands = new Color[] {};
       }
     } else {
-      if (getValue() == null || getUnit() == null)
-        return new Color[] {};
+      if (getValue() == null || getUnit() == null) return new Color[] {};
       double base = getValue() * getUnit().getFactor();
       int multiplier = 0;
       while (base > (resistorColorCode == ResistorColorCode._4_BAND ? 99 : 999)) {

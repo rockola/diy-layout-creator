@@ -21,16 +21,16 @@
 */
 package org.diylc.presenter;
 
-import java.awt.Font;
-
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import java.awt.Font;
 
 /**
- * Serializes {@link Font} objects in a more compact fashion. Backwards compatible when unmarshalling.
- * 
+ * Serializes {@link Font} objects in a more compact fashion. Backwards compatible when
+ * unmarshalling.
+ *
  * @author Branislav Stojkovic
  */
 public class FontConverter extends com.thoughtworks.xstream.converters.extended.FontConverter {
@@ -46,7 +46,10 @@ public class FontConverter extends com.thoughtworks.xstream.converters.extended.
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
     if (reader.getAttribute("name") != null) {
-      return new Font(reader.getAttribute("name"), Integer.parseInt(reader.getAttribute("style")), Integer.parseInt(reader.getAttribute("size")));
+      return new Font(
+          reader.getAttribute("name"),
+          Integer.parseInt(reader.getAttribute("style")),
+          Integer.parseInt(reader.getAttribute("size")));
     }
     return super.unmarshal(reader, context);
   }

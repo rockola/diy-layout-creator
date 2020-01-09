@@ -32,7 +32,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -57,9 +56,15 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
-@ComponentDescriptor(name = "Audio Transformer", author = "Branislav Stojkovic", category = "Passive",
-    instanceNamePrefix = "TR", description = "Small signal audio transformer with EI core",
-    zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE, transformer = DIL_ICTransformer.class)
+@ComponentDescriptor(
+    name = "Audio Transformer",
+    author = "Branislav Stojkovic",
+    category = "Passive",
+    instanceNamePrefix = "TR",
+    description = "Small signal audio transformer with EI core",
+    zOrder = IDIYComponent.COMPONENT,
+    keywordPolicy = KeywordPolicy.SHOW_VALUE,
+    transformer = DIL_ICTransformer.class)
 public class AudioTransformer extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
@@ -92,7 +97,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   private boolean primaryCT = true;
   private boolean secondaryCT = true;
 
-  transient private Area[] body;
+  private transient Area[] body;
 
   public AudioTransformer() {
     super();
@@ -133,7 +138,9 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     body = null;
   }
 
-  @EditableProperty(name = "Winding Spacing", validatorClass = PositiveNonZeroMeasureValidator.class)
+  @EditableProperty(
+      name = "Winding Spacing",
+      validatorClass = PositiveNonZeroMeasureValidator.class)
   public Size getWindingSpacing() {
     return windingSpacing;
   }
@@ -190,20 +197,24 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     controlPoints[0] = firstPoint;
     double leadSpacing = this.leadSpacing.convertToPixels();
     double windingSpacing = this.windingSpacing.convertToPixels();
-    
+
     // Update control points.
     for (int i = 1; i < 2 + (primaryCT ? 1 : 0); i++)
-      controlPoints[i] = new Point(firstPoint.x, (int) (firstPoint.y + i * leadSpacing * (primaryCT ? 1 : 2)));    
+      controlPoints[i] =
+          new Point(firstPoint.x, (int) (firstPoint.y + i * leadSpacing * (primaryCT ? 1 : 2)));
     for (int i = 0; i < 2 + (secondaryCT ? 1 : 0); i++)
-      controlPoints[2 + (primaryCT ? 1 : 0) + i] = new Point((int) (firstPoint.x + windingSpacing), (int) (firstPoint.y + i * leadSpacing * (secondaryCT ? 1 : 2)));    
-        
+      controlPoints[2 + (primaryCT ? 1 : 0) + i] =
+          new Point(
+              (int) (firstPoint.x + windingSpacing),
+              (int) (firstPoint.y + i * leadSpacing * (secondaryCT ? 1 : 2)));
+
     AffineTransform tx = getTx();
 
     if (tx != null) {
       for (int i = 1; i < controlPoints.length; i++) {
         tx.transform(controlPoints[i], controlPoints[i]);
-      }      
-    }    
+      }
+    }
   }
 
   @Override
@@ -218,28 +229,37 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
       int coreThickness = getClosestOdd(this.coreThickness.convertToPixels());
       int coilWidth = getClosestOdd(this.coilWidth.convertToPixels());
       int coilLength = getClosestOdd(this.coilLength.convertToPixels());
-      
-      body[0] = new Area(new Rectangle2D.Double(centerX - coreThickness / 2, centerY - coreWidth / 2, coreThickness, coreWidth));
-      body[1] = new Area(new RoundRectangle2D.Double(centerX - coilLength / 2, centerY - coilWidth / 2, coilLength, coilWidth, coilWidth / 3, coilWidth / 3));
+
+      body[0] =
+          new Area(
+              new Rectangle2D.Double(
+                  centerX - coreThickness / 2, centerY - coreWidth / 2, coreThickness, coreWidth));
+      body[1] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  centerX - coilLength / 2,
+                  centerY - coilWidth / 2,
+                  coilLength,
+                  coilWidth,
+                  coilWidth / 3,
+                  coilWidth / 3));
       body[1].subtract(body[0]);
-      
+
       AffineTransform tx = getTx();
       if (tx != null)
         for (Area b : body) {
-          if (b != null)
-            b.transform(tx);
+          if (b != null) b.transform(tx);
         }
     }
     return body;
   }
-  
+
   @SuppressWarnings("incomplete-switch")
   private AffineTransform getTx() {
     double x = controlPoints[0].x;
     double y = controlPoints[0].y;
-    if (orientation == Orientation.DEFAULT)
-      return null;
-    
+    if (orientation == Orientation.DEFAULT) return null;
+
     double theta = 0;
     switch (orientation) {
       case _90:
@@ -251,14 +271,18 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
       case _270:
         theta = Math.PI * 3 / 2;
         break;
-    }        
+    }
     AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
-    
+
     return rotation;
   }
 
   @Override
-  public void draw(Graphics2D g2d, ComponentState componentState, boolean outlineMode, Project project,
+  public void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
       IDrawingObserver drawingObserver) {
     if (checkPointsClipped(g2d.getClip())) {
       return;
@@ -266,7 +290,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     Area[] body = getBody();
     Area coreArea = body[0];
     Area coilArea = body[1];
-        
+
     if (!outlineMode) {
       int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
       for (Point point : controlPoints) {
@@ -280,7 +304,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
-    
+
     // render coil
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getCoilColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -288,51 +312,62 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     Color finalBorderColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = getCoilBorderColor();
     }
     g2d.setColor(finalBorderColor);
     g2d.draw(coilArea);
-    
+
     // render core
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getCoreColor());
     g2d.fill(coreArea);
     g2d.setComposite(oldComposite);
 
-    if (!outlineMode)
-      finalBorderColor = getCoreBorderColor();
-    
-    g2d.setColor(finalBorderColor);   
+    if (!outlineMode) finalBorderColor = getCoreBorderColor();
+
+    g2d.setColor(finalBorderColor);
     g2d.draw(coreArea);
-    
-    drawingObserver.stopTracking();   
+
+    drawingObserver.stopTracking();
 
     g2d.setFont(project.getFont());
-    
+
     // Draw winding designations
-    Point wPoint = new Point((int) (controlPoints[0].x + project.getFontSize()), (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+    Point wPoint =
+        new Point(
+            (int) (controlPoints[0].x + project.getFontSize()),
+            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
     AffineTransform tx = getTx();
-    if (tx != null)
-      tx.transform(wPoint, wPoint);
-    StringUtils.drawCenteredText(g2d, "P", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    wPoint = new Point((int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()), (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
-    if (tx != null)
-      tx.transform(wPoint, wPoint);
-    StringUtils.drawCenteredText(g2d, "S", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    if (tx != null) tx.transform(wPoint, wPoint);
+    StringUtils.drawCenteredText(
+        g2d, "P", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    wPoint =
+        new Point(
+            (int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()),
+            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+    if (tx != null) tx.transform(wPoint, wPoint);
+    StringUtils.drawCenteredText(
+        g2d, "S", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
     // Draw label.
     Color finalLabelColor;
     if (outlineMode) {
       Theme theme =
-          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+          (Theme)
+              ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : theme.getOutlineColor();
     } else {
       finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
+          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+              ? LABEL_COLOR_SELECTED
               : getLabelColor();
     }
     g2d.setColor(finalLabelColor);
@@ -368,10 +403,8 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
         }
 
         if (label.length == 2) {
-          if (i == 0)
-            g2d.translate(0, -textHeight / 2);
-          else if (i == 1)
-            g2d.translate(0, textHeight / 2);
+          if (i == 0) g2d.translate(0, -textHeight / 2);
+          else if (i == 1) g2d.translate(0, textHeight / 2);
         }
 
         g2d.drawString(l, x, y);
@@ -390,14 +423,14 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     g2d.fillRoundRect(1, (int) (height / 8f), width - 2, (int) (height * 6 / 8f), radius, radius);
     g2d.setColor(COIL_BORDER_COLOR);
     g2d.drawRoundRect(1, (int) (height / 8f), width - 2, (int) (height * 6 / 8f), radius, radius);
-    
+
     g2d.setColor(CORE_COLOR);
     g2d.fillRect(width * 3 / 8, 1, width / 4, height - 2);
     g2d.setColor(CORE_BORDER_COLOR);
     g2d.drawRect(width * 3 / 8, 1, width / 4, height - 2);
-    
+
     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-    
+
     int pinSize = (int) (2f * width / 32);
     g2d.setColor(PIN_COLOR);
     for (int i = 0; i < 3; i++) {
@@ -441,7 +474,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
   }
-    
+
   @EditableProperty(name = "Core Thickness")
   public Size getCoreThickness() {
     return coreThickness;
@@ -481,7 +514,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     this.coilLength = coilLength;
     body = null;
   }
-  
+
   @EditableProperty(name = "Coil")
   public Color getCoilColor() {
     return coilColor;
@@ -499,7 +532,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   public void setCoilBorderColor(Color coilBorderColor) {
     this.coilBorderColor = coilBorderColor;
   }
-  
+
   @EditableProperty(name = "Primary CT")
   public boolean getPrimaryCT() {
     return primaryCT;
@@ -518,8 +551,8 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   public void setSecondaryCT(boolean secondaryCT) {
     this.secondaryCT = secondaryCT;
     updateControlPoints();
-  }  
-  
+  }
+
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;

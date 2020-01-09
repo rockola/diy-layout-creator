@@ -25,7 +25,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -35,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 public class MiniToolbar extends JPanel {
-  
+
   private static final long serialVersionUID = 1L;
 
   public MiniToolbar() {
@@ -48,26 +47,26 @@ public class MiniToolbar extends JPanel {
     l.setIcon((Icon) action.getValue(AbstractAction.SMALL_ICON));
     l.setToolTipText((String) action.getValue(AbstractAction.NAME));
     l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    l.addMouseListener(new MouseAdapter() {
-      
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        action.actionPerformed(null);
-      }      
-    });
-    add(l);  
+    l.addMouseListener(
+        new MouseAdapter() {
+
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            action.actionPerformed(null);
+          }
+        });
+    add(l);
     setEnabled(false);
   }
-  
+
   @Override
   public void setEnabled(boolean enabled) {
-    for (Component c : getComponents())
-      c.setEnabled(enabled);
+    for (Component c : getComponents()) c.setEnabled(enabled);
   }
-  
+
   public void addSpacer() {
     JSeparator l = new JSeparator();
-//    l.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
+    //    l.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
     add(l);
   }
 }

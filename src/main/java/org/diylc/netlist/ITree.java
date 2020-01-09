@@ -26,6 +26,6 @@ import java.util.List;
 public interface ITree {
 
   List<ITree> getChildren();
-  
+
   TreeConnectionType getConnectionType();
 }
