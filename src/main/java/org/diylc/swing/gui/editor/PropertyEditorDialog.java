@@ -38,8 +38,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import org.diylc.common.Message;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ValidationException;
 import org.diylc.swingframework.ButtonDialog;
