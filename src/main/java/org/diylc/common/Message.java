@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.commonmark.node.*;
+import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.*;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 public final class Message {
     private static Logger LOG = LogManager.getLogger(Message.class);
