@@ -9,10 +9,9 @@
     <show-at-startup>true</show-at-startup>
   </templates>
   <url>
-    <manual>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/Manual.md</manual>
-    <faq>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/FAQ.md</faq>
-    <component>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/ComponentAPI.md</component>
-    <component>https://github.com/bancika/diy-layout-creator/blob/wiki/ComponentAPI.md</component>
+    <manual>https://github.com/rockola/diy-layout-creator/blob/evo/doc/Manual.md</manual>
+    <faq>https://github.com/rockola/diy-layout-creator/blob/evo/doc/FAQ.md</faq>
+    <component>https://github.com/rockola/diy-layout-creator/blob/evo/doc/ComponentAPI.md</component>
     <!-- <plugin>https://github.com/bancika/diy-layout-creator/blob/wiki/PluginAPI.md</plugin> -->
     <bug>https://github.com/rockola/diy-layout-creator/issues</bug>
     <donate>http://diy-fever.com/donate</donate>
