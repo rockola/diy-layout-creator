@@ -56,8 +56,6 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class CloudPlugIn implements IPlugIn {
 
-    private static final String ONLINE_TITLE = "Project Cloud";
-
     private final static Logger LOG = LogManager.getLogger(CloudPlugIn.class);
 
     private IPlugInPort plugInPort;
@@ -77,7 +75,7 @@ public class CloudPlugIn implements IPlugIn {
     private CloudBrowserFrame cloudBrowser;
 
     private void menuEntry(AbstractAction action) {
-	DIYLC.ui().injectMenuAction(action, ONLINE_TITLE);
+	DIYLC.ui().injectMenuAction(action, DIYLC.getString("cloud.title"));
     }
     private void separator() { menuEntry(null); }
     private String getMsg(String key) { return Config.getString("message.cloud." + key); }
