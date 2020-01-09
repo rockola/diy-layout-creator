@@ -34,6 +34,12 @@ You will need to go this route if you want to send pull requests.
 	
 Sit back and wait for Maven to fetch a number of JARs required to build DIYLC.
 
+### zsh function for compiling
+````
+mc () {
+        mvn -B compile 2>&1 | tee log/compile.txt
+}
+````
 ## Run your newly built version of DIYLC
 
 	% mvn -B exec:exec | tee log/run.log
@@ -41,7 +47,12 @@ Sit back and wait for Maven to fetch a number of JARs required to build DIYLC.
 or, if you don't want/need to hold on to various debug/error messages printed on the console:
 
 	% mvn exec:exec
-	
+### zsh function for running
+````
+mr () {
+        mvn -B exec:exec 2>&1 | tee log/run-$(date +'%Y%m%d-%H%M%S').txt
+}
+````
 ## Build a complete package for distribution
 
 	% mvn package
