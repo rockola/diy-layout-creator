@@ -48,6 +48,8 @@ public class Project implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String FILE_SUFFIX = ".diy";
+
     public static String DEFAULT_TITLE = Config.getString("project.new-title");
     public static Size DEFAULT_WIDTH = new Size(29d, SizeUnit.cm);
     public static Size DEFAULT_HEIGHT =	new Size(21d, SizeUnit.cm);
@@ -56,7 +58,6 @@ public class Project implements Serializable {
 					       Font.PLAIN, 14);
 
     private VersionNumber fileVersion;
-
     private String title;
     private String author;
     private String description;
