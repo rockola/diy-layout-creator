@@ -254,8 +254,8 @@ public class MainFrame extends JFrame {
 	info(Config.getString("message.info"), text);
     }
     public void info(String text, Exception e) {
-	error(Config.getString("message.info"),
-	      String.format("%s %s", text, e.getMessage()));
+	info(Config.getString("message.info"),
+	     String.format("%s %s", text, e.getMessage()));
     }
     public void error(String title, String text) {
 	showMessage(text, title, IView.ERROR_MESSAGE);
@@ -272,6 +272,13 @@ public class MainFrame extends JFrame {
     }
     public void warn(String text) {
 	warn(Config.getString("message.warn"), text);
+    }
+
+    public void requestBugReport(String text) {
+	// TODO: bring up an error dialog with a clickable link to
+	// web page for reporting issues.
+	// For now just a normal error with a humble request.
+	error(text + " " + Config.getString("message.bug-report-request"));
     }
 
     public int showConfirmDialog(String message, String title, int optionType, int messageType) {
