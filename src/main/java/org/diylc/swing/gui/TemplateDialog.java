@@ -301,7 +301,7 @@ public class TemplateDialog extends JDialog {
 	    File dir = new File(s);
 	    if (dir.exists()) {
 		for (File f : dir.listFiles()) {
-		    if (f.isFile() && f.getName().toLowerCase().endsWith(".diy")) {
+		    if (f.isFile() && f.getName().toLowerCase().endsWith(Project.FILE_SUFFIX)) {
 			files.add(f);
 		    }
 		}
