@@ -42,6 +42,7 @@ public interface ISimpleView {
     void info(String text);
     void error(String title, String text);
     void error(String text);
+    void error(String text, Exception e);
     void warn(String title, String text);
     void warn(String text);
 

@@ -214,7 +214,8 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 		@Override
 		public List<ProjectEntity> doInBackground() throws Exception {
 		    return searchSession.startSession(getSearchHeaderPanel().getSearchText(),
-						      getSearchHeaderPanel().getCategory(), getSearchHeaderPanel().getSorting());
+						      getSearchHeaderPanel().getCategory(),
+						      getSearchHeaderPanel().getSorting());
 		}
 
 		@Override
@@ -274,6 +275,10 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
     }
     public void error(String text) {
 	error(Config.getString("message.error"), text);
+    }
+    public void error(String text, Exception e) {
+	error(Config.getString("message.error"),
+	      String.format("%s %s", text, e.getMessage()));
     }
     public void warn(String title, String text) {
 	showMessage(text, title, IView.WARNING_MESSAGE);

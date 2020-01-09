@@ -138,6 +138,10 @@ public class UploadManagerFrame extends JFrame implements ISimpleView {
     public void error(String text) {
 	error(Config.getString("message.error"), text);
     }
+    public void error(String text, Exception e) {
+	error(Config.getString("message.error"),
+	      String.format("%s %s", text, e.getMessage()));
+    }
     public void warn(String title, String text) {
 	showMessage(text, title, IView.WARNING_MESSAGE);
     }
