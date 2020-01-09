@@ -8,4 +8,20 @@
   <templates>
     <show-at-startup>true</show-at-startup>
   </templates>
+  <url>
+    <manual>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/Manual.md</manual>
+    <faq>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/FAQ.md</faq>
+    <component>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/ComponentAPI.md</component>
+    <component>https://github.com/bancika/diy-layout-creator/blob/wiki/ComponentAPI.md</component>
+    <!-- <plugin>https://github.com/bancika/diy-layout-creator/blob/wiki/PluginAPI.md</plugin> -->
+    <bug>https://github.com/rockola/diy-layout-creator/issues</bug>
+    <donate>http://diy-fever.com/donate</donate>
+    <website>https://github.com/rockola/diy-layout-creator</website>
+    <!-- -->
+    <update>http://www.diy-fever.com/update.xml</update>
+    <api>
+      <base>http://www.diy-fever.com/diylc/api/v1</base>
+      <announcements>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/announcement.md</announcements>
+    </api>
+  </url>
 </configuration>
