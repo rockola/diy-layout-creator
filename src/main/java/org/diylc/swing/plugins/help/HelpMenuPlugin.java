@@ -72,7 +72,7 @@ public class HelpMenuPlugin implements IPlugIn {
 	navigateURL("user-manual", Icon.Manual, "manual");
 	navigateURL("faq", Icon.Faq, "faq");
 	navigateURL("component-api", Icon.CoffeebeanEdit, "component");
-	navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
+	//navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
 	navigateURL("bug-report", Icon.Bug, "bug");
 	separator();
 	DIYLC.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
