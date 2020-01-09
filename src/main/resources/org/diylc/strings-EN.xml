@@ -5,6 +5,7 @@
   </app>
   <project>
     <new-title>New Project</new-title>
+    <autosave-failed>Could not save project backup file!</autosave-failed>
   </project>
   <menu>
     <help>
@@ -23,6 +24,7 @@
     <info>Information</info>
     <warn>Warning</warn>
     <success/>
+    <bug-report-request>Please file a bug report.</bug-report-request>
     <statusbar>
       <highlight-connected>Click on a component to highlight area directly or indirectly connected to the area below the cursor. To continue editing, this mode needs to be switched OFF.</highlight-connected>
       <empty-selection>Selection is empty.</empty-selection>
@@ -119,11 +121,22 @@
       <upload-error/>
       <upload-success/>
       <project-uploaded>The project has been uploaded to the cloud successfully. Thank you for your contribution!</project-uploaded>
+      <project-replaced>The project has been replaced successfully.</project-replaced>
       <temp-file-error>Could not prepare temporary files to be uploaded to the cloud.</temp-file-error>
       <file-not-opened>Could not open file.</file-not-opened>
+      <querying-for-more>Querying the cloud for more results...</querying-for-more>
+      <no-more-results/>
       <search>Search the Cloud</search>
+      <see-comments>Click to see and add public comments</see-comments>
       <could-not-search>Failed to retrieve search results.</could-not-search>
+      <search-no-match>No projects match the search criteria.</search-no-match>
+      <search-failed>Search failed! Detailed message is in the logs.</search-failed>
+      <delete-project/>
+      <confirm-delete>Are you sure you want to permanently delete project '%s' from the cloud?</confirm-delete>
+      <delete-failed>Could not delete the project. Detailed message is in the logs.</delete-failed>
       <manage-my-uploads/>
+      <view-count/>
+      <download-to-local-drive/>
     </cloud>
   </message>
   <url>
