@@ -940,7 +940,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(ts);
               break;
             default:
-              LOG.error("Don't know what to do with {}", lcNodeName)
+              LOG.error("Don't know what to do with {}", lcNodeName);
           }
         } else {
           LOG.error("Unrecognized node name found: {}", node.getNodeName());

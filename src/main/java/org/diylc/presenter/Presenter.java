@@ -1521,7 +1521,7 @@ public class Presenter implements IPlugInPort {
     }
 
     if (!canMirror)
-      if (showConfirmDialog(DIYLC.getString("presenter.unmirrorable-components")
+      if (showConfirmDialog(DIYLC.getString("presenter.unmirrorable-components"),
                             "Mirror Selection",
                             IView.YES_NO_OPTION,
                             IView.QUESTION_MESSAGE)
