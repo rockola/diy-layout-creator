@@ -227,7 +227,7 @@ public class DIYLC {
 	    int response =
 		JOptionPane.showConfirmDialog(null,
 					      Message.getHTML("startup-warning"),
-					      "DIYLC",
+					      Config.getString("app.title"),
 					      JOptionPane.YES_NO_OPTION,
 					      JOptionPane.WARNING_MESSAGE);
 	    if (response != JOptionPane.YES_OPTION) {
