@@ -64,6 +64,7 @@ import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
+import org.diylc.common.Message;
 import org.diylc.core.IDIYComponent;
 import org.diylc.images.Icon;
 import org.diylc.presenter.Presenter;

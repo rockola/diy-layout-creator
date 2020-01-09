@@ -438,7 +438,7 @@ public class ResultsScrollPanel extends JScrollPane {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            if (cloudUI.showConfirmDialog(Format.string(DIYLC.getString("cloud.confirm-replace"),
+            if (cloudUI.showConfirmDialog(String.format(DIYLC.getString("cloud.confirm-replace"),
                                                         project.getName()),
                                           "Replace Project",
                                           IView.YES_NO_OPTION,
