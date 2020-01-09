@@ -102,8 +102,8 @@ public class V2FileParser implements IOldFileParser {
     parser.addConstant("cm", Constants.PIXELS_PER_INCH / 2.54f);
     parser.addConstant("in", Constants.PIXELS_PER_INCH * 1f);
     parser.addConstant("grid", Constants.PIXELS_PER_INCH * 0.1f);
-    parser.addConstant("degree", Double.valueOf(0.017453292519943295D));
-    parser.addConstant("deg", Double.valueOf(0.017453292519943295D));
+    parser.addConstant("degree", Constants.DEGREES_PER_RADIAN);
+    parser.addConstant("deg", Constants.DEGREES_PER_RADIAN);
     parser.addConstant("px", 1f);
     parser.parseExpression(text);
 
@@ -213,9 +213,7 @@ public class V2FileParser implements IOldFileParser {
                   Size anglePro = parseString(nodeValue);
                   angle = anglePro.getValue() * Constants.PIXELS_PER_INCH
                           / 25.4f
-                          / Double.valueOf(0.017453292519943295D); // magic number?
-                // (anglePro.getValue()*
-                // 25.4f/Double.valueOf(0.017453292519943295D)/Double.valueOf(3.2257990310669));
+                          / Constants.DEGREES_PER_RADIAN;
                   angle = Math.floor(angle);
                   break;
                 case "distance":
