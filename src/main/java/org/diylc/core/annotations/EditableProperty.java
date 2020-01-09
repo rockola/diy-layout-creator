@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.core.annotations;
 
@@ -27,11 +25,11 @@ import org.diylc.core.AllowAllValidator;
 import org.diylc.core.IPropertyValidator;
 
 /**
- * Used to annotate editable component property. Editable property XYZ must have both getter and
- * setter named <code>getXYZ</code> and <code>setXYZ</code> respectively and this annotation must be
- * placed on the getter method. <br>
- * <br>
- * In the example below, {@code category} is the property we want to edit and {@code
+ * Used to annotate editable component property. Editable property XYZ
+ * must have both getter and setter named <code>getXYZ</code> and
+ * <code>setXYZ</code> respectively and this annotation must be placed
+ * on the getter method. <br> <br> In the example below, {@code
+ * category} is the property we want to edit and {@code
  * getCategories()} provides a list of available values for category.
  *
  * <pre>
@@ -54,9 +52,10 @@ import org.diylc.core.IPropertyValidator;
 public @interface EditableProperty {
 
   /**
-   * Returns property name. If left blank property name will be extracted from the getter name, e.g.
-   * getter <code>getXYZ</code> will induce property name <code>XYZ</code>. <br>
-   * Default value is blank.
+   * Returns property name. If left blank property name will be
+   * extracted from the getter name, e.g.  getter <code>getXYZ</code>
+   * will induce property name <code>XYZ</code>. <br> Default value is
+   * blank.
    *
    * @return
    */

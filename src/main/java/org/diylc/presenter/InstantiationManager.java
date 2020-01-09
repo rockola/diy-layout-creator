@@ -151,7 +151,9 @@ public class InstantiationManager {
     this.potentialControlPoint = null;
   }
 
-  public void instantiatePointByPoint(Point scaledPoint, Project currentProject) throws Exception {
+  public void instantiatePointByPoint(Point scaledPoint, Project currentProject)
+      throws Exception {
+
     firstControlPoint = scaledPoint;
     componentSlot =
         instantiateComponent(componentTypeSlot, template, firstControlPoint, currentProject);
@@ -203,7 +205,8 @@ public class InstantiationManager {
       if (existingNames.contains(component.getName())) {
         ComponentType componentType =
             ComponentProcessor.getInstance()
-                .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+            .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>)
+                                          component.getClass());
         String newName = createUniqueName(componentType, allComponents);
         existingNames.add(newName);
         component.setName(newName);
@@ -376,8 +379,9 @@ public class InstantiationManager {
   }
 
   /**
-   * Finds any properties that have default values and injects default values. Typically it should
-   * be used for {@link IDIYComponent} and {@link Project} objects.
+   * Finds any properties that have default values and injects default
+   * values. Typically it should be used for {@link IDIYComponent} and
+   * {@link Project} objects.
    *
    * @param object
    * @param template

@@ -190,7 +190,8 @@ class ComponentTabbedPane extends JTabbedPane {
     final Container toolbar = getRecentToolbar();
     refreshRecentComponentsToolbar(
         toolbar,
-        (List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY, new ArrayList<String>()));
+        (List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY,
+                                       new ArrayList<String>()));
     ConfigurationManager.addListener(
         IPlugInPort.RECENT_COMPONENTS_KEY,
         new IConfigListener() {

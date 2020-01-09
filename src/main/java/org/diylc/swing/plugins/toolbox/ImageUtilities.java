@@ -86,7 +86,8 @@ public final class ImageUtilities {
     if (img.getHeight(null) * img.getWidth(null) > 576) {
       return img;
     }
-    BufferedImage rep = ImageUtilities.createBufferedImage(img.getWidth(null), img.getHeight(null));
+    BufferedImage rep = ImageUtilities.createBufferedImage(img.getWidth(null),
+                                                           img.getHeight(null));
     Graphics2D g = rep.createGraphics();
     g.drawImage(img, 0, 0, null);
     g.dispose();

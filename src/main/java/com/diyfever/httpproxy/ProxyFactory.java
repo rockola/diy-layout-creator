@@ -25,8 +25,9 @@ public class ProxyFactory {
   private IFlatProxy flatProxy;
 
   /**
-   * Creates a new instance of {@link ProxyFactory} for the specified {@link IFlatProxy}. All server
-   * calls will be delegated to the specified {@link IFlatProxy}.
+   * Creates a new instance of {@link ProxyFactory} for the specified
+   * {@link IFlatProxy}. All server calls will be delegated to the
+   * specified {@link IFlatProxy}.
    *
    * @param flatProxy
    */
@@ -36,10 +37,12 @@ public class ProxyFactory {
   }
 
   /**
-   * Dynamically creates proxy class and instatiates it. All methods from the specified interface
-   * <code>clazz</code> are implemented in the dynamically created class. Method parameters that are
-   * annotated with {@link ParamName} annotation are named according to annotation. Parameters
-   * without the annotation are named <code>paramN</code> where <code>N</code> is parameter index.
+   * Dynamically creates proxy class and instatiates it. All methods
+   * from the specified interface <code>clazz</code> are implemented
+   * in the dynamically created class. Method parameters that are
+   * annotated with {@link ParamName} annotation are named according
+   * to annotation. Parameters without the annotation are named
+   * <code>paramN</code> where <code>N</code> is parameter index.
    *
    * @param <T>
    * @param clazz

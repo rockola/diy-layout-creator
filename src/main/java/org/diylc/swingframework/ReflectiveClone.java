@@ -10,10 +10,10 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-// ----------------------------------------------------------------------------
 /**
- * This non-instantiable non-extendible class provides a static clone() method suitable for cloning
- * an instance of a class satisfying the following constraints:
+ * This non-instantiable non-extendible class provides a static
+ * clone() method suitable for cloning an instance of a class
+ * satisfying the following constraints:
  *
  * <UL>
  *   <LI>no-arg constructor is available (not necessarily public)
@@ -21,8 +21,9 @@ import java.util.Set;
  *   <LI>neither the class nor any of its superclasses have any inner classes
  * </UL>
  *
- * This class requires sufficient security privileges to work. This implementation is not industrial
- * strength and is provided for demo purposes.
+ * This class requires sufficient security privileges to work. This
+ * implementation is not industrial strength and is provided for demo
+ * purposes.
  *
  * <p>MT-safety: this class is safe for use from mutliple concurrent threads.
  *
@@ -135,7 +136,8 @@ public abstract class ReflectiveClone {
         }
       }
 
-      if (!metadata.m_noargConstructorAccessible && (Modifier.PUBLIC & noarg.getModifiers()) == 0) {
+      if (!metadata.m_noargConstructorAccessible
+          && (Modifier.PUBLIC & noarg.getModifiers()) == 0) {
         try {
           noarg.setAccessible(true);
         } catch (SecurityException e) {
@@ -185,8 +187,8 @@ public abstract class ReflectiveClone {
   }
 
   /**
-   * This method sets clones all declared 'fields' from 'src' to 'dest' and updates the object and
-   * metadata maps accordingly.
+   * This method sets clones all declared 'fields' from 'src' to
+   * 'dest' and updates the object and metadata maps accordingly.
    *
    * @param src source object
    * @param dest src's clone [not fully populated yet]
@@ -295,5 +297,4 @@ public abstract class ReflectiveClone {
     FINAL_IMMUTABLE_CLASSES.add(Character.class);
     FINAL_IMMUTABLE_CLASSES.add(Boolean.class);
   }
-} // end of class
-// ----------------------------------------------------------------------------
+}

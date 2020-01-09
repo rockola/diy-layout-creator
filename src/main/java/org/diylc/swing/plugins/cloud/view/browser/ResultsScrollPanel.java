@@ -73,8 +73,8 @@ import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.ButtonDialog;
 
 /**
- * Component that is capable of showing a list of {@link ProjectEntity} objects. Can work in paging
- * mode and pull one page of data at a time.
+ * Component that is capable of showing a list of {@link ProjectEntity}
+ * objects. Can work in paging mode and pull one page of data at a time.
  *
  * @see {@link SearchSession}
  * @author Branislav Stojkovic
@@ -87,8 +87,8 @@ public class ResultsScrollPanel extends JScrollPane {
 
   private JPanel resultsPanel;
   /**
-   * This label goes at the end of the page. When it gets rendered we know that we need to request
-   * another page.
+   * This label goes at the end of the page. When it gets rendered we
+   * know that we need to request another page.
    */
   private JLabel loadMoreLabel;
 
@@ -227,9 +227,9 @@ public class ResultsScrollPanel extends JScrollPane {
     caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
     descriptionArea.setEnabled(false);
 
-    final JLabel commentLabel =
-        new JLabel(
-            Integer.toString(project.getCommentCount()), Icon.Messages.icon(), SwingConstants.LEFT);
+    final JLabel commentLabel = new JLabel(Integer.toString(project.getCommentCount()),
+                                           Icon.Messages.icon(),
+                                           SwingConstants.LEFT);
     commentLabel.setToolTipText(DIYLC.getString("cloud.see-comments"));
     commentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     commentLabel.addMouseListener(
@@ -258,8 +258,9 @@ public class ResultsScrollPanel extends JScrollPane {
           }
         });
 
-    final JLabel viewLabel =
-        new JLabel(Integer.toString(project.getViewCount()), Icon.Eye.icon(), SwingConstants.LEFT);
+    final JLabel viewLabel = new JLabel(Integer.toString(project.getViewCount()),
+                                        Icon.Eye.icon(),
+                                        SwingConstants.LEFT);
     viewLabel.setToolTipText(DIYLC.getString("cloud.view-count"));
 
     final JLabel downloadLabel =
@@ -341,11 +342,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
                                   @Override
                                   public void failed(Exception e) {
-                                    DIYLC
-                                        .ui()
-                                        .error(
-                                            "Could not open file. Detailed message is in the logs.",
-                                            e);
+                                    DIYLC.ui().error(DIYLC.getString("cloud.file-not-opened"), e);
                                   }
                                 },
                                 true);
@@ -354,10 +351,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
                     @Override
                     public void failed(Exception e) {
-                      cloudUI.showMessage(
-                          "Could not save to file. Detailed message is in the logs.",
-                          "Error",
-                          IView.ERROR_MESSAGE);
+                      DIYLC.ui().error(DIYLC.getString("cloud.file-not-saved"), e);
                     }
                   });
             }
@@ -381,8 +375,10 @@ public class ResultsScrollPanel extends JScrollPane {
                 CloudPresenter.Instance.getProjectProperties(project);
             PropertyEditorDialog editor =
                 DialogFactory.getInstance()
-                    .createPropertyEditorDialog(
-                        cloudUI.getOwnerFrame(), projectProperties, "Edit Published Project", true);
+                    .createPropertyEditorDialog(cloudUI.getOwnerFrame(),
+                                                projectProperties,
+                                                DIYLC.getString("cloud.edit-published-project"),
+                                                true);
             editor.setVisible(true);
             if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
               // Update the project
@@ -442,14 +438,11 @@ public class ResultsScrollPanel extends JScrollPane {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            if (cloudUI.showConfirmDialog(
-                    "Are you sure you want to replace the project \""
-                        + project.getName()
-                        + "\" with a new file?\nThis opperation is irreversible. Once replaced, the old version of the project cannot be restored.",
-                    "Replace Project",
-                    IView.YES_NO_OPTION,
-                    IView.QUESTION_MESSAGE)
-                == IView.YES_OPTION) {
+            if (cloudUI.showConfirmDialog(Format.string(DIYLC.getString("cloud.confirm-replace"),
+                                                        project.getName()),
+                                          "Replace Project",
+                                          IView.YES_NO_OPTION,
+                                          IView.QUESTION_MESSAGE) == IView.YES_OPTION) {
               final Presenter thumbnailPresenter = new Presenter();
               final File file =
                   DialogFactory.getInstance()

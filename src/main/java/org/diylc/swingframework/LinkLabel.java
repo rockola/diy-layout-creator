@@ -30,8 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.diylc.appframework.miscutils.Utils;
 
 /**
- * {@link JLabel} customized to show hyperlinks. Foreground color is set to blue by default and link
- * is underlined.
+ * {@link JLabel} customized to show hyperlinks. Foreground color is
+ * set to blue by default and link is underlined.
  *
  * @author Branislav Stojkovic
  */

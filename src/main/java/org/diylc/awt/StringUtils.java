@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.awt;
 
@@ -61,9 +59,11 @@ public class StringUtils {
   }
 
   /**
-   * Returns an array of strings, one for each line in the string after it has been wrapped to fit
-   * lines of <var>maxWidth</var>. Lines end with any of cr, lf, or cr lf. A line ending at the end
-   * of the string will not output a further, empty string.
+   * Returns an array of strings, one for each line in the string
+   * after it has been wrapped to fit lines of
+   * <var>maxWidth</var>. Lines end with any of cr, lf, or cr lf. A
+   * line ending at the end of the string will not output a further,
+   * empty string.
    *
    * <p>This code assumes <var>str</var> is not <code>null</code>.
    *
@@ -83,8 +83,8 @@ public class StringUtils {
   }
 
   /**
-   * Given a line of text and font metrics information, wrap the line and add the new line(s) to
-   * <var>list</var>.
+   * Given a line of text and font metrics information, wrap the line
+   * and add the new line(s) to <var>list</var>.
    *
    * @param line a line of text
    * @param list an output list of strings
@@ -152,8 +152,9 @@ public class StringUtils {
   }
 
   /**
-   * Returns an array of strings, one for each line in the string. Lines end with any of cr, lf, or
-   * cr lf. A line ending at the end of the string will not output a further, empty string.
+   * Returns an array of strings, one for each line in the
+   * string. Lines end with any of cr, lf, or cr lf. A line ending at
+   * the end of the string will not output a further, empty string.
    *
    * <p>This code assumes <var>str</var> is not <code>null</code>.
    *

@@ -116,9 +116,9 @@ public class ComponentProcessor {
     // Draw component icon.
     try {
       IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
-      Image image =
-          new BufferedImage(
-              Presenter.ICON_SIZE, Presenter.ICON_SIZE, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+      Image image = new BufferedImage(Presenter.ICON_SIZE,
+                                      Presenter.ICON_SIZE,
+                                      java.awt.image.BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2d = (Graphics2D) image.getGraphics();
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);

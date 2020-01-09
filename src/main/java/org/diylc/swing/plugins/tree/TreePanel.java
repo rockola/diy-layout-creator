@@ -500,7 +500,8 @@ public class TreePanel extends JPanel {
                 getPopup().show(e.getComponent(), e.getX(), e.getY());
               } else {
                 TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                DefaultMutableTreeNode node =
+                    (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (node != null && node.getUserObject() != null) {
                   Payload payload = (Payload) node.getUserObject();
                   if (payload.getClickListener() != null) {
@@ -806,13 +807,14 @@ public class TreePanel extends JPanel {
         } else {
           setToolTipText(
               "<html><b>"
-                  + payload.getComponentType().getName()
-                  + "</b><br>"
-                  + payload.getComponentType().getDescription()
-                  + "<br>Author: "
-                  + payload.getComponentType().getAuthor()
-                  + "<br><br>Left click to instantiate this component, right click for more options"
-                  + "</html>");
+              + payload.getComponentType().getName()
+              + "</b><br>"
+              + payload.getComponentType().getDescription()
+              + "<br>Author: "
+              + payload.getComponentType().getAuthor()
+              + "<br><br>"
+              + "Left click to instantiate this component, right click for more options"
+              + "</html>");
           setIcon(payload.getComponentType().getIcon());
           if (payload.isVisible()) setPreferredSize(new Dimension(250, 32));
           else setPreferredSize(new Dimension(0, 0));
@@ -831,8 +833,9 @@ public class TreePanel extends JPanel {
           if (shortcutMap != null && shortcutMap.containsValue(identifier)) {
             for (String key : shortcutMap.keySet()) {
               if (shortcutMap.get(key).equals(identifier)) {
-                shortCutHtml =
-                    " <a style=\"text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; background-color: #eeeeee; color: #666666;\">&nbsp;"
+                shortCutHtml = " <a style=\"text-shadow: "
+                               + "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; "
+                               + "background-color: #eeeeee; color: #666666;\">&nbsp;"
                         + key
                         + "&nbsp;</a>";
               }
@@ -844,9 +847,10 @@ public class TreePanel extends JPanel {
           List<Template> variants = plugInPort.getVariantsFor(payload.getComponentType());
           if (variants != null && !variants.isEmpty()) {
             variantsHtml =
-                " <a style=\"text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; background-color: #D7FFC6; color: #666666;\">[+"
-                    + variants.size()
-                    + "]</a>";
+                " <a style=\"text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; "
+                + "background-color: #D7FFC6; color: #666666;\">[+"
+                + variants.size()
+                + "]</a>";
           }
         }
 

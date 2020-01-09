@@ -1,20 +1,22 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.netlist;
 
 import java.util.ArrayList;
@@ -61,7 +63,8 @@ public abstract class NetlistAnalyzer {
     //
     // System.out.println("opposite:");
     // Tree tree1 = new Tree(TreeConnectionType.Parallel);
-    // connectNodes(netlist, nodeB, nodeA, tree1.getChildren(), new Tree(TreeConnectionType.Series),
+    // connectNodes(netlist, nodeB, nodeA, tree1.getChildren(),
+    //              new Tree(TreeConnectionType.Series),
     // new HashSet<Node>());
     // System.out.println(tree1);
 
@@ -189,7 +192,9 @@ public abstract class NetlistAnalyzer {
                   .get(backward ? i : pathsToMerge.get(0).getChildren().size() - i - 1);
           for (Tree t : pathsToMerge) {
             if (t.getChildren().size() <= i
-                || !t.getChildren().get(backward ? 0 : t.getChildren().size() - 1).equals(unique)) {
+                || !t.getChildren().get(backward
+                                        ? 0
+                                        : t.getChildren().size() - 1).equals(unique)) {
               canMerge = false;
               break;
             }
@@ -344,8 +349,8 @@ public abstract class NetlistAnalyzer {
     return res;
   }
 
-  //  protected List<Node> find(Set<String> typeNames, String nodeName, Netlist netlist, List<Node>
-  // inGroupWith) {
+  //  protected List<Node> find(Set<String> typeNames, String nodeName, Netlist netlist,
+  //                            List<Node> inGroupWith) {
   //    List<Node> res = new ArrayList<Node>();
   //    for (Group g : netlist.getGroups()) {
   //
@@ -395,8 +400,8 @@ public abstract class NetlistAnalyzer {
   //    return true;
   //  }
 
-  //  protected boolean allComponentsMatch(Collection<Node> nodes, Set<IDIYComponent<?>> components)
-  // {
+  //  protected boolean allComponentsMatch(Collection<Node> nodes,
+  //                                       Set<IDIYComponent<?>> components) {
   //    Set<IDIYComponent<?>> extracted = extractComponents(nodes);
   //    return extracted.containsAll(components);
   //  }

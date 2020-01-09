@@ -48,10 +48,9 @@ public class ComponentNote extends JPanel {
 
     setOpaque(true);
     setBackground(Color.orange);
-    setBorder(
-        BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.black),
-            BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN)));
+    setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(Color.black),
+        BorderFactory.createEmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN)));
     mainComponent.addComponentListener(
         new ComponentAdapter() {
 
@@ -65,9 +64,7 @@ public class ComponentNote extends JPanel {
             updateLocation();
           }
         });
-    mainComponent
-        .getParent()
-        .addComponentListener(
+    mainComponent.getParent().addComponentListener(
             new ComponentAdapter() {
 
               @Override
@@ -79,8 +76,9 @@ public class ComponentNote extends JPanel {
   }
 
   private void updateLocation() {
-    Rectangle mainBounds =
-        SwingUtilities.convertRectangle(mainComponent.getParent(), mainComponent.getBounds(), null);
+    Rectangle mainBounds = SwingUtilities.convertRectangle(mainComponent.getParent(),
+                                                           mainComponent.getBounds(),
+                                                           null);
     Rectangle rootBounds = SwingUtilities.getRoot(mainComponent).getBounds();
     Dimension bounds = getPreferredSize();
     int x = mainBounds.x + (mainBounds.width - bounds.width) / 2;

@@ -37,8 +37,9 @@ import java.awt.image.VolatileImage;
 import javax.swing.JComponent;
 
 /**
- * {@link JComponent} that renders ruler. It features configurable units (cm or in), orientation and
- * ability to indicate cursor position.
+ * {@link JComponent} that renders ruler. It features configurable
+ * units (cm or in), orientation and ability to indicate cursor
+ * position.
  *
  * @author Branislav Stojkovic
  */
@@ -258,7 +259,9 @@ public class Ruler extends JComponent {
           if (text != null) {
             FontMetrics fm = bufferGraphics.getFontMetrics();
             bufferGraphics.drawString(
-                text, SIZE - (int) fm.getStringBounds(text, bufferGraphics).getWidth() - 2, x + 10);
+                text,
+                SIZE - (int) fm.getStringBounds(text, bufferGraphics).getWidth() - 2,
+                x + 10);
           }
         }
       }

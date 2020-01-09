@@ -54,11 +54,12 @@ import org.diylc.swingframework.images.CursorLoader;
  *   <li>button in the bottom-right corner to navigate through the viewport
  * </ul>
  *
- * Note: when doing drag'n'drop in the viewport component, sometimes Java doesn't fire <code>
- * mouseDragged</code> events. To overcome this, component can notify about drag movements by firing
- * property change events. Property name is "dragPoint" and x, y coordinates are stored as oldValue
- * and newValue respectively. <br>
- * <br>
+ * Note: when doing drag'n'drop in the viewport component, sometimes
+ * Java doesn't fire <code> mouseDragged</code> events. To overcome
+ * this, component can notify about drag movements by firing property
+ * change events. Property name is "dragPoint" and x, y coordinates
+ * are stored as oldValue and newValue respectively. <br> <br>
+ *
  * Note to self: try to come up with something more elegant.
  *
  * @author Branislav Stojkovic
@@ -131,11 +132,13 @@ public class RulerScrollPane extends JScrollPane {
                 getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + dy);
 
                 if (Math.abs(dx) > 2 * Math.abs(dy))
-                  view.setCursor(
-                      dx > 0 ? CursorLoader.ScrollE.getCursor() : CursorLoader.ScrollW.getCursor());
+                  view.setCursor(dx > 0
+                                 ? CursorLoader.ScrollE.getCursor()
+                                 : CursorLoader.ScrollW.getCursor());
                 else if (Math.abs(dy) > 2 * Math.abs(dx))
-                  view.setCursor(
-                      dy > 0 ? CursorLoader.ScrollS.getCursor() : CursorLoader.ScrollN.getCursor());
+                  view.setCursor(dy > 0
+                                 ? CursorLoader.ScrollS.getCursor()
+                                 : CursorLoader.ScrollN.getCursor());
                 else if (dx > 0 && dy > 0) view.setCursor(CursorLoader.ScrollSE.getCursor());
                 else if (dx > 0 && dy < 0) view.setCursor(CursorLoader.ScrollNE.getCursor());
                 else if (dx < 0 && dy < 0) view.setCursor(CursorLoader.ScrollNW.getCursor());

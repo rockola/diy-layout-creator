@@ -62,8 +62,8 @@ public class DialogFactory {
   private DialogFactory() {}
 
   /**
-   * Sets the frame to be used as dialog parent. This should be called prior to any other methods in
-   * this class.
+   * Sets the frame to be used as dialog parent. This should be called
+   * prior to any other methods in this class.
    *
    * @param mainFrame
    */

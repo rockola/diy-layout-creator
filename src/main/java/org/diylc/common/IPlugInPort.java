@@ -36,9 +36,10 @@ import org.diylc.core.Template;
 import org.diylc.core.Theme;
 
 /**
- * Interface for communication between plug-ins and the application. Plug-ins may acquire
- * information or make changes through this interface. Application events are dispatched to plug-ins
- * through {@link MessageDispatcher}
+ * Interface for communication between plug-ins and the
+ * application. Plug-ins may acquire information or make changes
+ * through this interface. Application events are dispatched to
+ * plug-ins through {@link MessageDispatcher}
  *
  * @author Branislav Stojkovic
  * @see IPlugIn
@@ -80,9 +81,11 @@ public interface IPlugInPort
   public static final int DND_TOGGLE_SNAP = 0x40000000;
 
   /**
-   * Returns size of the canvas that takes project dimensions into account as well as zoom level.
-   * Each dimension is calculated as the product of the actual size and the number of pixels per
-   * unit. If <code>useZoom</code> is set to true, the result is scaled by zoom factor.
+   * Returns size of the canvas that takes project dimensions into
+   * account as well as zoom level.  Each dimension is calculated as
+   * the product of the actual size and the number of pixels per
+   * unit. If <code>useZoom</code> is set to true, the result is
+   * scaled by zoom factor.
    *
    * @param useZoom
    * @param includeExtraSpace
@@ -91,7 +94,8 @@ public interface IPlugInPort
   Dimension getCanvasDimensions(boolean useZoom, boolean includeExtraSpace);
 
   /**
-   * Returns an instance of {@link Cursor} that should be used at the specified location.
+   * Returns an instance of {@link Cursor} that should be used at the
+   * specified location.
    *
    * <p>Note: point coordinates are scaled for zoom factor.
    *
@@ -148,17 +152,19 @@ public interface IPlugInPort
   boolean allowFileAction();
 
   /**
-   * Returns all available {@link ComponentType}s classified by category. Result is a {@link Map}
-   * between category name to a {@link List} of all {@link ComponentType}s that share that category
-   * name.
+   * Returns all available {@link ComponentType}s classified by
+   * category. Result is a {@link Map} between category name to a
+   * {@link List} of all {@link ComponentType}s that share that
+   * category name.
    *
    * @return
    */
   Map<String, List<ComponentType>> getComponentTypes();
 
   /**
-   * Draws project on the provided {@link Graphics2D}. If the provided filter is not null, it will
-   * be used to filter the components that are shown.
+   * Draws project on the provided {@link Graphics2D}. If the provided
+   * filter is not null, it will be used to filter the components that
+   * are shown.
    *
    * @param g2d
    * @param drawOptions specific drawing options

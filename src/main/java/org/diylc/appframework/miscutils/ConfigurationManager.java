@@ -34,8 +34,9 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.Serializer;
 
 /**
- * Utility that reads and writes configuration to an XML file. Each configuration item should have a
- * unique name. To write to the configuration use {@link #writeValue(String, Object)}. Use <code>
+ * Utility that reads and writes configuration to an XML file. Each
+ * configuration item should have a unique name. To write to the
+ * configuration use {@link #writeValue(String, Object)}. Use <code>
  * readXYZ</code> methods where XYZ stands for specific data types.
  *
  * @author Branislav Stojkovic

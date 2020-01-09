@@ -123,10 +123,8 @@ public class StatusBar extends JPanel implements IPlugIn {
       LOG.error("Could not install status bar", e);
     }
 
-    DIYLC
-        .ui()
-        .executeBackgroundTask(
-            new ITask<String>() {
+    DIYLC.ui().executeBackgroundTask(
+        new ITask<String>() {
 
               @Override
               public String doInBackground() throws Exception {
@@ -137,12 +135,12 @@ public class StatusBar extends JPanel implements IPlugIn {
 
                 if (update != null) {
                   String updateHtml =
-                      "<font size='4'><b>New version available:</b> "
-                          + update
-                          + "</font><br>Click the lighbulb icon in the bottom-right corner of the window for more info.";
+                      String.format(Message.getHTML("statusbar.new-version.available"),
+                                    update);
                   if (announcements == null || announcements.length() == 0)
                     return "<html>" + updateHtml + "</html>";
-                  announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
+                  announcements = announcements.replace("<html>",
+                                                        "<html>" + updateHtml + "<br>");
                 }
 
                 return announcements;

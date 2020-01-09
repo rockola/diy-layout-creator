@@ -162,8 +162,8 @@ public class CloudPresenter {
           cats.add(0, "");
           categories = cats.toArray(new String[0]);
         } else {
-          throw new CloudException(
-              "Unexpected server response received for category list: " + res.getClass().getName());
+          throw new CloudException("Unexpected server response received for category list: "
+                                   + res.getClass().getName());
         }
       } catch (Exception e) {
         throw new CloudException(e);
@@ -183,7 +183,8 @@ public class CloudPresenter {
       Integer projectId)
       throws IOException, CloudException {
 
-    if (currentUsername() == null || currentToken() == null) throw new CloudException(LOGIN_FAILED);
+    if (currentUsername() == null || currentToken() == null)
+      throw new CloudException(LOGIN_FAILED);
 
     LOG.info("Uploading new project '{}'", projectName);
     try {
@@ -210,7 +211,8 @@ public class CloudPresenter {
   public void updateProjectDetails(ProjectEntity project, String diylcVersion)
       throws IOException, CloudException {
 
-    if (currentUsername() == null || currentToken() == null) throw new CloudException(LOGIN_FAILED);
+    if (currentUsername() == null || currentToken() == null)
+      throw new CloudException(LOGIN_FAILED);
     LOG.info("Updating project with id {}", project.getId());
     try {
       String res =
@@ -235,12 +237,13 @@ public class CloudPresenter {
 
   public void deleteProject(int projectId) throws CloudException {
 
-    if (currentUsername() == null || currentToken() == null) throw new CloudException(LOGIN_FAILED);
+    if (currentUsername() == null || currentToken() == null)
+      throw new CloudException(LOGIN_FAILED);
 
     LOG.info("Deleting project with id {}", projectId);
     try {
-      String res =
-          getService().deleteProject(currentUsername(), currentToken(), getMachineId(), projectId);
+      String res = getService().deleteProject(currentUsername(), currentToken(), getMachineId(),
+                                              projectId);
       if (!res.equals(SUCCESS)) throw new CloudException(res);
     } catch (Exception e) {
       throw new CloudException(e);
@@ -249,14 +252,14 @@ public class CloudPresenter {
 
   public void postComment(int projectId, String comment) throws CloudException {
 
-    if (currentUsername() == null || currentToken() == null) throw new CloudException(LOGIN_FAILED);
+    if (currentUsername() == null || currentToken() == null)
+      throw new CloudException(LOGIN_FAILED);
 
     LOG.info("Posting a new comment to project {}", projectId);
 
     try {
-      String res =
-          getService()
-              .postComment(currentUsername(), currentToken(), getMachineId(), projectId, comment);
+      String res = getService().postComment(currentUsername(), currentToken(), getMachineId(),
+                                            projectId, comment);
       if (!res.equals(SUCCESS)) throw new CloudException(res);
     } catch (Exception e) {
       throw new CloudException(e);
@@ -284,10 +287,14 @@ public class CloudPresenter {
     } catch (Exception e) {
       throw new CloudException(e);
     }
-    if (res instanceof String) throw new CloudException(res.toString());
-    if (res instanceof UserEntity) return (UserEntity) res;
-    throw new CloudException(
-        "Unexpected server response received for category list: " + res.getClass().getName());
+    if (res instanceof String) {
+      throw new CloudException(res.toString());
+    }
+    if (res instanceof UserEntity) {
+      return (UserEntity) res;
+    }
+    throw new CloudException("Unexpected server response received for category list: "
+                             + res.getClass().getName());
   }
 
   public void updatePassword(String oldPassword, String newPassword) throws CloudException {
@@ -299,7 +306,9 @@ public class CloudPresenter {
     } catch (Exception e) {
       throw new CloudException(e);
     }
-    if (!res.equals(SUCCESS)) throw new CloudException(res);
+    if (!res.equals(SUCCESS)) {
+      throw new CloudException(res);
+    }
   }
 
   public void updateUserDetails(String email, String website, String bio) throws CloudException {
@@ -307,10 +316,8 @@ public class CloudPresenter {
     LOG.info("Updating user details for {}", currentUsername());
     String res;
     try {
-      res =
-          getService()
-              .updateUserDetails(
-                  currentUsername(), currentToken(), getMachineId(), email, website, bio);
+      res = getService().updateUserDetails(currentUsername(), currentToken(), getMachineId(),
+                                           email, website, bio);
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -325,8 +332,8 @@ public class CloudPresenter {
             "search(%1$s,%2$s,%3$s,%4$d,%5$d)",
             criteria, category, sortOrder, pageNumber, itemsPerPage));
     try {
-      Object res =
-          getService().search(criteria, category, pageNumber, itemsPerPage, sortOrder, null, null);
+      Object res = getService().search(criteria, category, pageNumber, itemsPerPage,
+                                       sortOrder, null, null);
       return processResults(res);
     } catch (CloudException ce) {
       throw ce;
@@ -339,10 +346,8 @@ public class CloudPresenter {
     UserEntity user = getUserDetails();
     LOG.info("Fetching all user uploads for {}", user.getUsername());
     try {
-      Object res =
-          getService()
-              .search(
-                  "", "", 1, Integer.MAX_VALUE, getSortings()[0], user.getUsername(), projectId);
+      Object res = getService().search("", "", 1, Integer.MAX_VALUE, getSortings()[0],
+                                       user.getUsername(), projectId);
       return processResults(res);
     } catch (CloudException ce) {
       throw ce;
@@ -352,9 +357,13 @@ public class CloudPresenter {
   }
 
   private List<ProjectEntity> processResults(Object res) throws CloudException, IOException {
-    if (res == null) throw new CloudException("Failed to retrieve search results.");
+    if (res == null) {
+      throw new CloudException("Failed to retrieve search results.");
+    }
 
-    if (res instanceof String) throw new CloudException(res.toString());
+    if (res instanceof String) {
+      throw new CloudException(res.toString());
+    }
 
     if (res instanceof List<?>) {
       @SuppressWarnings("unchecked")
@@ -376,8 +385,8 @@ public class CloudPresenter {
       LOG.info("Finished downloading thumbnails.");
       return projects;
     }
-    throw new CloudException(
-        "Unexpected server response received for search results: " + res.getClass().getName());
+    throw new CloudException("Unexpected server response received for search results: "
+                             + res.getClass().getName());
   }
 
   public String[] getSortings() throws CloudException {
@@ -400,8 +409,8 @@ public class CloudPresenter {
         List<CommentEntity> comments = (List<CommentEntity>) res;
         return comments;
       }
-      throw new CloudException(
-          "Unexpected server response received for comments: " + res.getClass().getName());
+      throw new CloudException("Unexpected server response received for comments: "
+                               + res.getClass().getName());
     } catch (Exception e) {
       throw new CloudException(e);
     }

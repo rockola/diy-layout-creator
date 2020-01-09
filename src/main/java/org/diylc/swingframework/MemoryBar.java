@@ -15,8 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * {@link JComponent} that draws current memory usage as a vertical bar. Details are provided in the
- * tooltip. Click on the component will run the garbage collector. Memory usage information is read
+ * {@link JComponent} that draws current memory usage as a vertical
+ * bar. Details are provided in the tooltip. Click on the component
+ * will run the garbage collector. Memory usage information is read
  * periodically.
  *
  * @author Branislav Stojkovic

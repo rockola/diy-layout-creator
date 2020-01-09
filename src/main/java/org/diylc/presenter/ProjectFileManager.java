@@ -158,7 +158,8 @@ public class ProjectFileManager {
           if (!Modifier.isAbstract(clazz.getModifiers())
               && IOldFileParser.class.isAssignableFrom(clazz)) {
 
-            IOldFileParser instance = (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
+            IOldFileParser instance =
+                (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
             parsers.add(instance);
           }
         }
@@ -212,7 +213,8 @@ public class ProjectFileManager {
     return p;
   }
 
-  private static Project deserializeProjectFromFileInternal(String fileName, List<String> warnings)
+  private static Project deserializeProjectFromFileInternal(String fileName,
+                                                            List<String> warnings)
       throws SAXException, IOException, ParserConfigurationException {
     LOG.info(String.format("loadProjectFromFile(%s)", fileName));
     Project project = null;
@@ -270,8 +272,7 @@ public class ProjectFileManager {
     try {
       fileVersion = readV3Version(fileName);
       if (fileVersion.compareTo(DIYLC.getVersionNumber()) > 0)
-        warnings.add(
-            "The file is created with a newer version of DIYLC and may contain features that are not supported by your version of DIYLC. Please update.");
+        warnings.add(DIYLC.getString("project.newer-version-warning"));
     } catch (Exception e) {
       warnings.add("Could not read file version number, the file may be corrupted.");
     }
@@ -287,8 +288,7 @@ public class ProjectFileManager {
       project = (Project) xStreamOld.fromXML(fis);
     }
     if (!missingFields.isEmpty()) {
-      warnings.add(
-          "The project references unknown component properties, most likely because it was created with a newer version of DIYLC.");
+      warnings.add(DIYLC.getString("project.unknown-properties"));
     }
     fis.close();
     return project;
@@ -298,15 +298,16 @@ public class ProjectFileManager {
     File fXmlFile = new File(fileName);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    Document doc = dBuilder.parse(fXmlFile);
 
+    Document doc = dBuilder.parse(fXmlFile);
     doc.getDocumentElement().normalize();
 
     NodeList nList = doc.getElementsByTagName("fileVersion");
 
     int items = nList.getLength();
 
-    if (items != 1) throw new Exception("File version information could not be read from the XML.");
+    if (items != 1)
+      throw new Exception("File version information could not be read from XML.");
 
     Node versionNode = nList.item(0);
     Node n = versionNode.getFirstChild().getNextSibling();

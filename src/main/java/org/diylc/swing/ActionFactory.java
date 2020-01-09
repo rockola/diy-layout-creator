@@ -250,8 +250,11 @@ public class ActionFactory {
     return new ConfigAction(plugInPort, title, configKey, defaultValue);
   }
 
-  public static ConfigAction createConfigAction(
-      IPlugInPort plugInPort, String title, String configKey, boolean defaultValue, String tipKey) {
+  public static ConfigAction createConfigAction(IPlugInPort plugInPort,
+                                                String title,
+                                                String configKey,
+                                                boolean defaultValue,
+                                                String tipKey) {
     return new ConfigAction(plugInPort, title, configKey, defaultValue, tipKey);
   }
 

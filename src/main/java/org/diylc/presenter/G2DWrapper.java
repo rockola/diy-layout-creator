@@ -1,20 +1,22 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.presenter;
 
 import java.awt.BasicStroke;
@@ -58,11 +60,13 @@ import org.diylc.common.ZoomableStroke;
 import org.diylc.core.IDrawingObserver;
 
 /**
- * {@link Graphics2D} wrapper that keeps track of all drawing actions and creates an {@link Area}
- * that corresponds to drawn objects. Before each component is drawn, {@link
- * #startedDrawingComponent()} should be called. After the component is drawn, area may be retrieved
- * using {@link #finishedDrawingComponent()}. Graphics configuration (color, font, etc) is reset
- * between each two components.
+ * {@link Graphics2D} wrapper that keeps track of all drawing actions
+ * and creates an {@link Area} that corresponds to drawn
+ * objects. Before each component is drawn, {@link #startedDrawingComponent()}
+ * should be called. After the component is drawn, area may be
+ * retrieved using {@link #finishedDrawingComponent()}. Graphics
+ * configuration (color, font, etc) is reset between each two
+ * components.
  *
  * @author Branislav Stojkovic
  */
@@ -124,7 +128,8 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   /**
-   * Reverts {@link Graphics2D} settings and returns area drawn by component in the meantime.
+   * Reverts {@link Graphics2D} settings and returns area drawn by
+   * component in the meantime.
    *
    * @return
    */
@@ -508,47 +513,46 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, int width, int height,
+                           ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, width, height, observer);
   }
 
   @Override
-  public boolean drawImage(
-      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor,
+                           ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, width, height, bgcolor, observer);
   }
 
   @Override
-  public boolean drawImage(
-      Image img,
-      int dx1,
-      int dy1,
-      int dx2,
-      int dy2,
-      int sx1,
-      int sy1,
-      int sx2,
-      int sy2,
-      ImageObserver observer) {
+  public boolean drawImage(Image img,
+                           int dx1,
+                           int dy1,
+                           int dx2,
+                           int dy2,
+                           int sx1,
+                           int sy1,
+                           int sx2,
+                           int sy2,
+                           ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
   }
 
   @Override
-  public boolean drawImage(
-      Image img,
-      int dx1,
-      int dy1,
-      int dx2,
-      int dy2,
-      int sx1,
-      int sy1,
-      int sx2,
-      int sy2,
-      Color bgcolor,
-      ImageObserver observer) {
+  public boolean drawImage(Image img,
+                           int dx1,
+                           int dy1,
+                           int dx2,
+                           int dy2,
+                           int sx1,
+                           int sy1,
+                           int sx2,
+                           int sy2,
+                           Color bgcolor,
+                           ImageObserver observer) {
     // FIXME: map
     return drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
   }

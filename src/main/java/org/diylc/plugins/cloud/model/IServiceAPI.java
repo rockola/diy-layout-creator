@@ -4,15 +4,15 @@
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
@@ -87,8 +87,8 @@ public interface IServiceAPI {
    * @param username
    * @param password
    * @param machineId
-   * @return string with an error message if it fails, or an instance of {@link UserEntity} if it
-   *     succeeds.
+   * @return string with an error message if it fails, or an instance
+   *     of {@link UserEntity} if it succeeds.
    */
   Object getUserDetails(
       @ParamName("username") String username,
@@ -96,7 +96,8 @@ public interface IServiceAPI {
       @ParamName("machineId") String machineId);
 
   /**
-   * * Tries to authenticate with the token that was previously created by calling login() function.
+   * Tries to authenticate with the token that was previously created
+   * by calling login() function.
    *
    * @param username
    * @param password
@@ -131,9 +132,10 @@ public interface IServiceAPI {
    * @param itemsPerPage
    * @param sort
    * @param username
-   * @param projectId optional parameter used when we want to fetch a particular project
-   * @return string with error message if the error occurred or a list of {@link ProjectEntity}
-   *     objects.
+   * @param projectId optional parameter used when we want to fetch a
+   *        particular project
+   * @return string with error message if the error occurred or a list
+   *         of {@link ProjectEntity} objects.
    */
   Object search(
       @ParamName("criteria") String criteria,
@@ -145,8 +147,9 @@ public interface IServiceAPI {
       @ParamName("projectId") Integer projectId);
 
   /**
-   * Uploads a project using token to authenticate. When projectI is specified, it updates the
-   * existing project instead. In that case, the project must belong to the user.
+   * Uploads a project using token to authenticate. When projectId is
+   * specified, it updates the existing project instead. In that case,
+   * the project must belong to the user.
    *
    * @param username
    * @param token

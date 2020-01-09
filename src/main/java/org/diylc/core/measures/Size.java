@@ -41,7 +41,8 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     // double remainder = (factor * getValue() * Constants.GRIDS_PER_INCH) - grids;
     // return (int) Math.round(Constants.PIXELS_PER_INCH / Constants.GRIDS_PER_INCH
     // * (grids + remainder));
-    return getValue() * getUnit().getFactor() / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
+    return getValue() * getUnit().getFactor()
+        / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
   }
 
   @Override

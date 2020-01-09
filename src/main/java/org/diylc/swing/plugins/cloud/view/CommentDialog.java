@@ -42,8 +42,8 @@ import org.diylc.swing.ISimpleView;
 import org.diylc.swing.gui.components.HTMLTextArea;
 
 /**
- * {@link JDialog} that shows a list of comments posted to a cloud project and provides controls for
- * posting more comments.
+ * {@link JDialog} that shows a list of comments posted to a cloud
+ * project and provides controls for posting more comments.
  *
  * @author Branislav Stojkovic
  */

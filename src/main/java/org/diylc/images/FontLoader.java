@@ -14,7 +14,8 @@ public final class FontLoader {
     Font font = fonts.get(name);
     if (font == null) {
       try {
-        InputStream is = FontLoader.class.getResourceAsStream(String.format("/fonts/%s.ttf", name));
+        InputStream is =
+            FontLoader.class.getResourceAsStream(String.format("/fonts/%s.ttf", name));
         font = Font.createFont(Font.TRUETYPE_FONT, is);
         fonts.put(name, font);
       } catch (Exception ex) {

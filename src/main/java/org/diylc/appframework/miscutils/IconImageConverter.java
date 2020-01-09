@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.appframework.miscutils;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -20,7 +39,9 @@ public class IconImageConverter implements Converter {
   private static final Logger LOG = LogManager.getLogger(IconImageConverter.class);
 
   @Override
-  public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+  public void marshal(Object object,
+                      HierarchicalStreamWriter writer,
+                      MarshallingContext context) {
     ImageIcon image = (ImageIcon) object;
     int width = image.getIconWidth();
     int height = image.getIconHeight();
@@ -28,7 +49,8 @@ public class IconImageConverter implements Converter {
 
     if (image != null) {
       try {
-        PixelGrabber pg = new PixelGrabber(image.getImage(), 0, 0, width, height, pixels, 0, width);
+        PixelGrabber pg =
+            new PixelGrabber(image.getImage(), 0, 0, width, height, pixels, 0, width);
         pg.grabPixels();
         if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
           LOG.error("Failed to load image contents");

@@ -29,9 +29,11 @@ import org.diylc.DIYLC;
 import org.diylc.images.Icon;
 
 /**
- * Utility that handles undo/redo operations. Use {@link #getUndoAction()} and {@link
- * #getRedoAction()} to obtain instances of actions that may be used for menus, buttons, etc. Action
- * states are updated automatically, i.e. they are enabled and disabled when they need to be.
+ * Utility that handles undo/redo operations. Use {@link
+ * #getUndoAction()} and {@link #getRedoAction()} to obtain instances
+ * of actions that may be used for menus, buttons, etc. Action states
+ * are updated automatically, i.e. they are enabled and disabled when
+ * they need to be.
  *
  * @author Branislav Stojkovic
  * @param <T> type of entities that actions are performed upon

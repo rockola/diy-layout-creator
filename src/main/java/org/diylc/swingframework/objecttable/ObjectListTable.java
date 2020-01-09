@@ -14,8 +14,8 @@ import javax.swing.table.TableCellRenderer;
 import org.diylc.swingframework.autofit.AutoFitTable;
 
 /**
- * Customized {@link JTable} that shows objects displayed as rows in the table. Cells in each rows
- * are read from the object.
+ * Customized {@link JTable} that shows objects displayed as rows in
+ * the table. Cells in each row are read from the object.
  *
  * @author Branislav Stojkovic
  * @param T type of data that will be stored in the table
@@ -26,17 +26,20 @@ public class ObjectListTable<T> extends AutoFitTable {
   private IActionProcessor<T> clickListener;
 
   /**
-   * Creates a new {@link ObjectListTable} that will display data of the specified type. For each
-   * element in the <code>fields</code> list a new column is created. There are two types of
-   * columns: <br>
+   * Creates a new {@link ObjectListTable} that will display data of
+   * the specified type. For each element in the <code>fields</code>
+   * list a new column is created. There are two types of columns:
+   * <br>
    *
    * <ul>
    *   <li>Data columns; field is specified with the getter name
    *   <li>Actions; field is specified in <code>action:<i>action name</i></code> format
    * </ul>
    *
-   * The example below shows a simple class that has two fields. We are making a table with three
-   * columns, two of which will show the data and one will trigger an action. <br>
+   * The example below shows a simple class that has two fields. We
+   * are making a table with three columns, two of which will show the
+   * data and one will trigger an action. <br>
+   *
    * <br>
    * <code>class Point {<br>
    * &nbsp;&nbsp;int x, y;<br>
@@ -46,9 +49,13 @@ public class ObjectListTable<T> extends AutoFitTable {
    * new ObjectListTable&lt;Point&gt;(Point.class, new String[] {"getX/setY", "getY", "action:Delete"}, provider);
    * </code> <br>
    * <br>
-   * The resulting table will contain columns named "X", "Y" and "Delete" in that order. Column
-   * "Delete" contains buttons that trigger the action. Column "X" is editable because it has a
-   * setter defined. Event will be fired back the user though {@link IActionProcessor}.<br>
+   *
+   * The resulting table will contain columns named "X", "Y" and
+   * "Delete" in that order. Column "Delete" contains buttons that
+   * trigger the action. Column "X" is editable because it has a
+   * setter defined. Event will be fired back the user though {@link
+   * IActionProcessor}.
+   *
    * <br>
    *
    * @see IActionProcessor

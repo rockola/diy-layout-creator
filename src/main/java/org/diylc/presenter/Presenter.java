@@ -295,7 +295,8 @@ public class Presenter implements IPlugInPort {
     List<String> warnings = null;
     try {
       warnings = new ArrayList<String>();
-      Project project = (Project) projectFileManager.deserializeProjectFromFile(fileName, warnings);
+      Project project =
+          (Project) projectFileManager.deserializeProjectFromFile(fileName, warnings);
       loadProject(project, true, fileName);
       projectFileManager.fireFileStatusChanged();
       if (!warnings.isEmpty()) {
@@ -892,7 +893,7 @@ public class Presenter implements IPlugInPort {
         try {
           applyPropertiesToSelection(properties);
         } catch (Exception e1) {
-          DIYLC.ui().error("Error occured while editing selection. Check the log for details.");
+          DIYLC.ui().error(DIYLC.getString("presenter.selection-edit-error"));
           LOG.error("Error applying properties", e1);
         }
         // Save default values.
@@ -911,7 +912,8 @@ public class Presenter implements IPlugInPort {
 
     dragAction = shiftDown ? IPlugInPort.DND_TOGGLE_SNAP : 0;
 
-    Map<IDIYComponent<?>, Set<Integer>> components = new HashMap<IDIYComponent<?>, Set<Integer>>();
+    Map<IDIYComponent<?>, Set<Integer>> components =
+        new HashMap<IDIYComponent<?>, Set<Integer>>();
     this.previousScaledPoint = scalePoint(point);
     if (instantiationManager.getComponentTypeSlot() != null) {
       if (isSnapToGrid()) {
@@ -969,7 +971,8 @@ public class Presenter implements IPlugInPort {
             inPoint.getX() * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d,
             inPoint.getY() * SizeUnit.in.getFactor() / SizeUnit.cm.getFactor() * 10d);
 
-    messageDispatcher.dispatchMessage(EventType.MOUSE_MOVED, previousScaledPoint, inPoint, mmPoint);
+    messageDispatcher.dispatchMessage(EventType.MOUSE_MOVED,
+                                      previousScaledPoint, inPoint, mmPoint);
 
     if (!components.equals(controlPointMap)) {
       controlPointMap = components;
@@ -1185,7 +1188,7 @@ public class Presenter implements IPlugInPort {
       for (int i = 0; i < component.getControlPointCount(); i++) {
         // Do not process a control point if it's already in the map and
         // if it's locked.
-        if ((!controlPointMap.containsKey(component) || !controlPointMap.get(component).contains(i))
+        if (!(controlPointMap.containsKey(component) && controlPointMap.get(component).contains(i))
             && !isComponentLocked(component)
             && isComponentVisible(component)) {
           if (component.isControlPointSticky(i)) {
@@ -1405,11 +1408,10 @@ public class Presenter implements IPlugInPort {
     }
 
     if (!canRotate)
-      if (showConfirmDialog(
-              "Selection contains components that cannot be rotated. Do you want to exclude them?",
-              "Mirror Selection",
-              IView.YES_NO_OPTION,
-              IView.QUESTION_MESSAGE)
+      if (showConfirmDialog(DIYLC.getString("presenter.unrotatable-components"),
+                            "Mirror Selection",
+                            IView.YES_NO_OPTION,
+                            IView.QUESTION_MESSAGE)
           != IView.YES_OPTION) return;
 
     for (IDIYComponent<?> component : selectedComponents) {
@@ -1422,8 +1424,9 @@ public class Presenter implements IPlugInPort {
       }
     }
 
-    // AffineTransform rotate = AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x,
-    // center.y);
+    // AffineTransform rotate =
+    // AffineTransform.getRotateInstance(Math.PI / 2 * direction,
+    // center.x, center.y);
     //
     // // Update all points to new location.
     // for (IDIYComponent<?> component : components) {
@@ -1518,19 +1521,17 @@ public class Presenter implements IPlugInPort {
     }
 
     if (!canMirror)
-      if (showConfirmDialog(
-              "Selection contains components that cannot be mirrored. Do you want to exclude them?",
-              "Mirror Selection",
-              IView.YES_NO_OPTION,
-              IView.QUESTION_MESSAGE)
+      if (showConfirmDialog(DIYLC.getString("presenter.unmirrorable-components")
+                            "Mirror Selection",
+                            IView.YES_NO_OPTION,
+                            IView.QUESTION_MESSAGE)
           != IView.YES_OPTION) return;
 
     if (changesCircuit)
-      if (showConfirmDialog(
-              "Mirroring operation will change the circuit. Do you want to continue?",
-              "Mirror Selection",
-              IView.YES_NO_OPTION,
-              IView.QUESTION_MESSAGE)
+      if (showConfirmDialog(DIYLC.getString("presenter.confirm-mirroring"),
+                            "Mirror Selection",
+                            IView.YES_NO_OPTION,
+                            IView.QUESTION_MESSAGE)
           != IView.YES_OPTION) return;
 
     for (IDIYComponent<?> component : components) {
@@ -1614,7 +1615,9 @@ public class Presenter implements IPlugInPort {
       // calculateSelectionDimension());
     } else if (instantiationManager.getComponentSlot() != null) {
       preDragProject = currentProject.clone();
-      addPendingComponentsToProject(scaledPoint, instantiationManager.getComponentTypeSlot(), null);
+      addPendingComponentsToProject(scaledPoint,
+                                    instantiationManager.getComponentTypeSlot(),
+                                    null);
     } else {
       updateSelection(selectedComponents);
     }
@@ -1666,8 +1669,8 @@ public class Presenter implements IPlugInPort {
         ComponentType componentType =
             ComponentProcessor.getInstance()
                 .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) cloned.getClass());
-        cloned.setName(
-            instantiationManager.createUniqueName(componentType, currentProject.getComponents()));
+        cloned.setName(instantiationManager.createUniqueName(componentType,
+                                                             currentProject.getComponents()));
         newSelection.add(cloned);
         for (int i = 0; i < component.getControlPointCount(); i++) {
           Point p = component.getControlPoint(i);
@@ -1822,7 +1825,8 @@ public class Presenter implements IPlugInPort {
     int forceConfirmation = -1;
     Project oldProject = currentProject.clone();
 
-    // sort the selection in the reversed Z-order to preserve the order after moving to the back
+    /* sort the selection in the reversed Z-order to preserve the
+       order after moving to the back */
     List<IDIYComponent<?>> selection = new ArrayList<IDIYComponent<?>>(selectedComponents);
     Collections.sort(
         selection,
@@ -1855,12 +1859,11 @@ public class Presenter implements IPlugInPort {
                     < Math.round(componentType.getZOrder())
                 && forceConfirmation != IView.YES_OPTION
                 && (forceConfirmation =
-                        showConfirmDialog(
-                            "Selected component(s) have reached the bottom of their layer. Do you want to force the selection to the back?",
-                            "Send Selection to Back",
-                            IView.YES_NO_OPTION,
-                            IView.QUESTION_MESSAGE))
-                    != IView.YES_OPTION) break;
+                    showConfirmDialog(DIYLC.getString("presenter.bottom-reached"),
+                                      "Send Selection to Back",
+                                      IView.YES_NO_OPTION,
+                                      IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
+              break;
           }
           Collections.swap(currentProject.getComponents(), index, index - 1);
           index--;
@@ -1914,12 +1917,11 @@ public class Presenter implements IPlugInPort {
                     > Math.round(componentType.getZOrder())
                 && forceConfirmation != IView.YES_OPTION
                 && (forceConfirmation =
-                        showConfirmDialog(
-                            "Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?",
-                            "Bring Selection to Front",
-                            IView.YES_NO_OPTION,
-                            IView.QUESTION_MESSAGE))
-                    != IView.YES_OPTION) break;
+                    showConfirmDialog(DIYLC.getString("presenter.top-reached"),
+                                      "Bring Selection to Front",
+                                      IView.YES_NO_OPTION,
+                                      IView.QUESTION_MESSAGE)) != IView.YES_OPTION)
+              break;
           }
           Collections.swap(currentProject.getComponents(), index, index + 1);
           index++;
@@ -2133,12 +2135,14 @@ public class Presenter implements IPlugInPort {
   }
 
   /**
-   * Finds all components that are grouped with the specified component. This should be called any
-   * time components are added or removed from the selection.
+   * Finds all components that are grouped with the specified
+   * component. This should be called any time components are added or
+   * removed from the selection.
    *
    * @param component
-   * @return set of all components that belong to the same group with the specified component. At
-   *     the minimum, set contains that single component.
+   * @return set of all components that belong to the same group with
+   *     the specified component. At the minimum, set contains that
+   *     single component.
    */
   private static Set<IDIYComponent<?>> findAllGroupedComponents(
       Project p, IDIYComponent<?> component) {
@@ -2784,7 +2788,9 @@ public class Presenter implements IPlugInPort {
       }
       for (Template t : entry.getValue()) {
         templates.add(
-            new Template(t.getName() + " [" + pkg.getOwner() + "]", t.getValues(), t.getPoints()));
+            new Template(t.getName() + " [" + pkg.getOwner() + "]",
+                         t.getValues(),
+                         t.getPoints()));
       }
     }
 

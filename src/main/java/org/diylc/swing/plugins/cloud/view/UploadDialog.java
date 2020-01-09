@@ -56,21 +56,6 @@ public class UploadDialog extends ButtonDialog {
 
   private static final long serialVersionUID = 1L;
 
-  private static final String BULLET = "&nbsp;&nbsp;&nbsp;&#8226;&nbsp;";
-  private static final String TERMS_HTML =
-      "<html>"
-          + BULLET
-          + "All content uploaded to DIY Cloud is shared under Creative Commons 3.0 Licence.<br>"
-          + BULLET
-          + "Only finished and resonably verified projects may be uploaded to the DIY Cloud.<br>"
-          + BULLET
-          + "Please provide a meaningful project description to make it possible for others to find the project.<br>"
-          + BULLET
-          + "If you are building on top of someone else's work, please leave credits in the description.<br>"
-          + BULLET
-          + "Uploaded content may be reviewed, edited and removed by the administrators if it is not up to standards.<br>"
-          + "</html>";
-
   private JPanel mainPanel;
   private JLabel termsLabel;
   private JCheckBox agreeBox;
@@ -84,8 +69,12 @@ public class UploadDialog extends ButtonDialog {
   private IPlugInPort plugInPort;
   private String[] categories;
 
-  public UploadDialog(JFrame owner, IPlugInPort plugInPort, String[] categories, boolean isUpdate) {
-    super(owner, isUpdate ? "Re-Upload A Project" : "Upload A Project", new String[] {OK, CANCEL});
+  public UploadDialog(JFrame owner, IPlugInPort plugInPort,
+                      String[] categories,
+                      boolean isUpdate) {
+    super(owner,
+          isUpdate ? "Re-Upload A Project" : "Upload A Project",
+          new String[] {OK, CANCEL});
     this.plugInPort = plugInPort;
     this.categories = categories;
     layoutGui();
@@ -185,7 +174,7 @@ public class UploadDialog extends ButtonDialog {
       termsLabel.setBorder(
           BorderFactory.createCompoundBorder(
               BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-      termsLabel.setText(TERMS_HTML);
+      termsLabel.setText(Message.getHTML("cloud-terms"));
     }
     return termsLabel;
   }
@@ -301,7 +290,8 @@ public class UploadDialog extends ButtonDialog {
 
   public BufferedImage getThumbnail() {
     Dimension d = getThumbnailSize();
-    BufferedImage thumbnailImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
+    BufferedImage thumbnailImage =
+        new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     Graphics2D cg = thumbnailImage.createGraphics();
 
     paintThumbnail(cg, new Rectangle(thumbnailImage.getWidth(), thumbnailImage.getHeight()));

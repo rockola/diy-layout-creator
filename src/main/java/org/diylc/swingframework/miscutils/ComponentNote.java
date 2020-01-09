@@ -80,7 +80,9 @@ public class ComponentNote extends JPanel {
 
   private void updateLocation() {
     Rectangle mainBounds =
-        SwingUtilities.convertRectangle(mainComponent.getParent(), mainComponent.getBounds(), null);
+        SwingUtilities.convertRectangle(mainComponent.getParent(),
+                                        mainComponent.getBounds(),
+                                        null);
     Rectangle rootBounds = SwingUtilities.getRoot(mainComponent).getBounds();
     Dimension bounds = getPreferredSize();
     int x = mainBounds.x + (mainBounds.width - bounds.width) / 2;

@@ -45,8 +45,8 @@ public final class Message {
         // let's try it as a file in resources
         String markdownResource = String.format("org/diylc/messages/%s.md", name);
         LOG.trace("getHtml({}) looking for {}", name, markdownResource);
-        BufferedReader reader =
-            new BufferedReader(new InputStreamReader(loader.getResourceAsStream(markdownResource)));
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(loader.getResourceAsStream(markdownResource)));
         markdownString = reader.lines().collect(Collectors.joining("\n"));
       }
       Node document = parser.parse(markdownString);

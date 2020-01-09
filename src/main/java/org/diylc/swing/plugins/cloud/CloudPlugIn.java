@@ -491,9 +491,8 @@ public class CloudPlugIn implements IPlugIn {
 
                                   @Override
                                   public void complete(Void result) {
-                                    DIYLC
-                                        .ui()
-                                        .info(getMsg("upload-success"), getMsg("project-uploaded"));
+                                    DIYLC.ui().info(getMsg("upload-success"),
+                                                    getMsg("project-uploaded"));
                                     synchronized (taskIterator) {
                                       if (taskIterator.hasPrevious())
                                         DIYLC
