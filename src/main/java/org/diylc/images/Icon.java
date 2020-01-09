@@ -162,9 +162,12 @@ public enum Icon {
     private static HashMap<Icon, ImageIcon> icons = new HashMap<>();
 
     private String resourcePNG() {
-	String r = DIYLC.getString("icon." + this.toString()) + ".png";
+	String resourceID = "icon." + this.toString();
+	String r = DIYLC.getString(resourceID) + ".png";
 	if (r == null)
-	    LOG.error("{} not found in icons!", this);
+	    LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
+	else
+	    LOG.debug("Looking for {} in icons...", r);
 	return r;
     }
 
@@ -173,10 +176,19 @@ public enum Icon {
 	if (i == null) {
 	    // this icon hasn't been requested yet, let's load it from
 	    // resources
-	    i = new ImageIcon(Icon.class.getResource(resourcePNG()));
-	    // let's store it for future reference IFF it was found
+	    try {
+		i = new ImageIcon(Icon.class.getResource(resourcePNG()));
+	    } catch (NullPointerException e) {
+		LOG.error("Cannot create ImageIcon for {}", this.toString());
+		throw e;
+	    }
 	    if (i != null) {
+		// let's store the icon for future reference
+		LOG.debug("storing ImageIcon for {}", this.toString());
 		icons.put(this, i);
+		if (icons.get(this) == null) {
+		    LOG.error("ImageIcon for {} was not stored!", this.toString());
+		}
 	    } else {
 		LOG.error("Could not retrieve icon {}", this);
 	    }
