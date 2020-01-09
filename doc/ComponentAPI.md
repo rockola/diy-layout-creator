@@ -7,6 +7,8 @@ visual identity and user experience consistent across the board and to
 have a maintainable code base that follows the same coding standards
 and patterns. **Good luck!**
 
+Note: the instructions below may need updating for DIYLC v4.
+
 ## Prerequisites
 
   * Java 8
@@ -16,17 +18,18 @@ and patterns. **Good luck!**
     [generics](http://java.sun.com/j2se/1.5/pdf/generics-tutorial.pdf),
     [annotations](http://download.oracle.com/javase/tutorial/java/javaOO/annotations.html)
     and
-    [Graphics2D](http://download.oracle.com/javase/tutorial/2d/overview/index.html). Unlike
-    the previous version, you actually need to write Java code to make
-    the component look and behave the way you want it. This makes it
-    harder for non-programmers to make their own components or
-    customize existing ones, but it allows greater flexibility and
-    performance.
+    [Graphics2D](http://download.oracle.com/javase/tutorial/2d/overview/index.html). 
+	
+Unlike DIYLC v2, you actually need to write Java code to make the
+component look and behave the way you want it. This makes it harder
+for non-programmers to make their own components or customize existing
+ones, but it allows greater flexibility and performance.
 
 ## Component design guidelines
 
-  * Make sure that your code is formatted using **diylc** formatter
-    (included in the source code) before committing.
+  * Make sure that your code is formatted using the 
+	[Google Java Style formatter](https://github.com/google/google-java-format) 
+	before committing.
   * Add JavaDoc on the new classes and public method you add. In
     particular, classes should have a brief description of what they
     represent and author name. Typical methods should have a one-two
@@ -56,7 +59,8 @@ LOG.info("Something happened.");
     made transparent to keep them readable. However, large surfaces,
     like component body should be made transparent.
 
-Here's an example that should be a good guideline for painting components in different situations:
+Here's an example that should be a good guideline for painting
+components in different situations:
 <p align='center'><img src='http://www.diy-fever.com/diylc/images/coloring.png' /></p>
 
 ## Adding to the main library
