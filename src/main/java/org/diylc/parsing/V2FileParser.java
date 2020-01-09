@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.DIYLC;
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.BlankBoard;
 import org.diylc.components.boards.PerfBoard;
@@ -274,9 +275,16 @@ public class V2FileParser implements IOldFileParser {
 
           String lcNodeName = node.getAttributes()
                               .getNamedItem("name").getNodeValue().toLowerCase();
+          AbstractBoard board = null;
+          AbstractLeadedComponent trace = null;
+          AbstractLeadedComponent capacitor = null;
+          TubeSocket ts = null;
+          Point point;
+          int x;
+          int y;
           switch (lcNodeName) {
             case "blank board":
-              AbstractBoard board = new BlankBoard();
+              board = new BlankBoard();
               if (cl != null) {
                 board.setBoardColor(cl);
               }
@@ -291,50 +299,38 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(board);
               break;
             case "perfboard":
-              PerfBoard board = new PerfBoard();
-              board.setBoardColor(Color.white);
-              board.setBorderColor(Color.black);
-              if (com_name != "") {
-                board.setName(com_name);
-              } else {
-                board.setName("Main board");
-              }
-              board.setSpacing(new Size(0.07, SizeUnit.in));
-              board.setControlPoint(tacke.get(0), 0);
-              board.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(board);
+              PerfBoard perf = new PerfBoard();
+              perf.setBoardColor(Color.white);
+              perf.setBorderColor(Color.black);
+              perf.setName(com_name != "" ? com_name : "Main board");
+              perf.setSpacing(new Size(0.07, SizeUnit.in));
+              perf.setControlPoint(tacke.get(0), 0);
+              perf.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(perf);
               break;
             case "copper trace":
-              CopperTrace trace = new CopperTrace();
-              if (com_name != "") {
-                trace.setName(com_name);
-              } else {
-                trace.setName("t");
-              }
+              CopperTrace copperTrace = new CopperTrace();
+              copperTrace.setName(com_name != "" ? com_name : "t");
               if (cl != null) {
-                trace.setLeadColor(cl);
+                copperTrace.setLeadColor(cl);
               }
-              trace.setThickness(thicknessPro);
-              trace.setControlPoint(tacke.get(0), 0);
-              trace.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(trace);
+              copperTrace.setThickness(thicknessPro);
+              copperTrace.setControlPoint(tacke.get(0), 0);
+              copperTrace.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(copperTrace);
               break;
             case "copper trace curved":
-              CurvedTrace trace = new CurvedTrace();
-              if (com_name != "") {
-                trace.setName(com_name);
-              } else {
-                trace.setName("t");
-              }
+              CurvedTrace curvedTrace = new CurvedTrace();
+              curvedTrace.setName(com_name != "" ? com_name : "t");
               if (cl != null) {
-                trace.setLeadColor(cl);
+                curvedTrace.setLeadColor(cl);
               }
-              trace.setThickness(thicknessPro);
-              trace.setControlPoint(tacke.get(0), 0);
-              trace.setControlPoint(tacke.get(1), 1);
-              trace.setControlPoint(tacke.get(2), 2);
-              trace.setControlPoint(tacke.get(3), 3);
-              project.getComponents().add(trace);
+              curvedTrace.setThickness(thicknessPro);
+              curvedTrace.setControlPoint(tacke.get(0), 0);
+              curvedTrace.setControlPoint(tacke.get(1), 1);
+              curvedTrace.setControlPoint(tacke.get(2), 2);
+              curvedTrace.setControlPoint(tacke.get(3), 3);
+              project.getComponents().add(curvedTrace);
               break;
             case "eyelet":
               Eyelet eyelet = new Eyelet();
@@ -362,16 +358,16 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(pad);
               break;
             case "stripboard":
-              VeroBoard board = new VeroBoard();
+              VeroBoard vero = new VeroBoard();
               if (com_name != "") {
-                board.setName(com_name);
+                vero.setName(com_name);
               } else {
-                board.setName("Main board");
+                vero.setName("Main board");
               }
-              board.setControlPoint(tacke.get(0), 0);
-              board.setControlPoint(tacke.get(1), 1);
-              board.setSpacing(new Size(0.08, SizeUnit.in));
-              project.getComponents().add(board);
+              vero.setControlPoint(tacke.get(0), 0);
+              vero.setControlPoint(tacke.get(1), 1);
+              vero.setSpacing(new Size(0.08, SizeUnit.in));
+              project.getComponents().add(vero);
               break;
             case "trace cut":
               TraceCut cut = new TraceCut();
@@ -387,9 +383,8 @@ public class V2FileParser implements IOldFileParser {
               if (com_name != "") {
                 sw.setName(com_name);
               } else sw.setName("sw");
-              Point point;
-              int x = (int) (tacke.get(0).getX() + 20);
-              int y = (int) (tacke.get(0).getY() + 10);
+              x = (int) (tacke.get(0).getX() + 20);
+              y = (int) (tacke.get(0).getY() + 10);
               point = new Point(x, y);
               sw.setSpacing(new Size(0.1, SizeUnit.in));
               sw.setControlPoint(point, 0);
@@ -465,98 +460,98 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(hw);
               break;
             case "electrolytic (axial)":
-              AxialElectrolyticCapacitor capacitor = new AxialElectrolyticCapacitor();
+              AxialElectrolyticCapacitor aec = new AxialElectrolyticCapacitor();
               if (com_name != "") {
-                capacitor.setName(com_name);
-              } else capacitor.setName("A_E_C");
-              capacitor.setAlpha((byte) transparency);
+                aec.setName(com_name);
+              } else aec.setName("A_E_C");
+              aec.setAlpha((byte) transparency);
               if (value != -9999) {
-                capacitor.setValue(new Capacitance(value, cp));
+                aec.setValue(new Capacitance(value, cp));
               }
-              capacitor.setWidth(diameterPro);
-              capacitor.setLength(lengthPro);
+              aec.setWidth(diameterPro);
+              aec.setLength(lengthPro);
               if (display.equals("Name")) {
-                capacitor.setDisplay(Display.NAME);
+                aec.setDisplay(Display.NAME);
               } else {
-                capacitor.setDisplay(Display.VALUE);
+                aec.setDisplay(Display.VALUE);
               }
-              capacitor.setControlPoint(tacke.get(0), 0);
-              capacitor.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(capacitor);
+              aec.setControlPoint(tacke.get(0), 0);
+              aec.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(aec);
               break;
             case "capacitor (axial)":
-              AxialFilmCapacitor capacitor = new AxialFilmCapacitor();
+              AxialFilmCapacitor afc = new AxialFilmCapacitor();
               if (com_name != "") {
-                capacitor.setName(com_name);
+                afc.setName(com_name);
               }
-              capacitor.setAlpha((byte) transparency);
+              afc.setAlpha((byte) transparency);
               if (value != -9999) {
-                capacitor.setValue(new Capacitance(value, cp));
-              } else capacitor.setName("A_F_C");
+                afc.setValue(new Capacitance(value, cp));
+              } else afc.setName("A_F_C");
               if (display.equals("Name")) {
-                capacitor.setDisplay(Display.NAME);
+                afc.setDisplay(Display.NAME);
               } else {
-                capacitor.setDisplay(Display.VALUE);
+                afc.setDisplay(Display.VALUE);
               }
-              capacitor.setWidth(thicknessPro);
-              capacitor.setLength(lengthPro);
-              capacitor.setControlPoint(tacke.get(0), 0);
-              capacitor.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(capacitor);
+              afc.setWidth(thicknessPro);
+              afc.setLength(lengthPro);
+              afc.setControlPoint(tacke.get(0), 0);
+              afc.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(afc);
               break;
             case "capacitor (ceramic)":
-              RadialCeramicDiskCapacitor capacitor = new RadialCeramicDiskCapacitor();
+              RadialCeramicDiskCapacitor rcdc = new RadialCeramicDiskCapacitor();
               if (com_name != "") {
-                capacitor.setName(com_name);
-              } else capacitor.setName("Radial_Ceramic_Capacitor");
-              capacitor.setAlpha((byte) transparency);
+                rcdc.setName(com_name);
+              } else rcdc.setName("Radial_Ceramic_Capacitor");
+              rcdc.setAlpha((byte) transparency);
               if (value != -9999) {
-                capacitor.setValue(new Capacitance(value, cp));
+                rcdc.setValue(new Capacitance(value, cp));
               }
               if (display.equals("Name")) {
-                capacitor.setDisplay(Display.NAME);
+                rcdc.setDisplay(Display.NAME);
               } else {
-                capacitor.setDisplay(Display.VALUE);
+                rcdc.setDisplay(Display.VALUE);
               }
-              capacitor.setWidth(thicknessPro);
-              capacitor.setLength(lengthPro);
-              capacitor.setControlPoint(tacke.get(0), 0);
-              capacitor.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(capacitor);
+              rcdc.setWidth(thicknessPro);
+              rcdc.setLength(lengthPro);
+              rcdc.setControlPoint(tacke.get(0), 0);
+              rcdc.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(rcdc);
               break;
             case "capacitor (radial)":
-              RadialFilmCapacitor capacitor = new RadialFilmCapacitor();
+              RadialFilmCapacitor rfc = new RadialFilmCapacitor();
               if (com_name != "") {
-                capacitor.setName(com_name);
-              } else capacitor.setName("Radial_Film_Capacitor");
-              capacitor.setAlpha((byte) transparency);
+                rfc.setName(com_name);
+              } else rfc.setName("Radial_Film_Capacitor");
+              rfc.setAlpha((byte) transparency);
               if (value != -9999) {
-                capacitor.setValue(new Capacitance(value, cp));
+                rfc.setValue(new Capacitance(value, cp));
               }
               if (display.equals("Name")) {
-                capacitor.setDisplay(Display.NAME);
+                rfc.setDisplay(Display.NAME);
               } else {
-                capacitor.setDisplay(Display.VALUE);
+                rfc.setDisplay(Display.VALUE);
               }
-              capacitor.setWidth(thicknessPro);
-              capacitor.setLength(lengthPro);
-              capacitor.setControlPoint(tacke.get(0), 0);
-              capacitor.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(capacitor);
+              rfc.setWidth(thicknessPro);
+              rfc.setLength(lengthPro);
+              rfc.setControlPoint(tacke.get(0), 0);
+              rfc.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(rfc);
               break;
             case "electrolytic (radial)":
-              RadialElectrolytic capacitor = new RadialElectrolytic();
+              RadialElectrolytic re = new RadialElectrolytic();
               if (com_name != "") {
-                capacitor.setName(com_name);
-              } else capacitor.setName("Radial_Electrolytic_Capacitor");
+                re.setName(com_name);
+              } else re.setName("Radial_Electrolytic_Capacitor");
               if (value != -9999) {
-                capacitor.setValue(new Capacitance(value, cp));
+                re.setValue(new Capacitance(value, cp));
               }
-              capacitor.setAlpha((byte) transparency);
-              capacitor.setLength(diameterPro);
-              capacitor.setControlPoint(tacke.get(0), 0);
-              capacitor.setControlPoint(tacke.get(1), 1);
-              project.getComponents().add(capacitor);
+              re.setAlpha((byte) transparency);
+              re.setLength(diameterPro);
+              re.setControlPoint(tacke.get(0), 0);
+              re.setControlPoint(tacke.get(1), 1);
+              project.getComponents().add(re);
               break;
             case "potentiometer lug":
               PotentiometerPanel panel = new PotentiometerPanel();
@@ -570,9 +565,8 @@ public class V2FileParser implements IOldFileParser {
               if (angle > 45 && angle <= 135) panel.setOrientation(Orientation._90);
               else if (angle > 135 && angle <= 225) panel.setOrientation(Orientation._180);
               else if (angle > 225 && angle <= 315) panel.setOrientation(Orientation._270);
-              Point point;
-              int x = (int) (tacke.get(0).getX() - 20);
-              int y = (int) tacke.get(0).getY();
+              x = (int) (tacke.get(0).getX() - 20);
+              y = (int) tacke.get(0).getY();
               point = new Point(x, y);
               panel.setControlPoint(point, 0);
               panel.setBodyDiameter(bodyPro);
@@ -658,10 +652,8 @@ public class V2FileParser implements IOldFileParser {
               } else ps.setName("ps");
               ps.setColor(cl);
               if (value_s != "") ps.setValue(value_s);
-
-              Point point;
-              int x = (int) (tacke.get(0).getX() - 70);
-              int y = (int) tacke.get(0).getY();
+              x = (int) (tacke.get(0).getX() - 70);
+              y = (int) tacke.get(0).getY();
               point = new Point(x, y);
               ps.setControlPoint(point, 0);
               project.getComponents().add(ps);
@@ -689,32 +681,30 @@ public class V2FileParser implements IOldFileParser {
               } else ic.setName("ics");
               if (value_s != "") ic.setValue(value_s);
               ic.setAlpha((byte) transparency);
-              Point point;
-              int x = (int) (tacke.get(0).getX() - 70);
-              int y = (int) tacke.get(0).getY() - 20;
+              x = (int) (tacke.get(0).getX() - 70);
+              y = (int) tacke.get(0).getY() - 20;
               point = new Point(x, y);
               ic.setControlPoint(point, 0);
               ic.setIcPointCount(ICPointCount._3);
               project.getComponents().add(ic);
               break;
             case "potentiometer symbol":
-              PotentiometerSymbol ps = new PotentiometerSymbol();
+              PotentiometerSymbol potsym = new PotentiometerSymbol();
               if (com_name != "") {
-                ps.setName(com_name);
-              } else ps.setName("ps");
-              ps.setOrientation(Orientation._270);
-              if (value_s != "") ps.setValue(value_s);
-              ps.setColor(cl);
-              Point point;
-              int x = (int) (tacke.get(0).getX() + 40);
-              int y = (int) tacke.get(0).getY() + 40;
+                potsym.setName(com_name);
+              } else potsym.setName("ps");
+              potsym.setOrientation(Orientation._270);
+              if (value_s != "") potsym.setValue(value_s);
+              potsym.setColor(cl);
+              x = (int) (tacke.get(0).getX() + 40);
+              y = (int) tacke.get(0).getY() + 40;
               point = new Point(x, y);
-              ps.setControlPoint(point, 0);
+              potsym.setControlPoint(point, 0);
               x = (int) (tacke.get(1).getX() + 40);
               y = (int) tacke.get(1).getY() + 40;
               point = new Point(x, y);
-              ps.setControlPoint(point, 1);
-              project.getComponents().add(ps);
+              potsym.setControlPoint(point, 1);
+              project.getComponents().add(potsym);
               break;
             case "resistor symbol":
               ResistorSymbol rs = new ResistorSymbol();
@@ -733,20 +723,19 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(rs);
               break;
             case "triode":
-              TriodeSymbol ts = new TriodeSymbol();
+              TriodeSymbol triodesym = new TriodeSymbol();
               if (com_name != "") {
-                ts.setName(com_name);
-              } else ts.setName("ts");
+                triodesym.setName(com_name);
+              } else triodesym.setName("ts");
               if (value_s != "") {
-                ts.setValue(value_s);
+                triodesym.setValue(value_s);
               }
-              ts.setColor(cl);
-              Point point;
-              int x = (int) (tacke.get(0).getX() - 30);
-              int y = (int) tacke.get(0).getY();
+              triodesym.setColor(cl);
+              x = (int) (tacke.get(0).getX() - 30);
+              y = (int) tacke.get(0).getY();
               point = new Point(x, y);
-              ts.setControlPoint(point, 0);
-              project.getComponents().add(ts);
+              triodesym.setControlPoint(point, 0);
+              project.getComponents().add(triodesym);
               break;
             case "diode":
               DiodePlastic dp = new DiodePlastic();
@@ -775,7 +764,6 @@ public class V2FileParser implements IOldFileParser {
                 case 6: dil.setPinCount(PinCount._6); break;
                 case 8: dil.setPinCount(PinCount._8); break;
                 case 10: dil.setPinCount(PinCount._10); break;
-                case 12: dil.setPinCount(PinCount._12); break;
                 case 12: dil.setPinCount(PinCount._12); break;
                 case 14: dil.setPinCount(PinCount._14); break;
                 case 16: dil.setPinCount(PinCount._16); break;
@@ -816,43 +804,57 @@ public class V2FileParser implements IOldFileParser {
                 trans.setValue(value_s);
               }
               trans.setPinSpacing(new Size(0.1, SizeUnit.in));
-              if (angle == 0) {
-                int x = (int) (tacke.get(0).getX() - 20);
-                int y = (int) (tacke.get(0).getY());
-                Point point = new Point(x, y);
-                trans.setControlPoint(point, 0);
-                x = (int) (tacke.get(1).getX() - 20);
-                y = (int) (tacke.get(1).getY());
-                trans.setControlPoint(point, 1);
-              } else if (angle == 90) {
-                int x = (int) (tacke.get(0).getX());
-                int y = (int) (tacke.get(0).getY() - 20);
-                Point point = new Point(x, y);
-                trans.setControlPoint(point, 0);
-                x = (int) (tacke.get(1).getX());
-                y = (int) (tacke.get(1).getY() - 20);
-                trans.setControlPoint(point, 1);
-              } else if (angle == 180) {
-                int x = (int) (tacke.get(0).getX() + 20);
-                int y = (int) (tacke.get(0).getY());
-                Point point = new Point(x, y);
-                trans.setControlPoint(point, 0);
-                x = (int) (tacke.get(1).getX() + 20);
-                y = (int) (tacke.get(1).getY());
-                trans.setControlPoint(point, 1);
-              } else if (angle == 270) {
-                int x = (int) (tacke.get(0).getX());
-                int y = (int) (tacke.get(0).getY() + 20);
-                Point point = new Point(x, y);
-                trans.setControlPoint(point, 0);
-                x = (int) (tacke.get(1).getX());
-                y = (int) (tacke.get(1).getY() + 20);
-                trans.setControlPoint(point, 1);
+              Point point0 = null;
+              Point point1 = null;
+              // note: code used to just compare angle with ints with
+              // the equality operator, so this should be equally ok/not ok
+              switch ((int) angle) {
+                case 0:
+                  x = (int) (tacke.get(0).getX() - 20);
+                  y = (int) (tacke.get(0).getY());
+                  point0 = new Point(x, y);
+                  x = (int) (tacke.get(1).getX() - 20);
+                  y = (int) (tacke.get(1).getY());
+                  point1 = new Point(x, y);
+                  break;
+                case 90:
+                  x = (int) (tacke.get(0).getX());
+                  y = (int) (tacke.get(0).getY() - 20);
+                  point0 = new Point(x, y);
+                  x = (int) (tacke.get(1).getX());
+                  y = (int) (tacke.get(1).getY() - 20);
+                  point1 = new Point(x, y);
+                  break;
+                case 180:
+                  x = (int) (tacke.get(0).getX() + 20);
+                  y = (int) (tacke.get(0).getY());
+                  point0 = new Point(x, y);
+                  x = (int) (tacke.get(1).getX() + 20);
+                  y = (int) (tacke.get(1).getY());
+                  point1 = new Point(x, y);
+                  break;
+                case 270:
+                  x = (int) (tacke.get(0).getX());
+                  y = (int) (tacke.get(0).getY() + 20);
+                  point0 = new Point(x, y);
+                  x = (int) (tacke.get(1).getX());
+                  y = (int) (tacke.get(1).getY() + 20);
+                  point1 = new Point(x, y);
+                default:
+                  LOG.error("Unknown transistor angle {}", angle);
+              }
+              if (point0 != null) {
+                trans.setControlPoint(point0, 0);
+                trans.setControlPoint(point1, 1);
               }
               Orientation orientation = Orientation._270;
-              if (angle > 45 && angle <= 135) orientation = Orientation.DEFAULT;
-              else if (angle > 135 && angle <= 225) orientation = Orientation._90;
-              else if (angle > 225 && angle <= 315) orientation = Orientation._180;
+              if (angle > 45 && angle <= 135) {
+                orientation = Orientation.DEFAULT;
+              } else if (angle > 135 && angle <= 225) {
+                orientation = Orientation._90;
+              } else if (angle > 225 && angle <= 315) {
+                orientation = Orientation._180;
+              }
               trans.setOrientation(orientation);
               project.getComponents().add(trans);
               break;
@@ -885,7 +887,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(rec);
               break;
             case "noval tube socket":
-              TubeSocket ts = new TubeSocket();
+              ts = new TubeSocket();
               if (com_name != "") {
                 ts.setName(com_name);
               } else ts.setName("ts");
@@ -907,15 +909,14 @@ public class V2FileParser implements IOldFileParser {
               else if (angle > 45 && angle <= 135) bjt.setOrientation(Orientation._90);
               else if (angle > 135 && angle <= 225) bjt.setOrientation(Orientation._180);
               else if (angle > 225 && angle <= 315) bjt.setOrientation(Orientation._270);
-              Point point;
-              int x = (int) (tacke.get(0).getX() - 20);
-              int y = (int) tacke.get(0).getY();
+              x = (int) (tacke.get(0).getX() - 20);
+              y = (int) tacke.get(0).getY();
               point = new Point(x, y);
               bjt.setControlPoint(point, 0);
               project.getComponents().add(bjt);
               break;
             case "octal tube socket":
-              TubeSocket ts = new TubeSocket();
+              ts = new TubeSocket();
               if (com_name != "") {
                 ts.setName(com_name);
               } else ts.setName("ts");
@@ -927,14 +928,13 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(ts);
               break;
             case "7-pin tube socket":
-              TubeSocket ts = new TubeSocket();
+              ts = new TubeSocket();
               if (com_name != "") {
                 ts.setName(com_name);
               } else ts.setName("ts");
               ts.setAlpha((byte) transparency);
               if (value_s != "") ts.setValue(value_s);
               ts.setAngle((int) angle);
-
               ts.setControlPoint(tacke.get(0), 0);
               ts.setBase(Base.B7G);
               project.getComponents().add(ts);
