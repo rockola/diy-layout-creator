@@ -61,6 +61,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.IView;
+import org.diylc.core.Project;
 import org.diylc.images.Icon;
 import org.diylc.plugins.cloud.model.CommentEntity;
 import org.diylc.plugins.cloud.model.ProjectEntity;
@@ -110,6 +111,14 @@ public class ResultsScrollPanel extends JScrollPane {
 
     private boolean showEditControls;
 
+    private static final String spinningResource;
+    private static final ImageIcon spinning;
+
+    static {
+	spinningResource = "/org/diylc/images/spinning.gif";
+	spinning = new ImageIcon(ResultsScrollPanel.class.getResource(spinningResource));
+    }
+
     public ResultsScrollPanel(ISimpleView cloudUI,
 			      IPlugInPort plugInPort,
 			      SearchSession searchSession,
@@ -155,7 +164,8 @@ public class ResultsScrollPanel extends JScrollPane {
 
     public void showNoMatches() {
 	JLabel label =
-	    new JLabel("<html><font size='4' color='#999999'>No projects match the search criteria.</font></html>");
+	    new JLabel(String.format("<html><font size='4' color='#999999'>%s</font></html>",
+				     DIYLC.getString("cloud.search-no-match")));
 	label.setHorizontalAlignment(SwingConstants.CENTER);
 	GridBagConstraints gbc = new GridBagConstraints();
 	gbc.insets = new Insets(2, 2, 2, 2);
@@ -175,7 +185,7 @@ public class ResultsScrollPanel extends JScrollPane {
 	    showNoMatches();
 	} else {
 	    final Point old = getViewport().getViewPosition();
-	    LOG.info("Adding " + projects.size() + " projects to display.");
+	    LOG.info("Adding {} projects to display.", projects.size());
 	    for (ProjectEntity project : projects) {
 		addProjectToDisplay(project);
 		this.currentLocation++;
@@ -196,10 +206,10 @@ public class ResultsScrollPanel extends JScrollPane {
 		});
 
 	    if (searchSession != null && searchSession.hasMoreData()) {
-		getLoadMoreLabel().setText("Querying the cloud for more results...");
-		getLoadMoreLabel().setIcon(Icon.Spinning.icon());
+		getLoadMoreLabel().setText(DIYLC.getString("cloud.querying-for-more"));
+		getLoadMoreLabel().setIcon(spinning);
 	    } else {
-		getLoadMoreLabel().setText("No more results.");
+		getLoadMoreLabel().setText(DIYLC.getString("cloud.no-more-results"));
 		getLoadMoreLabel().setIcon(null);
 	    }
 	}
@@ -225,7 +235,7 @@ public class ResultsScrollPanel extends JScrollPane {
 	    new JLabel(Integer.toString(project.getCommentCount()),
 		       Icon.Messages.icon(),
 		       SwingConstants.LEFT);
-	commentLabel.setToolTipText("Click to see and add public comments");
+	commentLabel.setToolTipText(DIYLC.getString("cloud.see-comments"));
 	commentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	commentLabel.addMouseListener(new MouseAdapter() {
 		@Override
@@ -239,8 +249,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
 			    @Override
 			    public void failed(Exception e) {
-				cloudUI.showMessage("Could not open file. Detailed message is in the logs.", "Cloud Error",
-						    IView.ERROR_MESSAGE);
+				cloudUI.error(DIYLC.getString("cloud.file-not-opened"));
 			    }
 
 			    @Override
@@ -257,7 +266,7 @@ public class ResultsScrollPanel extends JScrollPane {
 	    new JLabel(Integer.toString(project.getViewCount()),
 		       Icon.Eye.icon(),
 		       SwingConstants.LEFT);
-	viewLabel.setToolTipText("View count");
+	viewLabel.setToolTipText(DIYLC.getString("cloud.view-count"));
 
 	final JLabel downloadLabel =
 	    new JLabel(Integer.toString(project.getDownloadCount()),
@@ -265,21 +274,24 @@ public class ResultsScrollPanel extends JScrollPane {
 		       SwingConstants.LEFT);
 	downloadLabel.setToolTipText("Download count");
 
-	final JLabel categoryLabel = new JLabel("<html>Category: <b>" + project.getCategory() + "</b></html>");
-	final JLabel authorLabel = new JLabel("<html>Author: <b>" + project.getOwner() + "</b></html>");
-	final JLabel updatedLabel = new JLabel("<html>Last updated: <b>" + project.getUpdated() + "</b></html>");
+	final JLabel categoryLabel = new JLabel(String.format("<html>Category: <b>%s</b></html>",
+							      project.getCategory()));
+	final JLabel authorLabel = new JLabel(String.format("<html>Author: <b>%s</b></html>",
+							    project.getOwner()));
+	final JLabel updatedLabel = new JLabel(String.format("<html>Last updated: <b>%s</b></html>",
+							     project.getUpdated()));
 
 	final JLabel downloadButton = new JLabel(Icon.CloudDownload.icon());
 	downloadButton.setFocusable(true);
 	downloadButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	downloadButton.setToolTipText("Download to local drive");
+	downloadButton.setToolTipText(DIYLC.getString("cloud.download-to-local-drive"));
 	downloadButton.addMouseListener(new MouseAdapter() {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 		    final File file =
 			DialogFactory.getInstance().showSaveDialog((JFrame) cloudUI, FileFilterEnum.DIY.getFilter(),
-								   new File(project.getName() + ".diy"), FileFilterEnum.DIY.getExtensions()[0], null);
+								   new File(project.getName() + Project.FILE_SUFFIX), FileFilterEnum.DIY.getExtensions()[0], null);
 		    if (file != null) {
 			cloudUI.executeBackgroundTask(new ITask<Void>() {
 
@@ -415,12 +427,13 @@ public class ResultsScrollPanel extends JScrollPane {
 			    DialogFactory.getInstance().showOpenDialog(FileFilterEnum.DIY.getFilter(), null,
 								       FileFilterEnum.DIY.getExtensions()[0], null, cloudUI.getOwnerFrame());
 			if (file != null) {
-			    LOG.info("Preparing replacement for project " + project.getName() + "(" + project.getId() + ")");
+			    LOG.info("Preparing replacement for project {} ({})",
+				     project.getName(), project.getId());
 			    cloudUI.executeBackgroundTask(new ITask<String[]>() {
 
 				    @Override
 				    public String[] doInBackground() throws Exception {
-					LOG.debug("Uploading from " + file.getAbsolutePath());
+					LOG.debug("Uploading from {}", file.getAbsolutePath());
 					thumbnailPresenter.loadProjectFromFile(file.getAbsolutePath());
 					return CloudPresenter.Instance.getCategories();
 				    }
@@ -428,7 +441,9 @@ public class ResultsScrollPanel extends JScrollPane {
 				    @Override
 				    public void complete(final String[] result) {
 					final UploadDialog dialog =
-					    DialogFactory.getInstance().createUploadDialog(cloudUI.getOwnerFrame(), thumbnailPresenter, result,
+					    DialogFactory.getInstance().createUploadDialog(cloudUI.getOwnerFrame(),
+											   thumbnailPresenter,
+											   result,
 											   true);
 					dialog.setVisible(true);
 					if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
@@ -438,7 +453,8 @@ public class ResultsScrollPanel extends JScrollPane {
 						    cloudUI.executeBackgroundTask(new ITask<ProjectEntity>() {
 
 							    @Override
-							    public ProjectEntity doInBackground() throws Exception {
+							    public ProjectEntity doInBackground()
+								throws Exception {
 								CloudPresenter.Instance.uploadProject(dialog.getName(), dialog.getCategory(), dialog
 												      .getDescription(), dialog.getKeywords(),
 												      DIYLC.getVersionNumber().toString(),
@@ -448,7 +464,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
 							    @Override
 							    public void failed(Exception e) {
-								cloudUI.showMessage(e.getMessage(), "Upload Error", IView.ERROR_MESSAGE);
+								cloudUI.error(DIYLC.getString("cloud.upload-error"), e);
 							    }
 
 							    @Override
@@ -458,25 +474,23 @@ public class ResultsScrollPanel extends JScrollPane {
 								categoryLabel.setText("<html>Category: <b>" + result.getCategory() + "</b></html>");
 								updatedLabel.setText("<html>Last updated: <b>" + result.getUpdated() + "</b></html>");
 								thumbnailLabel.setIcon(new ImageIcon(dialog.getThumbnail()));
-								cloudUI.showMessage("The project has been replaced successfully.", "Upload Success",
-										    IView.INFORMATION_MESSAGE);
+								cloudUI.info(DIYLC.getString("cloud.project-replaced"));
 							    }
 							});
 						} else {
-						    cloudUI.showMessage("Could not prepare temporary files to be uploaded to the cloud.",
-									"Upload Error", IView.ERROR_MESSAGE);
+						    cloudUI.error(DIYLC.getString("cloud.temp-file-error"));
+						    LOG.error(DIYLC.getString("cloud.temp-file-error"));
 						}
 					    } catch (Exception e) {
-						cloudUI.showMessage(e.getMessage(), "Upload Error", IView.ERROR_MESSAGE);
+						cloudUI.error(DIYLC.getString("cloud.upload-error"),
+							      e);
 					    }
 					}
 				    }
 
 				    @Override
 				    public void failed(Exception e) {
-					cloudUI.showMessage("Could not open file. " + e.getMessage(),
-							    "Error",
-							    IView.ERROR_MESSAGE);
+					cloudUI.error(DIYLC.getString("cloud.file-not-opened"), e);
 				    }
 				});
 			}
@@ -492,9 +506,13 @@ public class ResultsScrollPanel extends JScrollPane {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-		    if (cloudUI.showConfirmDialog("Are you sure you want to permanently delete project \"" + project.getName()
-						  + "\" from the cloud?", "Delete Project", IView.YES_NO_OPTION, IView.QUESTION_MESSAGE) == IView.YES_OPTION) {
-			LOG.info("Deleting project " + project.getName() + "(" + project.getId() + ")");
+		    if (cloudUI.showConfirmDialog(String.format(DIYLC.getString("cloud.confirm-delete"),
+								project.getName()),
+						  DIYLC.getString("cloud.delete-project"),
+						  IView.YES_NO_OPTION,
+						  IView.QUESTION_MESSAGE) == IView.YES_OPTION) {
+			LOG.info("Deleting project {} ({})",
+				 project.getName(), project.getId());
 			cloudUI.executeBackgroundTask(new ITask<Void>() {
 
 				@Override
@@ -505,9 +523,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
 				@Override
 				public void failed(Exception e) {
-				    cloudUI.showMessage("Could not delete the project. Detailed message is in the logs.",
-							"Error",
-							IView.ERROR_MESSAGE);
+				    cloudUI.error(DIYLC.getString("delete-failed"));
 				}
 
 				@Override
@@ -639,13 +655,16 @@ public class ResultsScrollPanel extends JScrollPane {
 		    public void paint(Graphics g) {
 			super.paint(g);
 			if (armed && searchSession != null && searchSession.hasMoreData()) {
-			    // disarm immediately so we don't trigger successive requests to the provider
+			    // disarm immediately so we don't trigger
+			    // successive requests to the provider
 			    LOG.info("Paging mechanism is disarmed");
 			    armed = false;
-			    SwingWorker<List<ProjectEntity>, Void> worker = new SwingWorker<List<ProjectEntity>, Void>() {
+			    SwingWorker<List<ProjectEntity>, Void> worker
+				= new SwingWorker<List<ProjectEntity>, Void>() {
 
 				    @Override
-				    protected List<ProjectEntity> doInBackground() throws Exception {
+				    protected List<ProjectEntity> doInBackground()
+					throws Exception {
 					return searchSession.requestMoreData();
 				    }
 
@@ -655,8 +674,7 @@ public class ResultsScrollPanel extends JScrollPane {
 					    List<ProjectEntity> newResults = get();
 					    addData(newResults);
 					} catch (Exception e) {
-					    cloudUI.showMessage("Search failed! Detailed message is in the logs.", "Search Failed",
-								IView.ERROR_MESSAGE);
+					    cloudUI.error(DIYLC.getString("cloud.search-failed"));
 					}
 				    }
 				};
