@@ -62,7 +62,7 @@ import org.diylc.utils.Pair;
 */
 public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
-    private static final String TITLE = "Search The Cloud";
+    private static final String TITLE = "Search the Cloud";
 
     private static final long serialVersionUID = 1L;
 
@@ -103,7 +103,8 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
 		    @Override
 		    public Pair<String[], String[]> doInBackground() throws Exception {
-			return new Pair<String[], String[]>(CloudPresenter.Instance.getCategories(), CloudPresenter.Instance.getSortings());
+			return new Pair<String[], String[]>(CloudPresenter.Instance.getCategories(),
+							    CloudPresenter.Instance.getSortings());
 		    }
 
 		    @Override
@@ -114,7 +115,8 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
 		    @Override
 		    public void complete(Pair<String[], String[]> result) {
-			getSearchHeaderPanel().initializeLists(result.getFirst(), result.getSecond());
+			getSearchHeaderPanel().initializeLists(result.getFirst(),
+							       result.getSecond());
 		    }
 		});
 	}
