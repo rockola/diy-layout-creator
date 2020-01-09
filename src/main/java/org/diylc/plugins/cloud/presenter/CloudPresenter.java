@@ -90,7 +90,7 @@ public class CloudPresenter {
     }
 
     public boolean logIn(String username, String password) throws CloudException {
-	LOG.info("Trying to login to cloud as " + username);
+	LOG.info("Trying to login to cloud as {}", username);
 
 	String res;
 	try {
@@ -103,7 +103,7 @@ public class CloudPresenter {
 	    LOG.info("Login failed");
 	    return false;
 	} else {
-	    LOG.info("Login success");
+	    LOG.info("Login success, logged in as {}", username);
 	    DIYLC.putValue(USERNAME_KEY, username);
 	    DIYLC.putValue(TOKEN_KEY, res);
 	    this.loggedIn = true;
@@ -133,7 +133,7 @@ public class CloudPresenter {
 		LOG.info("Login failed");
 		return false;
 	    } else {
-		LOG.info("Login success");
+		LOG.info("Login success, logged in (with token) as {}", currentUsername());
 		this.loggedIn = true;
 		return true;
 	    }
@@ -175,14 +175,16 @@ public class CloudPresenter {
 	return categories;
     }
 
-    public void uploadProject(String projectName, String category, String description, String keywords,
-			      String diylcVersion, File thumbnail, File project, Integer projectId)
+    public void uploadProject(String projectName, String category,
+			      String description, String keywords,
+			      String diylcVersion, File thumbnail,
+			      File project, Integer projectId)
 	throws IOException, CloudException {
 
 	if (currentUsername() == null || currentToken() == null)
 	    throw new CloudException(LOGIN_FAILED);
 
-	LOG.info("Uploading a new project: " + projectName);
+	LOG.info("Uploading new project '{}'", projectName);
 	try {
 	    String res =
 		getService().uploadProject(currentUsername(),
@@ -245,7 +247,7 @@ public class CloudPresenter {
 	if (currentUsername() == null || currentToken() == null)
 	    throw new CloudException(LOGIN_FAILED);
 
-	LOG.info("Posting a new comment to project {}" + projectId);
+	LOG.info("Posting a new comment to project {}", projectId);
 
 	try {
 	    String res = getService().postComment(currentUsername(),
@@ -299,8 +301,6 @@ public class CloudPresenter {
 	LOG.info("Updating password for {}", currentUsername());
 	String res;
 	try {
-	    // NOTE:
-	    // why does this not use the current token? security risk? //ola 20200101
 	    res = getService().updatePassword(currentUsername(), oldPassword, newPassword);
 	} catch (Exception e) {
 	    throw new CloudException(e);
@@ -369,9 +369,9 @@ public class CloudPresenter {
 	if (res instanceof List<?>) {
 	    @SuppressWarnings("unchecked")
 		List<ProjectEntity> projects = (List<ProjectEntity>) res;
-	    LOG.info("Received " + projects.size() + " results. Downloading thumbnails...");
-	    // Download thumbnails and replace urls with local paths to speed up loading in the main
-	    // thread
+	    LOG.info("Received {} results. Downloading thumbnails...", projects.size());
+	    // Download thumbnails and replace urls with local paths
+	    // to speed up loading in the main thread
 	    for (ProjectEntity project : projects) {
 		String url = project.getThumbnailUrl();
 		URL website = new URL(url);
@@ -420,7 +420,8 @@ public class CloudPresenter {
     }
 
     public List<PropertyWrapper> getProjectProperties(ProjectEntity project) {
-	List<PropertyWrapper> properties = ComponentProcessor.getInstance().extractProperties(ProjectEntity.class);
+	List<PropertyWrapper> properties =
+	    ComponentProcessor.getInstance().extractProperties(ProjectEntity.class);
 	try {
 	    for (PropertyWrapper property : properties) {
 		property.readFrom(project);
@@ -429,7 +430,8 @@ public class CloudPresenter {
 	    LOG.error("Could not get project entity properties", e);
 	    return null;
 	}
-	Collections.sort(properties, ComparatorFactory.getInstance().getDefaultPropertyComparator());
+	Collections.sort(properties,
+			 ComparatorFactory.getInstance().getDefaultPropertyComparator());
 	return properties;
     }
 
