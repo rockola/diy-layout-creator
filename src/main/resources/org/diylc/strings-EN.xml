@@ -114,6 +114,7 @@
       <login-failed>Login failed. Please try to login again.</login-failed>
       <could-not-login>Could not login. Possible reasons are wrong credentials or lack of internet connection.</could-not-login>
       <could-not-connect>Failed to retrieve user details from cloud server.</could-not-connect>
+      <category-setup-failed>Failed to retrieve categories and sortings from cloud server.</category-setup-failed>
       <change-password/>
       <password-update-failed>Failed to update the password.</password-update-failed>
       <password-updated/>
@@ -139,19 +140,4 @@
       <download-to-local-drive/>
     </cloud>
   </message>
-  <url>
-    <manual>https://github.com/bancika/diy-layout-creator/blob/wiki/Manual.md</manual>
-    <faq>https://github.com/bancika/diy-layout-creator/blob/wiki/FAQ.md</faq>
-    <component>https://github.com/bancika/diy-layout-creator/blob/wiki/ComponentAPI.md</component>
-    <plugin>https://github.com/bancika/diy-layout-creator/blob/wiki/PluginAPI.md</plugin>
-    <bug>https://github.com/bancika/diy-layout-creator/issues</bug>
-    <donate>http://diy-fever.com/donate</donate>
-    <website>https://github.com/rockola/diy-layout-creator</website>
-    <!-- -->
-    <update>http://www.diy-fever.com/update.xml</update>
-    <api>
-      <base>http://www.diy-fever.com/diylc/api/v1</base>
-      <announcements>https://raw.githubusercontent.com/rockola/diy-layout-creator/evo/doc/announcement.md</announcements>
-    </api>
-  </url>
 </configuration>
