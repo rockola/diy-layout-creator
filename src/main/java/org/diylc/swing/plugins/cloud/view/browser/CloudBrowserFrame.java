@@ -109,7 +109,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 		    @Override
 		    public void failed(Exception e) {
 			LOG.error("Could not fetch categories and sortings from the cloud", e);
-			showMessage("Could not fetch categories and sortings from the cloud", "Cloud Error", IView.ERROR_MESSAGE);
+			error(DIYLC.getString("cloud.category-setup-failed"));
 		    }
 
 		    @Override
@@ -220,8 +220,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
 		@Override
 		public void failed(Exception e) {
-		    showMessage("Search failed! Detailed message is in the logs. Please report to the author.", "Search Failed",
-				IView.ERROR_MESSAGE);
+		    error(DIYLC.getString("cloud.search-failed"));
 		}
 
 		@Override
