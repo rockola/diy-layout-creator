@@ -55,7 +55,7 @@
       <unmirrorable-components>Selection contains components that cannot be mirrored. Do you want to exclude them?</unmirrorable-components>
       <confirm-mirroring>Mirroring operation will change the circuit. Do you want to continue?</confirm-mirroring>
       <bottom-reached>Selected component(s) have reached the bottom of their layer. Do you want to force the selection to the back?</bottom-reached>
-      <top-reached>Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?</bottom-reached>
+      <top-reached>Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?</top-reached>
       <selection-edit-error>Error occurred while editing selection. Check the log for details.</selection-edit-error>
     </presenter>
     <infoDialog>
