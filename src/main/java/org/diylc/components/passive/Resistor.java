@@ -199,7 +199,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
   protected int getLabelOffset(int bodyLength, int bodyWidth, int labelLength) {
     if (value == null
         || getColorCode() == ResistorColorCode.NONE
-        || getLabelOriantation() != AbstractLeadedComponent.LabelOriantation.Directional) return 0;
+        || getLabelOrientation() != AbstractLeadedComponent.LabelOrientation.Directional) return 0;
     Color[] bands = value.getColorCode(colorCode);
 
     int bandLenght = FIRST_BAND + BAND_SPACING * (bands.length - 1);

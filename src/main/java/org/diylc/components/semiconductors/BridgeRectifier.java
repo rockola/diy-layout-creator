@@ -41,7 +41,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractLeadedComponent.LabelOriantation;
+import org.diylc.components.AbstractLeadedComponent.LabelOrientation;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.RoundedPolygon;
 import org.diylc.components.transform.DIL_ICTransformer;
@@ -118,7 +118,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   private Voltage voltage;
   private Current current;
   private transient Area[] body;
-  private LabelOriantation labelOriantation = LabelOriantation.Directional;
+  private LabelOrientation labelOrientation = LabelOrientation.Directional;
 
   public BridgeRectifier() {
     super();
@@ -489,7 +489,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
 
         AffineTransform oldTransform = g2d.getTransform();
 
-        if (getLabelOriantation() == LabelOriantation.Directional
+        if (getLabelOrientation() == LabelOrientation.Directional
             && (getOrientation() == Orientation.DEFAULT || getOrientation() == Orientation._180)) {
           int centerX = bounds.x + bounds.width / 2;
           int centerY = bounds.y + bounds.height / 2;
@@ -725,13 +725,13 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   }
 
   @EditableProperty(name = "Label Orientation")
-  public LabelOriantation getLabelOriantation() {
-    if (labelOriantation == null) labelOriantation = LabelOriantation.Directional;
-    return labelOriantation;
+  public LabelOrientation getLabelOrientation() {
+    if (labelOrientation == null) labelOrientation = LabelOrientation.Directional;
+    return labelOrientation;
   }
 
-  public void setLabelOriantation(LabelOriantation labelOriantation) {
-    this.labelOriantation = labelOriantation;
+  public void setLabelOrientation(LabelOrientation labelOrientation) {
+    this.labelOrientation = labelOrientation;
   }
 
   @Override

@@ -83,7 +83,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   protected Color leadColor = LEAD_COLOR;
   protected Display display = Display.NAME;
   private boolean flipStanding = false;
-  private LabelOriantation labelOriantation = LabelOriantation.Directional;
+  private LabelOrientation labelOrientation = LabelOrientation.Directional;
   protected boolean moveLabel = false;
 
   // parameters for adjusting the label control point
@@ -93,17 +93,15 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   protected AbstractLeadedComponent() {
     super();
     try {
-      this.length = getDefaultLength().clone();
-      this.width = getDefaultWidth().clone();
-    } catch (CloneNotSupportedException e) {
-      // This should never happen because Size supports cloning.
+      this.length = new Size(getDefaultLength());
+      this.width = new Size(getDefaultWidth());
     } catch (NullPointerException e) {
       // This will happen if components do not have any shape.
     }
     points[2] = calculateLabelPosition(points[0], points[1]);
   }
 
-  protected boolean IsCopperArea() {
+  protected boolean isCopperArea() {
     return false;
   }
 
@@ -148,7 +146,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     Shape shape = getBodyShape();
     // If there's no body, just draw the line connecting the ending points.
     if (shape == null) {
-      drawLead(g2d, componentState, drawingObserver, IsCopperArea());
+      drawLead(g2d, componentState, drawingObserver, isCopperArea());
       return;
     }
 
@@ -267,8 +265,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
         g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
 
         if (!outlineMode
-            && ConfigurationManager.getInstance()
-                .readBoolean(IPlugInPort.HI_QUALITY_RENDER_KEY, false)) {
+            && ConfigurationManager.getBoolean(IPlugInPort.Key.HI_QUALITY_RENDER, false)) {
           Point p1 = new Point((int) (length / 2), 0);
           Point p2 = new Point((int) (length / 2), (int) width);
           ShadedPaint paint =
@@ -362,14 +359,14 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     if (getMoveLabel()) {
       g2d.setTransform(oldTransform);
       g2d.translate(getPoints()[2].x, getPoints()[2].y);
-      if (getLabelOriantation() != LabelOriantation.Horizontal) {
+      if (getLabelOrientation() != LabelOrientation.Horizontal) {
         g2d.rotate(theta);
       }
       StringUtils.drawCenteredText(
           g2d, label, offset, 0, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
       g2d.setTransform(oldTransform);
     } else {
-      if (isStanding() || getLabelOriantation() == LabelOriantation.Horizontal) {
+      if (isStanding() || getLabelOrientation() == LabelOrientation.Horizontal) {
         g2d.setTransform(oldTransform);
         double x = (getPoints()[0].x + getPoints()[1].x - length) / 2.0;
         double y = (getPoints()[0].y + getPoints()[1].y - width) / 2.0;
@@ -385,7 +382,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
         g2d.setTransform(oldTransform);
       }
     }
-    //      if (getLabelOriantation() == LabelOriantation.Horizontal) {
+    //      if (getLabelOrientation() == LabelOrientation.Horizontal) {
     //
     //        drawCenteredText(g2d, label, getNewPoints()[2].x, getNewPoints()[2].x,
     // HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
@@ -413,12 +410,13 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     g2d.draw(new Line2D.Double(getPoints()[1].x, getPoints()[1].y, endX, endY));
   }
 
-  private void drawLead(
-      Graphics2D g2d,
-      ComponentState componentState,
-      IDrawingObserver observer,
-      boolean isCopperArea) {
-    if (isCopperArea) observer.startTrackingContinuityArea(true);
+  private void drawLead(Graphics2D g2d,
+                        ComponentState componentState,
+                        IDrawingObserver observer,
+                        boolean isCopperArea) {
+    if (isCopperArea) {
+      observer.startTrackingContinuityArea(true);
+    }
 
     float thickness = getLeadThickness();
 
@@ -677,13 +675,13 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   }
 
   @EditableProperty(name = "Label Orientation")
-  public LabelOriantation getLabelOriantation() {
-    if (labelOriantation == null) labelOriantation = LabelOriantation.Directional;
-    return labelOriantation;
+  public LabelOrientation getLabelOrientation() {
+    if (labelOrientation == null) labelOrientation = LabelOrientation.Directional;
+    return labelOrientation;
   }
 
-  public void setLabelOriantation(LabelOriantation labelOriantation) {
-    this.labelOriantation = labelOriantation;
+  public void setLabelOrientation(LabelOrientation labelOrientation) {
+    this.labelOrientation = labelOrientation;
   }
 
   @Override
@@ -721,7 +719,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return Integer.toString(index + 1);
   }
 
-  public enum LabelOriantation {
+  public enum LabelOrientation {
     Directional,
     Horizontal
   }
