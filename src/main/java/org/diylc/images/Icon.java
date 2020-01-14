@@ -201,4 +201,4 @@ public enum Icon {
     }
     return r;
   }
-};
+}

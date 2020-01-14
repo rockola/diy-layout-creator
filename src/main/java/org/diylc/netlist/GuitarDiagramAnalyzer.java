@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.netlist;
 
 import java.util.ArrayList;
@@ -111,14 +112,21 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
               if ((l.toString().toLowerCase().contains("north")
                       && (l.toString().toLowerCase().contains("->")))
                   || (l.toString().toLowerCase().contains("south")
-                      && (l.toString().toLowerCase().contains("<-")))) noiseCount++;
+                      && (l.toString().toLowerCase().contains("<-")))) {
+                noiseCount++;
+              }
               if ((l.toString().toLowerCase().contains("north")
                       && (l.toString().toLowerCase().contains("<-")))
                   || (l.toString().toLowerCase().contains("south")
-                      && (l.toString().toLowerCase().contains("->")))) noiseCount--;
-
-              if (l.toString().toLowerCase().contains("->")) positiveCount++;
-              if (l.toString().toLowerCase().contains("<-")) negativeCount++;
+                      && (l.toString().toLowerCase().contains("->")))) {
+                noiseCount--;
+              }
+              if (l.toString().toLowerCase().contains("->")) {
+                positiveCount++;
+              }
+              if (l.toString().toLowerCase().contains("<-")) {
+                negativeCount++;
+              }
             }
           });
 
@@ -139,10 +147,10 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
             if (nTree != null && sTree != null && parent != null) {
               notes.add(
                   "'"
-                      + pickup.getName()
-                      + "' pickup wired in humbucking mode with "
-                      + parent.getConnectionType().name().toLowerCase()
-                      + " coils");
+                  + pickup.getName()
+                  + "' pickup wired in humbucking mode with "
+                  + parent.getConnectionType().name().toLowerCase()
+                  + " coils");
             } else if ((nTree == null && sTree != null) || (nTree != null && sTree == null)) {
               notes.add("'" + pickup.getName() + "' pickup wired in coil-split mode");
             }

@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
 
 import java.awt.Color;
@@ -79,7 +78,9 @@ public class Resistance extends AbstractMeasure<ResistanceUnit> {
           bands = new Color[] {};
       }
     } else {
-      if (getValue() == null || getUnit() == null) return new Color[] {};
+      if (getValue() == null || getUnit() == null) {
+        return new Color[] {};
+      }
       double base = getValue() * getUnit().getFactor();
       int multiplier = 0;
       while (base > (resistorColorCode == ResistorColorCode._4_BAND ? 99 : 999)) {
@@ -91,7 +92,7 @@ public class Resistance extends AbstractMeasure<ResistanceUnit> {
         base *= 10;
       }
       if (multiplier > 6 || multiplier < -2) {
-        // Out of range.
+        // Out of range
         return new Color[] {};
       }
       switch (resistorColorCode) {
@@ -116,13 +117,13 @@ public class Resistance extends AbstractMeasure<ResistanceUnit> {
   }
 
   public static Resistance parseResistance(String value) {
-    value = value.replace("*", "").replace("R", "\u2126");
+    value = value.replace("*", "").replace("R", "Ω");
     for (ResistanceUnit unit : ResistanceUnit.values()) {
       if (value.toLowerCase().endsWith(unit.toString().toLowerCase())) {
         value = value.substring(0, value.length() - unit.toString().length()).trim();
         return new Resistance(parse(value), unit);
       }
     }
-    throw new IllegalArgumentException("Could not parse resistance: " + value);
+    throw new IllegalArgumentException("Could not parse resistance " + value);
   }
 }

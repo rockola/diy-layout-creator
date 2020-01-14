@@ -59,7 +59,7 @@ public enum SIUnit {
   */
   private static String exponentToPrefixNameOrSymbol(int exponent, boolean useSymbol) {
     switch (exponent) {
-      case -12: return useSymbol ? "p": "pico";
+      case -12: return useSymbol ? "p" : "pico";
       case -9: return useSymbol ? "n" : "nano";
       case -6: return useSymbol ? "µ" : "micro"; // hooray for UTF-8!
       case -3: return useSymbol ? "m" : "milli";
@@ -119,18 +119,15 @@ public enum SIUnit {
   }
 
   /* default is to use unit symbol */
-  public static String measureToString(
-      double value,
-      int decimals,
-      SIUnit unit) {
+  public static String measureToString(double value, int decimals, SIUnit unit) {
     return measureToString(value, decimals, true, unit);
   }
 
   public String measureToString(double value, int decimals, boolean withSymbol) {
-      return measureToString(value, decimals, withSymbol, this);
+    return measureToString(value, decimals, withSymbol, this);
   }
 
   public String measureToString(double value, int decimals) {
-      return measureToString(value, decimals, this);
+    return measureToString(value, decimals, this);
   }
 }
