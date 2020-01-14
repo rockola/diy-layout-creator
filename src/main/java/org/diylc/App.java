@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc;
 
 import java.awt.SplashScreen;
@@ -25,9 +26,12 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
+import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
@@ -43,11 +47,11 @@ import org.diylc.swing.gui.TemplateDialog;
  * @see Presenter
  * @see MainFrame
  */
-public class DIYLC {
+public class App {
 
   private static TemplateDialog templateDialog;
 
-  private static final Logger LOG = LogManager.getLogger(DIYLC.class);
+  private static final Logger LOG = LogManager.getLogger(App.class);
   private static final String SCRIPT_RUN = "org.diylc.scriptRun";
 
   public static boolean getBoolean(String key, boolean defaultValue) {
@@ -58,6 +62,14 @@ public class DIYLC {
 
   public static boolean getBoolean(String key) {
     return getBoolean(key, false);
+  }
+
+  public static boolean getBoolean(IPlugInPort.Key key, boolean defaultValue) {
+    return ConfigurationManager.getBoolean(key, defaultValue);
+  }
+
+  public static boolean getBoolean(IPlugInPort.Key key) {
+    return ConfigurationManager.getBoolean(key, false);
   }
 
   public static int getInt(String key, int defaultValue) {
@@ -93,7 +105,19 @@ public class DIYLC {
     return getObject(key, null);
   }
 
+  public static Object getObject(IPlugInPort.Key key, Object defaultValue) {
+    return ConfigurationManager.getObject(key, defaultValue);
+  }
+
+  public static Object getObject(IPlugInPort.Key key) {
+    return getObject(key, null);
+  }
+
   public static void putValue(String key, Object value) {
+    ConfigurationManager.putValue(key, value);
+  }
+
+  public static void putValue(IPlugInPort.Key key, Object value) {
     ConfigurationManager.putValue(key, value);
   }
 
@@ -130,63 +154,63 @@ public class DIYLC {
 
   // ****************************************************************
   public static boolean snapToGrid() {
-    return getBoolean(IPlugInPort.SNAP_TO_GRID_KEY, true);
+    return getBoolean(IPlugInPort.Key.SNAP_TO_GRID, true);
   }
 
   public static boolean autoEdit() {
-    return getBoolean(IPlugInPort.AUTO_EDIT_KEY);
+    return getBoolean(IPlugInPort.Key.AUTO_EDIT);
   }
 
   public static boolean continuousCreation() {
-    return getBoolean(IPlugInPort.CONTINUOUS_CREATION_KEY);
+    return getBoolean(IPlugInPort.Key.CONTINUOUS_CREATION);
   }
 
   public static boolean stickyPoints() {
-    return getBoolean(IPlugInPort.STICKY_POINTS_KEY, true);
+    return getBoolean(IPlugInPort.Key.STICKY_POINTS, true);
   }
 
   public static boolean highQualityRendering() {
-    return getBoolean(IPlugInPort.HI_QUALITY_RENDER_KEY);
+    return getBoolean(IPlugInPort.Key.HI_QUALITY_RENDER);
   }
 
   public static boolean highlightContinuityArea() {
-    return getBoolean(IPlugInPort.HIGHLIGHT_CONTINUITY_AREA);
+    return getBoolean(IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA);
   }
 
   public static boolean hardwareAcceleration() {
-    return getBoolean(IPlugInPort.HARDWARE_ACCELERATION);
+    return getBoolean(IPlugInPort.Key.HARDWARE_ACCELERATION);
   }
 
   public static boolean antiAliasing() {
-    return getBoolean(IPlugInPort.ANTI_ALIASING_KEY, true);
+    return getBoolean(IPlugInPort.Key.ANTI_ALIASING, true);
   }
 
   public static boolean outlineMode() {
-    return getBoolean(IPlugInPort.OUTLINE_KEY, false);
+    return getBoolean(IPlugInPort.Key.OUTLINE, false);
   }
 
   public static boolean showGrid() {
-    return getBoolean(IPlugInPort.SHOW_GRID_KEY, true);
+    return getBoolean(IPlugInPort.Key.SHOW_GRID, true);
   }
 
   public static boolean exportGrid() {
-    return getBoolean(IPlugInPort.EXPORT_GRID_KEY);
+    return getBoolean(IPlugInPort.Key.EXPORT_GRID);
   }
 
   public static boolean extraSpace() {
-    return getBoolean(IPlugInPort.EXTRA_SPACE_KEY, true);
+    return getBoolean(IPlugInPort.Key.EXTRA_SPACE, true);
   }
 
   public static boolean showRulers() {
-    return getBoolean(IPlugInPort.SHOW_RULERS_KEY, true);
+    return getBoolean(IPlugInPort.Key.SHOW_RULERS, true);
   }
 
   public static boolean metric() {
-    return getBoolean(Presenter.METRIC_KEY, true);
+    return getBoolean(Presenter.Key.METRIC, true);
   }
 
   public static boolean wheelZoom() {
-    return getBoolean(IPlugInPort.WHEEL_ZOOM_KEY);
+    return getBoolean(IPlugInPort.Key.WHEEL_ZOOM);
   }
 
   // ****************************************************************
@@ -204,20 +228,33 @@ public class DIYLC {
 
   // ****************************************************************
 
+  public static void openURL(URL url) {
+    try {
+      Utils.openURL(url);
+    } catch (Exception e) {
+      LOG.error("openURL(" + url + ") failed", e);
+    }
+  }
+
+  // ****************************************************************
+
   /** @param args */
   public static void main(String[] args) {
 
-    LOG.info("DIYLC is running");
+    final String appName = Config.getString("app.title");
+    LOG.info("{} is running", appName);
 
+    String lookAndFeel = "(class name not found)";
     try {
-      LOG.debug("Setting Look and Feel to {}", UIManager.getSystemLookAndFeelClassName());
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+      LOG.debug("Setting Look and Feel to {}", lookAndFeel);
+      UIManager.setLookAndFeel(lookAndFeel);
     } catch (Exception e) {
-      LOG.error("Could not set Look and Feel", e);
+      LOG.error("Could not set Look and Feel to " + lookAndFeel, e);
     }
 
-    ClassLoader loader = DIYLC.class.getClassLoader();
-    LOG.trace("DIYLC.class coming from {}", loader.getResource("org/diylc/DIYLC.class"));
+    ClassLoader loader = App.class.getClassLoader();
+    LOG.trace("App.class coming from {}", loader.getResource("org/diylc/App.class"));
     LOG.trace("log4j2.xml coming from {}", loader.getResource("log4j2.xml"));
     LOG.trace("java.class.path is {}", System.getProperty("java.class.path"));
 
@@ -225,10 +262,8 @@ public class DIYLC {
     final SplashScreen splash = SplashScreen.getSplashScreen();
     new Splash(splash).start();
 
-    ConfigurationManager.initialize("diylc");
-
-    Package p = DIYLC.class.getPackage();
-    LOG.trace("DIYLC package: {}", p.getName());
+    Package p = App.class.getPackage();
+    LOG.trace("App.class package: {}", p.getName());
     LOG.debug(
         "Implementation: version [{}] title [{}] vendor [{}]",
         p.getImplementationVersion(),
@@ -246,7 +281,7 @@ public class DIYLC {
         System.getProperty("os.version"),
         System.getProperty("java.runtime.version"),
         System.getProperty("java.vm.vendor"));
-    LOG.info("Starting DIYLC with working directory {}", System.getProperty("user.dir"));
+    LOG.info("Starting {} with working directory {}", appName, System.getProperty("user.dir"));
 
     String val = System.getProperty(SCRIPT_RUN);
     if (!"true".equals(val)) {
@@ -272,7 +307,7 @@ public class DIYLC {
       // show template dialog at startup iff project not loaded
       // from command line and SHOW_TEMPLATES_KEY is true in
       // config, user can always bring it up from UI
-      boolean showTemplates = DIYLC.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
+      boolean showTemplates = App.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
       if (showTemplates) {
         templateDialog = new TemplateDialog(mainFrame);
         if (!templateDialog.getFiles().isEmpty()) {
