@@ -43,13 +43,10 @@ public enum AWG {
   _42(42),
   _44(44);
 
-  private static HashMap<int, AWG> gauges = new HashMap<>();
-
   private final int gauge;
 
   AWG(int i) {
     this.gauge = i;
-    gauges.put(i, this);
   }
 
   @Override
@@ -71,7 +68,7 @@ public enum AWG {
     return Integer.parseInt(name().replace("_", ""));
   }
 
-  public static AWG fromInt(int gauge) {
-    return gauges.get(i);
+  public int getGauge() {
+    return gauge;
   }
 }

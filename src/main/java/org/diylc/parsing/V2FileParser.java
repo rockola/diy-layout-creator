@@ -121,6 +121,16 @@ public class V2FileParser implements IOldFileParser {
         metric ? SizeUnit.mm : SizeUnit.in);
   }
 
+  private AWG gaugeFromInt(int gauge) {
+    // TODO: cache into a HashMap
+    for (AWG awg : AWG.class.getEnumConstants()) {
+      if (gauge == awg.getGauge()) {
+        return awg;
+      }
+    }
+    return null;
+  }
+
   @Override
   public Project parseFile(Element root, List<String> warnings) {
     Project project = new Project();
@@ -457,21 +467,11 @@ public class V2FileParser implements IOldFileParser {
                 }
               }
               num = num * 2 + 8;
-              switch (num) {
-                case 8: hw.setGauge(AWG._8); break;
-                case 10: hw.setGauge(AWG._10); break;
-                case 12: hw.setGauge(AWG._12); break;
-                case 14: hw.setGauge(AWG._14); break;
-                case 16: hw.setGauge(AWG._16); break;
-                case 18: hw.setGauge(AWG._18); break;
-                case 20: hw.setGauge(AWG._20); break;
-                case 22: hw.setGauge(AWG._22); break;
-                case 24: hw.setGauge(AWG._24); break;
-                case 26: hw.setGauge(AWG._26); break;
-                case 28: hw.setGauge(AWG._28); break;
-                case 30: hw.setGauge(AWG._30); break;
-                default:
-                  LOG.error("Unknown gauge {}", num);
+              AWG gauge = gaugeFromInt(num);
+              if (gauge == null) {
+                LOG.error("Unknown gauge {}", num);
+              } else {
+                hw.setGauge(gauge);
               }
               hw.setLeadColor(cl);
               hw.setControlPoint(tacke.get(0), 0);
