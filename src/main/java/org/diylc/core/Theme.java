@@ -70,22 +70,44 @@ public class Theme implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     Theme other = (Theme) obj;
     if (bgColor == null) {
-      if (other.bgColor != null) return false;
-    } else if (!bgColor.equals(other.bgColor)) return false;
+      if (other.bgColor != null) {
+        return false;
+      }
+    } else if (!bgColor.equals(other.bgColor)) {
+      return false;
+    }
     if (gridColor == null) {
-      if (other.gridColor != null) return false;
-    } else if (!gridColor.equals(other.gridColor)) return false;
+      if (other.gridColor != null) {
+        return false;
+      }
+    } else if (!gridColor.equals(other.gridColor)) {
+      return false;
+    }
     if (outlineColor == null) {
-      if (other.outlineColor != null) return false;
-    } else if (!outlineColor.equals(other.outlineColor)) return false;
+      if (other.outlineColor != null) {
+        return false;
+      }
+    } else if (!outlineColor.equals(other.outlineColor)) {
+      return false;
+    }
     if (name == null) {
-      if (other.name != null) return false;
-    } else if (!name.equals(other.name)) return false;
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
     return true;
   }
 
