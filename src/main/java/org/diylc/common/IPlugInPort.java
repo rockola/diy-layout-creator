@@ -313,8 +313,8 @@ public interface IPlugInPort
   void editSelection();
 
   /**
-   * @return a list of editable properties of the current project.
    * @param obj
+   * @return a list of editable properties of the current project.
    */
   List<PropertyWrapper> getProperties(Object obj);
 
@@ -326,7 +326,9 @@ public interface IPlugInPort
    */
   void applyProperties(Object obj, List<PropertyWrapper> properties);
 
-  /** Gets the current new component slot. */
+  /**
+     Gets the current new component slot.
+  */
   ComponentType getNewComponentTypeSlot();
 
   /**
@@ -365,24 +367,29 @@ public interface IPlugInPort
    */
   void setLayerVisibility(int layerZOrder, boolean visible);
 
-  /** @return selection size expressed in both inches or centimeters, respectively */
+  /**
+     @return selection size expressed in both inches or centimeters, respectively
+  */
   Point2D[] calculateSelectionDimension();
 
-  // /**
-  // * @return the smallest rectangle that encloses the selection
-  // */
-  // Rectangle2D getSelectedAreaRect();
-
-  /** Sends each of the selected components one step back. */
+  /**
+     Sends each of the selected components one step back.
+  */
   void sendSelectionToBack();
 
-  /** Brings each of the selected components one step to front. */
+  /**
+     Brings each of the selected components one step to front.
+  */
   void bringSelectionToFront();
 
-  /** Causes the display to refresh. */
+  /**
+     Causes the display to refresh.
+  */
   void refresh();
 
-  /** @return currently selected theme. */
+  /**
+     @return currently selected theme.
+  */
   Theme getSelectedTheme();
 
   /**
@@ -399,6 +406,8 @@ public interface IPlugInPort
    */
   void renumberSelectedComponents(boolean xAxisFirst);
 
-  /** @return size of extra space around the canvas */
+  /**
+     @return size of extra space around the canvas
+  */
   double getExtraSpace();
 }
