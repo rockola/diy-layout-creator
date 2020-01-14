@@ -5,12 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.diylc</groupId>
-  <artifactId>diy-layout-creator</artifactId>
+  <artifactId>diylc</artifactId>
   <version>4.0.0-rockola</version>
   <packaging>jar</packaging>
 
   <name>DIY Layout Creator</name>
   <url>https://github.com/rockola/diy-layout-creator</url>
+  <description>Multiplatform circuit layout and schematic drawing tool</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,9 +20,15 @@
     <maven.compiler.release>8</maven.compiler.release>
     <!-- dependency properties -->
     <itext.version>RELEASE</itext.version>
+    <checkstyle.config.location>google_checks.xml</checkstyle.config.location>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>ca.mcgill.sable</groupId>
+      <artifactId>soot</artifactId>
+      <version>3.3.0</version>
+    </dependency>
     <!-- Apache FreeMarker - HTML templates -->
     <!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
     <dependency>
@@ -80,9 +87,14 @@
       <version>3.1.1</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>com.j2html</groupId>
+      <artifactId>j2html</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.5.2</version>
       <scope>test</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
@@ -185,16 +197,6 @@
   </dependencies>
 
   <repositories>
-    <!--
-	<repository>
-	<id>clojars</id>
-	<name>Clojars</name>
-	<url>https://repo.clojars.org</url>
-	<snapshots>
-	<enabled>false</enabled>
-	</snapshots>
-	</repository>
-    -->
     <repository>
       <id>freehep</id>
       <name>Freehep</name>
@@ -230,9 +232,11 @@
 	  <forceJavacCompilerUse>true</forceJavacCompilerUse>
         </configuration>
       </plugin>
+      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.1</version>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<version>3.0.0-M4</version>
       </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
@@ -241,7 +245,7 @@
 	  <archive>
 	    <manifest>
 	      <addClasspath>true</addClasspath>
-	      <mainClass>org.diylc.DIYLC</mainClass>
+	      <mainClass>org.diylc.App</mainClass>
 	      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 	      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 	    </manifest>
@@ -286,7 +290,7 @@
 	    <argument>-Dswing.aatext=true</argument>
 	    <argument>-classpath</argument>
 	    <classpath />
-            <argument>org.diylc.DIYLC</argument>
+            <argument>org.diylc.App</argument>
 	  </arguments>
         </configuration>
       </plugin>
@@ -303,7 +307,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.diylc.DIYLC</mainClass>
+              <mainClass>org.diylc.App</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -343,7 +347,7 @@
 		<transformer implementation=
 			     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 		  <manifestEntries>
-                    <Main-Class>org.diylc.DIYLC</Main-Class>
+                    <Main-Class>org.diylc.App</Main-Class>
 		  </manifestEntries>
 		</transformer>
 	      </transformers>
@@ -376,4 +380,43 @@
       </resource>
     </resources>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-checkstyle-plugin</artifactId>
+	<version>3.1.0</version>
+	<configuration>
+	  <!-- this is only read used checkstyle:check -->
+	  <!-- checkstyle:checkstyle uses checkstyle.config.location set in properties -->
+	  <configLocation>google_checks.xml</configLocation>
+	</configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>checkstyle</report>
+            </reports>
+          </reportSet>
+        </reportSets>	
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-javadoc-plugin</artifactId>
+	<version>3.1.1</version>
+	<configuration>
+	  <!-- NOTE: javadoc is in /usr/bin on Ubuntu, setting ${java.home} to /usr 
+	       would work here, but would it make sense?
+	       Anyway, do change this to ${java.home}/bin/javadoc if that
+	       works better for you.
+	  -->
+	  <javadocExecutable>/usr/bin/javadoc</javadocExecutable>
+	</configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
