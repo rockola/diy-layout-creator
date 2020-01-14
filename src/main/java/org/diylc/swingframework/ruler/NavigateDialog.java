@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework.ruler;
 
 import java.awt.AlphaComposite;
@@ -123,19 +124,11 @@ public class NavigateDialog extends JDialog {
       thumbnailImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
       Graphics2D g2d = thumbnailImage.createGraphics();
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      //			g2d.scale(scaleRatio, scaleRatio);
       provider.draw(0, g2d, scaleRatio);
       g2d.setTransform(new AffineTransform());
       g2d.setColor(Color.lightGray);
       g2d.drawRect(0, 0, width - 1, height - 1);
       g2d.dispose();
-      // addComponentListener(new ComponentAdapter() {
-      //
-      // @Override
-      // public void componentResized(ComponentEvent e) {
-      // re();
-      // }
-      // });
       addMouseMotionListener(
           new MouseMotionAdapter() {
 
