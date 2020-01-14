@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.annotations;
 
 import java.lang.annotation.Retention;
@@ -36,10 +37,14 @@ import org.diylc.core.IDIYComponent;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ComponentDescriptor {
 
-  /** @return component type name. */
+  /**
+     @return component type name.
+  */
   String name();
 
-  /** @return component type description. */
+  /**
+     @return component type description.
+  */
   String description();
 
   /**
@@ -50,10 +55,14 @@ public @interface ComponentDescriptor {
    */
   CreationMethod creationMethod() default CreationMethod.SINGLE_CLICK;
 
-  /** @return component category, e.g. "Passive", "Semiconductors", etc. */
+  /**
+     @return component category, e.g. "Passive", "Semiconductors", etc.
+  */
   String category();
 
-  /** @return component author name. */
+  /**
+     @return component author name.
+  */
   String author();
 
   /**
@@ -62,17 +71,25 @@ public @interface ComponentDescriptor {
    */
   String instanceNamePrefix();
 
-  /** @return Z-order of the component. */
+  /**
+     @return Z-order of the component.
+  */
   double zOrder();
 
-  /** @return true if the component may go beyond it's predefined
-   * layer without warning the user. */
+  /**
+     @return true if the component may go beyond it's predefined
+     layer without warning the user.
+   */
   boolean flexibleZOrder() default false;
 
-  /** @return controls what should be shown the BOM */
+  /**
+     @return controls what should be shown the BOM
+  */
   BomPolicy bomPolicy() default BomPolicy.SHOW_ALL_NAMES;
 
-  /** @return when true, component editor dialog should be shown in Auto-Edit mode. */
+  /**
+     @return when true, component editor dialog should be shown in Auto-Edit mode.
+  */
   boolean autoEdit() default true;
 
   /**

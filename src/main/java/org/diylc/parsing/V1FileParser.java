@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.parsing;
 
 import java.awt.Color;
@@ -29,8 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -72,6 +73,7 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.presenter.CalcUtils;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.utils.Constants;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -414,8 +416,12 @@ public class V1FileParser implements IOldFileParser {
             int dy = 0;
             for (int j = 0; j < sw.getControlPointCount(); j++) {
               Point p = new Point(sw.getControlPoint(j));
-              if (p.x < 0 && p.x < dx) dx = p.x;
-              if (p.y < 0 && p.y < dy) dy = p.y;
+              if (p.x < 0 && p.x < dx) {
+                dx = p.x;
+              }
+              if (p.y < 0 && p.y < dy) {
+                dy = p.y;
+              }
             }
             // Translate control points.
             for (int j = 0; j < sw.getControlPointCount(); j++) {
@@ -689,7 +695,9 @@ public class V1FileParser implements IOldFileParser {
     for (IDIYComponent<?> c : project.getComponents()) {
       for (int i = 0; i < c.getControlPointCount(); i++) {
         Point p = c.getControlPoint(i);
-        if (p.y < minY) minY = p.y;
+        if (p.y < minY) {
+          minY = p.y;
+        }
       }
     }
 
@@ -734,7 +742,8 @@ public class V1FileParser implements IOldFileParser {
 
     // Sort by z-order
     Collections.sort(
-        project.getComponents(), ComparatorFactory.getInstance().getComponentZOrderComparator());
+        project.getComponents(),
+        ComparatorFactory.getInstance().getComponentZOrderComparator());
     return project;
   }
 
@@ -747,7 +756,9 @@ public class V1FileParser implements IOldFileParser {
   }
 
   private Color parseV1Color(String color) {
-    if ("brown".equals(color.toLowerCase())) return new Color(139, 69, 19);
+    if (color.toLowerCase().equals("brown")) {
+      return new Color(139, 69, 19);
+    }
     try {
       Field field = Color.class.getDeclaredField(color.toLowerCase());
       return (Color) field.get(null);
@@ -760,7 +771,9 @@ public class V1FileParser implements IOldFileParser {
   private int myRandom(int range, Random r) {
     range = (range * 2) / 3;
     int rand = r.nextInt(range) - range / 2;
-    if (Math.abs(rand) < range / 3) rand = myRandom(range, r);
+    if (Math.abs(rand) < range / 3) {
+      rand = myRandom(range, r);
+    }
     return rand;
   }
 

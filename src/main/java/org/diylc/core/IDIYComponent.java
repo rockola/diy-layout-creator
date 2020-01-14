@@ -55,13 +55,18 @@ public interface IDIYComponent<T> extends Serializable {
   public static final int COMPONENT = 4;
   public static final int TEXT = 5;
 
-  /** @return identifier for component for e.g. debugging. */
+  /**
+     @return identifier for component for e.g. debugging.
+  */
   public String getIdentifier();
 
   public ComponentArea getComponentArea();
+
   public void setComponentArea(ComponentArea area);
 
-  /** @return component instance name. */
+  /**
+     @return component instance name.
+  */
   String getName();
 
   /**
