@@ -29,34 +29,34 @@ public class ObjectListTable<T> extends AutoFitTable {
    * Creates a new {@link ObjectListTable} that will display data of
    * the specified type. For each element in the <code>fields</code>
    * list a new column is created. There are two types of columns:
-   * <br>
    *
    * <ul>
    *   <li>Data columns; field is specified with the getter name
    *   <li>Actions; field is specified in <code>action:<i>action name</i></code> format
    * </ul>
    *
-   * The example below shows a simple class that has two fields. We
+   * <p>The example below shows a simple class that has two fields. We
    * are making a table with three columns, two of which will show the
    * data and one will trigger an action. <br>
    *
-   * <br>
-   * <code>class Point {<br>
-   * &nbsp;&nbsp;int x, y;<br>
-   * &nbsp;&nbsp;public int getX() { return x; }<br>
-   * &nbsp;&nbsp;public int getY() { return y; }<br>
-   * }<br><br>
-   * new ObjectListTable&lt;Point&gt;(Point.class, new String[] {"getX/setY", "getY", "action:Delete"}, provider);
-   * </code> <br>
-   * <br>
+   * {@code
+   class Point {
+     int x, y;
+     public int getX() { return x; }
+     public int getY() { return y; }
+     }
+
+   new ObjectListTable<Point>(
+       Point.class,
+       new String[] {"getX/setY", "getY", "action:Delete"},
+       provider);
+   }
    *
-   * The resulting table will contain columns named "X", "Y" and
+   * <p>The resulting table will contain columns named "X", "Y" and
    * "Delete" in that order. Column "Delete" contains buttons that
    * trigger the action. Column "X" is editable because it has a
-   * setter defined. Event will be fired back the user though {@link
-   * IActionProcessor}.
-   *
-   * <br>
+   * setter defined. Event will be fired back to the user through
+   * {@link IActionProcessor}.
    *
    * @see IActionProcessor
    * @param dataClass

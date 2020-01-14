@@ -156,8 +156,9 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void actionPerformed(ActionEvent e) {
       List<Version> updates = Version.getRecentUpdates();
-      if (updates == null) App.ui().info("Version history is not available.");
-      else {
+      if (updates == null) {
+        App.ui().info("Version history is not available.");
+      } else {
         String html = UpdateChecker.createUpdateHTML(updates);
         UpdateDialog updateDialog =
             new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, (String) null);

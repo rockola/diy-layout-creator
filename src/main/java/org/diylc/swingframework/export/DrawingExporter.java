@@ -154,12 +154,12 @@ public class DrawingExporter {
     /* iText 5 stuff
     DefaultFontMapper mapper = new DefaultFontMapper() {
     	@Override
-    	public BaseFontParameters getBaseFontParameters(String arg0) {
-    	    BaseFontParameters p = super.getBaseFontParameters(arg0);
-    	    if (p != null)
-    		p.encoding = BaseFont.IDENTITY_H;
-    	    return p;
-    	}
+        public BaseFontParameters getBaseFontParameters(String arg0) {
+            BaseFontParameters p = super.getBaseFontParameters(arg0);
+            if (p != null)
+                p.encoding = BaseFont.IDENTITY_H;
+            return p;
+        }
         };
     if (Utils.isWindows()) {
         mapper.insertDirectory(System.getenv("windir") + "\\Fonts");
@@ -184,12 +184,12 @@ public class DrawingExporter {
       /*
          PdfContentByte contentByte = writer.getDirectContent();
          PdfTemplate template = contentByte.createTemplate(totalWidth,
-      					      totalHeight);
+                                              totalHeight);
          Graphics2D g2d =
       template.createGraphics((float) (factor * d.getWidth()),
-      			(float) (factor * d.getHeight()),
-      			mapper);
-         //			g2d.scale(factor, factor);
+                        (float) (factor * d.getHeight()),
+                        mapper);
+         //                     g2d.scale(factor, factor);
          provider.draw(i, g2d, factor);
          contentByte.addTemplate(template, (float) margin, (float) margin);
          g2d.dispose();

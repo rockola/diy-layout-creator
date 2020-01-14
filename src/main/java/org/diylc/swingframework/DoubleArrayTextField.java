@@ -80,8 +80,11 @@ public class DoubleArrayTextField extends JTextField {
       StringBuilder b = new StringBuilder();
       boolean first = true;
       for (Double v : value) {
-        if (first) first = false;
-        else b.append(" / ");
+        if (first) {
+          first = false;
+        } else {
+          b.append(" / ");
+        }
         b.append(v == null ? "" : format.format(v));
       }
       setText(b.toString());

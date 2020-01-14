@@ -72,6 +72,9 @@ public class AutoFitTable extends JTable {
               width = cellWidth;
             }
           } catch (Exception e) {
+            LOG.debug("Exception caught", e);
+            // TODO catch block was empty, is this ok to ignore?
+            // Should probably at least spell out the expected exception(s)
           }
         }
       }

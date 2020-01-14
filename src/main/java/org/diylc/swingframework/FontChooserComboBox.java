@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import static java.lang.Math.max;
@@ -85,7 +86,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
     fontNames = Arrays.asList(fonts);
   }
 
-  /** Creates a new {@link FontChooserComboBox}. */
+  /**
+     Creates a new {@link FontChooserComboBox}.
+  */
   public FontChooserComboBox() {
     // recent fonts
     recentFontNames = new LinkedList<String>();
@@ -146,7 +149,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
       recentFontNames.removeLast();
       listChanged = true;
     }
-    if (listChanged) updateList(getSelectedFontName());
+    if (listChanged) {
+      updateList(getSelectedFontName());
+    }
   }
 
   public void itemStateChanged(ItemEvent e) {
@@ -160,7 +165,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
       // add at first position
       recentFontNames.addFirst(fontName);
       // trim list
-      if (recentFontNames.size() > recentFontsCount) recentFontNames.removeLast();
+      if (recentFontNames.size() > recentFontsCount) {
+        recentFontNames.removeLast();
+      }
       updateList(fontName);
     }
   }
@@ -186,13 +193,16 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
       itemsCache.put(fontName, item);
     }
     // reselect item
-    if (selectedFontName != null) setSelectedItem(selectedFontName);
+    if (selectedFontName != null) {
+      setSelectedItem(selectedFontName);
+    }
   }
 
   /** Gets the selected font name, or null. */
   public String getSelectedFontName() {
-    if (this.getSelectedItem() != null) return ((Item) this.getSelectedItem()).font.getFontName();
-    else return null;
+    return (this.getSelectedItem() != null)
+        ? ((Item) this.getSelectedItem()).font.getFontName()
+        : null;
   }
 
   @Override
@@ -201,13 +211,21 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
     return new Dimension(0, new JComboBox().getPreferredSize().height);
   }
 
-  /** Sets the selected font by the given name. If it does not exist, nothing happens. */
+  /**
+     Sets the selected font by the given name. If it does not exist, nothing happens.
+  */
   public void setSelectedItem(String fontName) {
-    // if a string is given, find the corresponding font, otherwise do
-    // nothing
-    Item item = recentItemsCache.get(fontName); // first in recent items
-    if (item == null) item = itemsCache.get(fontName); // then in regular items
-    if (item != null) setSelectedItem(item);
+    // If a string is given, find the corresponding font, otherwise do nothing
+    //
+    // Look first in recent items
+    Item item = recentItemsCache.get(fontName);
+    if (item == null) {
+      // then in regular items
+      item = itemsCache.get(fontName);
+    }
+    if (item != null) {
+      setSelectedItem(item);
+    }
   }
 
   /**
@@ -248,7 +266,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
             s2 = getMatch(s1);
             j--;
           }
-          if (s2 != null) FontChooserComboBox.this.setSelectedItem(s2);
+          if (s2 != null) {
+            FontChooserComboBox.this.setSelectedItem(s2);
+          }
           super.remove(0, getLength());
           super.insertString(0, s2, attributeset);
           textField.setSelectionStart(j + 1);
@@ -259,13 +279,17 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
       @Override
       public void remove(int i, int j) throws BadLocationException {
         int k = textField.getSelectionStart();
-        if (k > 0) k--;
+        if (k > 0) {
+          k--;
+        }
         String s = getMatch(getText(0, k));
 
         super.remove(0, getLength());
         super.insertString(0, s, null);
 
-        if (s != null) FontChooserComboBox.this.setSelectedItem(s);
+        if (s != null) {
+          FontChooserComboBox.this.setSelectedItem(s);
+        }
         try {
           textField.setSelectionStart(k);
           textField.setSelectionEnd(getLength());
@@ -276,12 +300,16 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 
     private FontChooserComboBoxEditor() {
       editor.setDocument(new AutoCompletionDocument());
-      if (fontNames.size() > 0) editor.setText(fontNames.get(0).toString());
+      if (fontNames.size() > 0) {
+        editor.setText(fontNames.get(0).toString());
+      }
     }
 
     private String getMatch(String input) {
       for (String fontName : fontNames) {
-        if (fontName.toLowerCase().startsWith(input.toLowerCase())) return fontName;
+        if (fontName.toLowerCase().startsWith(input.toLowerCase())) {
+          return fontName;
+        }
       }
       return null;
     }
@@ -294,6 +322,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
         int j = max(caret.getDot(), caret.getMark());
         doc.replace(i, j - i, s, null);
       } catch (BadLocationException ex) {
+        LOG.debug("replaceSelection(): bad location for String " + s, e)
       }
     }
   }
@@ -366,8 +395,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
 
     @Override
     public String toString() {
-      if (font != null) return font.getFamily();
-      else return "";
+      return (font != null) ? font.getFamily() : "";
     }
   }
 }

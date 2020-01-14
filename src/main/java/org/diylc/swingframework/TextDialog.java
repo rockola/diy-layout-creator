@@ -33,12 +33,12 @@ public class TextDialog extends JDialog {
     holderPanel.setLayout(new BorderLayout());
     holderPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
     //
-    //		holderPanel.add(new JLabel(latestVersionUrl == null ? "Most recent updates on this
+    //          holderPanel.add(new JLabel(latestVersionUrl == null ? "Most recent updates on this
     // computer:" : "These updates are available for your computer:"),
-    //				BorderLayout.NORTH);
+    //                          BorderLayout.NORTH);
 
     final JScrollPane scrollPane = new JScrollPane(getHtmlLabel());
-    //		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.);
+    //          scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.);
     holderPanel.add(scrollPane, BorderLayout.CENTER);
     holderPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 

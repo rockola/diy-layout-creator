@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.Color;
@@ -138,7 +139,9 @@ public class DropDownButton extends Box {
     mainButton.removeActionListener(mainButtonListener);
     mainRunsDefaultMenuOption = enable;
     setEnabled(mainRunsDefaultMenuOption == false || isEmpty() == false);
-    if (mainRunsDefaultMenuOption) mainButton.addActionListener(mainButtonListener);
+    if (mainRunsDefaultMenuOption) {
+      mainButton.addActionListener(mainButtonListener);
+    }
   }
 
   /**
@@ -152,7 +155,9 @@ public class DropDownButton extends Box {
   private void setDropDownEnabled(boolean enable) {
     dropDownEnabled = enable;
     dropDownButton.setIcon(enable ? enabledDownArrow : disDownArrow);
-    if (mainRunsDefaultMenuOption) setEnabled(enable);
+    if (mainRunsDefaultMenuOption) {
+      setEnabled(enable);
+    }
   }
 
   /** This object responds to events on the main button. */
@@ -160,7 +165,9 @@ public class DropDownButton extends Box {
     public void actionPerformed(ActionEvent e) {
       if (mainRunsDefaultMenuOption && !isEmpty()) {
         JMenuItem defaultItem = menu.getItem(0);
-        if (defaultItem != null) defaultItem.doClick(0);
+        if (defaultItem != null) {
+          defaultItem.doClick(0);
+        }
       }
     }
   }
@@ -170,13 +177,16 @@ public class DropDownButton extends Box {
     boolean pressHidPopup = false;
 
     public void mouseClicked(MouseEvent e) {
-      if (dropDownEnabled && !pressHidPopup) menu.doClick(0);
+      if (dropDownEnabled && !pressHidPopup) {
+        menu.doClick(0);
+      }
     }
 
     public void mousePressed(MouseEvent e) {
-      if (dropDownEnabled) menu.dispatchMouseEvent(e);
-      if (menu.isPopupMenuVisible()) pressHidPopup = false;
-      else pressHidPopup = true;
+      if (dropDownEnabled) {
+        menu.dispatchMouseEvent(e);
+      }
+      pressHidPopup = !menu.isPopupMenuVisible();
     }
 
     public void mouseReleased(MouseEvent e) {}

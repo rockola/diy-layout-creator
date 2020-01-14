@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.Color;
@@ -77,55 +78,52 @@ public class MemoryBar extends JComponent {
 
     setPreferredSize(new Dimension(16, 20));
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    bgThread =
-        new Thread(
-            new Runnable() {
+    bgThread = new Thread(new Runnable() {
 
-              @Override
-              public void run() {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-                while (true) {
-                  totalMemory = Runtime.getRuntime().totalMemory();
-                  freeMemory = Runtime.getRuntime().freeMemory();
-                  maxMemory = Runtime.getRuntime().maxMemory();
-                  percentFree = (double) freeMemory / totalMemory;
-                  // Run the garbage collector if needed.
-                  if (MemoryBar.this.autoGC && percentFree < THRESHOLD) {
-                    System.gc();
-                  }
-                  setToolTipText(
-                      String.format(
-                          tooltipPattern,
-                          format.format(convertToMb(freeMemory)),
-                          format.format(convertToMb(totalMemory)),
-                          format.format(convertToMb(maxMemory))));
-                  if (USE_LOG) {
-                    LOG.debug(
-                        String.format(
-                            logPattern,
-                            format.format(convertToMb(freeMemory)),
-                            format.format(convertToMb(totalMemory)),
-                            format.format(convertToMb(maxMemory))));
-                  }
-                  repaint();
-                  try {
-                    Thread.sleep(DELAY);
-                  } catch (InterruptedException e) {
-                  }
-                }
-              }
-            });
+        @Override
+        public void run() {
+          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+          while (true) {
+            totalMemory = Runtime.getRuntime().totalMemory();
+            freeMemory = Runtime.getRuntime().freeMemory();
+            maxMemory = Runtime.getRuntime().maxMemory();
+            percentFree = (double) freeMemory / totalMemory;
+            // Run the garbage collector if needed.
+            if (MemoryBar.this.autoGC && percentFree < THRESHOLD) {
+              System.gc();
+            }
+            setToolTipText(
+                String.format(
+                    tooltipPattern,
+                    format.format(convertToMb(freeMemory)),
+                    format.format(convertToMb(totalMemory)),
+                    format.format(convertToMb(maxMemory))));
+            if (USE_LOG) {
+              LOG.debug(
+                  String.format(
+                      logPattern,
+                      format.format(convertToMb(freeMemory)),
+                      format.format(convertToMb(totalMemory)),
+                      format.format(convertToMb(maxMemory))));
+            }
+            repaint();
+            try {
+              Thread.sleep(DELAY);
+            } catch (InterruptedException e) {
+            }
+          }
+        }
+      });
     bgThread.start();
 
-    addMouseListener(
-        new MouseAdapter() {
+    addMouseListener(new MouseAdapter() {
 
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            LOG.info("Running GC");
-            System.gc();
-          }
-        });
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          LOG.info("Running GC");
+          System.gc();
+        }
+      });
   }
 
   @Override

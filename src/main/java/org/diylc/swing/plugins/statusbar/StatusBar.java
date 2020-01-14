@@ -128,49 +128,48 @@ public class StatusBar extends JPanel implements IPlugIn {
       LOG.error("Could not install status bar", e);
     }
 
-    App.ui().executeBackgroundTask(
-        new ITask<String>() {
+    App.ui().executeBackgroundTask(new ITask<String>() {
 
-              @Override
-              public String doInBackground() throws Exception {
-                Thread.sleep(1000);
-                String announcements = announcementProvider.getCurrentAnnouncements(false);
+        @Override
+        public String doInBackground() throws Exception {
+          Thread.sleep(1000);
+          String announcements = announcementProvider.getCurrentAnnouncements(false);
 
-                String update = getUpdateLabel().getUpdateChecker().findNewVersionShort();
+          String update = getUpdateLabel().getUpdateChecker().findNewVersionShort();
 
-                if (update != null) {
-                  String updateHtml =
-                      String.format(Message.getHTML("statusbar.new-version.available"),
-                                    update);
-                  if (announcements == null || announcements.length() == 0)
-                    return "<html>" + updateHtml + "</html>";
-                  announcements = announcements.replace("<html>",
-                                                        "<html>" + updateHtml + "<br>");
-                }
+          if (update != null) {
+            String updateHtml =
+                String.format(Message.getHTML("statusbar.new-version.available"),
+                              update);
+            if (announcements == null || announcements.length() == 0)
+              return "<html>" + updateHtml + "</html>";
+            announcements = announcements.replace("<html>",
+                                                  "<html>" + updateHtml + "<br>");
+          }
 
-                return announcements;
-              }
+          return announcements;
+        }
 
-              @Override
-              public void failed(Exception e) {
-                LOG.error("Error while fetching announcements", e);
-              }
+        @Override
+        public void failed(Exception e) {
+          LOG.error("Error while fetching announcements", e);
+        }
 
-              @Override
-              public void complete(String result) {
-                if (result != null && result.length() > 0) {
-                  new BalloonTip(
-                      getUpdateLabel(),
-                      result,
-                      new EdgedBalloonStyle(
-                          UIManager.getColor("ToolTip.background"),
-                          UIManager.getColor("ToolTip.foreground")),
-                      true);
-                  announcementProvider.dismissed();
-                }
-              }
-            },
-            false);
+        @Override
+        public void complete(String result) {
+          if (result != null && result.length() > 0) {
+            new BalloonTip(
+                getUpdateLabel(),
+                result,
+                new EdgedBalloonStyle(
+                    UIManager.getColor("ToolTip.background"),
+                    UIManager.getColor("ToolTip.foreground")),
+                true);
+            announcementProvider.dismissed();
+          }
+        }
+      },
+      false);
 
     ConfigurationManager.addListener(
         IPlugInPort.Key.METRIC,
@@ -267,7 +266,9 @@ public class StatusBar extends JPanel implements IPlugIn {
                       if (result != null && result.length() > 0) {
                         App.ui().info(pa, result);
                         announcementProvider.dismissed();
-                      } else App.ui().info(pa, getMsg("no-announcements"));
+                      } else {
+                        App.ui().info(pa, getMsg("no-announcements"));
+                      }
                     }
                   },
                   true);
@@ -298,8 +299,9 @@ public class StatusBar extends JPanel implements IPlugIn {
             @Override
             public void mouseClicked(MouseEvent e) {
               List<Version> updates = Version.getRecentUpdates();
-              if (updates == null) App.ui().info(getMsg("no-version-history"));
-              else {
+              if (updates == null) {
+                App.ui().info(getMsg("no-version-history"));
+              } else {
                 String html = UpdateChecker.createUpdateHTML(updates);
                 UpdateDialog updateDialog =
                     new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, null);
@@ -313,16 +315,15 @@ public class StatusBar extends JPanel implements IPlugIn {
 
   private MemoryBar getMemoryPanel() {
     if (memoryPanel == null) {
-      memoryPanel =
-          new MemoryBar(false) {
+      memoryPanel = new MemoryBar(false) {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public Point getToolTipLocation(MouseEvent event) {
-              return new Point(0, -52);
-            }
-          };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -52);
+          }
+        };
     }
     return memoryPanel;
   }
@@ -345,45 +346,43 @@ public class StatusBar extends JPanel implements IPlugIn {
 
   public JLabel getSizeLabel() {
     if (sizeLabel == null) {
-      sizeLabel =
-          new JLabel(Icon.Size.icon()) {
+      sizeLabel = new JLabel(Icon.Size.icon()) {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public Point getToolTipLocation(MouseEvent event) {
-              return new Point(0, -16);
-            }
-          };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -16);
+          }
+        };
       sizeLabel.setFocusable(true);
       sizeLabel.setToolTipText(getMsg("selection-size-tooltip"));
-      sizeLabel.addMouseListener(
-          new MouseAdapter() {
+      sizeLabel.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-              Point2D[] sizes = plugInPort.calculateSelectionDimension();
-              String text;
-              if (sizes == null) {
-                text = getMsg("empty-selection");
-              } else {
-                text =
-                    sizeFormat.format(sizes[0].getX())
-                        + " x "
-                        + sizeFormat.format(sizes[0].getY())
-                        + " in\n"
-                        + sizeFormat.format(sizes[1].getX())
-                        + " x "
-                        + sizeFormat.format(sizes[1].getY())
-                        + " cm";
-              }
-              JOptionPane.showMessageDialog(
-                  SwingUtilities.getRootPane(StatusBar.this),
-                  text,
-                  "Selection Size",
-                  JOptionPane.INFORMATION_MESSAGE);
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            Point2D[] sizes = plugInPort.calculateSelectionDimension();
+            String text;
+            if (sizes == null) {
+              text = getMsg("empty-selection");
+            } else {
+              text =
+                  sizeFormat.format(sizes[0].getX())
+                  + " x "
+                  + sizeFormat.format(sizes[0].getY())
+                  + " in\n"
+                  + sizeFormat.format(sizes[1].getX())
+                  + " x "
+                  + sizeFormat.format(sizes[1].getY())
+                  + " cm";
             }
-          });
+            JOptionPane.showMessageDialog(
+                SwingUtilities.getRootPane(StatusBar.this),
+                text,
+                "Selection Size",
+                JOptionPane.INFORMATION_MESSAGE);
+          }
+        });
     }
     return sizeLabel;
   }
@@ -404,9 +403,6 @@ public class StatusBar extends JPanel implements IPlugIn {
     JPanel zoomPanel = new JPanel(new BorderLayout());
     zoomPanel.add(new JLabel(getMsg("zoom")), BorderLayout.WEST);
     zoomPanel.add(getZoomBox(), BorderLayout.CENTER);
-    // zoomPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-    // .createEtchedBorder(), BorderFactory.createEmptyBorder(2, 4, 2,
-    // 4)));
     zoomPanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
 
     gbc.gridx++;
@@ -515,6 +511,8 @@ public class StatusBar extends JPanel implements IPlugIn {
         mousePositionMm = (Point2D) params[2];
         refreshPosition(App.metric());
         break;
+      default:
+        LOG.error("processMessage() unknown eventType {}", eventType);
     }
   }
 
@@ -545,9 +543,8 @@ public class StatusBar extends JPanel implements IPlugIn {
         }
         if (!stuckComponentNames.isEmpty()) {
           builder.append(" (hold <b>Ctrl</b> and drag to unstuck from ");
-          builder.append(
-              Utils.toCommaString(
-                  stuckComponentNames.subList(0, Math.min(5, stuckComponentNames.size()))));
+          builder.append(Utils.toCommaString(
+              stuckComponentNames.subList(0, Math.min(5, stuckComponentNames.size()))));
           if (stuckComponentNames.size() > 5) {
             builder.append(" and " + (stuckComponentNames.size() - 5) + " more");
           }
@@ -556,12 +553,12 @@ public class StatusBar extends JPanel implements IPlugIn {
         statusText = "<html>Selection: " + builder.toString() + "</html>";
       }
     } else {
-      if (forceInstantiate != null && forceInstantiate)
+      if (forceInstantiate != null && forceInstantiate) {
         statusText =
             "<html>Drag the mouse over the canvas to place a new <font color='blue'>"
                 + componentSlot.getName()
                 + "</font></html>";
-      else
+      } else {
         switch (componentSlot.getCreationMethod()) {
           case POINT_BY_POINT:
             String count;
@@ -583,21 +580,25 @@ public class StatusBar extends JPanel implements IPlugIn {
                     + componentSlot.getName()
                     + "</font> or press <b>Esc</b> to cancel</html>";
             break;
+          default:
+            LOG.error("refreshStatusText(): unknown creation method");
         }
+      }
     }
 
     // override any other status with this when in highlight mode,
     // as we cannot do anything else
-    if (App.highlightContinuityArea()) statusText = getMsg("highlight-connected");
+    if (App.highlightContinuityArea()) {
+      statusText = getMsg("highlight-connected");
+    }
 
     final String finalStatus = statusText;
-    SwingUtilities.invokeLater(
-        new Runnable() {
+    SwingUtilities.invokeLater(new Runnable() {
 
-          @Override
-          public void run() {
-            getStatusLabel().setText(finalStatus);
-          }
-        });
+        @Override
+        public void run() {
+          getStatusLabel().setText(finalStatus);
+        }
+      });
   }
 }

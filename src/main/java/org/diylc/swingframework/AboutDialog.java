@@ -101,11 +101,10 @@ public class AboutDialog extends JDialog {
       gbc.fill = GridBagConstraints.NONE;
       gbc.insets = new Insets(10, 8, 10, 4);
 
-      JLabel iconLabel = new JLabel(icon);
-
       gbc.gridheight = 2;
       gbc.weightx = 0;
       gbc.weighty = 0;
+      JLabel iconLabel = new JLabel(icon);
       mainPanel.add(iconLabel, gbc);
 
       JLabel appNameLabel = new JLabel(appName);
@@ -128,12 +127,11 @@ public class AboutDialog extends JDialog {
       gbc.insets = new Insets(0, 4, 8, 4);
       mainPanel.add(versionLabel, gbc);
 
-      JLabel authorLabel = new JLabel(author);
-
       gbc.gridx = 0;
       gbc.gridy = 2;
       gbc.gridwidth = 2;
       gbc.insets = new Insets(1, 8, 1, 4);
+      JLabel authorLabel = new JLabel(author);
       mainPanel.add(authorLabel, gbc);
 
       JLabel urlLabel = new LinkLabel(url);
@@ -141,9 +139,8 @@ public class AboutDialog extends JDialog {
       gbc.gridy = 3;
       mainPanel.add(urlLabel, gbc);
 
-      // JLabel mailLabel = new LinkLabel("mailto:", mail);
-
       // gbc.gridy = 4;
+      // JLabel mailLabel = new LinkLabel("mailto:", mail);
       // mainPanel.add(mailLabel, gbc);
 
       String html =

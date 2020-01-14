@@ -150,7 +150,9 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-              if (getTabbedPane().getSelectedIndex() == 1) getSearchHeaderPanel().setFocus();
+              if (getTabbedPane().getSelectedIndex() == 1) {
+                getSearchHeaderPanel().setFocus();
+              }
             }
           });
     }

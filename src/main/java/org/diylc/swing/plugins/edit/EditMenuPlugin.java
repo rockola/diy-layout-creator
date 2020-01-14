@@ -90,23 +90,20 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
   public EditMenuPlugin() {
 
     clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    undoHandler =
-        new UndoHandler<Project>(
-            new IUndoListener<Project>() {
+    undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
 
-              @Override
-              public void actionPerformed(Project currentState) {
-                plugInPort.loadProject(currentState, false, null);
-              }
-            });
-    clipboard.addFlavorListener(
-        new FlavorListener() {
+        @Override
+        public void actionPerformed(Project currentState) {
+          plugInPort.loadProject(currentState, false, null);
+        }
+      });
+    clipboard.addFlavorListener(new FlavorListener() {
 
-          @Override
-          public void flavorsChanged(FlavorEvent e) {
-            refreshActions();
-          }
-        });
+        @Override
+        public void flavorsChanged(FlavorEvent e) {
+          refreshActions();
+        }
+      });
   }
 
   public ActionFactoryAction getCutAction() {

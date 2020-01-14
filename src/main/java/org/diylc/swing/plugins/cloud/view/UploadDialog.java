@@ -215,8 +215,11 @@ public class UploadDialog extends ButtonDialog {
 
   private Dimension getThumbnailSize() {
     Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
-    if (d.height > d.width) return new Dimension(192 * d.width / d.height, 192);
-    else return new Dimension(192, 192 * d.height / d.width);
+    if (d.height > d.width) {
+      return new Dimension(192 * d.width / d.height, 192);
+    } else {
+      return new Dimension(192, 192 * d.height / d.width);
+    }
   }
 
   private JTextField getNameField() {
@@ -226,9 +229,11 @@ public class UploadDialog extends ButtonDialog {
       List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.getCurrentProject());
 
       // set default from the project
-      for (int i = 0; i < props.size(); i++)
-        if (props.get(i).getName().equals("Title"))
+      for (int i = 0; i < props.size(); i++) {
+        if (props.get(i).getName().equals("Title")) {
           nameField.setText(props.get(i).getValue().toString());
+        }
+      }
     }
     return nameField;
   }
@@ -256,12 +261,15 @@ public class UploadDialog extends ButtonDialog {
       List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.getCurrentProject());
 
       // set default from the project
-      for (int i = 0; i < props.size(); i++)
-        if (props.get(i).getName().equals("Description"))
+      for (int i = 0; i < props.size(); i++) {
+        if (props.get(i).getName().equals("Description")) {
           try {
             descriptionArea.setText(props.get(i).getValue().toString());
           } catch (Exception e) {
+            LOG.debug("getDescriptionArea() exception thrown", e);
           }
+        }
+      }
       descriptionArea.setBorder(null);
       descriptionArea.setFont(getNameField().getFont());
     }
@@ -272,8 +280,8 @@ public class UploadDialog extends ButtonDialog {
     if (keywordsField == null) {
       keywordsField = new JTextField();
       keywordsField.setColumns(32);
-      keywordsField.setText(
-          KeywordExtractor.getInstance().extractKeywords(plugInPort.getCurrentProject()));
+      keywordsField.setText(KeywordExtractor.getInstance().extractKeywords(
+          plugInPort.getCurrentProject()));
     }
     return keywordsField;
   }
@@ -295,28 +303,21 @@ public class UploadDialog extends ButtonDialog {
     BufferedImage thumbnailImage =
         new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     Graphics2D cg = thumbnailImage.createGraphics();
-
     paintThumbnail(cg, new Rectangle(thumbnailImage.getWidth(), thumbnailImage.getHeight()));
     return thumbnailImage;
   }
 
   private void paintThumbnail(Graphics g, Rectangle rect) {
     Graphics2D g2d = (Graphics2D) g;
-    Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
-
     g2d.setColor(Color.white);
     g2d.fill(rect);
 
+    Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
     double projectRatio = d.getWidth() / d.getHeight();
     double actualRatio = rect.getWidth() / rect.getHeight();
-    double zoomRatio;
-    if (projectRatio > actualRatio) {
-      zoomRatio = rect.getWidth() / d.getWidth();
-    } else {
-      zoomRatio = rect.getHeight() / d.getHeight();
-    }
-
-    //    g2d.scale(zoomRatio, zoomRatio);
+    double zoomRatio = (projectRatio > actualRatio)
+                       ? rect.getWidth() / d.getWidth()
+                       : rect.getHeight() / d.getHeight();
     UploadDialog.this.plugInPort.draw(g2d, EnumSet.of(DrawOption.ANTIALIASING), null, zoomRatio);
   }
 

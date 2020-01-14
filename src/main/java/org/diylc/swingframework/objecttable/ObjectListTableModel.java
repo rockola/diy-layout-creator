@@ -1,3 +1,23 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.swingframework.objecttable;
 
 import java.lang.reflect.Method;
@@ -9,8 +29,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * {@link TableModel} that parses object of type <code>T</code> based on the specified rules and
- * shows each object in a separate rows. Individual properties are shown as cell in the row.
+ * {@link TableModel} that parses object of type <code>T</code> based
+ * on the specified rules and shows each object in a separate
+ * rows. Individual properties are shown as cell in the row.
  *
  * @see ObjectListTable
  * @author Branislav Stojkovic
@@ -40,8 +61,7 @@ public class ObjectListTableModel<T> extends AbstractTableModel {
    *   <li><b>getterName/setterName</b> - creates an editable field which uses getter to read and
    *       setter to write value
    *   <li><b>action:actionName</b> - creates an action column with the specified name
-   *       <ul>
-   *         <br>
+   * </ul>
    *
    * @param dataClass
    * @param fields

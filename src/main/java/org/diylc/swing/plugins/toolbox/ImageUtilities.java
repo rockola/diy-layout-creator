@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.awt.Component;
@@ -97,29 +98,22 @@ public final class ImageUtilities {
 
   static final BufferedImage createBufferedImage(int width, int height) {
     if (Utils.isMac()) {
-      return new BufferedImage(
-          width,
-          height,
-          // 3 // MAGIC NUMBER! //ola 20200107
-          BufferedImage.TYPE_INT_ARGB_PRE);
+      return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
     }
-    ColorModel model =
-        ImageUtilities.colorModel( // 3 // MAGIC NUMBER! //ola 20200107
-            Transparency.TRANSLUCENT);
-    BufferedImage buffImage =
-        new BufferedImage(
-            model,
-            model.createCompatibleWritableRaster(width, height),
-            model.isAlphaPremultiplied(),
-            null);
+    ColorModel model = ImageUtilities.colorModel(Transparency.TRANSLUCENT);
+    BufferedImage buffImage = new BufferedImage(
+        model,
+        model.createCompatibleWritableRaster(width, height),
+        model.isAlphaPremultiplied(),
+        null);
     return buffImage;
   }
 
   private static ColorModel colorModel(int transparency) {
     ColorModel model;
     try {
-      model =
-          GraphicsEnvironment.getLocalGraphicsEnvironment()
+      model = GraphicsEnvironment
+              .getLocalGraphicsEnvironment()
               .getDefaultScreenDevice()
               .getDefaultConfiguration()
               .getColorModel(transparency);
@@ -140,6 +134,7 @@ public final class ImageUtilities {
 
     @Override
     public int filterRGB(int x, int y, int rgb) {
+      // TODO lots of magic numbers here - what is 8947848?
       return (rgb & -16777216)
           + 8947848
           + ((rgb >> 16 & 255) >> 2 << 16)

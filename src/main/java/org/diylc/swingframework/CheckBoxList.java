@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.Component;
@@ -45,12 +46,13 @@ public class CheckBoxList extends JList {
           public void mouseClicked(MouseEvent event) {
             JList list = (JList) event.getSource();
             int index = list.locationToIndex(event.getPoint());
-
-            if (index < 0) return;
-
-            CheckListItem item = (CheckListItem) list.getModel().getElementAt(index);
-            item.setSelected(!item.isSelected()); // Toggle selected state
-            list.repaint(list.getCellBounds(index, index)); // Repaint cell
+            if (index >= 0) {
+              CheckListItem item = (CheckListItem) list.getModel().getElementAt(index);
+              // Toggle selected state
+              item.setSelected(!item.isSelected());
+              // Repaint cell
+              list.repaint(list.getCellBounds(index, index));
+            }
           }
         });
   }

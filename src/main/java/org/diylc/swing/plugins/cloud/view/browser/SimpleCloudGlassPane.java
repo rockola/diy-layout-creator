@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view.browser;
 
 import java.awt.Cursor;
@@ -65,19 +66,19 @@ public class SimpleCloudGlassPane extends JPanel implements MouseListener, KeyLi
   }
 
   @Override
-  public void mouseClicked(final MouseEvent pArg0) {}
+  public void mouseClicked(final MouseEvent e) {}
 
   @Override
-  public void mouseEntered(final MouseEvent pArg0) {}
+  public void mouseEntered(final MouseEvent e) {}
 
   @Override
-  public void mouseExited(final MouseEvent pArg0) {}
+  public void mouseExited(final MouseEvent e) {}
 
   @Override
-  public void mousePressed(final MouseEvent pArg0) {}
+  public void mousePressed(final MouseEvent e) {}
 
   @Override
-  public void mouseReleased(final MouseEvent pArg0) {}
+  public void mouseReleased(final MouseEvent e) {}
 
   @Override
   public void keyPressed(KeyEvent e) {}

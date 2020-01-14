@@ -72,7 +72,7 @@ import org.diylc.swing.gui.actionbar.ActionBarPlugin;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.autosave.AutoSavePlugin;
 import org.diylc.swing.plugins.canvas.CanvasPlugin;
-import org.diylc.swing.plugins.cloud.CloudPlugIn;
+import org.diylc.swing.plugins.cloud.CloudPlugin;
 import org.diylc.swing.plugins.config.ConfigPlugin;
 import org.diylc.swing.plugins.edit.EditMenuPlugin;
 import org.diylc.swing.plugins.file.FileFilterEnum;
@@ -133,7 +133,7 @@ public class MainFrame extends JFrame {
       presenter.installPlugin(new EditMenuPlugin());
       presenter.installPlugin(new ConfigPlugin());
       presenter.installPlugin(new LayersMenuPlugin());
-      presenter.installPlugin(new CloudPlugIn());
+      presenter.installPlugin(new CloudPlugin());
       presenter.installPlugin(new HelpMenuPlugin());
       presenter.installPlugin(new ActionBarPlugin());
 

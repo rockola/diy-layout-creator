@@ -3,8 +3,8 @@ package org.diylc.swingframework.awt;
 import java.awt.geom.GeneralPath;
 
 /**
- * <p>Creates a {@link GeneralPath} with rounded edges. To create a rounded path, follow these
- * steps:
+ * Creates a {@link GeneralPath} with rounded edges.
+ * To create a rounded path, follow these steps:
  *
  * <ul>
  *   <li>instantiate a {@link RoundedPath}

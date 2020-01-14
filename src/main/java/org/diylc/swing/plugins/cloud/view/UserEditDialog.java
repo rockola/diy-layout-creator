@@ -121,7 +121,7 @@ public class UserEditDialog extends ButtonDialog {
       }
 
       gbc.gridy = 3;
-      mainPanel.add(new JLabel("eMail:"), gbc);
+      mainPanel.add(new JLabel("Email:"), gbc);
 
       gbc.gridy = 4;
       mainPanel.add(new JLabel("Website:"), gbc);
@@ -184,26 +184,23 @@ public class UserEditDialog extends ButtonDialog {
         userNameField.setText(existingEntity.getUsername());
         userNameField.setEditable(false);
       }
-      userNameField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      userNameField.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            refreshState();
+          }
+        });
     }
     return userNameField;
   }
@@ -211,26 +208,23 @@ public class UserEditDialog extends ButtonDialog {
   private JPasswordField getPasswordField() {
     if (passwordField == null) {
       passwordField = new JPasswordField();
-      passwordField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      passwordField.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            refreshState();
+          }
+        });
     }
     return passwordField;
   }
@@ -238,26 +232,23 @@ public class UserEditDialog extends ButtonDialog {
   private JPasswordField getConfirmPasswordField() {
     if (confirmPasswordField == null) {
       confirmPasswordField = new JPasswordField();
-      confirmPasswordField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      confirmPasswordField.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            refreshState();
+          }
+        });
     }
     return confirmPasswordField;
   }
@@ -265,27 +256,26 @@ public class UserEditDialog extends ButtonDialog {
   private JTextField getEmailField() {
     if (emailField == null) {
       emailField = new JTextField();
-      if (existingEntity != null) emailField.setText(existingEntity.getEmail());
-      emailField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      if (existingEntity != null) {
+        emailField.setText(existingEntity.getEmail());
+      }
+      emailField.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            refreshState();
+          }
+        });
     }
     return emailField;
   }
@@ -293,27 +283,27 @@ public class UserEditDialog extends ButtonDialog {
   private JTextField getWebsiteField() {
     if (websiteField == null) {
       websiteField = new JTextField();
-      if (existingEntity != null) websiteField.setText(existingEntity.getWebsite());
-      websiteField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      if (existingEntity != null) {
+        websiteField.setText(existingEntity.getWebsite());
+      }
+      websiteField.getDocument().addDocumentListener(
+          new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+              refreshState();
+            }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+              refreshState();
+            }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+              refreshState();
+            }
+          });
     }
     return websiteField;
   }
@@ -331,29 +321,28 @@ public class UserEditDialog extends ButtonDialog {
   private JTextArea getBioArea() {
     if (bioArea == null) {
       bioArea = new HTMLTextArea();
-      if (existingEntity != null) bioArea.setText(existingEntity.getBio());
+      if (existingEntity != null) {
+        bioArea.setText(existingEntity.getBio());
+      }
       bioArea.setFont(getUserNameField().getFont());
       bioArea.setBorder(getUserNameField().getBorder());
-      bioArea
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      bioArea.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  refreshState();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            refreshState();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  refreshState();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            refreshState();
+          }
+        });
     }
     return bioArea;
   }

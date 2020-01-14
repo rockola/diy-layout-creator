@@ -291,17 +291,17 @@ public class TreePanel extends JPanel {
         componentType =
             ComponentProcessor.extractComponentTypeFrom(
                 (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
-        Payload payload =
-            new Payload(
-                componentType,
-                new MouseAdapter() {
+        Payload payload = new Payload(
+            componentType,
+            new MouseAdapter() {
 
-                  @Override
-                  public void mouseClicked(MouseEvent e) {
-                    if (plugInPort.getNewComponentTypeSlot() != componentType)
-                      plugInPort.setNewComponentTypeSlot(componentType, null, false);
-                  }
-                });
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                if (plugInPort.getNewComponentTypeSlot() != componentType) {
+                  plugInPort.setNewComponentTypeSlot(componentType, null, false);
+                }
+              }
+            });
         final DefaultMutableTreeNode componentNode = new DefaultMutableTreeNode(payload, false);
         String text = getSearchField().getText();
         boolean visible =
@@ -315,7 +315,9 @@ public class TreePanel extends JPanel {
         LOG.error("Could not create recent component button for " + componentClassName, e);
       }
     }
-    if (!initializing) getTreeModel().nodeStructureChanged(getRecentNode());
+    if (!initializing) {
+      getTreeModel().nodeStructureChanged(getRecentNode());
+    }
   }
 
   private void refreshBuildingBlocks(List<String> blocks) {
@@ -323,28 +325,27 @@ public class TreePanel extends JPanel {
 
     getBlocksNode().removeAllChildren();
     for (final String block : blocks) {
-      Payload payload =
-          new Payload(
-              block,
-              new MouseAdapter() {
+      Payload payload = new Payload(
+          block,
+          new MouseAdapter() {
 
-                long previousActionTime = 0;
+            long previousActionTime = 0;
 
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                  if (e == null
-                      || SwingUtilities.isLeftMouseButton(e)
-                          && System.currentTimeMillis() - previousActionTime > 100) {
-                    previousActionTime = System.currentTimeMillis();
-                    try {
-                      plugInPort.loadBlock(block);
-                    } catch (InvalidBlockException e1) {
-                      // TODO Auto-generated catch block
-                      e1.printStackTrace();
-                    }
-                  }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+              if (e == null
+                  || SwingUtilities.isLeftMouseButton(e)
+                  && System.currentTimeMillis() - previousActionTime > 100) {
+                previousActionTime = System.currentTimeMillis();
+                try {
+                  plugInPort.loadBlock(block);
+                } catch (InvalidBlockException e1) {
+                  // TODO Auto-generated catch block
+                  e1.printStackTrace();
                 }
-              });
+              }
+            }
+          });
       final DefaultMutableTreeNode componentNode = new DefaultMutableTreeNode(payload, false);
       String text = getSearchField().getText();
       boolean visible =
@@ -352,7 +353,9 @@ public class TreePanel extends JPanel {
       payload.setVisible(visible);
       getBlocksNode().add(componentNode);
     }
-    if (!initializing) getTreeModel().nodeStructureChanged(getBlocksNode());
+    if (!initializing) {
+      getTreeModel().nodeStructureChanged(getBlocksNode());
+    }
   }
 
   private void refreshFavorites(List<Favorite> favorites) {
@@ -362,52 +365,51 @@ public class TreePanel extends JPanel {
 
     Map<String, List<ComponentType>> types = plugInPort.getComponentTypes();
     Map<String, ComponentType> typesByClass = new HashMap<String, ComponentType>();
-    for (Map.Entry<String, List<ComponentType>> e : types.entrySet())
-      for (ComponentType c : e.getValue())
+    for (Map.Entry<String, List<ComponentType>> e : types.entrySet()) {
+      for (ComponentType c : e.getValue()) {
         typesByClass.put(c.getInstanceClass().getCanonicalName(), c);
+      }
+    }
 
     for (Favorite f : favorites) {
       if (f.getType() == FavoriteType.Component) {
         final ComponentType type = typesByClass.get(f.getName());
         if (type != null) {
-          DefaultMutableTreeNode componentNode =
-              new DefaultMutableTreeNode(
-                  new Payload(
-                      type,
-                      new MouseAdapter() {
+          Payload payload = new Payload(
+              type,
+              new MouseAdapter() {
 
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                          plugInPort.setNewComponentTypeSlot(type, null, false);
-                        }
-                      }),
-                  false);
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                  plugInPort.setNewComponentTypeSlot(type, null, false);
+                }
+              });
+          DefaultMutableTreeNode componentNode = new DefaultMutableTreeNode(payload, false);
           getFavoritesNode().add(componentNode);
         }
       } else if (f.getType() == FavoriteType.Block) {
         final String block = f.getName();
-        Payload payload =
-            new Payload(
-                block,
-                new MouseAdapter() {
+        Payload payload = new Payload(
+            block,
+            new MouseAdapter() {
 
-                  long previousActionTime = 0;
+              long previousActionTime = 0;
 
-                  @Override
-                  public void mouseClicked(MouseEvent e) {
-                    if (e == null
-                        || SwingUtilities.isLeftMouseButton(e)
-                            && System.currentTimeMillis() - previousActionTime > 100) {
-                      previousActionTime = System.currentTimeMillis();
-                      try {
-                        plugInPort.loadBlock(block);
-                      } catch (InvalidBlockException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                      }
-                    }
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                if (e == null
+                    || SwingUtilities.isLeftMouseButton(e)
+                    && System.currentTimeMillis() - previousActionTime > 100) {
+                  previousActionTime = System.currentTimeMillis();
+                  try {
+                    plugInPort.loadBlock(block);
+                  } catch (InvalidBlockException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
                   }
-                });
+                }
+              }
+            });
         final DefaultMutableTreeNode componentNode = new DefaultMutableTreeNode(payload, false);
         String text = getSearchField().getText();
         boolean visible =
@@ -416,7 +418,9 @@ public class TreePanel extends JPanel {
         getFavoritesNode().add(componentNode);
       }
     }
-    if (!initializing) getTreeModel().nodeStructureChanged(getFavoritesNode());
+    if (!initializing) {
+      getTreeModel().nodeStructureChanged(getFavoritesNode());
+    }
   }
 
   private static class MyTreeModelListener implements TreeModelListener {
@@ -449,18 +453,16 @@ public class TreePanel extends JPanel {
             new DefaultMutableTreeNode(new Payload(category, null));
         rootNode.add(categoryNode);
         for (final ComponentType type : componentTypes.get(category)) {
-          final DefaultMutableTreeNode componentNode =
-              new DefaultMutableTreeNode(
-                  new Payload(
-                      type,
-                      new MouseAdapter() {
+          Payload payload = new Payload(
+              type,
+              new MouseAdapter() {
 
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                          plugInPort.setNewComponentTypeSlot(type, null, false);
-                        }
-                      }),
-                  false);
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                  plugInPort.setNewComponentTypeSlot(type, null, false);
+                }
+              });
+          final DefaultMutableTreeNode componentNode = new DefaultMutableTreeNode(payload, false);
           categoryNode.add(componentNode);
         }
       }
@@ -479,13 +481,11 @@ public class TreePanel extends JPanel {
       tree.setRowHeight(0);
       ToolTipManager.sharedInstance().registerComponent(tree);
 
-      tree.addTreeSelectionListener(
-          new TreeSelectionListener() {
+      tree.addTreeSelectionListener(new TreeSelectionListener() {
 
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-              if (!e.isAddedPath()) return;
-
+          @Override
+          public void valueChanged(TreeSelectionEvent e) {
+            if (e.isAddedPath()) {
               DefaultMutableTreeNode node =
                   (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
               if (node != null && node.getUserObject() != null) {
@@ -495,32 +495,33 @@ public class TreePanel extends JPanel {
                 }
               }
             }
-          });
+          }
+        });
 
-      tree.addMouseListener(
-          new MouseAdapter() {
+      tree.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-              if (e.getClickCount() != 1) return;
-
-              if (SwingUtilities.isRightMouseButton(e)) {
-                int row = tree.getClosestRowForLocation(e.getX(), e.getY());
-                tree.setSelectionRow(row);
-                getPopup().show(e.getComponent(), e.getX(), e.getY());
-              } else {
-                TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
-                DefaultMutableTreeNode node =
-                    (DefaultMutableTreeNode) path.getLastPathComponent();
-                if (node != null && node.getUserObject() != null) {
-                  Payload payload = (Payload) node.getUserObject();
-                  if (payload.getClickListener() != null) {
-                    payload.getClickListener().mouseClicked(e);
-                  }
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() != 1) {
+              return;
+            }
+            if (SwingUtilities.isRightMouseButton(e)) {
+              int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+              tree.setSelectionRow(row);
+              getPopup().show(e.getComponent(), e.getX(), e.getY());
+            } else {
+              TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
+              DefaultMutableTreeNode node =
+                  (DefaultMutableTreeNode) path.getLastPathComponent();
+              if (node != null && node.getUserObject() != null) {
+                Payload payload = (Payload) node.getUserObject();
+                if (payload.getClickListener() != null) {
+                  payload.getClickListener().mouseClicked(e);
                 }
               }
             }
-          });
+          }
+        });
     }
     return tree;
   }
@@ -529,30 +530,61 @@ public class TreePanel extends JPanel {
     if (popup == null) {
       popup = new JPopupMenu();
       popup.add("Loading...");
-      popup.addPopupMenuListener(
-          new PopupMenuListener() {
+      popup.addPopupMenuListener(new PopupMenuListener() {
 
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-              popup.removeAll();
+          @Override
+          public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            popup.removeAll();
 
-              DefaultMutableTreeNode selectedNode =
-                  (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            DefaultMutableTreeNode selectedNode =
+                (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
-              if (selectedNode == null || selectedNode.getUserObject() == null) return;
+            if (selectedNode == null || selectedNode.getUserObject() == null) {
+              return;
+            }
 
-              Payload payload = (Payload) selectedNode.getUserObject();
+            Payload payload = (Payload) selectedNode.getUserObject();
 
-              final ComponentType componentType = payload.getComponentType();
+            final ComponentType componentType = payload.getComponentType();
 
-              final String identifier =
-                  componentType == null
-                      ? "block:" + payload.toString()
-                      : componentType.getInstanceClass().getCanonicalName();
+            final String identifier =
+                componentType == null
+                ? "block:" + payload.toString()
+                : componentType.getInstanceClass().getCanonicalName();
 
-              JMenu shortcutSubmenu = new JMenu("Assign Shortcut");
-              final JMenuItem noneItem = new JMenuItem("None");
-              noneItem.addActionListener(
+            JMenu shortcutSubmenu = new JMenu("Assign Shortcut");
+            final JMenuItem noneItem = new JMenuItem("None");
+            noneItem.addActionListener(
+                new ActionListener() {
+
+                  @SuppressWarnings("unchecked")
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                    HashMap<String, String> map =
+                        (HashMap<String, String>) App.getObject(COMPONENT_SHORTCUT_KEY);
+                    if (map == null) {
+                      map = new HashMap<String, String>();
+                    }
+                    Iterator<Entry<String, String>> it = map.entrySet().iterator();
+                    while (it.hasNext()) {
+                      Entry<String, String> item = it.next();
+                      if (item.getValue().equals(identifier)) {
+                        it.remove();
+                      }
+                    }
+
+                    App.putValue(COMPONENT_SHORTCUT_KEY, map);
+
+                    TreePanel.this.invalidate();
+                    TreePanel.this.repaint();
+                  }
+                });
+
+            shortcutSubmenu.add(noneItem);
+
+            for (int i = 1; i <= 12; i++) {
+              final JMenuItem item = new JMenuItem("F" + i);
+              item.addActionListener(
                   new ActionListener() {
 
                     @SuppressWarnings("unchecked")
@@ -560,13 +592,20 @@ public class TreePanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                       HashMap<String, String> map =
                           (HashMap<String, String>) App.getObject(COMPONENT_SHORTCUT_KEY);
-                      if (map == null) map = new HashMap<String, String>();
-
+                      if (map == null) {
+                        map = new HashMap<String, String>();
+                      }
+                      if (map.containsKey(item.getText())) {
+                        map.remove(item.getText());
+                      }
                       Iterator<Entry<String, String>> it = map.entrySet().iterator();
                       while (it.hasNext()) {
                         Entry<String, String> item = it.next();
-                        if (item.getValue().equals(identifier)) it.remove();
+                        if (item.getValue().equals(identifier)) {
+                          it.remove();
+                        }
                       }
+                      map.put(item.getText(), identifier);
 
                       App.putValue(COMPONENT_SHORTCUT_KEY, map);
 
@@ -574,101 +613,70 @@ public class TreePanel extends JPanel {
                       TreePanel.this.repaint();
                     }
                   });
-
-              shortcutSubmenu.add(noneItem);
-
-              for (int i = 1; i <= 12; i++) {
-                final JMenuItem item = new JMenuItem("F" + i);
-                item.addActionListener(
-                    new ActionListener() {
-
-                      @SuppressWarnings("unchecked")
-                      @Override
-                      public void actionPerformed(ActionEvent e) {
-                        HashMap<String, String> map =
-                            (HashMap<String, String>) App.getObject(COMPONENT_SHORTCUT_KEY);
-                        if (map == null) map = new HashMap<String, String>();
-
-                        if (map.containsKey(item.getText())) map.remove(item.getText());
-
-                        Iterator<Entry<String, String>> it = map.entrySet().iterator();
-                        while (it.hasNext()) {
-                          Entry<String, String> item = it.next();
-                          if (item.getValue().equals(identifier)) it.remove();
-                        }
-
-                        map.put(item.getText(), identifier);
-
-                        App.putValue(COMPONENT_SHORTCUT_KEY, map);
-
-                        TreePanel.this.invalidate();
-                        TreePanel.this.repaint();
-                      }
-                    });
-                shortcutSubmenu.add(item);
-              }
-
-              if (selectedNode.isLeaf()) {
-                final Favorite fav =
-                    new Favorite(
-                        componentType == null ? FavoriteType.Block : FavoriteType.Component,
-                        componentType == null
-                            ? payload.toString()
-                            : componentType.getInstanceClass().getCanonicalName());
-                final boolean isFavorite = favorites != null && favorites.indexOf(fav) >= 0;
-                final JMenuItem favoritesItem =
-                    new JMenuItem(
-                        isFavorite ? "Remove From Favorites" : "Add To Favorites",
-                        isFavorite ? Icon.StarBlue.icon() : Icon.StarGrey.icon());
-                favoritesItem.addActionListener(
-                    new ActionListener() {
-
-                      @Override
-                      public void actionPerformed(ActionEvent e) {
-                        List<Favorite> favorites =
-                            new ArrayList<Favorite>(TreePanel.this.favorites);
-                        if (isFavorite) {
-                          favorites.remove(fav);
-                        } else {
-                          favorites.add(fav);
-                          Collections.sort(favorites);
-                        }
-                        App.putValue(IPlugInPort.Key.FAVORITES, favorites);
-                      }
-                    });
-                popup.add(favoritesItem);
-              }
-
-              if (componentType != null) {
-                popup.add(new SelectAllAction(plugInPort, componentType));
-                popup.add(shortcutSubmenu);
-                popup.add(new JSeparator());
-
-                List<Template> templates = plugInPort.getVariantsFor(componentType);
-                if (templates == null || templates.isEmpty()) {
-                  JMenuItem item = new JMenuItem("<no variants>");
-                  item.setEnabled(false);
-                  popup.add(item);
-                } else {
-                  for (Template template : templates) {
-                    JMenuItem item =
-                        ComponentButtonFactory.createVariantItem(
-                            plugInPort, template, componentType);
-                    popup.add(item);
-                  }
-                }
-              } else if (selectedNode.isLeaf()) {
-                popup.add(shortcutSubmenu);
-                popup.add(new DeleteBlockAction(plugInPort, payload.toString()));
-              }
+              shortcutSubmenu.add(item);
             }
 
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+            if (selectedNode.isLeaf()) {
+              final Favorite fav =
+                  new Favorite(
+                      componentType == null ? FavoriteType.Block : FavoriteType.Component,
+                      componentType == null
+                      ? payload.toString()
+                      : componentType.getInstanceClass().getCanonicalName());
+              final boolean isFavorite = favorites != null && favorites.indexOf(fav) >= 0;
+              final JMenuItem favoritesItem =
+                  new JMenuItem(
+                      isFavorite ? "Remove From Favorites" : "Add To Favorites",
+                      isFavorite ? Icon.StarBlue.icon() : Icon.StarGrey.icon());
+              favoritesItem.addActionListener(
+                  new ActionListener() {
 
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {}
-          });
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                      List<Favorite> favorites =
+                          new ArrayList<Favorite>(TreePanel.this.favorites);
+                      if (isFavorite) {
+                        favorites.remove(fav);
+                      } else {
+                        favorites.add(fav);
+                        Collections.sort(favorites);
+                      }
+                      App.putValue(IPlugInPort.Key.FAVORITES, favorites);
+                    }
+                  });
+              popup.add(favoritesItem);
+            }
+
+            if (componentType != null) {
+              popup.add(new SelectAllAction(plugInPort, componentType));
+              popup.add(shortcutSubmenu);
+              popup.add(new JSeparator());
+
+              List<Template> templates = plugInPort.getVariantsFor(componentType);
+              if (templates == null || templates.isEmpty()) {
+                JMenuItem item = new JMenuItem("<no variants>");
+                item.setEnabled(false);
+                popup.add(item);
+              } else {
+                for (Template template : templates) {
+                  JMenuItem item =
+                      ComponentButtonFactory.createVariantItem(
+                          plugInPort, template, componentType);
+                  popup.add(item);
+                }
+              }
+            } else if (selectedNode.isLeaf()) {
+              popup.add(shortcutSubmenu);
+              popup.add(new DeleteBlockAction(plugInPort, payload.toString()));
+            }
+          }
+
+          @Override
+          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+
+          @Override
+          public void popupMenuCanceled(PopupMenuEvent e) {}
+        });
     }
     return popup;
   }
@@ -760,7 +768,9 @@ public class TreePanel extends JPanel {
                           payload.setVisible(visible);
                           model.nodeStructureChanged(componentNode);
                         }
-                        if (visible) visibleCount++;
+                        if (visible) {
+                          visibleCount++;
+                        }
                       }
                     }
 
@@ -811,9 +821,14 @@ public class TreePanel extends JPanel {
         Payload payload = (Payload) obj;
         if (payload.getComponentType() == null) {
           setToolTipText(null);
-          if (leaf) setIcon(Icon.Component.icon());
-          if (payload.isVisible()) setPreferredSize(new Dimension(250, 20));
-          else setPreferredSize(new Dimension(0, 0));
+          if (leaf) {
+            setIcon(Icon.Component.icon());
+          }
+          if (payload.isVisible()) {
+            setPreferredSize(new Dimension(250, 20));
+          } else {
+            setPreferredSize(new Dimension(0, 0));
+          }
         } else {
           setToolTipText(
               "<html><b>"
@@ -826,8 +841,11 @@ public class TreePanel extends JPanel {
               + "Left click to instantiate this component, right click for more options"
               + "</html>");
           setIcon(payload.getComponentType().getIcon());
-          if (payload.isVisible()) setPreferredSize(new Dimension(250, 32));
-          else setPreferredSize(new Dimension(0, 0));
+          if (payload.isVisible()) {
+            setPreferredSize(new Dimension(250, 32));
+          } else {
+            setPreferredSize(new Dimension(0, 0));
+          }
         }
 
         String shortCutHtml = "";

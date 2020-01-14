@@ -79,7 +79,7 @@ import org.diylc.swingframework.ButtonDialog;
  * Component that is capable of showing a list of {@link ProjectEntity}
  * objects. Can work in paging mode and pull one page of data at a time.
  *
- * @see {@link SearchSession}
+ * @see SearchSession
  * @author Branislav Stojkovic
  */
 public class ResultsScrollPanel extends JScrollPane {
@@ -702,24 +702,23 @@ public class ResultsScrollPanel extends JScrollPane {
                 // successive requests to the provider
                 LOG.info("Paging mechanism is disarmed");
                 armed = false;
-                SwingWorker<List<ProjectEntity>, Void> worker =
-                    new SwingWorker<List<ProjectEntity>, Void>() {
+                SwingWorker<List<ProjectEntity>, Void> worker = new SwingWorker<>() {
 
-                      @Override
-                      protected List<ProjectEntity> doInBackground() throws Exception {
-                        return searchSession.requestMoreData();
-                      }
+                    @Override
+                    protected List<ProjectEntity> doInBackground() throws Exception {
+                      return searchSession.requestMoreData();
+                    }
 
-                      @Override
-                      protected void done() {
-                        try {
-                          List<ProjectEntity> newResults = get();
-                          addData(newResults);
-                        } catch (Exception e) {
-                          cloudUI.error(App.getString("cloud.search-failed"));
-                        }
+                    @Override
+                    protected void done() {
+                      try {
+                        List<ProjectEntity> newResults = get();
+                        addData(newResults);
+                      } catch (Exception e) {
+                        cloudUI.error(App.getString("cloud.search-failed"));
                       }
-                    };
+                    }
+                  };
                 worker.execute();
               }
             }
