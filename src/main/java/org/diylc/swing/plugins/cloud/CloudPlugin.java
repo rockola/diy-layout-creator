@@ -53,9 +53,9 @@ import org.diylc.swing.plugins.cloud.view.browser.UploadManagerFrame;
 import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.ButtonDialog;
 
-public class CloudPlugIn implements IPlugIn {
+public class CloudPlugin implements IPlugIn {
 
-  private static final Logger LOG = LogManager.getLogger(CloudPlugIn.class);
+  private static final Logger LOG = LogManager.getLogger(CloudPlugin.class);
 
   private IPlugInPort plugInPort;
   private IPlugInPort thumbnailPresenter;
@@ -85,7 +85,7 @@ public class CloudPlugIn implements IPlugIn {
     menuEntry(null);
   }
 
-  public CloudPlugIn() {
+  public CloudPlugin() {
     super();
 
     this.thumbnailPresenter = new Presenter();
