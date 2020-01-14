@@ -32,7 +32,6 @@ public interface ITask<T> {
    * Runs in background thread.
    *
    * @return
-   * @throws Exception
    */
   T doInBackground() throws Exception;
 
