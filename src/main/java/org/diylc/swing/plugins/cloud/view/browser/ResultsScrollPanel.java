@@ -702,23 +702,24 @@ public class ResultsScrollPanel extends JScrollPane {
                 // successive requests to the provider
                 LOG.info("Paging mechanism is disarmed");
                 armed = false;
-                SwingWorker<List<ProjectEntity>, Void> worker = new SwingWorker<>() {
+                SwingWorker<List<ProjectEntity>, Void> worker =
+                    new SwingWorker<List<ProjectEntity>, Void>() {
 
-                    @Override
-                    protected List<ProjectEntity> doInBackground() throws Exception {
-                      return searchSession.requestMoreData();
-                    }
-
-                    @Override
-                    protected void done() {
-                      try {
-                        List<ProjectEntity> newResults = get();
-                        addData(newResults);
-                      } catch (Exception e) {
-                        cloudUI.error(App.getString("cloud.search-failed"));
+                      @Override
+                      protected List<ProjectEntity> doInBackground() throws Exception {
+                        return searchSession.requestMoreData();
                       }
-                    }
-                  };
+
+                      @Override
+                      protected void done() {
+                        try {
+                          List<ProjectEntity> newResults = get();
+                          addData(newResults);
+                        } catch (Exception e) {
+                          cloudUI.error(App.getString("cloud.search-failed"));
+                        }
+                      }
+                    };
                 worker.execute();
               }
             }

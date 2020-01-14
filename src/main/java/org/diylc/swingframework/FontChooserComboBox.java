@@ -48,6 +48,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.PlainDocument;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Combobox which lists all installed fonts, sorted alphabetically. In
  * the dropdown, each font name is shown in the default font together
@@ -67,6 +70,7 @@ import javax.swing.text.PlainDocument;
  */
 public class FontChooserComboBox extends JComboBox implements ItemListener {
 
+  private static final Logger LOG = LogManager.getLogger(FontChooserComboBox.class);
   private static final long serialVersionUID = 1L;
 
   private int previewFontSize;
@@ -322,7 +326,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
         int j = max(caret.getDot(), caret.getMark());
         doc.replace(i, j - i, s, null);
       } catch (BadLocationException ex) {
-        LOG.debug("replaceSelection(): bad location for String " + s, e)
+        LOG.debug("replaceSelection(): bad location for String " + s, ex);
       }
     }
   }

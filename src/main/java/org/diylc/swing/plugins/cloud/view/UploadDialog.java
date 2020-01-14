@@ -46,6 +46,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
@@ -57,6 +60,7 @@ import org.diylc.utils.KeywordExtractor;
 public class UploadDialog extends ButtonDialog {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(UploadDialog.class);
 
   private JPanel mainPanel;
   private JLabel termsLabel;
