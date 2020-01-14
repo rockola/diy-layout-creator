@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core;
 
 import java.awt.Font;
@@ -283,7 +284,9 @@ public class Project implements Serializable, Cloneable {
   }
 
   public Set<Integer> getHiddenLayers() {
-    if (hiddenLayers == null) hiddenLayers = new HashSet<Integer>();
+    if (hiddenLayers == null) {
+      hiddenLayers = new HashSet<Integer>();
+    }
     return hiddenLayers;
   }
 
@@ -297,7 +300,9 @@ public class Project implements Serializable, Cloneable {
 
   @EditableProperty(name = "Default Font")
   public Font getFont() {
-    if (font == null) font = DEFAULT_FONT;
+    if (font == null) {
+      font = DEFAULT_FONT;
+    }
     return font;
   }
 
@@ -307,12 +312,11 @@ public class Project implements Serializable, Cloneable {
 
   @EditableProperty(name = "Default Font Size")
   public int getFontSize() {
-    if (font == null) font = DEFAULT_FONT;
-    return font.getSize();
+    return getFont().getSize();
   }
 
   public void setFontSize(int size) {
-    font = font.deriveFont((float) size);
+    font = getFont().deriveFont((float) size);
   }
 
   @Override
@@ -330,15 +334,27 @@ public class Project implements Serializable, Cloneable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     Project other = (Project) obj;
     if (author == null) {
-      if (other.author != null) return false;
-    } else if (!author.equals(other.author)) return false;
+      if (other.author != null) {
+        return false;
+      }
+    } else if (!author.equals(other.author)) {
+      return false;
+    }
     if (components == null) {
-      if (other.components != null) return false;
+      if (other.components != null) {
+        return false;
+      }
     } else if (components.size() != other.components.size()) {
       return false;
     } else {
@@ -347,36 +363,74 @@ public class Project implements Serializable, Cloneable {
       while (i1.hasNext()) {
         IDIYComponent<?> c1 = i1.next();
         IDIYComponent<?> c2 = i2.next();
-        if (!c1.equalsTo(c2)) return false;
+        if (!c1.equalsTo(c2)) {
+          return false;
+        }
       }
     }
     if (description == null) {
-      if (other.description != null) return false;
-    } else if (!description.equals(other.description)) return false;
+      if (other.description != null) {
+        return false;
+      }
+    } else if (!description.equals(other.description)) {
+      return false;
+    }
     if (height == null) {
-      if (other.height != null) return false;
-    } else if (!height.equals(other.height)) return false;
+      if (other.height != null) {
+        return false;
+      }
+    } else if (!height.equals(other.height)) {
+      return false;
+    }
     if (title == null) {
-      if (other.title != null) return false;
-    } else if (!title.equals(other.title)) return false;
+      if (other.title != null) {
+        return false;
+      }
+    } else if (!title.equals(other.title)) {
+      return false;
+    }
     if (width == null) {
-      if (other.width != null) return false;
-    } else if (!width.equals(other.width)) return false;
+      if (other.width != null) {
+        return false;
+      }
+    } else if (!width.equals(other.width)) {
+      return false;
+    }
     if (gridSpacing == null) {
-      if (other.gridSpacing != null) return false;
-    } else if (!gridSpacing.equals(other.gridSpacing)) return false;
+      if (other.gridSpacing != null) {
+        return false;
+      }
+    } else if (!gridSpacing.equals(other.gridSpacing)) {
+      return false;
+    }
     if (font == null) {
-      if (other.font != null) return false;
-    } else if (!font.equals(other.font)) return false;
+      if (other.font != null) {
+        return false;
+      }
+    } else if (!font.equals(other.font)) {
+      return false;
+    }
     if (groups == null) {
-      if (other.groups != null) return false;
-    } else if (!groups.equals(other.groups)) return false;
+      if (other.groups != null) {
+        return false;
+      }
+    } else if (!groups.equals(other.groups)) {
+      return false;
+    }
     if (lockedLayers == null) {
-      if (other.lockedLayers != null) return false;
-    } else if (!lockedLayers.equals(other.lockedLayers)) return false;
+      if (other.lockedLayers != null) {
+        return false;
+      }
+    } else if (!lockedLayers.equals(other.lockedLayers)) {
+      return false;
+    }
     if (hiddenLayers == null) {
-      if (other.hiddenLayers != null) return false;
-    } else if (!hiddenLayers.equals(other.hiddenLayers)) return false;
+      if (other.hiddenLayers != null) {
+        return false;
+      }
+    } else if (!hiddenLayers.equals(other.hiddenLayers)) {
+      return false;
+    }
     return true;
   }
 
