@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.swing.plugins.cloud;
 
 import java.awt.event.ActionEvent;
@@ -28,9 +29,11 @@ import java.util.List;
 import java.util.ListIterator;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
@@ -75,7 +78,7 @@ public class CloudPlugIn implements IPlugIn {
   }
 
   private void menuEntry(AbstractAction action) {
-    DIYLC.ui().injectMenuAction(action, getMsg("title"));
+    App.ui().injectMenuAction(action, getMsg("title"));
   }
 
   private void separator() {
@@ -113,31 +116,29 @@ public class CloudPlugIn implements IPlugIn {
   }
 
   private void initialize() {
-    DIYLC
-        .ui()
-        .executeBackgroundTask(
-            new ITask<Boolean>() {
+    App.ui().executeBackgroundTask(
+        new ITask<Boolean>() {
 
-              @Override
-              public Boolean doInBackground() throws Exception {
-                return CloudPresenter.Instance.tryLogInWithToken();
-              }
+          @Override
+          public Boolean doInBackground() throws Exception {
+            return CloudPresenter.Instance.tryLogInWithToken();
+          }
 
-              @Override
-              public void failed(Exception e) {
-                LOG.error("Error while trying to login using token");
-              }
+          @Override
+          public void failed(Exception e) {
+            LOG.error("Error while trying to login using token");
+          }
 
-              @Override
-              public void complete(Boolean result) {
-                try {
-                  if (result) loggedIn();
-                } catch (Exception e) {
-                  LOG.error("Error while trying to login with token", e);
-                }
-              }
-            },
-            false);
+          @Override
+          public void complete(Boolean result) {
+            try {
+              if (result) loggedIn();
+            } catch (Exception e) {
+              LOG.error("Error while trying to login with token", e);
+            }
+          }
+        },
+        false);
   }
 
   public CloudBrowserFrame getCloudBrowser() {
@@ -250,14 +251,14 @@ public class CloudPlugIn implements IPlugIn {
         if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
           try {
             if (CloudPresenter.Instance.logIn(dialog.getUserName(), dialog.getPassword())) {
-              DIYLC.ui().info(getMsg("login-successful"), getMsg("successfully-logged-in"));
+              App.ui().info(getMsg("login-successful"), getMsg("successfully-logged-in"));
               loggedIn();
               break;
             } else {
-              DIYLC.ui().error(getMsg("login-error"), getMsg("could-not-login"));
+              App.ui().error(getMsg("login-error"), getMsg("could-not-login"));
             }
           } catch (CloudException e1) {
-            DIYLC.ui().error(getMsg("could-not-login"), e1);
+            App.ui().error(getMsg("could-not-login"), e1);
           }
         } else break;
       } while (true);
@@ -296,33 +297,31 @@ public class CloudPlugIn implements IPlugIn {
       final UserEditDialog dialog = DialogFactory.getInstance().createUserEditDialog(null);
       dialog.setVisible(true);
       if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        App.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    CloudPresenter.Instance.createUserAccount(
-                        dialog.getUserName(),
-                        dialog.getPassword(),
-                        dialog.getEmail(),
-                        dialog.getWebsite(),
-                        dialog.getBio());
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                CloudPresenter.Instance.createUserAccount(
+                    dialog.getUserName(),
+                    dialog.getPassword(),
+                    dialog.getEmail(),
+                    dialog.getWebsite(),
+                    dialog.getBio());
+                return null;
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("account-not-created"), e);
-                  }
+              @Override
+              public void failed(Exception e) {
+                App.ui().error(getMsg("account-not-created"), e);
+              }
 
-                  @Override
-                  public void complete(Void result) {
-                    DIYLC.ui().info(getMsg("account-created"));
-                  }
-                },
-                true);
+              @Override
+              public void complete(Void result) {
+                App.ui().info(getMsg("account-created"));
+              }
+            },
+            true);
       }
     }
   }
@@ -345,32 +344,30 @@ public class CloudPlugIn implements IPlugIn {
                 .createUserEditDialog(CloudPresenter.Instance.getUserDetails());
         dialog.setVisible(true);
         if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-          DIYLC
-              .ui()
-              .executeBackgroundTask(
-                  new ITask<Void>() {
+          App.ui().executeBackgroundTask(
+              new ITask<Void>() {
 
-                    @Override
-                    public Void doInBackground() throws Exception {
-                      CloudPresenter.Instance.updateUserDetails(
-                          dialog.getEmail(), dialog.getWebsite(), dialog.getBio());
-                      return null;
-                    }
+                @Override
+                public Void doInBackground() throws Exception {
+                  CloudPresenter.Instance.updateUserDetails(
+                      dialog.getEmail(), dialog.getWebsite(), dialog.getBio());
+                  return null;
+                }
 
-                    @Override
-                    public void failed(Exception e) {
-                      DIYLC.ui().error(getMsg("account-not-updated"), e);
-                    }
+                @Override
+                public void failed(Exception e) {
+                  App.ui().error(getMsg("account-not-updated"), e);
+                }
 
-                    @Override
-                    public void complete(Void result) {
-                      DIYLC.ui().info(getMsg("account-updated"));
-                    }
-                  },
-                  true);
+                @Override
+                public void complete(Void result) {
+                  App.ui().info(getMsg("account-updated"));
+                }
+              },
+              true);
         }
       } catch (CloudException e1) {
-        DIYLC.ui().error(getMsg("could-not-connect"), e1);
+        App.ui().error(getMsg("could-not-connect"), e1);
       }
     }
   }
@@ -390,29 +387,27 @@ public class CloudPlugIn implements IPlugIn {
       final ChangePasswordDialog dialog = DialogFactory.getInstance().createChangePasswordDialog();
       dialog.setVisible(true);
       if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        App.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    CloudPresenter.Instance.updatePassword(
-                        dialog.getOldPassword(), dialog.getNewPassword());
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                CloudPresenter.Instance.updatePassword(
+                    dialog.getOldPassword(), dialog.getNewPassword());
+                return null;
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("password-update-failed"), e);
-                  }
+              @Override
+              public void failed(Exception e) {
+                App.ui().error(getMsg("password-update-failed"), e);
+              }
 
-                  @Override
-                  public void complete(Void result) {
-                    DIYLC.ui().info(getMsg("password-updated"));
-                  }
-                },
-                true);
+              @Override
+              public void complete(Void result) {
+                App.ui().info(getMsg("password-updated"));
+              }
+            },
+            true);
       }
     }
   }
@@ -431,14 +426,12 @@ public class CloudPlugIn implements IPlugIn {
     public void actionPerformed(ActionEvent e) {
       LOG.info("UploadAction triggered");
 
-      final File[] files =
-          DialogFactory.getInstance()
-              .showOpenMultiDialog(
-                  FileFilterEnum.DIY.getFilter(),
-                  null,
-                  FileFilterEnum.DIY.getExtensions()[0],
-                  null,
-                  DIYLC.ui().getOwnerFrame());
+      final File[] files = DialogFactory.getInstance().showOpenMultiDialog(
+          FileFilterEnum.DIY.getFilter(),
+          null,
+          FileFilterEnum.DIY.getExtensions()[0],
+          null,
+          App.ui().getOwnerFrame());
       if (files != null && files.length > 0) {
         List<ITask<String[]>> tasks = new ArrayList<ITask<String[]>>();
         final ListIterator<ITask<String[]>> taskIterator = tasks.listIterator();
@@ -459,68 +452,66 @@ public class CloudPlugIn implements IPlugIn {
                   final UploadDialog dialog =
                       DialogFactory.getInstance()
                           .createUploadDialog(
-                              DIYLC.ui().getOwnerFrame(), thumbnailPresenter, result, false);
+                              App.ui().getOwnerFrame(), thumbnailPresenter, result, false);
                   dialog.setVisible(true);
                   if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
                     try {
                       final File thumbnailFile = File.createTempFile("upload-thumbnail", ".png");
                       if (ImageIO.write(dialog.getThumbnail(), "png", thumbnailFile)) {
-                        DIYLC
-                            .ui()
-                            .executeBackgroundTask(
-                                new ITask<Void>() {
+                        App.ui().executeBackgroundTask(
+                            new ITask<Void>() {
 
-                                  @Override
-                                  public Void doInBackground() throws Exception {
-                                    CloudPresenter.Instance.uploadProject(
-                                        dialog.getName(),
-                                        dialog.getCategory(),
-                                        dialog.getDescription(),
-                                        dialog.getKeywords(),
-                                        DIYLC.getVersionNumber().toString(),
-                                        thumbnailFile,
-                                        file,
-                                        null);
-                                    return null;
-                                  }
+                              @Override
+                              public Void doInBackground() throws Exception {
+                                CloudPresenter.Instance.uploadProject(
+                                    dialog.getName(),
+                                    dialog.getCategory(),
+                                    dialog.getDescription(),
+                                    dialog.getKeywords(),
+                                    App.getVersionNumber().toString(),
+                                    thumbnailFile,
+                                    file,
+                                    null);
+                                return null;
+                              }
 
-                                  @Override
-                                  public void failed(Exception e) {
-                                    DIYLC.ui().error(getMsg("upload-error"), e);
-                                  }
+                              @Override
+                              public void failed(Exception e) {
+                                App.ui().error(getMsg("upload-error"), e);
+                              }
 
-                                  @Override
-                                  public void complete(Void result) {
-                                    DIYLC.ui().info(getMsg("upload-success"),
-                                                    getMsg("project-uploaded"));
-                                    synchronized (taskIterator) {
-                                      if (taskIterator.hasPrevious())
-                                        DIYLC
-                                            .ui()
-                                            .executeBackgroundTask(taskIterator.previous(), true);
-                                    }
-                                  }
-                                },
-                                true);
+                              @Override
+                              public void complete(Void result) {
+                                App.ui().info(getMsg("upload-success"),
+                                                getMsg("project-uploaded"));
+                                synchronized (taskIterator) {
+                                  if (taskIterator.hasPrevious())
+                                    App.ui().executeBackgroundTask(
+                                        taskIterator.previous(),
+                                        true);
+                                }
+                              }
+                            },
+                            true);
                       } else {
-                        DIYLC.ui().error(getMsg("upload-error"), getMsg("temp-file-error"));
+                        App.ui().error(getMsg("upload-error"), getMsg("temp-file-error"));
                       }
                     } catch (Exception e) {
-                      DIYLC.ui().error(getMsg("upload-error"), e);
+                      App.ui().error(getMsg("upload-error"), e);
                     }
                   }
                 }
 
                 @Override
                 public void failed(Exception e) {
-                  DIYLC.ui().error(getMsg("file-not-opened"), e);
+                  App.ui().error(getMsg("file-not-opened"), e);
                 }
               });
         }
 
         synchronized (taskIterator) {
           if (taskIterator.hasPrevious())
-            DIYLC.ui().executeBackgroundTask(taskIterator.previous(), true);
+            App.ui().executeBackgroundTask(taskIterator.previous(), true);
         }
       }
     }

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.statusbar;
 
 import java.awt.BorderLayout;
@@ -46,11 +47,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.styles.EdgedBalloonStyle;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.announcements.AnnouncementProvider;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -119,12 +123,12 @@ public class StatusBar extends JPanel implements IPlugIn {
     setLayout(new GridBagLayout());
 
     try {
-      DIYLC.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
+      App.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
     } catch (BadPositionException e) {
       LOG.error("Could not install status bar", e);
     }
 
-    DIYLC.ui().executeBackgroundTask(
+    App.ui().executeBackgroundTask(
         new ITask<String>() {
 
               @Override
@@ -210,7 +214,7 @@ public class StatusBar extends JPanel implements IPlugIn {
   private UpdateLabel getUpdateLabel() {
     if (updateLabel == null) {
       updateLabel =
-          new UpdateLabel(DIYLC.getVersionNumber(), Config.getURL("update").toString()) {
+          new UpdateLabel(App.getVersionNumber(), Config.getURL("update").toString()) {
 
             private static final long serialVersionUID = 1L;
 
@@ -243,32 +247,30 @@ public class StatusBar extends JPanel implements IPlugIn {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-              DIYLC
-                  .ui()
-                  .executeBackgroundTask(
-                      new ITask<String>() {
+              App.ui().executeBackgroundTask(
+                  new ITask<String>() {
 
-                        @Override
-                        public String doInBackground() throws Exception {
-                          return announcementProvider.getCurrentAnnouncements(true);
-                        }
+                    @Override
+                    public String doInBackground() throws Exception {
+                      return announcementProvider.getCurrentAnnouncements(true);
+                    }
 
-                        @Override
-                        public void failed(Exception e) {
-                          LOG.error("Error while fetching announcements", e);
-                          DIYLC.ui().error(getMsg("failed-announcements"));
-                        }
+                    @Override
+                    public void failed(Exception e) {
+                      LOG.error("Error while fetching announcements", e);
+                      App.ui().error(getMsg("failed-announcements"));
+                    }
 
-                        @Override
-                        public void complete(String result) {
-                          final String pa = getMsg("public-announcement");
-                          if (result != null && result.length() > 0) {
-                            DIYLC.ui().info(pa, result);
-                            announcementProvider.dismissed();
-                          } else DIYLC.ui().info(pa, getMsg("no-announcements"));
-                        }
-                      },
-                      true);
+                    @Override
+                    public void complete(String result) {
+                      final String pa = getMsg("public-announcement");
+                      if (result != null && result.length() > 0) {
+                        App.ui().info(pa, result);
+                        announcementProvider.dismissed();
+                      } else App.ui().info(pa, getMsg("no-announcements"));
+                    }
+                  },
+                  true);
             }
           });
     }
@@ -296,11 +298,11 @@ public class StatusBar extends JPanel implements IPlugIn {
             @Override
             public void mouseClicked(MouseEvent e) {
               List<Version> updates = Version.getRecentUpdates();
-              if (updates == null) DIYLC.ui().info(getMsg("no-version-history"));
+              if (updates == null) App.ui().info(getMsg("no-version-history"));
               else {
                 String html = UpdateChecker.createUpdateHTML(updates);
                 UpdateDialog updateDialog =
-                    new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(), html, null);
+                    new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, null);
                 updateDialog.setVisible(true);
               }
             }
@@ -511,7 +513,7 @@ public class StatusBar extends JPanel implements IPlugIn {
       case MOUSE_MOVED:
         mousePositionIn = (Point2D) params[1];
         mousePositionMm = (Point2D) params[2];
-        refreshPosition(DIYLC.metric());
+        refreshPosition(App.metric());
         break;
     }
   }
@@ -586,7 +588,7 @@ public class StatusBar extends JPanel implements IPlugIn {
 
     // override any other status with this when in highlight mode,
     // as we cannot do anything else
-    if (DIYLC.highlightContinuityArea()) statusText = getMsg("highlight-connected");
+    if (App.highlightContinuityArea()) statusText = getMsg("highlight-connected");
 
     final String finalStatus = statusText;
     SwingUtilities.invokeLater(

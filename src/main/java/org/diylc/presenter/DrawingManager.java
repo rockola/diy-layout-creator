@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import java.awt.AlphaComposite;
@@ -45,7 +46,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.DrawOption;
 import org.diylc.common.EventType;
@@ -84,7 +85,7 @@ public class DrawingManager {
   public static Color CONTROL_POINT_COLOR = Color.blue;
   public static Color SELECTED_CONTROL_POINT_COLOR = Color.green;
 
-  private Theme theme = (Theme) DIYLC.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+  private Theme theme = (Theme) App.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
 
   // Keeps Area object of each drawn component.
   private Map<IDIYComponent<?>, ComponentArea> componentAreaMap =
@@ -191,7 +192,7 @@ public class DrawingManager {
         ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
         : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-    boolean hiQuality = DIYLC.highQualityRendering();
+    boolean hiQuality = App.highQualityRendering();
 
     g2d.setRenderingHint(
         RenderingHints.KEY_ALPHA_INTERPOLATION,
@@ -501,7 +502,7 @@ public class DrawingManager {
     }
     */
 
-    if (continuityArea != null && DIYLC.highlightContinuityArea()) {
+    if (continuityArea != null && App.highlightContinuityArea()) {
       Composite oldComposite = g2d.getComposite();
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
       g2d.setColor(Color.green);
@@ -637,7 +638,7 @@ public class DrawingManager {
 
   public void setTheme(Theme theme) {
     this.theme = theme;
-    DIYLC.putValue(IPlugInPort.THEME_KEY, theme);
+    App.putValue(IPlugInPort.THEME_KEY, theme);
     if (messageDispatcher != null) messageDispatcher.dispatchMessage(EventType.REPAINT);
   }
 

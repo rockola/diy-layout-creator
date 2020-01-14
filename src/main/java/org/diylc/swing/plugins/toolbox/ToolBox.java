@@ -17,13 +17,16 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.util.EnumSet;
 import javax.swing.SwingConstants;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.BadPositionException;
@@ -46,7 +49,7 @@ public class ToolBox implements IPlugIn {
   public void connect(IPlugInPort plugInPort) {
     this.plugInPort = plugInPort;
     try {
-      DIYLC.ui().injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
+      App.ui().injectGUIComponent(getComponentTabbedPane(), SwingConstants.TOP);
     } catch (BadPositionException e) {
       LOG.error("Could not install the toolbox", e);
     }
@@ -63,11 +66,9 @@ public class ToolBox implements IPlugIn {
           }
         });
 
-    getComponentTabbedPane()
-        .setVisible(
-            DIYLC
-                .getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
-                .equals(ConfigPlugin.TABBED_TOOLBAR));
+    getComponentTabbedPane().setVisible(App.getString(
+        ConfigPlugin.COMPONENT_BROWSER,
+        ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.TABBED_TOOLBAR));
   }
 
   public ComponentTabbedPane getComponentTabbedPane() {

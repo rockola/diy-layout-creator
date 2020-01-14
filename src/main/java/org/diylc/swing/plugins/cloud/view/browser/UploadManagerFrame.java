@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view.browser;
 
 import java.awt.Dimension;
@@ -25,9 +26,11 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
@@ -54,7 +57,7 @@ public class UploadManagerFrame extends JFrame implements ISimpleView {
 
     setContentPane(getResultsScrollPane());
     this.pack();
-    this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
+    this.setLocationRelativeTo(App.ui().getOwnerFrame());
     this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
     search();

@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.swing.plugins.edit;
 
 import java.awt.Toolkit;
@@ -35,7 +36,7 @@ import javax.swing.AbstractAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.undo.IUndoListener;
 import org.diylc.appframework.undo.UndoHandler;
 import org.diylc.common.EventType;
@@ -269,12 +270,12 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
   private void addActions(List<AbstractAction> actions, String menuTitle) {
     for (AbstractAction action : actions) {
-      DIYLC.ui().injectMenuAction(action, menuTitle);
+      App.ui().injectMenuAction(action, menuTitle);
     }
   }
 
   private void separator(String menuTitle) {
-    DIYLC.ui().injectMenuAction(null, menuTitle);
+    App.ui().injectMenuAction(null, menuTitle);
   }
 
   @Override
@@ -295,7 +296,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
             getDeleteSelectionAction())),
         EDIT_TITLE);
     //
-    DIYLC.ui().injectSubmenu(TRANSFORM_TITLE, Icon.MagicWand, EDIT_TITLE);
+    App.ui().injectSubmenu(TRANSFORM_TITLE, Icon.MagicWand, EDIT_TITLE);
     // addEditAction(getSaveAsTemplateAction());
     addActions(
         new ArrayList<AbstractAction>(Arrays.asList(
@@ -315,13 +316,13 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
         TRANSFORM_TITLE);
     // ----------------------------------------------------------------
     separator(EDIT_TITLE);
-    DIYLC.ui().injectSubmenu(RENUMBER_TITLE, Icon.Sort, EDIT_TITLE);
+    App.ui().injectSubmenu(RENUMBER_TITLE, Icon.Sort, EDIT_TITLE);
     addActions(
         new ArrayList<AbstractAction>(Arrays.asList(
             getRenumberXAxisAction(),
             getRenumberYAxisAction())),
         RENUMBER_TITLE);
-    DIYLC.ui().injectSubmenu(EXPAND_TITLE, Icon.BranchAdd, EDIT_TITLE);
+    App.ui().injectSubmenu(EXPAND_TITLE, Icon.BranchAdd, EDIT_TITLE);
     addActions(
         new ArrayList<AbstractAction>(Arrays.asList(
             getExpandSelectionAllAction(),
@@ -330,7 +331,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
         EXPAND_TITLE);
     // ----------------------------------------------------------------
     separator(EDIT_TITLE);
-    DIYLC.ui().injectMenuAction(ActionFactory.createEditProjectAction(plugInPort), EDIT_TITLE);
+    App.ui().injectMenuAction(ActionFactory.createEditProjectAction(plugInPort), EDIT_TITLE);
 
     refreshActions();
   }

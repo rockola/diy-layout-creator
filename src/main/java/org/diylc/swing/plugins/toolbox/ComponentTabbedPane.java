@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.awt.BorderLayout;
@@ -36,9 +37,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
@@ -190,7 +193,7 @@ class ComponentTabbedPane extends JTabbedPane {
     final Container toolbar = getRecentToolbar();
     refreshRecentComponentsToolbar(
         toolbar,
-        (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_COMPONENTS, new ArrayList<String>()));
+        (List<String>) App.getObject(IPlugInPort.Key.RECENT_COMPONENTS, new ArrayList<String>()));
     ConfigurationManager.addListener(
         IPlugInPort.Key.RECENT_COMPONENTS,
         new IConfigListener() {

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.autosave;
 
 import java.io.File;
@@ -33,9 +34,11 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
@@ -169,7 +172,7 @@ public class AutoSavePlugin implements IPlugIn {
             baseFileName,
             i,
             backupFileName);
-        DIYLC.ui().requestBugReport(DIYLC.getString("project.autosave-failed"));
+        App.ui().requestBugReport(App.getString("project.autosave-failed"));
         return null;
       }
       backupFileName = formatBackupFileName(name, date, i);

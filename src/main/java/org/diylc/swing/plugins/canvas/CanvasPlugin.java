@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.canvas;
 
 import java.awt.Dimension;
@@ -53,7 +54,7 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.appframework.miscutils.Utils;
@@ -120,12 +121,12 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
   public void connect(IPlugInPort pluginPort) {
     this.pluginPort = pluginPort;
     try {
-      DIYLC.ui().injectGUIComponent(getScrollPane(), SwingConstants.CENTER);
+      App.ui().injectGUIComponent(getScrollPane(), SwingConstants.CENTER);
     } catch (BadPositionException e) {
       LOG.error("Could not install canvas plugin", e);
     }
 
-    getScrollPane().setRulerVisible(DIYLC.showRulers());
+    getScrollPane().setRulerVisible(App.showRulers());
 
     // revalidate canvas on scrolling when we render visible rect only
     if (CanvasPanel.RENDER_VISIBLE_RECT_ONLY) {
@@ -323,8 +324,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
               new ProjectDrawingProvider(pluginPort, true, false, true),
               new Size(1d, SizeUnit.cm).convertToPixels(),
               new Size(1d, SizeUnit.in).convertToPixels());
-      scrollPane.setUseHardwareAcceleration(DIYLC.hardwareAcceleration());
-      scrollPane.setMetric(DIYLC.metric());
+      scrollPane.setUseHardwareAcceleration(App.hardwareAcceleration());
+      scrollPane.setMetric(App.metric());
       scrollPane.setWheelScrollingEnabled(true);
       scrollPane.addUnitListener(
           new IRulerListener() {
@@ -349,7 +350,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
               final JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
               final JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 
-              if (DIYLC.wheelZoom() || (Utils.isMac() ? e.isMetaDown() : e.isControlDown())) {
+              if (App.wheelZoom() || (Utils.isMac() ? e.isMetaDown() : e.isControlDown())) {
 
                 Point mousePos = getCanvasPanel().getMousePosition(true);
 
@@ -756,7 +757,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
               @Override
               public void run() {
-                if (DIYLC.showRulers()) {
+                if (App.showRulers()) {
                   scrollPane.setSelectionRectangle(pluginPort.getSelectionBounds(true));
                 }
               }
@@ -770,7 +771,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
   }
 
   private void refreshSize() {
-    Dimension d = pluginPort.getCanvasDimensions(true, DIYLC.extraSpace());
+    Dimension d = pluginPort.getCanvasDimensions(true, App.extraSpace());
     canvasPanel.setSize(d);
     canvasPanel.setPreferredSize(d);
     getScrollPane().setZoomLevel(pluginPort.getZoomLevel());

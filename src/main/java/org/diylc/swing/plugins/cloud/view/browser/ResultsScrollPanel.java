@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view.browser;
 
 import java.awt.Color;
@@ -49,9 +50,11 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.text.DefaultCaret;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
@@ -160,7 +163,7 @@ public class ResultsScrollPanel extends JScrollPane {
         new JLabel(
             String.format(
                 "<html><font size='4' color='#999999'>%s</font></html>",
-                DIYLC.getString("cloud.search-no-match")));
+                App.getString("cloud.search-no-match")));
     label.setHorizontalAlignment(SwingConstants.CENTER);
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(2, 2, 2, 2);
@@ -202,10 +205,10 @@ public class ResultsScrollPanel extends JScrollPane {
           });
 
       if (searchSession != null && searchSession.hasMoreData()) {
-        getLoadMoreLabel().setText(DIYLC.getString("cloud.querying-for-more"));
+        getLoadMoreLabel().setText(App.getString("cloud.querying-for-more"));
         getLoadMoreLabel().setIcon(spinning);
       } else {
-        getLoadMoreLabel().setText(DIYLC.getString("cloud.no-more-results"));
+        getLoadMoreLabel().setText(App.getString("cloud.no-more-results"));
         getLoadMoreLabel().setIcon(null);
       }
     }
@@ -230,7 +233,7 @@ public class ResultsScrollPanel extends JScrollPane {
     final JLabel commentLabel = new JLabel(Integer.toString(project.getCommentCount()),
                                            Icon.Messages.icon(),
                                            SwingConstants.LEFT);
-    commentLabel.setToolTipText(DIYLC.getString("cloud.see-comments"));
+    commentLabel.setToolTipText(App.getString("cloud.see-comments"));
     commentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     commentLabel.addMouseListener(
         new MouseAdapter() {
@@ -246,7 +249,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
                   @Override
                   public void failed(Exception e) {
-                    cloudUI.error(DIYLC.getString("cloud.file-not-opened"));
+                    cloudUI.error(App.getString("cloud.file-not-opened"));
                   }
 
                   @Override
@@ -261,7 +264,7 @@ public class ResultsScrollPanel extends JScrollPane {
     final JLabel viewLabel = new JLabel(Integer.toString(project.getViewCount()),
                                         Icon.Eye.icon(),
                                         SwingConstants.LEFT);
-    viewLabel.setToolTipText(DIYLC.getString("cloud.view-count"));
+    viewLabel.setToolTipText(App.getString("cloud.view-count"));
 
     final JLabel downloadLabel =
         new JLabel(
@@ -280,7 +283,7 @@ public class ResultsScrollPanel extends JScrollPane {
     final JLabel downloadButton = new JLabel(Icon.CloudDownload.icon());
     downloadButton.setFocusable(true);
     downloadButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    downloadButton.setToolTipText(DIYLC.getString("cloud.download-to-local-drive"));
+    downloadButton.setToolTipText(App.getString("cloud.download-to-local-drive"));
     downloadButton.addMouseListener(
         new MouseAdapter() {
 
@@ -323,35 +326,33 @@ public class ResultsScrollPanel extends JScrollPane {
                           return;
                         }
 
-                        DIYLC
-                            .ui()
-                            .executeBackgroundTask(
-                                new ITask<Void>() {
+                        App.ui().executeBackgroundTask(
+                            new ITask<Void>() {
 
-                                  @Override
-                                  public Void doInBackground() throws Exception {
-                                    LOG.debug("Opening from " + file.getAbsolutePath());
-                                    plugInPort.loadProjectFromFile(file.getAbsolutePath());
-                                    return null;
-                                  }
+                              @Override
+                              public Void doInBackground() throws Exception {
+                                LOG.debug("Opening from " + file.getAbsolutePath());
+                                plugInPort.loadProjectFromFile(file.getAbsolutePath());
+                                return null;
+                              }
 
-                                  @Override
-                                  public void complete(Void result) {
-                                    DIYLC.ui().bringToFocus();
-                                  }
+                              @Override
+                              public void complete(Void result) {
+                                App.ui().bringToFocus();
+                              }
 
-                                  @Override
-                                  public void failed(Exception e) {
-                                    DIYLC.ui().error(DIYLC.getString("cloud.file-not-opened"), e);
-                                  }
-                                },
-                                true);
+                              @Override
+                              public void failed(Exception e) {
+                                App.ui().error(App.getString("cloud.file-not-opened"), e);
+                              }
+                            },
+                            true);
                       }
                     }
 
                     @Override
                     public void failed(Exception e) {
-                      DIYLC.ui().error(DIYLC.getString("cloud.file-not-saved"), e);
+                      App.ui().error(App.getString("cloud.file-not-saved"), e);
                     }
                   });
             }
@@ -377,7 +378,7 @@ public class ResultsScrollPanel extends JScrollPane {
                 DialogFactory.getInstance()
                     .createPropertyEditorDialog(cloudUI.getOwnerFrame(),
                                                 projectProperties,
-                                                DIYLC.getString("cloud.edit-published-project"),
+                                                App.getString("cloud.edit-published-project"),
                                                 true);
             editor.setVisible(true);
             if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
@@ -400,7 +401,7 @@ public class ResultsScrollPanel extends JScrollPane {
                     @Override
                     public ProjectEntity doInBackground() throws Exception {
                       CloudPresenter.Instance.updateProjectDetails(
-                          project, DIYLC.getVersionNumber().toString());
+                          project, App.getVersionNumber().toString());
                       return CloudPresenter.Instance.fetchUserUploads(project.getId()).get(0);
                     }
 
@@ -438,7 +439,7 @@ public class ResultsScrollPanel extends JScrollPane {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            if (cloudUI.showConfirmDialog(String.format(DIYLC.getString("cloud.confirm-replace"),
+            if (cloudUI.showConfirmDialog(String.format(App.getString("cloud.confirm-replace"),
                                                         project.getName()),
                                           "Replace Project",
                                           IView.YES_NO_OPTION,
@@ -485,7 +486,7 @@ public class ResultsScrollPanel extends JScrollPane {
                                           dialog.getCategory(),
                                           dialog.getDescription(),
                                           dialog.getKeywords(),
-                                          DIYLC.getVersionNumber().toString(),
+                                          App.getVersionNumber().toString(),
                                           thumbnailFile,
                                           file,
                                           project.getId());
@@ -496,7 +497,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
                                     @Override
                                     public void failed(Exception e) {
-                                      cloudUI.error(DIYLC.getString("cloud.upload-error"), e);
+                                      cloudUI.error(App.getString("cloud.upload-error"), e);
                                     }
 
                                     @Override
@@ -513,22 +514,22 @@ public class ResultsScrollPanel extends JScrollPane {
                                               + result.getUpdated()
                                               + "</b></html>");
                                       thumbnailLabel.setIcon(new ImageIcon(dialog.getThumbnail()));
-                                      cloudUI.info(DIYLC.getString("cloud.project-replaced"));
+                                      cloudUI.info(App.getString("cloud.project-replaced"));
                                     }
                                   });
                             } else {
-                              cloudUI.error(DIYLC.getString("cloud.temp-file-error"));
-                              LOG.error(DIYLC.getString("cloud.temp-file-error"));
+                              cloudUI.error(App.getString("cloud.temp-file-error"));
+                              LOG.error(App.getString("cloud.temp-file-error"));
                             }
                           } catch (Exception e) {
-                            cloudUI.error(DIYLC.getString("cloud.upload-error"), e);
+                            cloudUI.error(App.getString("cloud.upload-error"), e);
                           }
                         }
                       }
 
                       @Override
                       public void failed(Exception e) {
-                        cloudUI.error(DIYLC.getString("cloud.file-not-opened"), e);
+                        cloudUI.error(App.getString("cloud.file-not-opened"), e);
                       }
                     });
               }
@@ -546,8 +547,8 @@ public class ResultsScrollPanel extends JScrollPane {
           @Override
           public void mouseClicked(MouseEvent e) {
             if (cloudUI.showConfirmDialog(
-                    String.format(DIYLC.getString("cloud.confirm-delete"), project.getName()),
-                    DIYLC.getString("cloud.delete-project"),
+                    String.format(App.getString("cloud.confirm-delete"), project.getName()),
+                    App.getString("cloud.delete-project"),
                     IView.YES_NO_OPTION,
                     IView.QUESTION_MESSAGE)
                 == IView.YES_OPTION) {
@@ -563,7 +564,7 @@ public class ResultsScrollPanel extends JScrollPane {
 
                     @Override
                     public void failed(Exception e) {
-                      cloudUI.error(DIYLC.getString("delete-failed"));
+                      cloudUI.error(App.getString("delete-failed"));
                     }
 
                     @Override
@@ -715,7 +716,7 @@ public class ResultsScrollPanel extends JScrollPane {
                           List<ProjectEntity> newResults = get();
                           addData(newResults);
                         } catch (Exception e) {
-                          cloudUI.error(DIYLC.getString("cloud.search-failed"));
+                          cloudUI.error(App.getString("cloud.search-failed"));
                         }
                       }
                     };

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.BorderLayout;
@@ -51,9 +52,11 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
@@ -150,7 +153,7 @@ public class MainFrame extends JFrame {
 
             private void doExit() {
               if (presenter.allowFileAction()) {
-                DIYLC.putValue(IPlugInPort.Key.ABNORMAL_EXIT, false);
+                App.putValue(IPlugInPort.Key.ABNORMAL_EXIT, false);
                 dispose();
                 System.exit(0);
               }
@@ -533,8 +536,12 @@ public class MainFrame extends JFrame {
           fileName = "Untitled";
         }
         String modified = (Boolean) params[1] ? " (modified)" : "";
-        setTitle(
-            String.format("DIYLC v%s - %s %s", DIYLC.getFullVersionString(), fileName, modified));
+        setTitle(String.format(
+            "%s v%s - %s%s",
+            App.title(),
+            App.getFullVersionString(),
+            fileName,
+            modified));
       }
     }
   }

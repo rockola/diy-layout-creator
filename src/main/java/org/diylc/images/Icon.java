@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.images;
 
 import java.awt.Image;
@@ -24,9 +25,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
 
 public enum Icon {
   App,
@@ -160,7 +161,7 @@ public enum Icon {
 
   private String resourcePNG() {
     String resourceID = "icon." + this.toString();
-    String r = DIYLC.getString(resourceID) + ".png";
+    String r = org.diylc.App.getString(resourceID) + ".png";
     if (r == null || r.isEmpty()) {
       LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
     } else {

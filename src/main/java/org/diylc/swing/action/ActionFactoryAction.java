@@ -17,11 +17,13 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.action;
 
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 
 public abstract class ActionFactoryAction extends AbstractAction {
@@ -39,7 +41,7 @@ public abstract class ActionFactoryAction extends AbstractAction {
 
   protected ActionFactoryAction(
       IPlugInPort plugInPort, String name, String actionName, Object icon) {
-    this(plugInPort, name, DIYLC.getKeyStroke(actionName), icon);
+    this(plugInPort, name, App.getKeyStroke(actionName), icon);
   }
 
   protected ActionFactoryAction(IPlugInPort plugInPort, String name, Object icon) {

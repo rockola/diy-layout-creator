@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.Color;
@@ -26,7 +27,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 import org.diylc.images.Icon;
 import org.diylc.swingframework.ButtonDialog;
@@ -35,6 +37,12 @@ public class InfoDialog extends ButtonDialog {
 
   private static final long serialVersionUID = 1L;
 
+  private static String[] tipKeys = new String[] {
+    IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA.toString()
+  };
+  private static String[] messages = new String[] {
+    App.getString("infoDialog.highlight-continuity")
+  };
   private String message;
   private String tipKey;
 
@@ -67,15 +75,9 @@ public class InfoDialog extends ButtonDialog {
   @Override
   public void setVisible(boolean b) {
     if (!b && getSelectedButtonCaption() == "Dismiss") {
-      DIYLC.putValue(tipKey + ".dismissed", true);
+      App.putValue(tipKey + ".dismissed", true);
     }
 
     super.setVisible(b);
   }
-
-  private static String[] tipKeys = new String[] {
-    IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA.toString()
-  };
-  private static String[] messages =
-      new String[] {DIYLC.getString("infoDialog.highlight-continuity")};
 }

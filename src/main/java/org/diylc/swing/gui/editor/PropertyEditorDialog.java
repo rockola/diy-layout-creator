@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui.editor;
 
 import java.awt.Component;
@@ -131,7 +132,6 @@ public class PropertyEditorDialog extends ButtonDialog {
               }
             }
           });
-      //editor.getInputMap().put(DIYLC.getKeyStroke("OK"), "TODO");
 
       editorPanel.add(editor, gbc);
 

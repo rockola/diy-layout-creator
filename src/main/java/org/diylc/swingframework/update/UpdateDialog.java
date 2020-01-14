@@ -23,7 +23,7 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 
 public class UpdateDialog extends JDialog {
 
@@ -87,7 +87,7 @@ public class UpdateDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
               try {
-                DIYLC.openURL(new URL(latestVersionUrl));
+                App.openURL(new URL(latestVersionUrl));
                 UpdateDialog.this.setVisible(false);
               } catch (Exception e1) {
                 JOptionPane.showMessageDialog(

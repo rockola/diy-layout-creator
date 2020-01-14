@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.tree;
 
 import java.awt.AlphaComposite;
@@ -75,7 +76,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
@@ -237,7 +238,7 @@ public class TreePanel extends JPanel {
       this.recentNode = new DefaultMutableTreeNode(new Payload("(Recently Used)", null), true);
 
       @SuppressWarnings("unchecked")
-      List<String> recent = (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
+      List<String> recent = (List<String>) App.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
       if (recent != null) {
         this.recentComponents = new ArrayList<String>(recent);
         refreshRecentComponents(recent);
@@ -254,7 +255,7 @@ public class TreePanel extends JPanel {
 
       @SuppressWarnings("unchecked")
       Map<String, List<IDIYComponent<?>>> newBlocks =
-          (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.Key.BLOCKS);
+          (Map<String, List<IDIYComponent<?>>>) App.getObject(IPlugInPort.Key.BLOCKS);
       if (newBlocks != null) {
         List<String> blockNames = new ArrayList<String>(newBlocks.keySet());
         Collections.sort(blockNames);
@@ -271,7 +272,7 @@ public class TreePanel extends JPanel {
       this.favoritesNode = new DefaultMutableTreeNode(new Payload("(Favorites)", null), true);
 
       @SuppressWarnings("unchecked")
-      List<Favorite> favorites = (List<Favorite>) DIYLC.getObject(IPlugInPort.Key.FAVORITES);
+      List<Favorite> favorites = (List<Favorite>) App.getObject(IPlugInPort.Key.FAVORITES);
       if (favorites != null) {
         refreshFavorites(favorites);
       } else {
@@ -558,7 +559,7 @@ public class TreePanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                       HashMap<String, String> map =
-                          (HashMap<String, String>) DIYLC.getObject(COMPONENT_SHORTCUT_KEY);
+                          (HashMap<String, String>) App.getObject(COMPONENT_SHORTCUT_KEY);
                       if (map == null) map = new HashMap<String, String>();
 
                       Iterator<Entry<String, String>> it = map.entrySet().iterator();
@@ -567,7 +568,7 @@ public class TreePanel extends JPanel {
                         if (item.getValue().equals(identifier)) it.remove();
                       }
 
-                      DIYLC.putValue(COMPONENT_SHORTCUT_KEY, map);
+                      App.putValue(COMPONENT_SHORTCUT_KEY, map);
 
                       TreePanel.this.invalidate();
                       TreePanel.this.repaint();
@@ -585,7 +586,7 @@ public class TreePanel extends JPanel {
                       @Override
                       public void actionPerformed(ActionEvent e) {
                         HashMap<String, String> map =
-                            (HashMap<String, String>) DIYLC.getObject(COMPONENT_SHORTCUT_KEY);
+                            (HashMap<String, String>) App.getObject(COMPONENT_SHORTCUT_KEY);
                         if (map == null) map = new HashMap<String, String>();
 
                         if (map.containsKey(item.getText())) map.remove(item.getText());
@@ -598,7 +599,7 @@ public class TreePanel extends JPanel {
 
                         map.put(item.getText(), identifier);
 
-                        DIYLC.putValue(COMPONENT_SHORTCUT_KEY, map);
+                        App.putValue(COMPONENT_SHORTCUT_KEY, map);
 
                         TreePanel.this.invalidate();
                         TreePanel.this.repaint();
@@ -632,7 +633,7 @@ public class TreePanel extends JPanel {
                           favorites.add(fav);
                           Collections.sort(favorites);
                         }
-                        DIYLC.putValue(IPlugInPort.Key.FAVORITES, favorites);
+                        App.putValue(IPlugInPort.Key.FAVORITES, favorites);
                       }
                     });
                 popup.add(favoritesItem);
@@ -834,7 +835,7 @@ public class TreePanel extends JPanel {
 
         if (payload.isVisible()) {
           HashMap<String, String> shortcutMap =
-              (HashMap<String, String>) DIYLC.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
+              (HashMap<String, String>) App.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
           String identifier =
               payload.getComponentType() == null
                   ? "block:" + payload.toString()
@@ -979,14 +980,11 @@ public class TreePanel extends JPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info(getValue(AbstractAction.NAME) + " triggered");
-      if (DIYLC
-              .ui()
-              .showConfirmDialog(
-                  "Are you sure you want to delete building block \"" + blockName + "\"?",
-                  "Delete Building Block",
-                  IView.YES_NO_OPTION,
-                  IView.QUESTION_MESSAGE)
-          == IView.YES_OPTION) plugInPort.deleteBlock(blockName);
+      if (App.ui().getPresenter().userConfirmed(
+              "Are you sure you want to delete building block \"" + blockName + "\"?",
+              "Delete Building Block")) {
+        plugInPort.deleteBlock(blockName);
+      }
     }
   }
 }

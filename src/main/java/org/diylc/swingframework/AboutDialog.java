@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.BorderLayout;
@@ -43,7 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 
 public class AboutDialog extends JDialog {
 
@@ -68,7 +70,7 @@ public class AboutDialog extends JDialog {
       String author,
       URL url,
       String htmlContent) {
-    super(parent, DIYLC.getString("menu.help.about"));
+    super(parent, App.getString("menu.help.about"));
     this.appName = appName;
     this.icon = icon;
     this.version = version;

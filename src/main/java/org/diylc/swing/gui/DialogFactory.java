@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.Window;
@@ -27,7 +28,8 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.UserEntity;
@@ -69,7 +71,7 @@ public class DialogFactory {
    */
   public void initialize(JFrame mainFrame) {
     this.mainFrame = mainFrame;
-    String lastDirectoryPath = DIYLC.getString(PATH_KEY, null);
+    String lastDirectoryPath = App.getString(PATH_KEY, null);
     if (lastDirectoryPath != null) {
       lastDirectory = new File(lastDirectoryPath);
     }
@@ -205,7 +207,7 @@ public class DialogFactory {
     fileChooser.setAccessory(null);
     if (result == JFileChooser.APPROVE_OPTION) {
       lastDirectory = fileChooser.getCurrentDirectory();
-      DIYLC.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
+      App.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
       if (fileChooser.getSelectedFile().getName().contains(".")) {
         return fileChooser.getSelectedFile();
       } else {
@@ -221,7 +223,7 @@ public class DialogFactory {
     fileChooser.setAccessory(null);
     if (result == JFileChooser.APPROVE_OPTION) {
       lastDirectory = fileChooser.getCurrentDirectory();
-      DIYLC.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
+      App.putValue(PATH_KEY, lastDirectory.getAbsolutePath());
       return fileChooser.getSelectedFiles();
     } else {
       return null;

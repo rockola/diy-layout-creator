@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.action;
 
 import java.awt.Dimension;
@@ -43,7 +44,7 @@ import javax.swing.KeyStroke;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.BuildingBlockPackage;
 import org.diylc.common.ComponentType;
@@ -340,7 +341,7 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Void>() {
 
               @Override
@@ -355,7 +356,7 @@ public class ActionFactory {
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error("Could not open file. " + e.getMessage());
+                App.ui().error("Could not open file. " + e.getMessage());
               }
             },
             true);
@@ -411,31 +412,29 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        App.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Opening from " + file.getAbsolutePath());
-                    // Get project BUT do not load
-                    Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
-                    // Grab all components and paste them into
-                    // the main presenter (i.e. current project)
-                    plugInPort.pasteComponents(p.getComponents(), false);
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Opening from " + file.getAbsolutePath());
+                // Get project BUT do not load
+                Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+                // Grab all components and paste them into
+                // the main presenter (i.e. current project)
+                plugInPort.pasteComponents(p.getComponents(), false);
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not open file. " + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                App.ui().error("Could not open file. " + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
@@ -459,7 +458,7 @@ public class ActionFactory {
             FileFilterEnum.DIY.getFilter(),
             FileFilterEnum.DIY.getExtensions()[0]);
         if (file != null) {
-          DIYLC.ui().executeBackgroundTask(
+          App.ui().executeBackgroundTask(
               new ITask<Void>() {
 
                 @Override
@@ -474,33 +473,31 @@ public class ActionFactory {
 
                 @Override
                 public void failed(Exception e) {
-                  DIYLC.ui().error("Could not save to file. " + e.getMessage());
+                  App.ui().error("Could not save to file. " + e.getMessage());
                 }
               },
               true);
         }
       } else {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        App.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Saving to " + plugInPort.getCurrentFileName());
-                    plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Saving to " + plugInPort.getCurrentFileName());
+                plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not save to file. " + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                App.ui().error("Could not save to file. " + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
@@ -523,7 +520,7 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Void>() {
 
               @Override
@@ -538,7 +535,7 @@ public class ActionFactory {
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error("Could not save to file. " + e.getMessage());
+                App.ui().error("Could not save to file. " + e.getMessage());
               }
             },
             true);
@@ -610,7 +607,7 @@ public class ActionFactory {
           FileFilterEnum.PDF.getExtensions()[0],
           null);
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Void>() {
 
               @Override
@@ -626,7 +623,7 @@ public class ActionFactory {
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error("Could not export to PDF.", e);
+                App.ui().error("Could not export to PDF.", e);
               }
             },
             true);
@@ -671,28 +668,26 @@ public class ActionFactory {
                   FileFilterEnum.PNG.getExtensions()[0],
                   null);
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        App.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Exporting to " + file.getAbsolutePath());
-                    DrawingExporter.getInstance()
-                        .exportPNG(ExportPNGAction.this.drawingProvider, file);
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Exporting to " + file.getAbsolutePath());
+                DrawingExporter.getInstance()
+                    .exportPNG(ExportPNGAction.this.drawingProvider, file);
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not export to PNG.", e);
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                App.ui().error("Could not export to PNG.", e);
+              }
+            },
+            true);
       }
     }
   }
@@ -751,9 +746,9 @@ public class ActionFactory {
 
       try {
         Map<String, List<Template>> variantMap =
-            (Map<String, List<Template>>) DIYLC.getObject(IPlugInPort.Key.TEMPLATES);
+            (Map<String, List<Template>>) App.getObject(IPlugInPort.Key.TEMPLATES);
         if (variantMap == null || variantMap.isEmpty()) {
-          DIYLC.ui().error(getMsg("no-variants"));
+          App.ui().error(getMsg("no-variants"));
           return;
         }
 
@@ -775,7 +770,7 @@ public class ActionFactory {
             });
 
         CheckBoxListDialog dialog =
-            new CheckBoxListDialog(DIYLC.ui().getOwnerFrame(), "Export Variants", types.toArray());
+            new CheckBoxListDialog(App.ui().getOwnerFrame(), "Export Variants", types.toArray());
 
         dialog.setVisible(true);
 
@@ -784,7 +779,7 @@ public class ActionFactory {
         Object[] selected = dialog.getSelectedOptions();
 
         if (selected.length == 0) {
-          DIYLC.ui().error(getMsg("no-variants-selected"));
+          App.ui().error(getMsg("no-variants-selected"));
           return;
         }
 
@@ -797,7 +792,7 @@ public class ActionFactory {
         }
       } catch (Exception ex) {
         LOG.error("Error preparing variants for export", ex);
-        DIYLC.ui().error(getMsg("export-variants"), getMsg("variant-export-failed"));
+        App.ui().error(getMsg("export-variants"), getMsg("variant-export-failed"));
         return;
       }
 
@@ -817,7 +812,7 @@ public class ActionFactory {
           null);
 
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Void>() {
 
               @Override
@@ -837,12 +832,12 @@ public class ActionFactory {
 
               @Override
               public void complete(Void result) {
-                DIYLC.ui().success(String.format(getMsg("variants-exported"), file.getName()));
+                App.ui().success(String.format(getMsg("variants-exported"), file.getName()));
               }
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error(getMsg("variant-export-failed") + e.getMessage());
+                App.ui().error(getMsg("variant-export-failed") + e.getMessage());
               }
             },
             true);
@@ -869,10 +864,10 @@ public class ActionFactory {
       final File file = DialogFactory.getInstance().showOpenDialog(
           FileFilterEnum.XML.getFilter(),
           FileFilterEnum.XML.getExtensions()[0],
-          DIYLC.ui().getOwnerFrame());
+          App.ui().getOwnerFrame());
 
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Integer>() {
 
               @Override
@@ -882,13 +877,13 @@ public class ActionFactory {
 
               @Override
               public void complete(Integer result) {
-                DIYLC.ui().success(
+                App.ui().success(
                     String.format(getMsg("variants-imported"), result, file.getName()));
               }
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error(getMsg("variant-import-failed") + e.getMessage());
+                App.ui().error(getMsg("variant-import-failed") + e.getMessage());
               }
             },
             true);
@@ -918,9 +913,9 @@ public class ActionFactory {
 
       try {
         Map<String, List<IDIYComponent<?>>> blocks =
-            (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.Key.BLOCKS);
+            (Map<String, List<IDIYComponent<?>>>) App.getObject(IPlugInPort.Key.BLOCKS);
         if (blocks == null || blocks.isEmpty()) {
-          DIYLC.ui().error(getMsg("no-building-blocks"));
+          App.ui().error(getMsg("no-building-blocks"));
           return;
         }
 
@@ -938,7 +933,7 @@ public class ActionFactory {
 
         CheckBoxListDialog dialog =
             new CheckBoxListDialog(
-                DIYLC.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
+                App.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
 
         dialog.setVisible(true);
 
@@ -947,7 +942,7 @@ public class ActionFactory {
         Object[] selected = dialog.getSelectedOptions();
 
         if (selected.length == 0) {
-          DIYLC.ui().error(getMsg("no-building-blocks-selected"));
+          App.ui().error(getMsg("no-building-blocks-selected"));
           return;
         }
 
@@ -957,7 +952,7 @@ public class ActionFactory {
         }
       } catch (Exception ex) {
         LOG.error("Error preparing building blocks for export", ex);
-        DIYLC.ui().error(getMsg("export-building-blocks"), getMsg("building-block-export-failed"));
+        App.ui().error(getMsg("export-building-blocks"), getMsg("building-block-export-failed"));
         return;
       }
 
@@ -976,7 +971,7 @@ public class ActionFactory {
           null);
 
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Void>() {
 
               @Override
@@ -994,13 +989,13 @@ public class ActionFactory {
 
               @Override
               public void complete(Void result) {
-                DIYLC.ui().success(
+                App.ui().success(
                     String.format(getMsg("building-blocks-exported"), file.getName()));
               }
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error(getMsg("building-block-export-failed") + e.getMessage());
+                App.ui().error(getMsg("building-block-export-failed") + e.getMessage());
               }
             },
             true);
@@ -1029,7 +1024,7 @@ public class ActionFactory {
           FileFilterEnum.XML.getExtensions()[0]);
 
       if (file != null) {
-        DIYLC.ui().executeBackgroundTask(
+        App.ui().executeBackgroundTask(
             new ITask<Integer>() {
 
               @Override
@@ -1039,13 +1034,13 @@ public class ActionFactory {
 
               @Override
               public void complete(Integer result) {
-                DIYLC.ui().success(
+                App.ui().success(
                     String.format(getMsg("building-blocks-imported"), result, file.getName()));
               }
 
               @Override
               public void failed(Exception e) {
-                DIYLC.ui().error(getMsg("building-block-import-failed"), e);
+                App.ui().error(getMsg("building-block-import-failed"), e);
               }
             },
             true);
@@ -1066,7 +1061,7 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      DIYLC.showTemplateDialog();
+      App.showTemplateDialog();
     }
   }
 
@@ -1307,7 +1302,7 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Nudge triggered");
       Nudge n = new Nudge();
-      boolean metric = DIYLC.getBoolean(IPlugInPort.Key.METRIC, true);
+      boolean metric = App.getBoolean(IPlugInPort.Key.METRIC, true);
       if (metric) {
         n.setxOffset(new Size(0d, SizeUnit.mm));
         n.setyOffset(new Size(0d, SizeUnit.mm));
@@ -1556,7 +1551,7 @@ public class ActionFactory {
       this.configKey = configKey;
       this.tipKey = tipKey;
       putValue(IView.CHECK_BOX_MENU_ITEM, true);
-      putValue(AbstractAction.SELECTED_KEY, DIYLC.getBoolean(configKey, defaultValue));
+      putValue(AbstractAction.SELECTED_KEY, App.getBoolean(configKey, defaultValue));
     }
 
     public ConfigAction(
@@ -1567,10 +1562,10 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info(getValue(AbstractAction.NAME) + " triggered");
-      DIYLC.putValue(configKey, getValue(AbstractAction.SELECTED_KEY));
+      App.putValue(configKey, getValue(AbstractAction.SELECTED_KEY));
       if ((Boolean) getValue(AbstractAction.SELECTED_KEY)
           && tipKey != null
-          && !DIYLC.getBoolean(tipKey + ".dismissed", false)) {
+          && !App.getBoolean(tipKey + ".dismissed", false)) {
         DialogFactory.getInstance().createInfoDialog(tipKey).setVisible(true);
       }
       plugInPort.refresh();
@@ -1597,7 +1592,7 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info(getValue(AbstractAction.NAME) + " triggered");
+      LOG.info("{} triggered", getValue(AbstractAction.NAME));
       plugInPort.setSelectedTheme(theme);
     }
   }
@@ -1618,13 +1613,13 @@ public class ActionFactory {
       putValue(
           AbstractAction.SELECTED_KEY,
           browserType.equals(
-              DIYLC.getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)));
+              App.getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info(getValue(AbstractAction.NAME) + " triggered");
-      DIYLC.putValue(ConfigPlugin.COMPONENT_BROWSER, browserType);
+      LOG.info("{} triggered", getValue(AbstractAction.NAME));
+      App.putValue(ConfigPlugin.COMPONENT_BROWSER, browserType);
     }
   }
 
@@ -1662,7 +1657,7 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      DIYLC.ui().executeBackgroundTask(
+      App.ui().executeBackgroundTask(
           new ITask<List<Netlist>>() {
 
             @Override
@@ -1672,13 +1667,13 @@ public class ActionFactory {
 
             @Override
             public void failed(Exception e) {
-              DIYLC.ui().error("Failed to generate the netlist.", e);
+              App.ui().error("Failed to generate the netlist.", e);
             }
 
             @Override
             public void complete(List<Netlist> res) {
               if (res == null) {
-                DIYLC.ui().info("The generated netlist is empty, nothing to show.");
+                App.ui().info("The generated netlist is empty, nothing to show.");
                 return;
               }
               StringBuilder sb = new StringBuilder("<html>");
@@ -1697,7 +1692,7 @@ public class ActionFactory {
               }
               sb.append("</html>");
               new TextDialog(
-                  DIYLC.ui().getOwnerFrame().getRootPane(),
+                  App.ui().getOwnerFrame().getRootPane(),
                   sb.toString(),
                   "DIYLC Netlist",
                   new Dimension(600, 480))
@@ -1728,7 +1723,7 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-      DIYLC.ui().executeBackgroundTask(
+      App.ui().executeBackgroundTask(
           new ITask<List<Summary>>() {
 
             @Override
@@ -1743,13 +1738,13 @@ public class ActionFactory {
 
             @Override
             public void failed(Exception e) {
-              DIYLC.ui().info(summarizer.getName(), e);
+              App.ui().info(summarizer.getName(), e);
             }
 
             @Override
             public void complete(List<Summary> res) {
               if (res == null) {
-                DIYLC.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
+                App.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
                 return;
               }
               StringBuilder sb = new StringBuilder("<html>");
@@ -1772,7 +1767,7 @@ public class ActionFactory {
               }
               sb.append("</html>");
               new TextDialog(
-                  DIYLC.ui().getOwnerFrame().getRootPane(),
+                  App.ui().getOwnerFrame().getRootPane(),
                   sb.toString(),
                   summarizer.getName(),
                   new Dimension(600, 480)).setVisible(true);

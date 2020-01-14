@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.parsing;
 
 import java.awt.Color;
@@ -27,7 +28,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
@@ -113,7 +114,7 @@ public class V2FileParser implements IOldFileParser {
     parser.parseExpression(text);
 
     Double value = parser.getValue(); // in pixels
-    boolean metric = DIYLC.getBoolean(IPlugInPort.Key.METRIC, true);
+    boolean metric = App.getBoolean(IPlugInPort.Key.METRIC, true);
 
     return new Size(
         value / Constants.PIXELS_PER_INCH * (metric ? 25.4f : 1.0f),

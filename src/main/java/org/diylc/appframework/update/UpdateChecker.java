@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.update;
 
 import java.text.Format;
@@ -28,7 +29,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.Config;
 
@@ -47,7 +48,7 @@ public class UpdateChecker {
     this.updateFileURL = updateFileURL;
   }
 
-  private static String getMsg(String key) { return DIYLC.getString("message.update." + key); }
+  private static String getMsg(String key) { return App.getString("message.update." + key); }
 
   @SuppressWarnings("unchecked")
   public List<Version> findNewVersions() throws Exception {

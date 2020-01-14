@@ -17,13 +17,15 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.file;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.swingframework.IDrawingProvider;
@@ -64,10 +66,10 @@ public class ProjectDrawingProvider implements IDrawingProvider {
     if (useZoom) {
       drawOptions.add(DrawOption.ZOOM);
     }
-    if (showGridWhenNeeded && DIYLC.exportGrid()) {
+    if (showGridWhenNeeded && App.exportGrid()) {
       drawOptions.add(DrawOption.GRID);
     }
-    if (DIYLC.outlineMode()) {
+    if (App.outlineMode()) {
       drawOptions.add(DrawOption.OUTLINE_MODE);
     }
     if (includeExtraSpace) {

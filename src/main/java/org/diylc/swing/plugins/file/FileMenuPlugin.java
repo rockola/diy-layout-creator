@@ -17,14 +17,17 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.file;
 
 import java.util.EnumSet;
 import java.util.List;
 import javax.swing.AbstractAction;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.common.IPlugIn;
@@ -56,11 +59,11 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
   }
 
   private void addAction(AbstractAction action, String submenuTitle) {
-    DIYLC.ui().injectMenuAction(action, submenuTitle);
+    App.ui().injectMenuAction(action, submenuTitle);
   }
 
   private void addAction(AbstractAction action) {
-    DIYLC.ui().injectMenuAction(action, FILE_TITLE);
+    App.ui().injectMenuAction(action, FILE_TITLE);
   }
 
   @Override
@@ -74,16 +77,16 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
     addAction(ActionFactory.createImportAction(plugInPort));
     addAction(ActionFactory.createSaveAction(plugInPort));
     addAction(ActionFactory.createSaveAsAction(plugInPort));
-    DIYLC.ui().injectDynamicSubmenu("Recent Files", Icon.History, FILE_TITLE, this);
+    App.ui().injectDynamicSubmenu("Recent Files", Icon.History, FILE_TITLE, this);
     addAction(null);
 
     // Export / Print
     addAction(ActionFactory.createExportPDFAction(plugInPort, drawingProvider, ""));
     addAction(ActionFactory.createExportPNGAction(plugInPort, drawingProvider, ""));
-    addAction(ActionFactory.createPrintAction(drawingProvider, DIYLC.getKeyStroke("Print")));
+    addAction(ActionFactory.createPrintAction(drawingProvider, App.getKeyStroke("Print")));
 
     // Trace mask
-    DIYLC.ui().injectSubmenu(TRACE_MASK_TITLE, Icon.TraceMask, FILE_TITLE);
+    App.ui().injectSubmenu(TRACE_MASK_TITLE, Icon.TraceMask, FILE_TITLE);
     addAction(
         ActionFactory.createExportPDFAction(plugInPort, traceMaskDrawingProvider, " (mask)"),
         TRACE_MASK_TITLE);
@@ -92,11 +95,11 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
         TRACE_MASK_TITLE);
     addAction(
         ActionFactory.createPrintAction(
-            traceMaskDrawingProvider, DIYLC.getKeyStroke("Print Trace Mask")),
+            traceMaskDrawingProvider, App.getKeyStroke("Print Trace Mask")),
         TRACE_MASK_TITLE);
 
     // Analyze
-    DIYLC.ui().injectSubmenu(ANALYZE_TITLE, Icon.Scientist, FILE_TITLE);
+    App.ui().injectSubmenu(ANALYZE_TITLE, Icon.Scientist, FILE_TITLE);
     addAction(ActionFactory.createBomAction(plugInPort), ANALYZE_TITLE);
     addAction(ActionFactory.createGenerateNetlistAction(plugInPort), ANALYZE_TITLE);
 
@@ -109,7 +112,7 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
     addAction(null);
 
     // Integration
-    DIYLC.ui().injectSubmenu(INTEGRATION_TITLE, Icon.Node, FILE_TITLE);
+    App.ui().injectSubmenu(INTEGRATION_TITLE, Icon.Node, FILE_TITLE);
     addAction(ActionFactory.createImportBlocksAction(plugInPort), INTEGRATION_TITLE);
     addAction(ActionFactory.createExportBlocksAction(), INTEGRATION_TITLE);
     addAction(null, INTEGRATION_TITLE);
@@ -148,6 +151,6 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
   @SuppressWarnings("unchecked")
   @Override
   public List<String> getAvailableItems() {
-    return (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_FILES);
+    return (List<String>) App.getObject(IPlugInPort.Key.RECENT_FILES);
   }
 }

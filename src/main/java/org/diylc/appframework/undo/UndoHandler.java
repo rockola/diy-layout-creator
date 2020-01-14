@@ -17,15 +17,18 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.undo;
 
 import java.awt.event.ActionEvent;
 import java.util.Stack;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.images.Icon;
 
 /**
@@ -93,7 +96,7 @@ public class UndoHandler<T> {
     public UndoAction() {
       super();
       putValue(Action.NAME, "Undo");
-      putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Undo"));
+      putValue(AbstractAction.ACCELERATOR_KEY, App.getKeyStroke("Undo"));
       putValue(AbstractAction.SMALL_ICON, Icon.Undo.icon());
     }
 
@@ -118,7 +121,7 @@ public class UndoHandler<T> {
     public RedoAction() {
       super();
       putValue(Action.NAME, "Redo");
-      putValue(AbstractAction.ACCELERATOR_KEY, DIYLC.getKeyStroke("Redo"));
+      putValue(AbstractAction.ACCELERATOR_KEY, App.getKeyStroke("Redo"));
       putValue(AbstractAction.SMALL_ICON, Icon.Redo.icon());
     }
 

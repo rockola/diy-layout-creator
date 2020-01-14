@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.layers;
 
 import java.awt.event.ActionEvent;
@@ -26,7 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
@@ -95,10 +97,10 @@ public class LayersMenuPlugin implements IPlugIn {
           };
       selectAllActionMap.put(zOrder, selectAllAction);
 
-      DIYLC.ui().injectSubmenu(layer.title, null, LOCK_LAYERS_TITLE);
-      DIYLC.ui().injectMenuAction(visibleAction, layer.title);
-      DIYLC.ui().injectMenuAction(lockAction, layer.title);
-      DIYLC.ui().injectMenuAction(selectAllAction, layer.title);
+      App.ui().injectSubmenu(layer.title, null, LOCK_LAYERS_TITLE);
+      App.ui().injectMenuAction(visibleAction, layer.title);
+      App.ui().injectMenuAction(lockAction, layer.title);
+      App.ui().injectMenuAction(selectAllAction, layer.title);
     }
   }
 

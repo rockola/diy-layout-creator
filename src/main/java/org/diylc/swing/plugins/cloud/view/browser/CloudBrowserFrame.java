@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.swing.plugins.cloud.view.browser;
 
 import java.awt.Color;
@@ -38,9 +39,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
@@ -85,7 +88,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
     setContentPane(getSearchPanel());
     this.pack();
-    this.setLocationRelativeTo(DIYLC.ui().getOwnerFrame());
+    this.setLocationRelativeTo(App.ui().getOwnerFrame());
     this.setGlassPane(SimpleCloudGlassPane.GLASS_PANE);
 
     JRootPane rootPane = SwingUtilities.getRootPane(getSearchHeaderPanel().getGoButton());
@@ -108,7 +111,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
             @Override
             public void failed(Exception e) {
               LOG.error("Could not fetch categories and sortings from the cloud", e);
-              error(DIYLC.getString("cloud.category-setup-failed"));
+              error(App.getString("cloud.category-setup-failed"));
             }
 
             @Override
@@ -221,7 +224,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
           @Override
           public void failed(Exception e) {
-            error(DIYLC.getString("cloud.search-failed"));
+            error(App.getString("cloud.search-failed"));
           }
 
           @Override

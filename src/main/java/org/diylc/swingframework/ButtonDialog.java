@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.BorderLayout;
@@ -33,7 +34,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 
 public abstract class ButtonDialog extends JDialog {
 
@@ -66,7 +68,7 @@ public abstract class ButtonDialog extends JDialog {
         };
     JRootPane root = dialog.getRootPane();
     root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-        DIYLC.getKeyStroke("Cancel"),
+        App.getKeyStroke("Cancel"),
         windowClosingKey);
     root.getActionMap().put(windowClosingKey, dispatchClosing);
   }

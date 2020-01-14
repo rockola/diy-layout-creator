@@ -97,6 +97,10 @@ public class App {
     return getString(key, null);
   }
 
+  public static String title() {
+    return getString("app.title");
+  }
+
   public static Object getObject(String key, Object defaultValue) {
     return ConfigurationManager.getObject(key, defaultValue);
   }
@@ -248,8 +252,7 @@ public class App {
   */
   public static void main(String[] args) {
 
-    final String appName = Config.getString("app.title");
-    LOG.info("{} is running", appName);
+    LOG.info("{} is running", App.title());
 
     String lookAndFeel = "(class name not found)";
     try {
@@ -288,7 +291,7 @@ public class App {
         System.getProperty("os.version"),
         System.getProperty("java.runtime.version"),
         System.getProperty("java.vm.vendor"));
-    LOG.info("Starting {} with working directory {}", appName, System.getProperty("user.dir"));
+    LOG.info("Starting {} with working directory {}", App.title(), System.getProperty("user.dir"));
 
     String val = System.getProperty(SCRIPT_RUN);
     if (!"true".equals(val)) {

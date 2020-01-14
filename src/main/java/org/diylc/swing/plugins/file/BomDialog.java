@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.file;
 
 import java.awt.BorderLayout;
@@ -32,7 +33,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.images.Icon;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swingframework.export.TableExporter;
@@ -48,7 +50,7 @@ public class BomDialog extends JDialog {
   private String initialFileName;
 
   public BomDialog(JFrame parent, List<BomEntry> bom, String initialFileName) {
-    super(parent, DIYLC.getString("bomDialog.bill-of-materials"));
+    super(parent, App.getString("bomDialog.bill-of-materials"));
     this.initialFileName = initialFileName;
     setContentPane(createMainPanel());
     getTable().setData(bom);

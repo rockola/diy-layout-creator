@@ -33,13 +33,13 @@ import org.apache.logging.log4j.Logger;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.diylc.DIYLC;
+import org.diylc.App;
 
 public class AnnouncementProvider {
 
   private Logger LOG = LogManager.getLogger(AnnouncementProvider.class);
 
-  private String serviceUrl = DIYLC.getURL("api.announcements").toString();
+  private String serviceUrl = App.getURL("api.announcements").toString();
   private final String lastReadKey = "announcement.lastReadDate";
   private Date lastDate;
   private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -50,7 +50,7 @@ public class AnnouncementProvider {
   public AnnouncementProvider() {
     parser = Parser.builder().build();
     renderer = HtmlRenderer.builder().build();
-    String lastDateStr = DIYLC.getString(lastReadKey);
+    String lastDateStr = App.getString(lastReadKey);
     try {
       this.lastDate = (lastDateStr == null ? null : dateFormat.parse(lastDateStr));
     } catch (ParseException e) {
@@ -81,6 +81,6 @@ public class AnnouncementProvider {
 
   public void dismissed() {
     Date date = new Date();
-    DIYLC.putValue(lastReadKey, dateFormat.format(date));
+    App.putValue(lastReadKey, dateFormat.format(date));
   }
 }

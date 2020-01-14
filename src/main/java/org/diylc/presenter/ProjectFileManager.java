@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import com.thoughtworks.xstream.XStream;
@@ -46,7 +47,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.appframework.update.VersionNumber;
@@ -196,8 +197,8 @@ public class ProjectFileManager {
       for (String w : warnings) {
         LOG.warn(w);
       }
-      DIYLC.ui().error(
-          String.format(DIYLC.getString("message.presenter.could-not-open"), fileName), e);
+      App.ui().error(
+          String.format(App.getString("message.presenter.could-not-open"), fileName), e);
     }
     return project;
   }
@@ -267,8 +268,8 @@ public class ProjectFileManager {
     VersionNumber fileVersion;
     try {
       fileVersion = readV3Version(fileName);
-      if (fileVersion.compareTo(DIYLC.getVersionNumber()) > 0)
-        warnings.add(DIYLC.getString("project.newer-version-warning"));
+      if (fileVersion.compareTo(App.getVersionNumber()) > 0)
+        warnings.add(App.getString("project.newer-version-warning"));
     } catch (Exception e) {
       warnings.add("Could not read file version number, the file may be corrupted.");
     }
@@ -284,7 +285,7 @@ public class ProjectFileManager {
       project = (Project) xStreamOld.fromXML(fis);
     }
     if (!missingFields.isEmpty()) {
-      warnings.add(DIYLC.getString("project.unknown-properties"));
+      warnings.add(App.getString("project.unknown-properties"));
     }
     fis.close();
     return project;

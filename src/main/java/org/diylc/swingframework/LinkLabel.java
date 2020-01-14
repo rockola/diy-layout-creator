@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework;
 
 import java.awt.Color;
@@ -30,7 +31,7 @@ import javax.swing.JLabel;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 
 /**
  * {@link JLabel} customized to show hyperlinks. Foreground color is
@@ -58,7 +59,7 @@ public class LinkLabel extends JLabel {
           @Override
           public void mouseClicked(MouseEvent e) {
             try {
-              DIYLC.openURL(url);
+              App.openURL(url);
             } catch (Exception e1) {
               LOG.error("Could not launch default browser", e1);
             }

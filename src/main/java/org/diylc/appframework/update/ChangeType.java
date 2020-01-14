@@ -17,11 +17,12 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.update;
 
 import org.apache.logging.log4j.LogManager;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 
 public enum ChangeType {
   BUG_FIX,
@@ -32,7 +33,7 @@ public enum ChangeType {
      Human readable string. Can be translated in resources.
   */
   public String theString() {
-    return DIYLC.getString("message.update." + this.toString().replace("_", "-"));
+    return App.getString("message.update." + this.toString().replace("_", "-"));
   }
 
   public static ChangeType parse(String s) {

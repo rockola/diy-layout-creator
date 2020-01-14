@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.canvas;
 
 import java.awt.Graphics;
@@ -47,9 +48,11 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IBlockProcessor.InvalidBlockException;
@@ -74,7 +77,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   private Image bufferImage;
   private GraphicsConfiguration screenGraphicsConfiguration;
 
-  public boolean useHardwareAcceleration = DIYLC.hardwareAcceleration();
+  public boolean useHardwareAcceleration = App.hardwareAcceleration();
 
   // static final EnumSet<DrawOption> DRAW_OPTIONS =
   // EnumSet.of(DrawOption.GRID,
@@ -128,8 +131,8 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
   private void initializeActions() {
     InputMap focusedMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    focusedMap.put(DIYLC.getKeyStroke("Repeat Last"), "repeatLast");
-    focusedMap.put(DIYLC.getKeyStroke("Cancel"), "clearSlot");
+    focusedMap.put(App.getKeyStroke("Repeat Last"), "repeatLast");
+    focusedMap.put(App.getKeyStroke("Cancel"), "clearSlot");
 
     for (int i = 1; i <= 12; i++) {
       final int x = i;
@@ -170,7 +173,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
           @Override
           public void actionPerformed(ActionEvent e) {
             List<String> recent =
-                (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
+                (List<String>) App.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
             if (recent != null && !recent.isEmpty()) {
               String clazz = recent.get(0);
               Map<String, List<ComponentType>> componentTypes =
@@ -194,7 +197,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   @SuppressWarnings("unchecked")
   protected void functionKeyPressed(int i) {
     HashMap<String, String> shortcutMap =
-        (HashMap<String, String>) DIYLC.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
+        (HashMap<String, String>) App.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
     if (shortcutMap == null) {
       return;
     }
@@ -265,16 +268,16 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
     Set<DrawOption> drawOptions =
         EnumSet.of(DrawOption.SELECTION, DrawOption.ZOOM, DrawOption.CONTROL_POINTS);
-    if (DIYLC.antiAliasing()) {
+    if (App.antiAliasing()) {
       drawOptions.add(DrawOption.ANTIALIASING);
     }
-    if (DIYLC.outlineMode()) {
+    if (App.outlineMode()) {
       drawOptions.add(DrawOption.OUTLINE_MODE);
     }
-    if (DIYLC.showGrid()) {
+    if (App.showGrid()) {
       drawOptions.add(DrawOption.GRID);
     }
-    if (DIYLC.extraSpace()) {
+    if (App.extraSpace()) {
       drawOptions.add(DrawOption.EXTRA_SPACE);
     }
 

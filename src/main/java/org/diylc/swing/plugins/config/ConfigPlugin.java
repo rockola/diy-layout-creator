@@ -17,13 +17,16 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.config;
 
 import java.io.File;
 import java.util.EnumSet;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
@@ -78,13 +81,13 @@ public class ConfigPlugin implements IPlugIn {
 
     File themeDir = new File("themes");
     if (themeDir.exists()) {
-      DIYLC.ui().injectSubmenu(THEME_MENU, Icon.Pens, CONFIG_MENU);
+      App.ui().injectSubmenu(THEME_MENU, Icon.Pens, CONFIG_MENU);
       for (File file : themeDir.listFiles()) {
         if (file.getName().toLowerCase().endsWith(".xml")) {
           try {
             Theme theme = (Theme) Serializer.fromFile(file);
             LOG.debug("Found theme: " + theme.getName());
-            DIYLC.ui().injectMenuAction(
+            App.ui().injectMenuAction(
                 ActionFactory.createThemeAction(plugInPort, theme), THEME_MENU);
           } catch (Exception e) {
             LOG.error("Could not load theme file " + file.getName(), e);
@@ -93,11 +96,10 @@ public class ConfigPlugin implements IPlugIn {
       }
     }
 
-    DIYLC.ui().injectSubmenu(COMPONENT_BROWSER_MENU, Icon.Hammer, CONFIG_MENU);
-
-    DIYLC.ui().injectMenuAction(
+    App.ui().injectSubmenu(COMPONENT_BROWSER_MENU, Icon.Hammer, CONFIG_MENU);
+    App.ui().injectMenuAction(
         ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), COMPONENT_BROWSER_MENU);
-    DIYLC.ui().injectMenuAction(
+    App.ui().injectMenuAction(
         ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), COMPONENT_BROWSER_MENU);
   }
 

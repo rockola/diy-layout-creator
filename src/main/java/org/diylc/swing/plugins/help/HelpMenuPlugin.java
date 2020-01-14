@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.help;
 
 import java.awt.event.ActionEvent;
@@ -24,8 +25,10 @@ import java.net.URL;
 import java.util.EnumSet;
 import java.util.List;
 import javax.swing.AbstractAction;
+
 import org.apache.logging.log4j.LogManager;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
@@ -51,13 +54,13 @@ public class HelpMenuPlugin implements IPlugIn {
   private AboutDialog aboutDialog;
 
   private void navigateURL(String menuEntry, Icon icon, String key) {
-    DIYLC.ui().injectMenuAction(new NavigateURLAction(
+    App.ui().injectMenuAction(new NavigateURLAction(
         Config.getString("menu.help." + menuEntry), icon, Config.getURL(key).toString()),
                                 HELP_TITLE);
   }
 
   private void separator() {
-    DIYLC.ui().injectMenuAction(null, HELP_TITLE);
+    App.ui().injectMenuAction(null, HELP_TITLE);
   }
 
   public HelpMenuPlugin() {
@@ -67,10 +70,10 @@ public class HelpMenuPlugin implements IPlugIn {
     // navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
     navigateURL("bug-report", Icon.Bug, "bug");
     separator();
-    DIYLC.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
+    App.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
     separator();
     navigateURL("donate", Icon.Donate, "donate");
-    DIYLC.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
+    App.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
   }
 
   @Override
@@ -97,12 +100,12 @@ public class HelpMenuPlugin implements IPlugIn {
     }
 
     public void actionPerformed(ActionEvent e) {
-      about.setEditorText(DIYLC.getHTML(this.textKey));
+      about.setEditorText(App.getHTML(this.textKey));
     }
   }
 
   private String defaultAboutText() {
-    return DIYLC.getHTML("interactive-license");
+    return App.getHTML("interactive-license");
   }
 
   private AboutDialog getAboutDialog() {
@@ -153,11 +156,11 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void actionPerformed(ActionEvent e) {
       List<Version> updates = Version.getRecentUpdates();
-      if (updates == null) DIYLC.ui().info("Version history is not available.");
+      if (updates == null) App.ui().info("Version history is not available.");
       else {
         String html = UpdateChecker.createUpdateHTML(updates);
         UpdateDialog updateDialog =
-            new UpdateDialog(DIYLC.ui().getOwnerFrame().getRootPane(), html, (String) null);
+            new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, (String) null);
         updateDialog.setVisible(true);
       }
     }
@@ -179,7 +182,7 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void actionPerformed(ActionEvent e) {
       try {
-        DIYLC.openURL(new URL(url));
+        App.openURL(new URL(url));
       } catch (Exception e1) {
         LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
       }

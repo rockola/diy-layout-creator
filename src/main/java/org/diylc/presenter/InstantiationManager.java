@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import java.awt.Point;
@@ -29,9 +30,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
@@ -328,7 +331,7 @@ public class InstantiationManager {
 
     // Write to recent components
     List<String> recentComponentTypes =
-        (List<String>) DIYLC.getObject(
+        (List<String>) App.getObject(
             IPlugInPort.Key.RECENT_COMPONENTS,
             (Object) new ArrayList<ComponentType>());
     String className = componentType.getInstanceClass().getName();
@@ -342,7 +345,7 @@ public class InstantiationManager {
       if (recentComponentTypes.size() > MAX_RECENT_COMPONENTS) {
         recentComponentTypes.remove(recentComponentTypes.size() - 1);
       }
-      DIYLC.putValue(IPlugInPort.Key.RECENT_COMPONENTS, recentComponentTypes);
+      App.putValue(IPlugInPort.Key.RECENT_COMPONENTS, recentComponentTypes);
     }
 
     List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
@@ -398,12 +401,12 @@ public class InstantiationManager {
     // Override with default values if available.
     for (PropertyWrapper property : properties) {
       propertyCache.put(property.getName(), property);
-      Object defaultValue =
-          DIYLC.getObject(
-              String.format(
-                  "%s%s:%s",
-                  Presenter.DEFAULTS_KEY_PREFIX, object.getClass().getName(), property.getName()),
-              null);
+      Object defaultValue = App.getObject(String.format(
+          "%s%s:%s",
+          Presenter.DEFAULTS_KEY_PREFIX,
+          object.getClass().getName(),
+          property.getName()),
+                                          null);
       if (defaultValue != null) {
         property.setValue(defaultValue);
         try {

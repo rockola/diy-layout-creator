@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.BorderLayout;
@@ -48,9 +49,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.DIYLC;
+
+import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.DrawOption;
 import org.diylc.common.Message;
@@ -190,7 +193,7 @@ public class TemplateDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              DIYLC.ui().getPresenter().loadProject(templateProject, true, null);
+              App.ui().getPresenter().loadProject(templateProject, true, null);
               dispose();
             }
           });
@@ -203,7 +206,7 @@ public class TemplateDialog extends JDialog {
       infoPanel = new JPanel();
       infoPanel.setBackground(Color.decode("#FFFFCC"));
       infoPanel.setBorder(new JTextField().getBorder());
-      // JLabel infoLabel = new JLabel(DIYLC.getHTML("message.templateDialog.info"));
+      // JLabel infoLabel = new JLabel(App.getHTML("message.templateDialog.info"));
       // infoLabel.setOpaque(false);
       JTextPane infoLabel = new JTextPane();
       infoLabel.setContentType("text/html");
@@ -278,7 +281,7 @@ public class TemplateDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              DIYLC.putValue(SHOW_TEMPLATES_KEY, showTemplatesBox.isSelected());
+              App.putValue(SHOW_TEMPLATES_KEY, showTemplatesBox.isSelected());
             }
           });
     }

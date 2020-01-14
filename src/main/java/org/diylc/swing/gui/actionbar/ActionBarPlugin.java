@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui.actionbar;
 
 import java.awt.BorderLayout;
@@ -24,7 +25,7 @@ import java.util.EnumSet;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.diylc.DIYLC;
+import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
@@ -81,7 +82,7 @@ public class ActionBarPlugin implements IPlugIn {
   @Override
   public void connect(IPlugInPort plugInPort) {
     this.plugInPort = plugInPort;
-    DIYLC.ui().injectMenuComponent(getActionPanel());
+    App.ui().injectMenuComponent(getActionPanel());
   }
 
   @Override
