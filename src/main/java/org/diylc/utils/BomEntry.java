@@ -87,23 +87,26 @@ public class BomEntry {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
-    BomEntry other = (BomEntry) obj;
-    if (type == null) {
-      if (other.type != null) return false;
-    } else if (!type.equals(other.type)) return false;
-    if (name == null) {
-      if (other.name != null) return false;
-    } else if (!name.equals(other.name)) return false;
-    if (notes == null) {
-      if (other.notes != null) return false;
-    } else if (!notes.equals(other.notes)) return false;
-    if (quantity != other.quantity) return false;
-    if (value == null) {
-      if (other.value != null) return false;
-    } else if (!value.equals(other.value)) return false;
+    if (this != obj) {
+      if (obj == null || (obj.getClass() != this.getClass())) {
+        return false;
+      } else {
+        BomEntry other = (BomEntry) obj;
+
+        if ((type == null && other.type != null)
+            || (type != null && !type.equals(other.type))
+            || (name == null && other.name != null)
+            || (name != null && !name.equals(other.name))
+            || (notes == null && other.notes != null)
+            || (notes != null && !notes.equals(other.notes))
+            || (quantity == null && other.quantity != null)
+            || (quantity != null && !quantity.equals(other.quantity))
+            || (value == null && other.value != null)
+            || (value != null && value.equals(other.value))) {
+          return false;
+        }
+      }
+    }
     return true;
   }
 }

@@ -169,7 +169,7 @@ public class StatusBar extends JPanel implements IPlugIn {
             false);
 
     ConfigurationManager.addListener(
-        IPlugInPort.METRIC_KEY,
+        IPlugInPort.Key.METRIC,
         new IConfigListener() {
 
           @Override
@@ -179,7 +179,7 @@ public class StatusBar extends JPanel implements IPlugIn {
         });
 
     ConfigurationManager.addListener(
-        IPlugInPort.HIGHLIGHT_CONTINUITY_AREA,
+        IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA,
         new IConfigListener() {
 
           @Override
@@ -511,7 +511,7 @@ public class StatusBar extends JPanel implements IPlugIn {
       case MOUSE_MOVED:
         mousePositionIn = (Point2D) params[1];
         mousePositionMm = (Point2D) params[2];
-        refreshPosition(DIYLC.getBoolean(Presenter.METRIC_KEY, true));
+        refreshPosition(DIYLC.metric());
         break;
     }
   }
@@ -520,12 +520,11 @@ public class StatusBar extends JPanel implements IPlugIn {
     Point2D mousePosition = metric ? mousePositionMm : mousePositionIn;
     String unit = metric ? "mm" : "in";
 
-    getPositionLabel()
-        .setText(
-            mousePosition == null
-                ? null
-                : String.format(
-                    "x:%.2f%s y:%.2f%s", mousePosition.getX(), unit, mousePosition.getY(), unit));
+    getPositionLabel().setText(
+        mousePosition == null
+        ? null
+        : String.format(
+              "x:%.2f%s y:%.2f%s", mousePosition.getX(), unit, mousePosition.getY(), unit));
   }
 
   private void refreshStatusText() {

@@ -35,11 +35,6 @@ public class Capacitance extends AbstractMeasure<CapacitanceUnit> {
     // TODO Auto-generated constructor stub
   }
 
-  @Override
-  public Capacitance clone() throws CloneNotSupportedException {
-    return new Capacitance(value, unit);
-  }
-
   public static Capacitance parseCapacitance(String value) {
     value = value.replace("*", "");
     for (CapacitanceUnit unit : CapacitanceUnit.values()) {

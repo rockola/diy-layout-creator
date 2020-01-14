@@ -24,16 +24,20 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
+import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.core.Theme;
+import org.diylc.core.measures.Size;
 
 /**
  * Interface for communication between plug-ins and the
@@ -48,34 +52,39 @@ import org.diylc.core.Theme;
  * @see EventType
  */
 public interface IPlugInPort
-    extends ISelectionProcessor,
+    extends
         IMouseProcessor,
         IKeyProcessor,
         IVariantProcessor,
         IBlockProcessor,
         INetlistProcessor {
 
-  public static final String ANTI_ALIASING_KEY = "antiAliasing";
-  public static final String HI_QUALITY_RENDER_KEY = "hiQualityRender";
-  public static final String EXPORT_GRID_KEY = "exportGrid";
-  public static final String STICKY_POINTS_KEY = "stickyPoints";
-  public static final String METRIC_KEY = "metric";
-  public static final String SNAP_TO_GRID_KEY = "snapToGrid";
-  public static final String CONTINUOUS_CREATION_KEY = "continuousCreation";
-  public static final String AUTO_EDIT_KEY = "autoEdit";
-  public static final String ABNORMAL_EXIT_KEY = "abnormalExit";
-  public static final String HEARTBEAT = "heartbeat";
-  public static final String WHEEL_ZOOM_KEY = "wheelZoom";
-  public static final String OUTLINE_KEY = "outline";
   public static final String THEME_KEY = "theme";
-  public static final String RECENT_COMPONENTS_KEY = "recentComponents";
-  public static final String RECENT_FILES_KEY = "recentFiles";
-  public static final String SHOW_RULERS_KEY = "showRulers";
-  public static final String SHOW_GRID_KEY = "showGrid";
-  public static final String HIGHLIGHT_CONTINUITY_AREA = "highlightContinuityArea";
-  public static final String HARDWARE_ACCELERATION = "hardwareAcceleration";
-  public static final String EXTRA_SPACE_KEY = "extraSpace";
-  public static final String FAVORITES_KEY = "favorites";
+
+  public enum Key {
+    ABNORMAL_EXIT,
+    ANTI_ALIASING,
+    AUTO_EDIT,
+    BLOCKS,
+    CONTINUOUS_CREATION,
+    EXPORT_GRID,
+    EXTRA_SPACE,
+    FAVORITES,
+    HARDWARE_ACCELERATION,
+    HEARTBEAT,
+    HIGHLIGHT_CONTINUITY_AREA,
+    HI_QUALITY_RENDER,
+    METRIC,
+    OUTLINE,
+    RECENT_COMPONENTS,
+    RECENT_FILES,
+    SHOW_GRID,
+    SHOW_RULERS,
+    SNAP_TO_GRID,
+    STICKY_POINTS,
+    TEMPLATES,
+    WHEEL_ZOOM
+  }
 
   public static final int DND_TOGGLE_STICKY = 0x1;
   public static final int DND_TOGGLE_SNAP = 0x40000000;
@@ -172,7 +181,10 @@ public interface IPlugInPort
    * @param externalZoom
    */
   void draw(
-      Graphics2D g2d, Set<DrawOption> drawOptions, IComponentFiler filter, Double externalZoom);
+      Graphics2D g2d,
+      Set<DrawOption> drawOptions,
+      IComponentFilter filter,
+      Double externalZoom);
 
   Double[] getAvailableZoomLevels();
 
@@ -198,14 +210,80 @@ public interface IPlugInPort
    */
   void pasteComponents(Collection<IDIYComponent<?>> components, boolean autoGroup);
 
+  /**
+   * Selects all components in the project.
+   *
+   * @param int layer if > 0, designates which layer to select. If <=
+   *     0 we should select all regardless of layer
+   */
+  void selectAll(int layer);
+
   /** Duplicates selected components and places them nearby. */
   void duplicateSelection();
 
   /** Deletes all the selected components from the project. */
   void deleteSelectedComponents();
 
+  /** Groups all selected components. */
+  void groupSelectedComponents();
+
+  /** Ungroups all selected components. */
+  void ungroupSelectedComponents();
+
   /**
-   * Sets default value for the specified property name for currently selected component types.
+   * Expands the current selection to include surrounding
+   * components. Options are controlled with
+   * <code>expansionMode</code> flag.
+   *
+   * @param expansionMode
+   */
+  void expandSelection(ExpansionMode expansionMode);
+
+  /**
+   * Finds all components at the specified location, sorted by z-index
+   * from top to bottom. Location depends on the current zoom level.
+   *
+   * @param point
+   * @return
+   */
+  List<IDIYComponent<?>> findComponentsAt(Point point);
+
+  /**
+   * Rotates selection for 90 degrees.
+   *
+   * @param direction 1 for clockwise, -1 for counter-clockwise
+   */
+  void rotateSelection(int direction);
+
+  /**
+   * Mirrors selected components in the given axis.
+   *
+   * @param direction
+   */
+  void mirrorSelection(int direction);
+
+  /**
+   * Returns the minimum rectangle containing all selected components,
+   * or null if none exists.  Rectangle is scaled by the current zoom
+   * level.
+   *
+   * @param applyZoom
+   * @return
+   */
+  Rectangle2D getSelectionBounds(boolean applyZoom);
+
+  /**
+   * Moves selection for the specified offset.
+   *
+   * @param xOffset
+   * @param yOffset
+   * @param includeStuckComponents
+   */
+  void nudgeSelection(Size xOffset, Size yOffset, boolean includeStuckComponents);
+
+  /**
+   * Sets default value for the specified property name for currently
+   * selected component types.
    *
    * @param propertyName display name for property
    * @param value new default value, must not be null
@@ -253,10 +331,10 @@ public interface IPlugInPort
    *
    * @param componentType
    * @param template
-   * @param forceInstatiate
+   * @param forceInstantiate
    */
   void setNewComponentTypeSlot(
-      ComponentType componentType, Template template, boolean forceInstatiate);
+      ComponentType componentType, Template template, boolean forceInstantiate);
 
   /**
    * Changes default size notation, true for metric, false for imperial.

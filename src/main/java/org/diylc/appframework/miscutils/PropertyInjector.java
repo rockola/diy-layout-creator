@@ -1,3 +1,23 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.appframework.miscutils;
 
 import java.awt.Color;
@@ -30,7 +50,7 @@ public class PropertyInjector {
   /**
    * Injects properties from the provided {@link Properties} object.
    *
-   * @param properties
+   * @param properties Properties to be injected.
    */
   public static void injectProperties(Properties properties) {
     for (Entry<Object, Object> entry : properties.entrySet()) {
@@ -62,20 +82,22 @@ public class PropertyInjector {
           } else if (Color.class.isAssignableFrom(fieldType)) {
             Color color = Color.decode(value);
             field.set(null, color);
-          } else LOG.warn("Property type not supported.");
+          } else {
+            LOG.warn("Property type not supported.");
+          }
         } catch (SecurityException e) {
-          LOG.warn("Could not inject " + key + ". Field access denied: " + fieldName);
+          LOG.warn("Could not inject {}. Field access denied: {} ", key, fieldName);
         } catch (NoSuchFieldException e) {
-          LOG.warn("Could not inject " + key + ". Field not found: " + fieldName);
+          LOG.warn("Could not inject {}. Field not found: {}", key, fieldName);
         } catch (IllegalArgumentException e) {
-          LOG.warn("Could not inject " + key + ". Illegal access: " + fieldName);
+          LOG.warn("Could not inject {}. Illegal access: {}", key, fieldName);
         } catch (IllegalAccessException e) {
-          LOG.warn("Could not inject " + key + ". Field illegal access: " + fieldName);
+          LOG.warn("Could not inject {}. Field illegal access: ", key, fieldName);
         }
       } catch (StringIndexOutOfBoundsException e) {
-        LOG.warn("Property name does not match format ClassName.FIELD_NAME: " + key);
+        LOG.warn("Property name does not match format ClassName.FIELD_NAME: {}", key);
       } catch (ClassNotFoundException e) {
-        LOG.warn("Could not inject " + key + ". Class not found: " + key);
+        LOG.warn("Could not inject {}. Class not found.", key);
       }
     }
   }

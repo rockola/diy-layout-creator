@@ -35,7 +35,7 @@ or
 Source code is released under [GNU General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.txt).
 
-See [LIBRARIES.md](LIBRARIES.md) for licenses of included libraries.
+See [doc/LIBRARIES.md](doc/LIBRARIES.md) for licenses of included libraries.
 
 ## Original README
 

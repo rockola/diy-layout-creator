@@ -58,7 +58,8 @@ public class ProxyFactory {
     String interfaceName = clazz.getName();
     String newClassName = interfaceName.substring(interfaceName.lastIndexOf(".") + 1) + "Impl";
     try {
-      LOG.info("Creating temp class code");
+      LOG.info("Creating temp class code: interface {}, new class {}, url {}",
+               interfaceName, newClassName, url);
       StringWriter writer = new StringWriter();
       PrintWriter out = new PrintWriter(writer);
 
@@ -113,6 +114,7 @@ public class ProxyFactory {
 
       String code = writer.toString();
 
+      LOG.debug("Compiling {}", code);
       ISimpleCompiler compiler = new CompilerFactory().newSimpleCompiler();
       compiler.cook(code);
       T instance =
@@ -123,11 +125,13 @@ public class ProxyFactory {
                   .getConstructors()[0]
                   .newInstance(flatProxy);
 
-      LOG.info("Successfully instantiated proxy");
+      LOG.info("Successfully instantiated proxy ({}, {})",
+               interfaceName, url);
       return instance;
     } catch (Exception e) {
       e.printStackTrace();
-      LOG.error("Could not create proxy: " + e.getMessage());
+      LOG.error("Could not create proxy for " + clazz.getName() + " URL " + url,
+                e.getMessage());
     }
     return null;
   }

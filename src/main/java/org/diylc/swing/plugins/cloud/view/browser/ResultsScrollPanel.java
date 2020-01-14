@@ -444,14 +444,10 @@ public class ResultsScrollPanel extends JScrollPane {
                                           IView.YES_NO_OPTION,
                                           IView.QUESTION_MESSAGE) == IView.YES_OPTION) {
               final Presenter thumbnailPresenter = new Presenter();
-              final File file =
-                  DialogFactory.getInstance()
-                      .showOpenDialog(
-                          FileFilterEnum.DIY.getFilter(),
-                          null,
-                          FileFilterEnum.DIY.getExtensions()[0],
-                          null,
-                          cloudUI.getOwnerFrame());
+              final File file = DialogFactory.getInstance().showOpenDialog(
+                  FileFilterEnum.DIY.getFilter(),
+                  FileFilterEnum.DIY.getExtensions()[0],
+                  cloudUI.getOwnerFrame());
               if (file != null) {
                 LOG.info(
                     "Preparing replacement for project {} ({})",

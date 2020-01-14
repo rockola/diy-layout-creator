@@ -1,20 +1,22 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.components;
 
 import java.awt.AlphaComposite;
@@ -170,7 +172,8 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   protected Point[] getControlPoints() {
     if (this.controlPoints != null) {
-      // ensure backward compatibility by copying points from the old structure to the new one
+      // ensure backward compatibility by copying points from the old
+      // structure to the new one
       switch (getPointCount()) {
         case TWO:
           this.controlPoints2 = new Point[2];
@@ -225,7 +228,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
               (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
       newPoints[1] =
-          new Point((newPoints[2].x + newPoints[0].x) / 2, (newPoints[2].y + newPoints[0].y) / 2);
+          new Point(
+              (newPoints[2].x + newPoints[0].x) / 2,
+              (newPoints[2].y + newPoints[0].y) / 2);
       newPoints[3] =
           new Point(
               (newPoints[pointCount.count - 1].x + newPoints[2].x) / 2,
@@ -236,9 +241,13 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
               (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
       newPoints[2] =
-          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
+          new Point(
+              (newPoints[3].x + newPoints[0].x) / 2,
+              (newPoints[3].y + newPoints[0].y) / 2);
       newPoints[1] =
-          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
+          new Point(
+              (newPoints[3].x + newPoints[0].x) / 2,
+              (newPoints[3].y + newPoints[0].y) / 2);
       newPoints[4] =
           new Point(
               (newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,
@@ -283,20 +292,6 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
     Point[] p = getControlPoints();
     p[index].setLocation(point);
     this.lastUpdatePointIndex = index;
-    // if (getSmooth()) {
-    // if (getPointCount() == PointCount.FIVE && (index == 1 || index == 2)) {
-    // p[3] = findThirdPoint(p[2], p[1]);
-    // }
-    // if (getPointCount() == PointCount.FIVE && index == 3) {
-    // p[1] = findThirdPoint(p[2], p[3]);
-    // }
-    // if (getPointCount() == PointCount.SEVEN && (index == 2 || index == 3)) {
-    // p[4] = findThirdPoint(p[3], p[2]);
-    // }
-    // if (getPointCount() == PointCount.SEVEN && index == 4) {
-    // p[2] = findThirdPoint(p[3], p[4]);
-    // }
-    // }
   }
 
   private Point findThirdPoint(Point p0, Point p) {
@@ -330,16 +325,6 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   public void setSmooth(Boolean smooth) {
     this.smooth = smooth;
-    // make the current curve smooth if needed
-    // Point[] p = getControlPoints();
-    // if (smooth) {
-    // if (getPointCount() == PointCount.FIVE) {
-    // p[3] = findThirdPoint(p[2], p[1]);
-    // }
-    // if (getPointCount() == PointCount.SEVEN) {
-    // p[4] = findThirdPoint(p[3], p[2]);
-    // }
-    // }
   }
 
   public enum PointCount {

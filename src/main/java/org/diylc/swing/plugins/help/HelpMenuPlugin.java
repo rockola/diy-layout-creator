@@ -20,6 +20,7 @@
 package org.diylc.swing.plugins.help;
 
 import java.awt.event.ActionEvent;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -50,12 +51,9 @@ public class HelpMenuPlugin implements IPlugIn {
   private AboutDialog aboutDialog;
 
   private void navigateURL(String menuEntry, Icon icon, String key) {
-    DIYLC
-        .ui()
-        .injectMenuAction(
-            new NavigateURLAction(
-                Config.getString("menu.help." + menuEntry), icon, Config.getURL(key).toString()),
-            HELP_TITLE);
+    DIYLC.ui().injectMenuAction(new NavigateURLAction(
+        Config.getString("menu.help." + menuEntry), icon, Config.getURL(key).toString()),
+                                HELP_TITLE);
   }
 
   private void separator() {
@@ -88,7 +86,7 @@ public class HelpMenuPlugin implements IPlugIn {
   @Override
   public void processMessage(EventType eventType, Object... params) {}
 
-  public class AboutTextAction extends AbstractAction {
+  public static class AboutTextAction extends AbstractAction {
     private String textKey;
     private AboutDialog about;
 
@@ -109,15 +107,13 @@ public class HelpMenuPlugin implements IPlugIn {
 
   private AboutDialog getAboutDialog() {
     if (aboutDialog == null) {
-      aboutDialog =
-          DialogFactory.getInstance()
-              .createAboutDialog(
-                  Config.getString("app.title"),
-                  Icon.App.icon(),
-                  Config.getString("app.version"),
-                  Config.getString("app.author"),
-                  Config.getURL("website"),
-                  defaultAboutText());
+      aboutDialog = DialogFactory.getInstance().createAboutDialog(
+          Config.getString("app.title"),
+          Icon.App.icon(),
+          Config.getString("app.version"),
+          Config.getString("app.author"),
+          Config.getURL("website"),
+          defaultAboutText());
 
       aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
       aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));
@@ -144,7 +140,7 @@ public class HelpMenuPlugin implements IPlugIn {
     }
   }
 
-  class RecentUpdatesAction extends AbstractAction {
+  public static class RecentUpdatesAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
@@ -167,7 +163,7 @@ public class HelpMenuPlugin implements IPlugIn {
     }
   }
 
-  class NavigateURLAction extends AbstractAction {
+  public static class NavigateURLAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
@@ -183,7 +179,7 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void actionPerformed(ActionEvent e) {
       try {
-        Utils.openURL(url);
+        DIYLC.openURL(new URL(url));
       } catch (Exception e1) {
         LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
       }

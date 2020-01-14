@@ -131,9 +131,12 @@ public class ShadedPaintContext implements PaintContext {
         // across the scan lines for the transition points.
         // To ensure that constraint, we negate the dx/dy
         // values and swap the points and colors.
-        Point2D p = p1;
+        //
+        // NOTE: SpotBugs reports "Dead store to local variable"
+        // for p2 //ola 20200109
+        //Point2D p = p1;
         p1 = p2;
-        p2 = p; // NOTE: SpotBugs reports "Dead store to local variable"! //ola 20200109
+        //p2 = p;
         Color c = c1;
         c1 = c2;
         c2 = c;
@@ -208,8 +211,6 @@ public class ShadedPaintContext implements PaintContext {
    * @param x,y,w,h The area in device space for which colors are generated.
    */
   public Raster getRaster(int x, int y, int w, int h) {
-    double rowrel = (x - x1) * dx + (y - y1) * dy;
-
     Raster rast = saved;
     if (rast == null || rast.getWidth() < w || rast.getHeight() < h) {
       rast = getCachedRaster(model, w, h);
@@ -220,6 +221,7 @@ public class ShadedPaintContext implements PaintContext {
       TODO: COMMENTED OUT THE OFFENDING BITS! //ola 20191220
 
            IntegerComponentRaster irast = (IntegerComponentRaster) rast;
+           double rowrel = (x - x1) * dx + (y - y1) * dy;
 
            int off = irast.getDataOffset(0);
            int adjust = irast.getScanlineStride() - w;

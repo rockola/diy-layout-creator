@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc;
 
 import java.awt.AlphaComposite;
@@ -33,7 +34,7 @@ import org.diylc.images.Icon;
 
 public class Splash {
 
-  private Thread t;
+  private Thread thread;
 
   private ImageIcon resistor = null;
   private ImageIcon film = null;
@@ -45,9 +46,13 @@ public class Splash {
   private String appVersion = null;
 
   public Splash(final SplashScreen splashScreen) {
-    if (splashScreen == null) return; // when/why would this happen?
+    if (splashScreen == null) {
+      return; // when/why would this happen?
+    }
     final Graphics2D g = splashScreen.createGraphics();
-    if (g == null) return; // when would this happen?
+    if (g == null) {
+      return; // when would this happen?
+    }
 
     resistor = Icon.SplashResistor.imageIcon();
     film = Icon.SplashFilm.imageIcon();
@@ -57,35 +62,37 @@ public class Splash {
     font = FontLoader.getFont("Jura", Font.BOLD, 24);
     appVersion = Config.getString("app.version");
 
-    t =
-        new Thread(
-            new Runnable() {
+    thread = new Thread(new Runnable() {
 
-              @Override
-              public void run() {
-                for (int i = 90; i >= 0; i--) {
-                  if (!splashScreen.isVisible()) return;
-                  final int frame = i;
-                  SwingUtilities.invokeLater(
-                      new Runnable() {
+        @Override
+        public void run() {
+          for (int i = 90; i >= 0; i--) {
+            if (splashScreen.isVisible()) {
+              final int frame = i;
+              SwingUtilities.invokeLater(
+                  new Runnable() {
 
-                        @Override
-                        public void run() {
-                          renderSplashFrame(splashScreen, g, frame);
-                          if (splashScreen.isVisible()) splashScreen.update();
-                        }
-                      });
-                  try {
-                    Thread.sleep(10);
-                  } catch (InterruptedException e) {
-                  }
-                }
+                    @Override
+                    public void run() {
+                      renderSplashFrame(splashScreen, g, frame);
+                      if (splashScreen.isVisible()) splashScreen.update();
+                    }
+                  });
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                // do nothing
               }
-            });
+            }
+          }
+        }
+      });
   }
 
   public void start() {
-    if (t != null) t.start();
+    if (thread != null) {
+      thread.start();
+    }
   }
 
   private Point resistorTarget = new Point(112, 114);

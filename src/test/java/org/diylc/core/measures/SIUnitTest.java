@@ -65,9 +65,24 @@ public class SIUnitTest {
 
   @Test
   public void measureToStringTest() {
+    assertEquals("1 volts", SIUnit.measureToString(1.0, 0, false, SIUnit.VOLT));
+    assertEquals("1.0 volts", SIUnit.measureToString(1.0, 1, false, SIUnit.VOLT));
+    assertEquals("2 watts", SIUnit.measureToString(2.0, 0, false, SIUnit.WATT));
+    //
+    assertEquals("1 V", SIUnit.measureToString(1.0, 0, true, SIUnit.VOLT));
     assertEquals("1 kV", SIUnit.measureToString(1000.0, 0, true, SIUnit.VOLT));
     assertEquals("1.0 kV", SIUnit.measureToString(1000.0, 1, true, SIUnit.VOLT));
     assertEquals("101 mV", SIUnit.measureToString(.101, 0, true, SIUnit.VOLT));
-    assertEquals("10.101 kW", SIUnit.measureToString(10101.0, 2, true, SIUnit.WATT));
+    assertEquals("10 kW", SIUnit.measureToString(10101.0, 0, true, SIUnit.WATT));
+    assertEquals("10.1 kW", SIUnit.measureToString(10101.0, 1, true, SIUnit.WATT));
+    assertEquals("10.10 kW", SIUnit.measureToString(10101.0, 2, true, SIUnit.WATT));
+    assertEquals("10.101 kW", SIUnit.measureToString(10101.0, 3, true, SIUnit.WATT));
+    //
+    assertEquals("47 µF", SIUnit.measureToString(.000047, 0, true, SIUnit.FARAD));
+    assertEquals("47 nF", SIUnit.measureToString(4.7e-8, 0, true, SIUnit.FARAD));
+    assertEquals("47 pF", SIUnit.measureToString(4.7e-11, 0, true, SIUnit.FARAD));
+    assertEquals("47 µF", SIUnit.measureToString(.000047, 0, SIUnit.FARAD));
+    assertEquals("47 nF", SIUnit.measureToString(4.7e-8, 0, SIUnit.FARAD));
+    assertEquals("47 pF", SIUnit.measureToString(4.7e-11, 0, SIUnit.FARAD));
   }
 }

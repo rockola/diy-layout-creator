@@ -23,12 +23,14 @@ import java.awt.BorderLayout;
 import java.util.EnumSet;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+
 import org.diylc.DIYLC;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.swing.ActionFactory;
+import org.diylc.core.Project;
+import org.diylc.swing.action.ActionFactory;
 
 /**
  * Mini toolbar with common actions
@@ -89,8 +91,10 @@ public class ActionBarPlugin implements IPlugIn {
 
   @Override
   public void processMessage(EventType eventType, Object... params) {
-    if (eventType != EventType.SELECTION_CHANGED) return;
-    boolean enabled = !plugInPort.getSelectedComponents().isEmpty();
+    if (eventType != EventType.SELECTION_CHANGED) {
+      return;
+    }
+    boolean enabled = !plugInPort.getCurrentProject().emptySelection();
     getMiniToolbar().setEnabled(enabled);
   }
 }

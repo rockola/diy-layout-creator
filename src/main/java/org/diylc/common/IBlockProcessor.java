@@ -25,8 +25,6 @@ import java.io.IOException;
 
 public interface IBlockProcessor {
 
-  public static final String BLOCKS_KEY = "buildingBlocks";
-
   void saveSelectionAsBlock(String blockName);
 
   void loadBlock(String blockName) throws InvalidBlockException;

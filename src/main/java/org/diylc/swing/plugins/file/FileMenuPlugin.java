@@ -30,8 +30,8 @@ import org.diylc.common.INetlistAnalyzer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.images.Icon;
-import org.diylc.swing.ActionFactory;
 import org.diylc.swing.IDynamicSubmenuHandler;
+import org.diylc.swing.action.ActionFactory;
 
 /**
  * Entry point class for File management utilities.
@@ -148,6 +148,6 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
   @SuppressWarnings("unchecked")
   @Override
   public List<String> getAvailableItems() {
-    return (List<String>) DIYLC.getObject(IPlugInPort.RECENT_FILES_KEY, null);
+    return (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_FILES);
   }
 }

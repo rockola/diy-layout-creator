@@ -22,18 +22,23 @@ package org.diylc.plugins.cloud.presenter;
 
 import com.diyfever.httpproxy.PhpFlatProxy;
 import com.diyfever.httpproxy.ProxyFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.CommentEntity;
@@ -44,7 +49,8 @@ import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
 
 /**
- * Contains all the back-end logic for using the cloud and manipulating projects on the cloud.
+ * Contains all the back-end logic for using the cloud and
+ * manipulating projects on the cloud.
  *
  * @author Branislav Stojkovic
  */
@@ -418,7 +424,7 @@ public class CloudPresenter {
 
   public List<PropertyWrapper> getProjectProperties(ProjectEntity project) {
     List<PropertyWrapper> properties =
-        ComponentProcessor.getInstance().extractProperties(ProjectEntity.class);
+        ComponentProcessor.extractProperties(ProjectEntity.class);
     try {
       for (PropertyWrapper property : properties) {
         property.readFrom(project);
@@ -435,20 +441,29 @@ public class CloudPresenter {
     if (machineId == null) {
       try {
         InetAddress ip = InetAddress.getLocalHost();
-
+        LOG.debug("Local IP address is {}", ip);
         NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+        if (network == null) {
+          LOG.debug("Did not find network interface using IP {}", ip);
+        } else {
+          byte[] mac = network.getHardwareAddress();
 
-        byte[] mac = network.getHardwareAddress();
+          StringBuilder sb = new StringBuilder(18);
+          for (byte b : mac) {
+            if (sb.length() > 0) sb.append(':');
+            sb.append(String.format("%02x", b));
+          }
 
-        StringBuilder sb = new StringBuilder(18);
-        for (byte b : mac) {
-          if (sb.length() > 0) sb.append(':');
-          sb.append(String.format("%02x", b));
+          machineId = sb.toString();
+          LOG.debug("Found machine ID, it is {}", machineId);
         }
-
-        machineId = sb.toString();
-      } catch (Exception e) {
-        machineId = "Generic";
+      } catch (UnknownHostException | SocketException e) {
+        LOG.error("Did not find machine ID", e);
+      } finally {
+        if (machineId == null) {
+          machineId = "Generic";
+          LOG.info("Machine ID not found, defaulting to {}", machineId);
+        }
       }
     }
     return machineId;

@@ -171,7 +171,7 @@ public class Breadboard extends AbstractComponent<Void> {
         }
         StringUtils.drawCenteredText(
             g2d,
-            Integer.valueOf(y + 1).toString(),
+            Integer.toString(y + 1),
             coordinateX,
             (int) (point.y + (y + 1) * spacing),
             (section == 0 ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT),

@@ -100,7 +100,7 @@ public class ComparatorFactory {
 
             @Override
             public int compare(PropertyWrapper o1, PropertyWrapper o2) {
-              int comp = Integer.valueOf(o1.getSortOrder()).compareTo(o2.getSortOrder());
+              int comp = Integer.compare(o1.getSortOrder(), o2.getSortOrder());
               if (comp != 0) return comp;
               return o1.getName().compareToIgnoreCase(o2.getName());
             }
@@ -118,12 +118,12 @@ public class ComparatorFactory {
             @Override
             public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
               ComponentType type1 =
-                  ComponentProcessor.getInstance()
+                  ComponentProcessor
                       .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) o1.getClass());
               ComponentType type2 =
-                  ComponentProcessor.getInstance()
+                  ComponentProcessor
                       .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) o2.getClass());
-              return Double.valueOf(type1.getZOrder()).compareTo(type2.getZOrder());
+              return Double.compare(type1.getZOrder(), type2.getZOrder());
             }
           };
     }
@@ -137,7 +137,7 @@ public class ComparatorFactory {
       public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
         int index1 = project.getComponents().indexOf(o1);
         int index2 = project.getComponents().indexOf(o2);
-        return Integer.valueOf(index1).compareTo(index2);
+        return Integer.compare(index1, index2);
       }
     };
   }

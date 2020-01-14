@@ -21,14 +21,17 @@ package org.diylc.appframework.update;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -53,7 +56,7 @@ public class Version implements Serializable, Comparable<Version> {
   public Version(VersionNumber versionNumber, Date releaseDate, String name, String url) {
     super();
     this.versionNumber = versionNumber;
-    this.releaseDate = releaseDate;
+    this.releaseDate = new Date(releaseDate.getTime());
     this.name = name;
     this.url = url;
     this.changes = new ArrayList<Change>();
@@ -76,7 +79,7 @@ public class Version implements Serializable, Comparable<Version> {
   }
 
   public void setReleaseDate(Date releaseDate) {
-    this.releaseDate = releaseDate;
+    this.releaseDate = new Date(releaseDate.getTime());
   }
 
   public String getName() {
@@ -164,14 +167,14 @@ public class Version implements Serializable, Comparable<Version> {
 
   @Override
   public int compareTo(Version o) {
-    return -versionNumber.compareTo(o.versionNumber);
+    return o.getVersionNumber().compareTo(this.getVersionNumber());
   }
 
   public static List<Version> getRecentUpdates() {
     ClassLoader loader = Version.class.getClassLoader();
+    BufferedReader reader = null;
     try {
-      BufferedReader reader =
-          new BufferedReader(new InputStreamReader(loader.getResourceAsStream(UPDATE_MD)));
+      reader = new BufferedReader(new InputStreamReader(loader.getResourceAsStream(UPDATE_MD)));
       Node document = parser.parse(reader.lines().collect(Collectors.joining("\n")));
       UpdateVisitor v = new UpdateVisitor();
       document.accept(v);
@@ -179,6 +182,12 @@ public class Version implements Serializable, Comparable<Version> {
     } catch (Exception e) {
       LOG.error("getRecentUpdates() failed", e);
       throw e;
+    } finally {
+      try {
+        reader.close();
+      } catch (IOException e) {
+        LOG.error("getRecentUpdates() couldn't close reader", e);
+      }
     }
   }
 }

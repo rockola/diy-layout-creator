@@ -161,8 +161,11 @@ public enum Icon {
   private String resourcePNG() {
     String resourceID = "icon." + this.toString();
     String r = DIYLC.getString(resourceID) + ".png";
-    if (r == null) LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
-    else LOG.debug("Looking for {} in icons...", r);
+    if (r == null || r.isEmpty()) {
+      LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
+    } else {
+      LOG.debug("Asked for {}, looking for {} in icons...", resourceID, r);
+    }
     return r;
   }
 
@@ -173,19 +176,12 @@ public enum Icon {
       // resources
       try {
         i = new ImageIcon(Icon.class.getResource(resourcePNG()));
-      } catch (NullPointerException e) {
-        LOG.error("Cannot create ImageIcon for {}", this.toString());
-        throw e;
-      }
-      if (i != null) {
         // let's store the icon for future reference
         LOG.debug("storing ImageIcon for {}", this.toString());
         icons.put(this, i);
-        if (icons.get(this) == null) {
-          LOG.error("ImageIcon for {} was not stored!", this.toString());
-        }
-      } else {
-        LOG.error("Could not retrieve icon {}", this);
+      } catch (NullPointerException e) {
+        LOG.error("Cannot create ImageIcon for {}", this.toString());
+        throw e;
       }
     }
     return i;

@@ -102,28 +102,33 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
                     BasicStroke.CAP_ROUND);
         break;
     }
-    Shape s = stroke.createStrokedShape(curve);
-    g2d.fill(s);
 
-    if (getStriped()) {
-      stroke =
-          ObjectCache.getInstance()
-              .fetchStroke(
-                  thickness,
-                  new float[] {thickness / 2, thickness * 2},
-                  thickness * 10,
-                  BasicStroke.CAP_BUTT);
-      Shape stripe = stroke.createStrokedShape(curve);
-      g2d.setColor(getStripeColor());
-      drawingObserver.stopTracking();
-      g2d.fill(stripe);
-      drawingObserver.startTracking();
-    }
+    if (stroke != null) {
+      Shape s = stroke.createStrokedShape(curve);
+      g2d.fill(s);
 
-    if (componentState == ComponentState.NORMAL) {
-      g2d.setColor(color.darker());
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-      g2d.draw(s);
+      if (getStriped()) {
+        stroke =
+            ObjectCache.getInstance()
+            .fetchStroke(
+                thickness,
+                new float[] {thickness / 2, thickness * 2},
+                thickness * 10,
+                BasicStroke.CAP_BUTT);
+        if (stroke != null) {
+          Shape stripe = stroke.createStrokedShape(curve);
+          g2d.setColor(getStripeColor());
+          drawingObserver.stopTracking();
+          g2d.fill(stripe);
+          drawingObserver.startTracking();
+        }
+      }
+
+      if (componentState == ComponentState.NORMAL) {
+        g2d.setColor(color.darker());
+        g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
+        g2d.draw(s);
+      }
     }
   }
 

@@ -97,16 +97,23 @@ public class DialogFactory {
 
   public File showOpenDialog(
       FileFilter fileFilter,
+      String defaultExtension) {
+    return showOpenDialog(fileFilter, null, defaultExtension, null);
+  }
+
+  public File showOpenDialog(
+      FileFilter fileFilter,
       File initialFile,
       String defaultExtension,
       IFileChooserAccessory accessory) {
-    JFileChooser openFileChooser = new JFileChooser();
-    initializeFileChooser(
-        openFileChooser, fileFilter, initialFile, defaultExtension, accessory, false);
+    return showOpenDialog(fileFilter, initialFile, defaultExtension, accessory, mainFrame);
+  }
 
-    int result = openFileChooser.showOpenDialog(mainFrame);
-
-    return processFileChooserResult(result, openFileChooser, defaultExtension);
+  public File showOpenDialog(
+      FileFilter fileFilter,
+      String defaultExtension,
+      JFrame ownerFrame) {
+    return showOpenDialog(fileFilter, null, defaultExtension, null, ownerFrame);
   }
 
   public File showOpenDialog(
@@ -137,6 +144,20 @@ public class DialogFactory {
     int result = openFileChooser.showOpenDialog(ownerFrame);
 
     return processFileMultiChooserResult(result, openFileChooser, defaultExtension);
+  }
+
+  public File showSaveDialog(
+      FileFilter fileFilter,
+      File initialFile,
+      String defaultExtension,
+      IFileChooserAccessory accessory) {
+    return showSaveDialog(mainFrame, fileFilter, initialFile, defaultExtension, accessory);
+  }
+
+  public File showSaveDialog(
+      FileFilter fileFilter,
+      String defaultExtension) {
+    return showSaveDialog(mainFrame, fileFilter, null, defaultExtension, null);
   }
 
   public File showSaveDialog(

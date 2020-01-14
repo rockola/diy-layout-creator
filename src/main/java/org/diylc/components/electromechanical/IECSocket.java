@@ -84,7 +84,6 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
 
   protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected transient Area[] body;
-  protected String name;
   protected String value;
   private Orientation orientation = Orientation.DEFAULT;
 

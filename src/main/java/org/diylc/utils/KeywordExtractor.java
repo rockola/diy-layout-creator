@@ -47,8 +47,8 @@ public class KeywordExtractor {
     Set<String> words = new HashSet<String>();
     for (IDIYComponent<?> c : project.getComponents()) {
       ComponentType cType =
-          ComponentProcessor.getInstance()
-              .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) c.getClass());
+          ComponentProcessor.extractComponentTypeFrom(
+              (Class<? extends IDIYComponent<?>>) c.getClass());
       if (cType.getKeywordPolicy() == KeywordPolicy.SHOW_TYPE_NAME)
         words.add(cType.getName().toLowerCase());
       if ((cType.getKeywordPolicy() == KeywordPolicy.SHOW_VALUE
@@ -57,7 +57,7 @@ public class KeywordExtractor {
           && c.getValueForDisplay().trim().length() > 0)
         words.add(c.getValueForDisplay().trim().toLowerCase());
       if ((cType.getKeywordPolicy() == KeywordPolicy.SHOW_TAG
-              || cType.getKeywordPolicy() == KeywordPolicy.SHOW_TAG_AND_VALUE)
+           || cType.getKeywordPolicy() == KeywordPolicy.SHOW_TAG_AND_VALUE)
           && cType.getKeywordTag() != null
           && cType.getKeywordTag().length() > 0)
         words.add(cType.getKeywordTag().trim().toLowerCase());

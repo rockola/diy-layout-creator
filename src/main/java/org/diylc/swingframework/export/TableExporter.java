@@ -72,10 +72,11 @@ public class TableExporter {
   private TableExporter() {}
 
   public void exportToExcel(JTable table, File file) throws IOException {
-    LOG.info("Exporting table to Excel file: " + file.getAbsolutePath());
+    LOG.info("Exporting table to Excel file {}", file.getAbsolutePath());
+    FileOutputStream fileOut = new FileOutputStream(file);
+
     LOG.debug("Creating workbook");
     HSSFWorkbook wb = new HSSFWorkbook();
-    FileOutputStream fileOut = new FileOutputStream(file);
 
     LOG.debug("Creating sheet");
     HSSFSheet bomSheet = wb.createSheet("B.O.M.");
@@ -201,6 +202,7 @@ public class TableExporter {
   }
 
   public void exportToCSV(JTable table, File file) throws IOException {
+
     LOG.info("Exporting table to CSV file: " + file.getAbsolutePath());
     FileWriter fstream = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fstream);
@@ -232,6 +234,13 @@ public class TableExporter {
             Method method = rendererComponent.getClass().getMethod("getText");
             out.write(method.invoke(rendererComponent).toString());
           } catch (Exception e) {
+            LOG.error(
+                "exportToCSV("
+                + table.toString()
+                + ", "
+                + file.toString()
+                + ") failed",
+                e);
           }
         }
       }

@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swingframework;
 
 import java.awt.Color;
@@ -11,8 +30,11 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import org.diylc.common.Message;
 
 /**
  * {@link JComponent} that draws current memory usage as a vertical
@@ -32,10 +54,7 @@ public class MemoryBar extends JComponent {
   private static final boolean USE_LOG = false;
   private static final Format format = new DecimalFormat("0.00");
   private static final String logPattern = "%s MB of %s MB free, max %s MB is available";
-  private static final String tooltipPattern =
-      "<html>%s MB of %s MB free<br>"
-          + "Max %s MB is available<br>"
-          + "Click to run the garbage collector</html>";
+  private String tooltipPattern = null;
 
   private static final double THRESHOLD = 0.1d;
 
@@ -51,6 +70,10 @@ public class MemoryBar extends JComponent {
   public MemoryBar(boolean autoGC) {
     super();
     this.autoGC = autoGC;
+
+    if (tooltipPattern == null) {
+      tooltipPattern = Message.getHTML("message.memorybar.tooltip", true, "<br>");
+    }
 
     setPreferredSize(new Dimension(16, 20));
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

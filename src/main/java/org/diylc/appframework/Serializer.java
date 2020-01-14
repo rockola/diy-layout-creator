@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework;
 
 import com.thoughtworks.xstream.XStream;
@@ -37,9 +38,7 @@ public class Serializer {
   private static XStream xsd = null;
   private static XStream xsj = null;
 
-  private static void initSerializer() {
-    if (xs != null) return;
-
+  static {
     xs = new XStream();
     xsd = new XStream(new DomDriver());
     xsj = new XStream(new JettisonMappedXmlDriver());
@@ -59,8 +58,6 @@ public class Serializer {
   }
 
   public static Object fromURL(String url) throws IOException {
-
-    initSerializer();
     BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
     Object o = xsd.fromXML(in);
     in.close();
@@ -68,8 +65,6 @@ public class Serializer {
   }
 
   public static Object fromResource(String r) throws IOException {
-
-    initSerializer();
     BufferedInputStream in = new BufferedInputStream(Serializer.class.getResourceAsStream(r));
     Object o = xsd.fromXML(in);
     in.close();
@@ -77,8 +72,6 @@ public class Serializer {
   }
 
   public static Object fromFile(String file) throws IOException {
-
-    initSerializer();
     BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
     Object o = xsd.fromXML(in);
     in.close();
@@ -86,8 +79,6 @@ public class Serializer {
   }
 
   public static Object fromFile(File file) throws IOException {
-
-    initSerializer();
     BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
     Object o = xsd.fromXML(in);
     in.close();
@@ -95,25 +86,21 @@ public class Serializer {
   }
 
   public static void toFile(String file, Object o) throws IOException {
-
-    initSerializer();
     BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
     xsd.toXML(o, out);
     out.close();
   }
 
   public static void toFile(File file, Object o) throws IOException {
-
-    initSerializer();
     BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
     xsd.toXML(o, out);
     out.close();
   }
 
   public static Object fromInputStream(InputStream stream) throws IOException {
-
-    if (stream == null) return null;
-
+    if (stream == null) {
+      return null;
+    }
     // Deserialize the stream
     xsj.setMode(XStream.NO_REFERENCES);
     return xsj.fromXML(stream);

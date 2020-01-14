@@ -73,7 +73,9 @@ public class InfoDialog extends ButtonDialog {
     super.setVisible(b);
   }
 
-  private static String[] tipKeys = new String[] {IPlugInPort.HIGHLIGHT_CONTINUITY_AREA};
+  private static String[] tipKeys = new String[] {
+    IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA.toString()
+  };
   private static String[] messages =
       new String[] {DIYLC.getString("infoDialog.highlight-continuity")};
 }

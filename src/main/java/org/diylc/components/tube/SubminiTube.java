@@ -377,8 +377,8 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     Shape mainArea = getBody()[0];
-    Shape tabArea = getBody()[1];
-    Composite oldComposite = g2d.getComposite();
+    //Shape tabArea = getBody()[1];
+    //Composite oldComposite = g2d.getComposite();
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
@@ -449,7 +449,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
 
           g2d.setColor(PIN_COLOR);
           g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-          g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);
+          g2d.setColor(PIN_BORDER_COLOR);
           g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
         }
       }

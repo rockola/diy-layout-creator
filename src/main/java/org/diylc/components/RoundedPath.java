@@ -1,43 +1,41 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.components;
 
 import java.awt.geom.GeneralPath;
 
 /**
- * *
- *
- * <p>Creates a {@link GeneralPath} with rounded edges. To create a rounded path, follow these
- * steps:
+ * <p>Creates a {@link GeneralPath} with rounded edges. To create a
+ * rounded path, follow these steps:
  *
  * <ul>
  *   <li>instantiate a {@link RoundedPath}
  *   <li>place a starting point using {@link RoundedPath#moveTo(double, double)}
- *   <li>create a polygon using a series of {@link RoundedPath#lineTo(double, double)} calls
+ *   <li>create a polygon using a series of {@link
+ *       RoundedPath#lineTo(double, double)} calls
  *   <li>call {@link RoundedPath#getPath()} to get a rounded path
  * </ul>
  *
- * Note that the starting point shouldn't lie on a corner of the polygon if you want that corner to
- * get rounded too. Instead, place the starting/ending point on one of the polygon sides.
+ * Note that the starting point shouldn't lie on a corner of the
+ * polygon if you want that corner to get rounded too. Instead, place
+ * the starting/ending point on one of the polygon sides.
  *
  * @author bancika
  */
@@ -66,8 +64,12 @@ public class RoundedPath {
   public final void lineTo(double x, double y) {
     if (isFirst) {
       double theta = Math.atan2(y - this.y, x - this.x);
-      double r = Math.sqrt((y - this.y) * (y - this.y) + (x - this.x) * (x - this.x));
-      path.lineTo(this.x + Math.cos(theta) * (r - radius), this.y + Math.sin(theta) * (r - radius));
+      double r = Math.sqrt(
+          (y - this.y) * (y - this.y)
+          + (x - this.x) * (x - this.x));
+      path.lineTo(
+          this.x + Math.cos(theta) * (r - radius),
+          this.y + Math.sin(theta) * (r - radius));
     } else {
       double theta = Math.atan2(y - this.y, x - this.x);
       path.curveTo(

@@ -22,8 +22,10 @@ package org.diylc.core;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
+
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.presenter.ComponentArea;
 
 /**
  * Interface for component instance. Implementation classes of this
@@ -52,6 +54,12 @@ public interface IDIYComponent<T> extends Serializable {
   public static final int TRACE = 3;
   public static final int COMPONENT = 4;
   public static final int TEXT = 5;
+
+  /** @return identifier for component for e.g. debugging. */
+  public String getIdentifier();
+
+  public ComponentArea getComponentArea();
+  public void setComponentArea(ComponentArea area);
 
   /** @return component instance name. */
   String getName();

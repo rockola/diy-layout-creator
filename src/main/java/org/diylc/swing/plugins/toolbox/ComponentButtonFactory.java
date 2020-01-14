@@ -41,16 +41,18 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
+import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.images.Icon;
 
 /**
- * Factory that creates {@link JButton}s which display component type icons and instantiates the
- * component when clicked.
+ * Factory that creates {@link JButton}s which display component type
+ * icons and instantiates the component when clicked.
  *
  * @author Branislav Stojkovic
  */
@@ -89,18 +91,19 @@ public class ComponentButtonFactory {
           @Override
           public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {
-              List<IDIYComponent<?>> components = plugInPort.getCurrentProject().getComponents();
+              Project currentProject = plugInPort.getCurrentProject();
               List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-              for (IDIYComponent<?> component : components) {
+              for (IDIYComponent<?> component : currentProject.getComponents()) {
                 if (componentType.getInstanceClass().equals(component.getClass())) {
                   newSelection.add(component);
                 }
               }
               // Ctrl appends selection
               if (Utils.isMac() ? e.isControlDown() : e.isMetaDown()) {
-                newSelection.addAll(plugInPort.getSelectedComponents());
+                newSelection.addAll(currentProject.getSelection());
               }
-              plugInPort.updateSelection(newSelection);
+              currentProject.clearSelection();
+              currentProject.setSelection(newSelection);
               plugInPort.setNewComponentTypeSlot(null, null, false);
               plugInPort.refresh();
             }

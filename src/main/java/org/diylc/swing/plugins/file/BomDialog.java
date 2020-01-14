@@ -75,11 +75,10 @@ public class BomDialog extends JDialog {
   private ObjectListTable<BomEntry> getTable() {
     if (table == null) {
       try {
-        table =
-            new ObjectListTable<BomEntry>(
-                BomEntry.class,
-                new String[] {"getName", "getValue", "getQuantity", "getNotes/setNotes"},
-                null);
+        table = new ObjectListTable<BomEntry>(
+            BomEntry.class,
+            new String[] {"getName", "getValue", "getQuantity", "getNotes/setNotes"},
+            null);
       } catch (SecurityException | NoSuchMethodException e) {
         e.printStackTrace();
       }
@@ -115,14 +114,12 @@ public class BomDialog extends JDialog {
         initialFile = new File(initialFileName + ".xls");
       }
 
-      File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  BomDialog.this.getOwner(),
-                  FileFilterEnum.EXCEL.getFilter(),
-                  initialFile,
-                  FileFilterEnum.EXCEL.getExtensions()[0],
-                  null);
+      File file = DialogFactory.getInstance().showSaveDialog(
+          BomDialog.this.getOwner(),
+          FileFilterEnum.EXCEL.getFilter(),
+          initialFile,
+          FileFilterEnum.EXCEL.getExtensions()[0],
+          null);
       if (file != null) {
         try {
           TableExporter.getInstance().exportToExcel(getTable(), file);
@@ -151,14 +148,12 @@ public class BomDialog extends JDialog {
         initialFile = new File(initialFileName + ".csv");
       }
 
-      File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  BomDialog.this.getOwner(),
-                  FileFilterEnum.CSV.getFilter(),
-                  initialFile,
-                  FileFilterEnum.CSV.getExtensions()[0],
-                  null);
+      File file = DialogFactory.getInstance().showSaveDialog(
+          BomDialog.this.getOwner(),
+          FileFilterEnum.CSV.getFilter(),
+          initialFile,
+          FileFilterEnum.CSV.getExtensions()[0],
+          null);
       if (file != null) {
         try {
           TableExporter.getInstance().exportToCSV(getTable(), file);
@@ -187,14 +182,12 @@ public class BomDialog extends JDialog {
         initialFile = new File(initialFileName + ".html");
       }
 
-      File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  BomDialog.this.getOwner(),
-                  FileFilterEnum.HTML.getFilter(),
-                  initialFile,
-                  FileFilterEnum.HTML.getExtensions()[0],
-                  null);
+      File file = DialogFactory.getInstance().showSaveDialog(
+          BomDialog.this.getOwner(),
+          FileFilterEnum.HTML.getFilter(),
+          initialFile,
+          FileFilterEnum.HTML.getExtensions()[0],
+          null);
       if (file != null) {
         try {
           TableExporter.getInstance().exportToHTML(getTable(), file);
@@ -223,14 +216,12 @@ public class BomDialog extends JDialog {
         initialFile = new File(initialFileName + ".png");
       }
 
-      File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  BomDialog.this.getOwner(),
-                  FileFilterEnum.PNG.getFilter(),
-                  initialFile,
-                  FileFilterEnum.PNG.getExtensions()[0],
-                  null);
+      File file = DialogFactory.getInstance().showSaveDialog(
+          BomDialog.this.getOwner(),
+          FileFilterEnum.PNG.getFilter(),
+          initialFile,
+          FileFilterEnum.PNG.getExtensions()[0],
+          null);
       if (file != null) {
         try {
           TableExporter.getInstance().exportToPNG(getTable(), file);

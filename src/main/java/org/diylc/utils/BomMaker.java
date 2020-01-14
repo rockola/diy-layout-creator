@@ -68,7 +68,7 @@ public class BomMaker {
               if (compare != 0) {
                 return compare;
               }
-              return Integer.valueOf(value1).compareTo(value2);
+              return Integer.compare(value1, value2);
             }
             return name1.compareToIgnoreCase(name2);
           }
@@ -76,8 +76,8 @@ public class BomMaker {
     for (IDIYComponent<?> component : sortedComponents) {
       @SuppressWarnings("unchecked")
       ComponentType type =
-          ComponentProcessor.getInstance()
-              .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+          ComponentProcessor.extractComponentTypeFrom(
+              (Class<? extends IDIYComponent<?>>) component.getClass());
       if (type.getBomPolicy() == BomPolicy.NEVER_SHOW) continue;
       String name = component.getName();
       String value;

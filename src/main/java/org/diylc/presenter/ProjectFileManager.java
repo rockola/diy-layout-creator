@@ -22,6 +22,7 @@ package org.diylc.presenter;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,8 +42,10 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
@@ -50,6 +53,7 @@ import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.EventType;
 import org.diylc.core.Project;
 import org.diylc.parsing.IOldFileParser;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -135,6 +139,22 @@ public class ProjectFileManager {
     xStreamOld.autodetectAnnotations(true);
     XStream.setupDefaultSecurity(xStreamOld);
     xStreamOld.allowTypesByWildcard(allowTypes);
+
+    parsers = new ArrayList<IOldFileParser>();
+    try {
+      Set<Class<?>> componentTypeClasses = Utils.getClasses("org.diylc.parsing");
+      for (Class<?> clazz : componentTypeClasses) {
+        if (!Modifier.isAbstract(clazz.getModifiers())
+            && IOldFileParser.class.isAssignableFrom(clazz)) {
+
+          IOldFileParser instance =
+              (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
+          parsers.add(instance);
+        }
+      }
+    } catch (Exception e) {
+      LOG.error("Problem with finding old version parsers", e);
+    }
   }
 
   public ProjectFileManager(MessageDispatcher<EventType> messageDispatcher) {
@@ -146,28 +166,6 @@ public class ProjectFileManager {
     currentFileName = null;
     modified = false;
     fireFileStatusChanged();
-  }
-
-  public static List<IOldFileParser> getParsers() {
-    if (parsers == null) {
-      parsers = new ArrayList<IOldFileParser>();
-      Set<Class<?>> componentTypeClasses = null;
-      try {
-        componentTypeClasses = Utils.getClasses("org.diylc.parsing");
-        for (Class<?> clazz : componentTypeClasses) {
-          if (!Modifier.isAbstract(clazz.getModifiers())
-              && IOldFileParser.class.isAssignableFrom(clazz)) {
-
-            IOldFileParser instance =
-                (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
-            parsers.add(instance);
-          }
-        }
-      } catch (Exception e) {
-        LOG.error("Could not find old version parsers", e);
-      }
-    }
-    return parsers;
   }
 
   public synchronized void serializeProjectToFile(
@@ -198,9 +196,8 @@ public class ProjectFileManager {
       for (String w : warnings) {
         LOG.warn(w);
       }
-      DIYLC
-          .ui()
-          .error(String.format(DIYLC.getString("message.presenter.could-not-open"), fileName), e);
+      DIYLC.ui().error(
+          String.format(DIYLC.getString("message.presenter.could-not-open"), fileName), e);
     }
     return project;
   }
@@ -234,7 +231,6 @@ public class ProjectFileManager {
       String formatVersion = doc.getDocumentElement().getAttribute("formatVersion");
 
       // try to find a parser for an older version
-      List<IOldFileParser> parsers = getParsers();
       for (int i = 0; i < parsers.size(); i++) {
         if (parsers.get(i).canParse(formatVersion))
           project = parsers.get(i).parseFile(doc.getDocumentElement(), warnings);

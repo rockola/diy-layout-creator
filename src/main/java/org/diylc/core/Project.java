@@ -22,12 +22,19 @@ package org.diylc.core;
 import java.awt.Font;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.undo.UndoManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
 import org.diylc.core.annotations.EditableProperty;
@@ -37,15 +44,17 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
 /**
- * Entity class that defines a project. Contains project properties and a collection of
- * components.This class is serialized to file. Some filed getters are tagged with {@link
- * EditableProperty} to enable for user to edit them.
+ * Entity class that defines a project. Contains project properties
+ * and a collection of components.This class is serialized to
+ * file. Some filed getters are tagged with {@link EditableProperty}
+ * to enable for user to edit them.
  *
  * @author Branislav Stojkovic
  */
-public class Project implements Serializable {
+public class Project implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(Project.class);
 
   public static final String FILE_SUFFIX = ".diy";
 
@@ -56,30 +65,142 @@ public class Project implements Serializable {
   public static Font DEFAULT_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
 
   private VersionNumber fileVersion;
-  private String title;
-  private String author;
+  private String title = DEFAULT_TITLE;
+  private String author = System.getProperty("user.name");
   private String description;
-  private Size width;
-  private Size height;
-  private Size gridSpacing;
-  private List<IDIYComponent<?>> components;
-  private Set<Set<IDIYComponent<?>>> groups;
-  private Set<Integer> lockedLayers;
-  private Set<Integer> hiddenLayers;
+  private Size width = DEFAULT_WIDTH;
+  private Size height = DEFAULT_HEIGHT;
+  private Size gridSpacing = DEFAULT_GRID_SPACING;
+  private List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
+  private Set<Set<IDIYComponent<?>>> groups = new HashSet<Set<IDIYComponent<?>>>();
+  private Set<Integer> lockedLayers = new HashSet<Integer>();
+  private Set<Integer> hiddenLayers = new HashSet<Integer>();
   private Font font = DEFAULT_FONT;
 
-  public Project() {
-    components = new ArrayList<IDIYComponent<?>>();
-    groups = new HashSet<Set<IDIYComponent<?>>>();
-    lockedLayers = new HashSet<Integer>();
-    hiddenLayers = new HashSet<Integer>();
-    title = DEFAULT_TITLE;
-    author = System.getProperty("user.name");
-    width = DEFAULT_WIDTH;
-    height = DEFAULT_HEIGHT;
-    gridSpacing = DEFAULT_GRID_SPACING;
+  private transient Set<IDIYComponent<?>> selection = new HashSet<IDIYComponent<?>>();
+  // should really be called "instantiated"
+  private transient Date created = new Date();
+  private transient int sequenceNumber = nextSequenceNumber();
+
+  private static int projectSequenceNumber = 0;
+
+  public Project() {}
+
+  /**
+     xStream does not call default constructor, so any transients must
+     be explicitly initialized.
+   */
+  private Object readResolve() {
+    created = new Date();
+    sequenceNumber = nextSequenceNumber();
+    selection = new HashSet<IDIYComponent<?>>();
+    return this;
   }
 
+  private int nextSequenceNumber() {
+    projectSequenceNumber = projectSequenceNumber + 1;
+    return projectSequenceNumber;
+  }
+
+  public Date getCreated() {
+    return new Date(created.getTime());
+  }
+
+  public Set<IDIYComponent<?>> getSelection() {
+    return selection;
+  }
+
+  /* TODO: getSelection in Z order
+       Collections.sort(
+         getSelection(),
+         ComparatorFactory.getInstance().getComponentProjectZOrderComparator(this));
+  */
+
+
+  public boolean emptySelection() {
+    return selection.isEmpty();
+  }
+
+  public void clearSelection() {
+    LOG.trace("clearSelection()");
+    selection.clear();
+  }
+
+  public boolean inSelection(IDIYComponent<?> c) {
+    return selection.contains(c);
+  }
+
+  /**
+     Remove certain components from this project.
+   */
+  public void removeComponents(Collection<IDIYComponent<?>> componentsToRemove) {
+    Iterator<IDIYComponent<?>> i = componentsToRemove.iterator();
+    while (i.hasNext()) {
+      IDIYComponent<?> c = i.next();
+      selection.remove(c);
+      components.remove(c);
+    }
+  }
+
+  /**
+     Remove components in selection from this project.
+  */
+  public void removeSelection() {
+    // need a copy of selection to avoid race condition
+    //
+    // TODO: figure out a way to remove components from project/selection
+    // without duplicating selection
+    removeComponents(new HashSet<IDIYComponent<?>>(selection));
+    clearSelection();
+  }
+
+  public void setSelection(Collection<IDIYComponent<?>> newSelection) {
+    clearSelection();
+    Iterator<IDIYComponent<?>> i = newSelection.iterator();
+    while (i.hasNext()) {
+      selection.add(i.next());
+    }
+  }
+
+  public void addToSelection(IDIYComponent<?> c) {
+    selection.add(c);
+  }
+
+  /**
+   * Removes all the groups that contain at least one of the specified components.
+   *
+   * @param components
+   */
+  public void ungroupSelection() {
+    Iterator<Set<IDIYComponent<?>>> groupIterator = getGroups().iterator();
+    while (groupIterator.hasNext()) {
+      Set<IDIYComponent<?>> group = groupIterator.next();
+      group.removeAll(getSelection());
+      if (group.isEmpty()) {
+        groupIterator.remove();
+      }
+    }
+  }
+
+  public void groupSelection() {
+    // First remove the selected components from other groups
+    ungroupSelection();
+    // Then group them together
+    getGroups().add(new HashSet<IDIYComponent<?>>(getSelection()));
+  }
+
+  public void logTraceSelection() {
+    LOG.trace(
+        "Project {} selection {}",
+        this,
+        emptySelection() ? "is empty" : "size " + getSelection().size());
+    for (IDIYComponent<?> c : getSelection()) {
+      LOG.trace("{} is selected", c.getIdentifier());
+    }
+  }
+
+  // ****************************************************************
+  // properties
   @EditableProperty(defaultable = false, sortOrder = 1)
   public String getTitle() {
     return title;
@@ -142,6 +263,10 @@ public class Project implements Serializable {
    */
   public List<IDIYComponent<?>> getComponents() {
     return components;
+  }
+
+  public boolean contains(IDIYComponent<?> c) {
+    return getComponents().contains(c);
   }
 
   /**
@@ -257,7 +382,15 @@ public class Project implements Serializable {
 
   @Override
   public String toString() {
-    return title;
+    if (title == null) {
+      return String.format("<Project id=%d created=\"%s\"/>", sequenceNumber, created.toString());
+    } else {
+      return String.format(
+          "<Project id=%d name=\"%s\" created=\"%s\"/>",
+          sequenceNumber,
+          title,
+          created.toString());
+    }
   }
 
   public static class SpacingValidator extends PositiveMeasureValidator {
@@ -277,7 +410,20 @@ public class Project implements Serializable {
 
   @Override
   public Project clone() {
-    Project project = new Project();
+    Project project = null;
+    try {
+      project = (Project) super.clone();
+    } catch (CloneNotSupportedException e) {
+      // this song'n'dance is to get around declaring 'throws
+      // CloneNotSupportedException' as this would require handling in
+      // 50+ places in Presenter.java, some of which
+      // e.g. mouseClicked() might be tricky to do properly
+      //
+      // TODO: end goal is to rewrite all uses of Project.clone() to
+      // do something completely different //ola 20100110
+      throw new RuntimeException(e);
+    }
+    project.sequenceNumber = nextSequenceNumber();
     project.setTitle(this.getTitle());
     project.setAuthor(this.getAuthor());
     project.setDescription(this.getDescription());
@@ -292,15 +438,30 @@ public class Project implements Serializable {
     Map<IDIYComponent<?>, IDIYComponent<?>> cloneMap =
         new HashMap<IDIYComponent<?>, IDIYComponent<?>>();
 
+    List<IDIYComponent<?>> addedComponents = new ArrayList<>();
     for (IDIYComponent<?> component : this.components) {
+      /*
+      IDIYComponent<?> clone = null;
       try {
-        IDIYComponent<?> clone = component.clone();
-        project.getComponents().add(clone);
-        cloneMap.put(component, clone);
+        clone = component.clone();
+        LOG.trace(
+            "Cloning {}, got {}",
+            component.getIdentifier(),
+            clone.getIdentifier());
       } catch (CloneNotSupportedException e) {
+        // see above
+        LOG.error("Could not clone {}", component.getIdentifier());
         throw new RuntimeException(e);
       }
+      addedComponents.add(clone);
+      cloneMap.put(component, clone);
+      */
+      // on 2nd thoughts let's not make a deep clone --ola 20200114
+      addedComponents.add(component);
+      cloneMap.put(component, component);
     }
+    project.getComponents().clear();
+    project.getComponents().addAll(addedComponents);
 
     for (Set<IDIYComponent<?>> group : this.groups) {
       Set<IDIYComponent<?>> cloneGroup = new HashSet<IDIYComponent<?>>();

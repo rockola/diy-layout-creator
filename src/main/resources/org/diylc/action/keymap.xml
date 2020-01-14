@@ -2,9 +2,14 @@
 <keymap>
   <!-- function & navigation keys -->
   <binding>
+    <keycode>ENTER</keycode>
+    <modifier></modifier>
+    <action>OK</action>
+  </binding>
+  <binding>
     <keycode>ESCAPE</keycode>
     <modifier></modifier>
-    <action>Escape</action>
+    <action>Cancel</action>
   </binding>
   <binding>
     <keycode>DELETE</keycode>
@@ -57,6 +62,11 @@
     <keycode>E</keycode>
     <modifier>Menu</modifier>
     <action>Edit Selection</action>
+  </binding>
+  <binding>
+    <keycode>T</keycode>
+    <modifier>Menu</modifier>
+    <action>Template Dialog</action>
   </binding>
   <binding>
     <keycode>Y</keycode>

@@ -25,14 +25,12 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
 
   private static final long serialVersionUID = 1L;
 
-  // public Size() {
-  // super();
-  // // TODO Auto-generated constructor stub
-  // }
-
   public Size(Double value, SizeUnit unit) {
     super(value, unit);
-    // TODO Auto-generated constructor stub
+  }
+
+  public Size(Size s) {
+    super(s.value, s.unit);
   }
 
   public double convertToPixels() {
@@ -43,11 +41,6 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     // * (grids + remainder));
     return getValue() * getUnit().getFactor()
         / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
-  }
-
-  @Override
-  public Size clone() throws CloneNotSupportedException {
-    return new Size(value, unit);
   }
 
   public static Size parseSize(String value) {
@@ -63,7 +56,8 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
 
   @Override
   public int compareTo(Size o) {
-    return Double.valueOf(value * unit.getFactor())
-        .compareTo(o.getValue() * o.getUnit().getFactor());
+    return Double.compare(
+        value * unit.getFactor(),
+        o.getValue() * o.getUnit().getFactor());
   }
 }

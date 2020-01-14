@@ -84,7 +84,7 @@ public class DoubleArrayTextField extends JTextField {
         else b.append(" / ");
         b.append(v == null ? "" : format.format(v));
       }
-      setText(value == null ? "" : b.toString());
+      setText(b.toString());
     } finally {
       ignoreChanges = false;
     }

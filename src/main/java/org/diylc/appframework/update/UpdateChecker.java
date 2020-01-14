@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.appframework.update;
 
 import java.text.Format;
@@ -5,8 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import org.diylc.DIYLC;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.Config;
 
@@ -14,8 +36,6 @@ public class UpdateChecker {
 
   private static final Logger LOG = LogManager.getLogger(UpdateChecker.class);
 
-  private static final String VERSION_HTML = "<p><b>v%d.%d.%d (released on %s)</b><br>\n%s</p>\n";
-  private static final String CHANGE_HTML = "&nbsp;&nbsp;&nbsp;<b>&rsaquo;</b>&nbsp;[%s] %s<br>\n";
   private static final Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private VersionNumber currentVersion;
@@ -26,6 +46,8 @@ public class UpdateChecker {
     this.currentVersion = currentVersion;
     this.updateFileURL = updateFileURL;
   }
+
+  private static String getMsg(String key) { return DIYLC.getString("message.update." + key); }
 
   @SuppressWarnings("unchecked")
   public List<Version> findNewVersions() throws Exception {
@@ -46,48 +68,51 @@ public class UpdateChecker {
     List<Version> versions = findNewVersions();
     if (versions != null && !versions.isEmpty()) {
       Version v = versions.get(0);
-      return v.getName()
-          + "v"
-          + v.getVersionNumber()
-          + " released on "
-          + dateFormat.format(v.getReleaseDate());
+      return String.format(getMsg("version-short-format"),
+                           v.getName(),
+                           v.getVersionNumber(),
+                           dateFormat.format(v.getReleaseDate()));
     }
     return null;
   }
 
   public static String createUpdateHTML(List<Version> versions) {
     if (versions == null) {
-      return "Could not obtain update information.";
+      return getMsg("versions-not-found");
     }
 
-    String bodyHtml = "";
+    StringBuffer bodyHtml = new StringBuffer();
     for (Version version : versions) {
       LOG.debug("Version = {}", version);
-      String changeStr = "";
+      StringBuffer changeStr = new StringBuffer();
       for (Change change : version.getChanges()) {
-        changeStr +=
+        changeStr.append(
             String.format(
-                CHANGE_HTML,
-                convertChangeTypeToHTML(change.getChangeType()),
-                change.getDescription());
+                "&nbsp;&nbsp;&nbsp;<b>&rsaquo;</b>&nbsp;[<span class=\"%\">%s</span>] %s<br>%n",
+                change.getChangeType(),
+                change.getChangeType(),
+                change.getDescription()));
       }
 
-      bodyHtml +=
+      bodyHtml.append(
           String.format(
-              VERSION_HTML,
+              "<p><b>v%d.%d.%d (%s %s)</b><br>%n%s</p>%n",
               version.getVersionNumber().getMajor(),
               version.getVersionNumber().getMinor(),
               version.getVersionNumber().getBuild(),
+              getMsg("released-on"),
               dateFormat.format(version.getReleaseDate()),
-              changeStr);
+              changeStr));
     }
+
     return String.format(
-        "<html><font face=\"%s\" size=\"2\">\n%s\n</font></html>",
-        Config.getString("font.sans-serif"), bodyHtml);
+        "<html><font face=\"%s\" size=\"2\">%n%s%n</font></html>",
+        Config.getString("font.sans-serif"),
+        bodyHtml.toString());
   }
 
   private static String convertChangeTypeToHTML(ChangeType changeType) {
-    String color;
+    String color = null;
     switch (changeType) {
       case BUG_FIX:
         color = "red";
@@ -99,8 +124,12 @@ public class UpdateChecker {
         color = "green";
         break;
       default:
-        color = "black";
+        //color = "black";
     }
-    return "<font color=\"" + color + "\">" + changeType + "</font>";
+    if (color == null) {
+      return changeType.theString();
+    }
+
+    return "<font color=\"" + color + "\">" + changeType.theString() + "</font>";
   }
 }

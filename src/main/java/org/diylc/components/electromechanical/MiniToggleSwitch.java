@@ -74,7 +74,6 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
 
   protected Point[] controlPoints = new Point[] {new Point(0, 0)};
   protected transient Shape body;
-  protected String name;
   protected ToggleSwitchType switchType = ToggleSwitchType.DPDT;
   private OrientationHV orientation = OrientationHV.VERTICAL;
   private Size spacing = SPACING;

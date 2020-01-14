@@ -52,8 +52,8 @@ public class AnimatedCloudGlassPane extends JPanel implements MouseListener, Key
   private static final long serialVersionUID = -5344758920442881290L;
 
   private long startTime;
-  private final int msPerPx = 6;
-  private final Color bgColor = new Color(192, 222, 237);
+  private static final int msPerPx = 6;
+  private static final Color bgColor = new Color(192, 222, 237);
 
   private Timer animationTimer;
 

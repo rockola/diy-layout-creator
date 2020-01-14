@@ -71,8 +71,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -83,6 +85,7 @@ import org.diylc.common.IBlockProcessor.InvalidBlockException;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
+import org.diylc.core.Project;
 import org.diylc.core.Template;
 import org.diylc.images.Icon;
 import org.diylc.presenter.ComponentProcessor;
@@ -91,7 +94,6 @@ import org.diylc.swing.plugins.toolbox.ComponentButtonFactory;
 public class TreePanel extends JPanel {
 
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LogManager.getLogger(TreePanel.class);
 
   public static final String COMPONENT_SHORTCUT_KEY = "componentShortcuts";
@@ -136,7 +138,7 @@ public class TreePanel extends JPanel {
     setPreferredSize(new Dimension(240, 200));
 
     ConfigurationManager.addListener(
-        IPlugInPort.RECENT_COMPONENTS_KEY,
+        IPlugInPort.Key.RECENT_COMPONENTS,
         new IConfigListener() {
 
           @SuppressWarnings("unchecked")
@@ -148,13 +150,15 @@ public class TreePanel extends JPanel {
                     .equals(new HashSet<String>(TreePanel.this.recentComponents))) {
               LOG.info("Detected recent component change");
               refreshRecentComponents(newComponents);
-            } else LOG.info("Detected no recent component change");
-            TreePanel.this.recentComponents = new ArrayList<String>(newComponents);
+              TreePanel.this.recentComponents = new ArrayList<String>(newComponents);
+            } else {
+              LOG.info("Detected no recent component change");
+            }
           }
         });
 
     ConfigurationManager.addListener(
-        IPlugInPort.BLOCKS_KEY,
+        IPlugInPort.Key.BLOCKS,
         new IConfigListener() {
 
           @SuppressWarnings("unchecked")
@@ -168,13 +172,17 @@ public class TreePanel extends JPanel {
               if (!blockNames.equals(TreePanel.this.blocks)) {
                 LOG.info("Detected block change");
                 refreshBuildingBlocks(blockNames);
-              } else LOG.info("Detected no block change");
-            } else LOG.info("Detected no block change");
+              } else {
+                LOG.info("Detected no block change");
+              }
+            } else {
+              LOG.info("Detected no block change");
+            }
           }
         });
 
     ConfigurationManager.addListener(
-        IPlugInPort.TEMPLATES_KEY,
+        IPlugInPort.Key.TEMPLATES,
         new IConfigListener() {
           @Override
           public void valueChanged(String key, Object value) {
@@ -184,7 +192,7 @@ public class TreePanel extends JPanel {
         });
 
     ConfigurationManager.addListener(
-        IPlugInPort.FAVORITES_KEY,
+        IPlugInPort.Key.FAVORITES,
         new IConfigListener() {
           @SuppressWarnings("unchecked")
           @Override
@@ -193,7 +201,9 @@ public class TreePanel extends JPanel {
             if (newFavorites != null && !newFavorites.equals(TreePanel.this.favorites)) {
               LOG.info("Detected favorites change");
               refreshFavorites(newFavorites);
-            } else LOG.info("Detected no favorites change");
+            } else {
+              LOG.info("Detected no favorites change");
+            }
           }
         });
 
@@ -227,7 +237,7 @@ public class TreePanel extends JPanel {
       this.recentNode = new DefaultMutableTreeNode(new Payload("(Recently Used)", null), true);
 
       @SuppressWarnings("unchecked")
-      List<String> recent = (List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY);
+      List<String> recent = (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
       if (recent != null) {
         this.recentComponents = new ArrayList<String>(recent);
         refreshRecentComponents(recent);
@@ -244,7 +254,7 @@ public class TreePanel extends JPanel {
 
       @SuppressWarnings("unchecked")
       Map<String, List<IDIYComponent<?>>> newBlocks =
-          (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.BLOCKS_KEY);
+          (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.Key.BLOCKS);
       if (newBlocks != null) {
         List<String> blockNames = new ArrayList<String>(newBlocks.keySet());
         Collections.sort(blockNames);
@@ -261,7 +271,7 @@ public class TreePanel extends JPanel {
       this.favoritesNode = new DefaultMutableTreeNode(new Payload("(Favorites)", null), true);
 
       @SuppressWarnings("unchecked")
-      List<Favorite> favorites = (List<Favorite>) DIYLC.getObject(IPlugInPort.FAVORITES_KEY);
+      List<Favorite> favorites = (List<Favorite>) DIYLC.getObject(IPlugInPort.Key.FAVORITES);
       if (favorites != null) {
         refreshFavorites(favorites);
       } else {
@@ -278,9 +288,8 @@ public class TreePanel extends JPanel {
       final ComponentType componentType;
       try {
         componentType =
-            ComponentProcessor.getInstance()
-                .extractComponentTypeFrom(
-                    (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
+            ComponentProcessor.extractComponentTypeFrom(
+                (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
         Payload payload =
             new Payload(
                 componentType,
@@ -409,7 +418,7 @@ public class TreePanel extends JPanel {
     if (!initializing) getTreeModel().nodeStructureChanged(getFavoritesNode());
   }
 
-  class MyTreeModelListener implements TreeModelListener {
+  private static class MyTreeModelListener implements TreeModelListener {
     public void treeNodesChanged(TreeModelEvent e) {
       // super.treeNodesChanged(e);
     }
@@ -623,7 +632,7 @@ public class TreePanel extends JPanel {
                           favorites.add(fav);
                           Collections.sort(favorites);
                         }
-                        DIYLC.putValue(IPlugInPort.FAVORITES_KEY, favorites);
+                        DIYLC.putValue(IPlugInPort.Key.FAVORITES, favorites);
                       }
                     });
                 popup.add(favoritesItem);
@@ -938,15 +947,16 @@ public class TreePanel extends JPanel {
       LOG.info(getValue(AbstractAction.NAME) + " triggered");
       if (componentType != null) {
         plugInPort.setNewComponentTypeSlot(null, null, false);
-        List<IDIYComponent<?>> components = plugInPort.getCurrentProject().getComponents();
+        Project currentProject = plugInPort.getCurrentProject();
         List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-        for (IDIYComponent<?> component : components) {
+        for (IDIYComponent<?> component : currentProject.getComponents()) {
           if (componentType.getInstanceClass().equals(component.getClass())) {
             newSelection.add(component);
           }
         }
 
-        plugInPort.updateSelection(newSelection);
+        currentProject.clearSelection();
+        currentProject.setSelection(newSelection);
         plugInPort.refresh();
       }
     }

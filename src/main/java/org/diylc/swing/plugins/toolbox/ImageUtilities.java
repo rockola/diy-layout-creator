@@ -179,7 +179,7 @@ public final class ImageUtilities {
     }
 
     private synchronized Icon getDisabledIcon() {
-      if (null == this.disabledIcon) {
+      if (this.disabledIcon == null) {
         this.disabledIcon = new ImageIcon(LazyDisabledIcon.createDisabledImage(this.img));
       }
       return this.disabledIcon;

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -17,12 +19,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.Utils;
+
+import org.diylc.DIYLC;
 
 public class UpdateDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(UpdateDialog.class);
 
   private JEditorPane htmlLabel;
 
@@ -81,15 +87,14 @@ public class UpdateDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
               try {
-                Utils.openURL(latestVersionUrl);
+                DIYLC.openURL(new URL(latestVersionUrl));
                 UpdateDialog.this.setVisible(false);
               } catch (Exception e1) {
                 JOptionPane.showMessageDialog(
                     UpdateDialog.this,
-                    "Could not launch default browser. To downlaod the latest version visit "
+                    "Could not launch default browser. To download the latest version visit "
                         + latestVersionUrl);
-                LogManager.getLogger(UpdateDialog.class)
-                    .error("Could not launch default browser", e1);
+                LOG.error("Could not launch default browser", e1);
               }
             }
           });

@@ -148,24 +148,22 @@ public class MainFrame extends JFrame {
       addWindowListener(
           new WindowAdapter() {
 
-            @Override
-            public void windowClosed(WindowEvent e) {
+            private void doExit() {
               if (presenter.allowFileAction()) {
-                DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
+                DIYLC.putValue(IPlugInPort.Key.ABNORMAL_EXIT, false);
                 dispose();
-                presenter.dispose();
                 System.exit(0);
               }
             }
 
             @Override
+            public void windowClosed(WindowEvent e) {
+              doExit();
+            }
+
+            @Override
             public void windowClosing(WindowEvent e) {
-              if (presenter.allowFileAction()) {
-                DIYLC.putValue(IPlugInPort.ABNORMAL_EXIT_KEY, false);
-                dispose();
-                presenter.dispose();
-                System.exit(0);
-              }
+              doExit();
             }
           });
 
@@ -183,26 +181,17 @@ public class MainFrame extends JFrame {
     super.setVisible(b);
     // TODO: hack to prevent painting issues in the scroll bar rulers. Find
     // a better fix if possible.
-    Timer timer =
-        new Timer(
-            500,
-            new ActionListener() {
+    Timer timer = new Timer(
+        500,
+        new ActionListener() {
 
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                canvasPlugin.refresh();
-              }
-            });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            canvasPlugin.refresh();
+          }
+        });
     timer.setRepeats(false);
     timer.start();
-    // if (b) {
-    // SwingUtilities.invokeLater(new Runnable() {
-    // @Override
-    // public void run() {
-    //
-    // }
-    // });
-    // }
   }
 
   private void createBasePanels() {
@@ -254,6 +243,10 @@ public class MainFrame extends JFrame {
 
   public void info(String text, Exception e) {
     info(Config.getString("message.info"), String.format("%s %s", text, e.getMessage()));
+  }
+
+  public void success(String text) {
+    info(Config.getString("message.success"), text);
   }
 
   public void error(String title, String text) {
@@ -361,7 +354,7 @@ public class MainFrame extends JFrame {
    */
   public void injectMenuAction(Action action, String menuName) {
     LOG.trace(
-        "injectMenuAction(%s, %s)",
+        "injectMenuAction({}, {})",
         action == null ? "Separator" : action.getValue(Action.NAME), menuName);
     JMenu menu = findOrCreateMenu(menuName);
     if (action == null) {
@@ -397,7 +390,7 @@ public class MainFrame extends JFrame {
    * @param parentMenuName
    */
   public void injectSubmenu(String name, Icon icon, String parentMenuName) {
-    LOG.trace("injectSubmenu(%s, icon, %s)", name, parentMenuName);
+    LOG.trace("injectSubmenu({}, icon, {})", name, parentMenuName);
     JMenu menu = findOrCreateMenu(parentMenuName);
     JMenu submenu = new JMenu(name);
     if (icon != null) submenu.setIcon(icon.icon());
@@ -520,11 +513,11 @@ public class MainFrame extends JFrame {
 
   class FramePlugin implements IPlugIn {
 
-    private IPlugInPort plugInPort;
+    // private IPlugInPort plugInPort;
 
     @Override
     public void connect(IPlugInPort plugInPort) {
-      this.plugInPort = plugInPort;
+      // this.plugInPort = plugInPort;
     }
 
     @Override

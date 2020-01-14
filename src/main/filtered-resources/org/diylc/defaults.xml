@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
   <app>
+    <name>${artifactId}</name>
     <title>${project.name}</title>
     <version>${project.version}</version>
     <build>${maven.build.timestamp}</build>

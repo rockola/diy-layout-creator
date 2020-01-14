@@ -53,7 +53,8 @@ public abstract class ButtonDialog extends JDialog {
 
   public static final String windowClosingKey = "org.diylc.swingframework.dispatch:WINDOW_CLOSING";
 
-  public static void installEscapeCloseOperation(final JDialog dialog) {
+  public void closeWithEscape() {
+    final JDialog dialog = this;
     Action dispatchClosing =
         new AbstractAction() {
 
@@ -64,8 +65,9 @@ public abstract class ButtonDialog extends JDialog {
           }
         };
     JRootPane root = dialog.getRootPane();
-    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-        .put(DIYLC.getKeyStroke("Escape"), windowClosingKey);
+    root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+        DIYLC.getKeyStroke("Cancel"),
+        windowClosingKey);
     root.getActionMap().put(windowClosingKey, dispatchClosing);
   }
 
@@ -76,8 +78,9 @@ public abstract class ButtonDialog extends JDialog {
     setResizable(false);
 
     this.buttonCaptions = buttonCaptions;
-
     this.buttonMap = new HashMap<String, JButton>();
+
+    closeWithEscape();
   }
 
   protected void layoutGui() {

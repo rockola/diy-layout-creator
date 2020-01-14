@@ -167,7 +167,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   }
 
   @Override
-  protected boolean IsCopperArea() {
+  protected boolean isCopperArea() {
     return true;
   }
 

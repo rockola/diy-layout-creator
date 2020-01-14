@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.miscutils;
 
 import java.io.File;
@@ -29,9 +30,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.text.CaseUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.appframework.Serializer;
+import org.diylc.common.IPlugInPort;
 
 /**
  * Utility that reads and writes configuration to an XML file. Each
@@ -45,8 +50,7 @@ public class ConfigurationManager {
 
   private static final Logger LOG = LogManager.getLogger(ConfigurationManager.class);
 
-  private static ConfigurationManager instance;
-  private static String path = Utils.getUserDataDirectory("generic");
+  private static ConfigurationManager instance = new ConfigurationManager();
   private static final String fileName = "config.xml";
 
   private Map<String, Object> configuration;
@@ -54,20 +58,19 @@ public class ConfigurationManager {
 
   private boolean fileWithErrors = false;
 
-  public static void initialize(String appName) {
-    path = Utils.getUserDataDirectory(appName);
-  }
+  private static final char[] camelCaseSeparators = new char[]{'_'};
 
   public static ConfigurationManager getInstance() {
-    if (instance == null) {
-      instance = new ConfigurationManager();
-    }
     return instance;
   }
 
   public ConfigurationManager() {
     this.listeners = new HashMap<String, List<IConfigListener>>();
     initializeConfiguration();
+  }
+
+  public static String keyString(IPlugInPort.Key key) {
+    return CaseUtils.toCamelCase(key.toString(), false, camelCaseSeparators);
   }
 
   public void addConfigListener(String key, IConfigListener listener) {
@@ -85,6 +88,10 @@ public class ConfigurationManager {
     getInstance().addConfigListener(key, listener);
   }
 
+  public static void addListener(IPlugInPort.Key key, IConfigListener listener) {
+    getInstance().addConfigListener(keyString(key), listener);
+  }
+
   public static boolean isFileWithErrors() {
     return getInstance().fileWithErrors;
   }
@@ -93,7 +100,7 @@ public class ConfigurationManager {
   private void initializeConfiguration() {
     LOG.info("Initializing configuration");
 
-    String configFileName = path + fileName;
+    String configFileName = Utils.getUserDataDirectory() + fileName;
     File configFile = new File(configFileName);
     // if there's no file in the preferred folder, look for it in the app folder
     if (!configFile.exists()) {
@@ -109,7 +116,7 @@ public class ConfigurationManager {
         fileWithErrors = true;
         configuration = new HashMap<String, Object>();
         try {
-          File backupFile = new File(path + fileName + "~");
+          File backupFile = new File(Utils.getUserDataDirectory() + fileName + "~");
           while (backupFile.exists()) {
             backupFile = new File(backupFile.getAbsolutePath() + "~");
           }
@@ -136,13 +143,21 @@ public class ConfigurationManager {
   private void saveConfiguration() {
     LOG.info("Saving configuration");
 
-    String configFile = path + fileName;
+    String configFile = Utils.getUserDataDirectory() + fileName;
     try {
-      new File(path).mkdirs();
+      File f = new File(Utils.getUserDataDirectory());
+      if (!f.isDirectory()) {
+        boolean success = f.mkdirs();
+        if (!success) {
+          throw new RuntimeException(String.format("Directories not created for %s", configFile));
+        }
+      }
       // Writer writer = new OutputStreamWriter(out, "UTF-8");
       Serializer.toFile(configFile, configuration);
-    } catch (Exception e) {
-      LOG.error("Could not save configuration: " + e.getMessage());
+    } catch (IOException e) {
+      LOG.error("Could not save configuration to " + configFile, e);
+    } catch (SecurityException e) {
+      LOG.error("Access denied for " + configFile, e);
     }
   }
 
@@ -157,9 +172,17 @@ public class ConfigurationManager {
   public static boolean getBoolean(String key, boolean defaultValue) {
     return getInstance().readBoolean(key, defaultValue);
   }
-  // default boolean value = false
+
   public static boolean getBoolean(String key) {
     return getBoolean(key, false);
+  }
+
+  public static boolean getBoolean(IPlugInPort.Key key, boolean defaultValue) {
+    return getBoolean(keyString(key), defaultValue);
+  }
+
+  public static boolean getBoolean(IPlugInPort.Key key) {
+    return getBoolean(keyString(key), false);
   }
 
   public String readString(String key, String defaultValue) {
@@ -173,8 +196,9 @@ public class ConfigurationManager {
   public static String getString(String key, String defaultValue) {
     return getInstance().readString(key, defaultValue);
   }
-  // default String value = null
+
   public static String getString(String key) {
+    // default String value = null
     return getInstance().readString(key, null);
   }
 
@@ -225,12 +249,21 @@ public class ConfigurationManager {
   public static Object getObject(String key, Object defaultValue) {
     return getInstance().readObject(key, defaultValue);
   }
-  // default Object value = null
+
   public static Object getObject(String key) {
     return getObject(key, null);
   }
 
+  public static Object getObject(IPlugInPort.Key key, Object defaultValue) {
+    return getObject(keyString(key), defaultValue);
+  }
+
+  public static Object getObject(IPlugInPort.Key key) {
+    return getObject(keyString(key), null);
+  }
+
   public void writeValue(String key, Object value) {
+    LOG.debug("writeValue({}, {})", key, value);
     configuration.put(key, value);
     saveConfiguration();
     if (listeners.containsKey(key)) {
@@ -242,5 +275,9 @@ public class ConfigurationManager {
 
   public static void putValue(String key, Object value) {
     getInstance().writeValue(key, value);
+  }
+
+  public static void putValue(IPlugInPort.Key key, Object value) {
+    putValue(keyString(key), value);
   }
 }
