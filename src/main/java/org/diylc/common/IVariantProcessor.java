@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.io.IOException;
@@ -43,8 +44,5 @@ public interface IVariantProcessor {
 
   String getDefaultVariant(ComponentType type);
 
-  public class VariantAlreadyExistsException extends Exception {
-
-    private static final long serialVersionUID = 1L;
-  }
+  public class VariantAlreadyExistsException extends Exception {}
 }

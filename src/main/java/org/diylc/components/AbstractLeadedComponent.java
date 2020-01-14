@@ -171,7 +171,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
               width,
               width);
       shapeRect = body.getBounds();
-      Composite oldComposite = g2d.getComposite();
+      final Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
         g2d.setComposite(
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
@@ -218,8 +218,6 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
         if (shouldShadeLeads()) {
           Stroke leadStroke = ObjectCache.getInstance().fetchBasicStroke(leadThickness - 1);
-          Color leadColor = getLeadColorForPainting(componentState);
-
           Area leadArea = new Area();
 
           int endX = (int) (getPoints()[0].x + Math.cos(theta) * leadLength);
@@ -233,6 +231,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
           leadArea.add(new Area(leadStroke.createStrokedShape(line)));
 
           g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
+          Color leadColor = getLeadColorForPainting(componentState);
           g2d.setColor(leadColor);
           g2d.fill(leadArea);
           g2d.setColor(leadColor.darker());
@@ -259,7 +258,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
           (getPoints()[0].y + getPoints()[1].y - width) / 2);
       g2d.rotate(theta, length / 2, width / 2);
       // Draw body.
-      Composite oldComposite = g2d.getComposite();
+      final Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
         g2d.setComposite(
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
@@ -341,7 +340,6 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
               : labelColor;
     }
     g2d.setColor(finalLabelColor);
-    FontMetrics fontMetrics = g2d.getFontMetrics();
     String label = "";
     label = display == Display.NAME ? getName() : (getValue() == null ? "" : getValue().toString());
     if (display == Display.NONE) {
@@ -350,6 +348,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     if (display == Display.BOTH) {
       label = getName() + " " + (getValue() == null ? "" : getValue().toString());
     }
+    FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D textRect = fontMetrics.getStringBounds(label, g2d);
     // Don't offset in outline mode.
     int offset =
@@ -538,7 +537,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   /**
    * Controls how component shape should be placed relative to start and end point.
    *
-   * Returns <code>true<code> if shape rect should be used to center
+   * Returns <code>true</code> if shape rect should be used to center
    * the component or <code>false</code> to place the component
    * relative to <code>length</code> and <code>width</code> values.
    *
@@ -548,12 +547,16 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return true;
   }
 
-  /** @return default lead thickness. Override this method to change it. */
+  /**
+     @return default lead thickness. Override this method to change it.
+  */
   protected float getLeadThickness() {
     return getClosestOdd(LEAD_THICKNESS.convertToPixels());
   }
 
-  /** @return default lead color. Override this method to change it. */
+  /**
+     @return default lead color. Override this method to change it.
+  */
   protected Color getLeadColorForPainting(ComponentState componentState) {
     return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
         ? SELECTION_COLOR
@@ -708,7 +711,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   /**
    * Override this method with @EditableProperty annotation in child
-   * classes where standing mode is supported
+   * classes where standing mode is supported.
    *
    * @return
    */
@@ -731,8 +734,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   @Override
   public String getControlPointNodeName(int index) {
-    if (index >= 2) return null;
-    return Integer.toString(index + 1);
+    return (index >= 2 ? null : Integer.toString(index + 1));
   }
 
   public enum LabelOrientation {
