@@ -20,22 +20,37 @@
 
 package org.diylc.components.connectivity;
 
+import java.util.HashMap;
+
 public enum AWG {
-  _8,
-  _10,
-  _12,
-  _14,
-  _16,
-  _18,
-  _20,
-  _22,
-  _24,
-  _26,
-  _28,
-  _30,
-  _32,
-  _34,
-  _36;
+  _8(8),
+  _10(10),
+  _12(12),
+  _14(14),
+  _16(16),
+  _18(18),
+  _20(20),
+  _22(22),
+  _24(24),
+  _26(26),
+  _28(28),
+  _30(30),
+  _32(32),
+  _34(34),
+  _36(36),
+  _38(38),
+  _40(40),
+  _42(42),
+  _44(44);
+
+  private static HashMap<int, AWG> gauges = new HashMap<>();
+
+  private final int gauge;
+
+  AWG(int i) {
+    this.gauge = i;
+    gauges.put(i, this);
+  }
 
   @Override
   public String toString() {
@@ -54,5 +69,9 @@ public enum AWG {
 
   public int getValue() {
     return Integer.parseInt(name().replace("_", ""));
+  }
+
+  public static AWG fromInt(int gauge) {
+    return gauges.get(i);
   }
 }

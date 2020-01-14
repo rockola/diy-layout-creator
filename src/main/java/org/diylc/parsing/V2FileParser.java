@@ -157,7 +157,7 @@ public class V2FileParser implements IOldFileParser {
           double angle = 0;
           double distance = 1;
           double value = -9999;
-          String value_s = "";
+          String valueString = "";
           int transparency = 100;
           int pins = 6;
           Size sizePro = new Size(5.0, SizeUnit.mm);
@@ -231,7 +231,7 @@ public class V2FileParser implements IOldFileParser {
                 case "value":
                   String pr8 = nodeValue;
                   if (pr8 != "") {
-                    value_s = pr8;
+                    valueString = pr8;
                     String pr9 = pr8.replaceAll("[^0-9.]", "");
                     String pr10 = pr8.replaceAll("[^a-zA-Z]", "");
                     if (pr10.equals("pF")) {
@@ -656,8 +656,8 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 dio.setName("dp");
               }
-              if (value_s != "") {
-                dio.setValue(value_s);
+              if (valueString != "") {
+                dio.setValue(valueString);
               }
               dio.setBodyColor(cl);
               dio.setWidth(sizePro);
@@ -683,8 +683,8 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ls.setName("ls");
               }
-              if (value_s != "") {
-                ls.setValue(value_s);
+              if (valueString != "") {
+                ls.setValue(valueString);
               }
               ls.setBodyColor(cl);
               ls.setWidth(sizePro);
@@ -700,7 +700,7 @@ public class V2FileParser implements IOldFileParser {
                 ps.setName("ps");
               }
               ps.setColor(cl);
-              if (value_s != "") ps.setValue(value_s);
+              if (valueString != "") ps.setValue(valueString);
               x = (int) (tacke.get(0).getX() - 70);
               y = (int) tacke.get(0).getY();
               point = new Point(x, y);
@@ -732,7 +732,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ic.setName("ics");
               }
-              if (value_s != "") ic.setValue(value_s);
+              if (valueString != "") ic.setValue(valueString);
               ic.setAlpha((byte) transparency);
               x = (int) (tacke.get(0).getX() - 70);
               y = (int) tacke.get(0).getY() - 20;
@@ -749,8 +749,8 @@ public class V2FileParser implements IOldFileParser {
                 potsym.setName("ps");
               }
               potsym.setOrientation(Orientation._270);
-              if (value_s != "") {
-                potsym.setValue(value_s);
+              if (valueString != "") {
+                potsym.setValue(valueString);
               }
               potsym.setColor(cl);
               x = (int) (tacke.get(0).getX() + 40);
@@ -788,8 +788,8 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 triodesym.setName("ts");
               }
-              if (value_s != "") {
-                triodesym.setValue(value_s);
+              if (valueString != "") {
+                triodesym.setValue(valueString);
               }
               triodesym.setColor(cl);
               x = (int) (tacke.get(0).getX() - 30);
@@ -805,8 +805,8 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 dp.setName("dp");
               }
-              if (value_s != "") {
-                dp.setValue(value_s);
+              if (valueString != "") {
+                dp.setValue(valueString);
               }
               dp.setAlpha((byte) transparency);
               if (display.equals("Name")) {
@@ -856,8 +856,8 @@ public class V2FileParser implements IOldFileParser {
                   LOG.error("pin count error, cannot handle {} pins", pins);
               }
               dil.setAlpha((byte) transparency);
-              if (value_s != "") {
-                dil.setValue(value_s);
+              if (valueString != "") {
+                dil.setValue(valueString);
               }
               dil.setRowSpacing(spacingPro);
               dil.setControlPoint(tacke.get(0), 0);
@@ -872,8 +872,8 @@ public class V2FileParser implements IOldFileParser {
                 trans.setName("tr");
               }
               trans.setAlpha((byte) transparency);
-              if (value_s != "") {
-                trans.setValue(value_s);
+              if (valueString != "") {
+                trans.setValue(valueString);
               }
               trans.setPinSpacing(new Size(0.1, SizeUnit.in));
               Point point0 = null;
@@ -965,8 +965,8 @@ public class V2FileParser implements IOldFileParser {
                 ts.setName("ts");
               }
               ts.setAlpha((byte) transparency);
-              if (value_s != "") {
-                ts.setValue(value_s);
+              if (valueString != "") {
+                ts.setValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);
@@ -981,8 +981,8 @@ public class V2FileParser implements IOldFileParser {
                 bjt.setName("bjt");
               }
               bjt.setColor(cl);
-              if (value_s != "") {
-                bjt.setValue(value_s);
+              if (valueString != "") {
+                bjt.setValue(valueString);
               }
               if (angle <= 45 || angle > 315) {
                 bjt.setOrientation(Orientation.DEFAULT);
@@ -1007,8 +1007,8 @@ public class V2FileParser implements IOldFileParser {
                 ts.setName("ts");
               }
               ts.setAlpha((byte) transparency);
-              if (value_s != "") {
-                ts.setValue(value_s);
+              if (valueString != "") {
+                ts.setValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);
@@ -1023,8 +1023,8 @@ public class V2FileParser implements IOldFileParser {
                 ts.setName("ts");
               }
               ts.setAlpha((byte) transparency);
-              if (value_s != "") {
-                ts.setValue(value_s);
+              if (valueString != "") {
+                ts.setValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);
