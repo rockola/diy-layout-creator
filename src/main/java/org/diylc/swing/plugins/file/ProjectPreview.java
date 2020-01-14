@@ -40,9 +40,9 @@ import org.diylc.presenter.Presenter;
 import org.diylc.swingframework.IFileChooserAccessory;
 
 /**
- * {@link JComponent} that shows preview of the selected project in {@link JFileChooser}. It's
- * hooked onto {@link JFileChooser} as {@link PropertyChangeListener} and refreshes when file is
- * selected.
+ * {@link JComponent} that shows preview of the selected project in
+ * {@link JFileChooser}. It's hooked onto {@link JFileChooser} as
+ * {@link PropertyChangeListener} and refreshes when file is selected.
  *
  * @author Branislav Stojkovic
  */
@@ -51,7 +51,7 @@ public class ProjectPreview extends JPanel
 
   private static final long serialVersionUID = 1L;
 
-  private IPlugInPort presenter;
+  private transient IPlugInPort presenter;
   private Project emptyProject;
   private RenderComponent renderComponent;
   private JLabel nameLabel;

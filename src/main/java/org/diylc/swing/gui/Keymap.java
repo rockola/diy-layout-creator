@@ -19,6 +19,8 @@
 */
 package org.diylc.swing.gui;
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,8 +57,9 @@ public class Keymap {
     StringBuilder b = new StringBuilder();
     b.append(
         String.format(
-            "<Keymap bindings.size() %d actionBindingMap.size() %d>\n",
-            bindings.size(), actionBindingMap.size()));
+            "<Keymap bindings.size() %d actionBindingMap.size() %d>%n",
+            bindings.size(),
+            actionBindingMap.size()));
     for (Binding bi : bindings) {
       b.append(bi.toString() + "\n");
     }
@@ -94,20 +98,22 @@ public class Keymap {
     return getKeyForAction(actionName);
   }
 
-  public static Keymap getDefaultKeymap() throws JAXBException {
-    if (defaultKeymap == null) defaultKeymap = readDefaultKeymap();
+  public static Keymap getDefaultKeymap() throws JAXBException, IOException {
+    if (defaultKeymap == null) {
+      defaultKeymap = readDefaultKeymap();
+    }
     return defaultKeymap;
   }
 
-  public static Keymap readDefaultKeymap() throws JAXBException {
+  public static Keymap readDefaultKeymap() throws JAXBException, IOException {
     Keymap defaultKeymap = null;
+    InputStream resourceStream = null;
     try {
       String defaultKeymapResource = "/org/diylc/action/keymap.xml";
       JAXBContext jaxbContext = JAXBContext.newInstance(Keymap.class);
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      defaultKeymap =
-          (Keymap)
-              jaxbUnmarshaller.unmarshal(Keymap.class.getResourceAsStream(defaultKeymapResource));
+      resourceStream = Keymap.class.getResourceAsStream(defaultKeymapResource);
+      defaultKeymap = (Keymap) jaxbUnmarshaller.unmarshal(resourceStream);
       // initialize mapping from action name to binding
       for (Binding b : defaultKeymap.getBindings()) {
         LOG.debug(String.format("Adding binding %s", b.toString()));
@@ -117,6 +123,8 @@ public class Keymap {
     } catch (JAXBException e) {
       LOG.error("Could not load default keymap", e);
       throw e;
+    } finally {
+      resourceStream.close();
     }
     return defaultKeymap;
   }

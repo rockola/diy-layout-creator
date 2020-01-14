@@ -23,7 +23,7 @@ package org.diylc.common;
 
 import org.diylc.core.IDIYComponent;
 
-public interface IComponentFiler {
+public interface IComponentFilter {
 
   boolean testComponent(IDIYComponent<?> component);
 }

@@ -26,8 +26,11 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.diylc.appframework.miscutils.Utils;
+
+import org.diylc.DIYLC;
 
 /**
  * {@link JLabel} customized to show hyperlinks. Foreground color is
@@ -38,6 +41,7 @@ import org.diylc.appframework.miscutils.Utils;
 public class LinkLabel extends JLabel {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(LinkLabel.class);
 
   /**
    * Creates a hyperlink with the specified url.
@@ -54,9 +58,9 @@ public class LinkLabel extends JLabel {
           @Override
           public void mouseClicked(MouseEvent e) {
             try {
-              Utils.openURL(url);
+              DIYLC.openURL(url);
             } catch (Exception e1) {
-              LogManager.getLogger(LinkLabel.class).error("Could not launch default browser", e1);
+              LOG.error("Could not launch default browser", e1);
             }
           }
         });

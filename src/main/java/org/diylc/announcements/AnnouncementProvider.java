@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.announcements;
 
 import java.io.IOException;
@@ -39,24 +40,17 @@ public class AnnouncementProvider {
   private Logger LOG = LogManager.getLogger(AnnouncementProvider.class);
 
   private String serviceUrl = DIYLC.getURL("api.announcements").toString();
-  private String LAST_READ_KEY = "announcement.lastReadDate";
-
-  // private IAnnouncementService service;
-
+  private final String lastReadKey = "announcement.lastReadDate";
   private Date lastDate;
-  // private List<Announcement> announcements;
-
   private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
   private Parser parser;
   private HtmlRenderer renderer;
-
   private OkHttpClient httpClient = new OkHttpClient();
 
   public AnnouncementProvider() {
     parser = Parser.builder().build();
     renderer = HtmlRenderer.builder().build();
-    String lastDateStr = DIYLC.getString(LAST_READ_KEY);
+    String lastDateStr = DIYLC.getString(lastReadKey);
     try {
       this.lastDate = (lastDateStr == null ? null : dateFormat.parse(lastDateStr));
     } catch (ParseException e) {
@@ -76,7 +70,7 @@ public class AnnouncementProvider {
       // as that will not get rid of newlines between tags
       String txt = renderer.render(document).replace("\n", " ");
 
-      // TODO: only show announcements newer than LAST_READ_KEY
+      // TODO: only show announcements newer than lastReadKey
 
       LOG.debug("Announcements [{}]", txt);
 
@@ -87,6 +81,6 @@ public class AnnouncementProvider {
 
   public void dismissed() {
     Date date = new Date();
-    DIYLC.putValue(LAST_READ_KEY, dateFormat.format(date));
+    DIYLC.putValue(lastReadKey, dateFormat.format(date));
   }
 }

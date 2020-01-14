@@ -17,7 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
-package org.diylc.swing;
+package org.diylc.swing.action;
 
 import java.awt.Dimension;
 import java.awt.datatransfer.Clipboard;
@@ -39,8 +39,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.BuildingBlockPackage;
@@ -52,6 +54,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.common.VariantPackage;
+import org.diylc.core.ComponentTransferable;
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
@@ -70,7 +73,6 @@ import org.diylc.presenter.ProjectFileManager;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.config.ConfigPlugin;
-import org.diylc.swing.plugins.edit.ComponentTransferable;
 import org.diylc.swing.plugins.file.BomDialog;
 import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.ButtonDialog;
@@ -79,6 +81,7 @@ import org.diylc.swingframework.IDrawingProvider;
 import org.diylc.swingframework.TextDialog;
 import org.diylc.swingframework.export.DrawingExporter;
 import org.diylc.utils.BomEntry;
+import org.diylc.utils.BomMaker;
 
 public class ActionFactory {
 
@@ -281,9 +284,12 @@ public class ActionFactory {
 
   // File menu actions.
 
+  /**
+     Creates a new project. Not undoable.
+   */
   public static class NewAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public NewAction(IPlugInPort pp) {
       super(pp, "New", "New", Icon.DocumentPlain.icon());
@@ -313,9 +319,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Opens an existing project. Not undoable.
+  */
   public static class OpenAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public OpenAction(IPlugInPort plugInPort) {
       super(plugInPort, "Open", "Open", Icon.FolderOut.icon());
@@ -327,45 +336,44 @@ public class ActionFactory {
       if (!plugInPort.allowFileAction()) {
         return;
       }
-      final File file =
-          DialogFactory.getInstance()
-              .showOpenDialog(
-                  FileFilterEnum.DIY.getFilter(),
-                  null,
-                  FileFilterEnum.DIY.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showOpenDialog(
+          FileFilterEnum.DIY.getFilter(),
+          FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Opening from " + file.getAbsolutePath());
-                    plugInPort.loadProjectFromFile(file.getAbsolutePath());
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Opening from " + file.getAbsolutePath());
+                plugInPort.loadProjectFromFile(file.getAbsolutePath());
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not open file. " + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error("Could not open file. " + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Import all components from another project into the current project.
+     TODO: Undoable.
+   */
   public static class ImportAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public ImportAction(IPlugInPort plugInPort) {
       super(plugInPort, "Import", "Import", Icon.ElementInto.icon());
+      // TODO: reimplement!
       /*
          this.presenter = new Presenter(new IView() {
 
@@ -399,13 +407,9 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportAction triggered");
 
-      final File file =
-          DialogFactory.getInstance()
-              .showOpenDialog(
-                  FileFilterEnum.DIY.getFilter(),
-                  null,
-                  FileFilterEnum.DIY.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showOpenDialog(
+          FileFilterEnum.DIY.getFilter(),
+          FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
         DIYLC
             .ui()
@@ -436,9 +440,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Save project. Not undoable.
+  */
   public static class SaveAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public SaveAction(IPlugInPort plugInPort) {
       super(plugInPort, "Save", "Save", Icon.DiskBlue.icon());
@@ -448,36 +455,29 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("SaveAction triggered");
       if (plugInPort.getCurrentFileName() == null) {
-        final File file =
-            DialogFactory.getInstance()
-                .showSaveDialog(
-                    DIYLC.ui().getOwnerFrame(),
-                    FileFilterEnum.DIY.getFilter(),
-                    null,
-                    FileFilterEnum.DIY.getExtensions()[0],
-                    null);
+        final File file = DialogFactory.getInstance().showSaveDialog(
+            FileFilterEnum.DIY.getFilter(),
+            FileFilterEnum.DIY.getExtensions()[0]);
         if (file != null) {
-          DIYLC
-              .ui()
-              .executeBackgroundTask(
-                  new ITask<Void>() {
+          DIYLC.ui().executeBackgroundTask(
+              new ITask<Void>() {
 
-                    @Override
-                    public Void doInBackground() throws Exception {
-                      LOG.debug("Saving to " + file.getAbsolutePath());
-                      plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-                      return null;
-                    }
+                @Override
+                public Void doInBackground() throws Exception {
+                  LOG.debug("Saving to " + file.getAbsolutePath());
+                  plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
+                  return null;
+                }
 
-                    @Override
-                    public void complete(Void result) {}
+                @Override
+                public void complete(Void result) {}
 
-                    @Override
-                    public void failed(Exception e) {
-                      DIYLC.ui().error("Could not save to file. " + e.getMessage());
-                    }
-                  },
-                  true);
+                @Override
+                public void failed(Exception e) {
+                  DIYLC.ui().error("Could not save to file. " + e.getMessage());
+                }
+              },
+              true);
         }
       } else {
         DIYLC
@@ -505,9 +505,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Save project under new name. Not undoable.
+  */
   public static class SaveAsAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public SaveAsAction(IPlugInPort plugInPort) {
       super(plugInPort, "Save As", "Save As", Icon.DiskBlue.icon());
@@ -516,43 +519,39 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("SaveAsAction triggered");
-      final File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  DIYLC.ui().getOwnerFrame(),
-                  FileFilterEnum.DIY.getFilter(),
-                  null,
-                  FileFilterEnum.DIY.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showSaveDialog(
+          FileFilterEnum.DIY.getFilter(),
+          FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Saving to " + file.getAbsolutePath());
-                    plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Saving to " + file.getAbsolutePath());
+                plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not save to file. " + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error("Could not save to file. " + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Create bill of materials. Not undoable.
+  */
   public static class CreateBomAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public CreateBomAction(IPlugInPort plugInPort) {
       super(plugInPort, "Create B.O.M.", Icon.BOM.icon());
@@ -562,8 +561,7 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("CreateBomAction triggered");
       List<BomEntry> bom =
-          org.diylc.utils.BomMaker.getInstance()
-              .createBom(plugInPort.getCurrentProject().getComponents());
+          BomMaker.getInstance().createBom(plugInPort.getCurrentProject().getComponents());
 
       String initialFileName = null;
       String currentFile = plugInPort.getCurrentFileName();
@@ -577,9 +575,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Export project to PDF. Not undoable.
+   */
   public static class ExportPDFAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private IDrawingProvider drawingProvider;
     private String defaultSuffix;
@@ -603,44 +604,42 @@ public class ActionFactory {
             new File(cFile.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
       }
 
-      final File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  DIYLC.ui().getOwnerFrame(),
-                  FileFilterEnum.PDF.getFilter(),
-                  initialFile,
-                  FileFilterEnum.PDF.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showSaveDialog(
+          FileFilterEnum.PDF.getFilter(),
+          initialFile,
+          FileFilterEnum.PDF.getExtensions()[0],
+          null);
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Exporting to " + file.getAbsolutePath());
-                    DrawingExporter.getInstance()
-                        .exportPDF(ExportPDFAction.this.drawingProvider, file);
-                    return null;
-                  }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Exporting to " + file.getAbsolutePath());
+                DrawingExporter.getInstance()
+                    .exportPDF(ExportPDFAction.this.drawingProvider, file);
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {}
+              @Override
+              public void complete(Void result) {}
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error("Could not export to PDF.", e);
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error("Could not export to PDF.", e);
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Export to PNG. Not undoable.
+  */
   public static class ExportPNGAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private IDrawingProvider drawingProvider;
     private String defaultSuffix;
@@ -667,7 +666,6 @@ public class ActionFactory {
       final File file =
           DialogFactory.getInstance()
               .showSaveDialog(
-                  DIYLC.ui().getOwnerFrame(),
                   FileFilterEnum.PNG.getFilter(),
                   initialFile,
                   FileFilterEnum.PNG.getExtensions()[0],
@@ -699,9 +697,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Print. Not undoable.
+  */
   public static class PrintAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private IDrawingProvider drawingProvider;
 
@@ -721,9 +722,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Export variants. Not undoable.
+  */
   public static class ExportVariantsAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private Map<String, ComponentType> typeMap =
         new TreeMap<String, ComponentType>(String.CASE_INSENSITIVE_ORDER);
@@ -747,7 +751,7 @@ public class ActionFactory {
 
       try {
         Map<String, List<Template>> variantMap =
-            (Map<String, List<Template>>) DIYLC.getObject(IPlugInPort.TEMPLATES_KEY);
+            (Map<String, List<Template>>) DIYLC.getObject(IPlugInPort.Key.TEMPLATES);
         if (variantMap == null || variantMap.isEmpty()) {
           DIYLC.ui().error(getMsg("no-variants"));
           return;
@@ -806,58 +810,53 @@ public class ActionFactory {
                   ? "variants.xml"
                   : ("variants by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
-      final File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  DIYLC.ui().getOwnerFrame(),
-                  FileFilterEnum.XML.getFilter(),
-                  initialFile,
-                  FileFilterEnum.XML.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showSaveDialog(
+          FileFilterEnum.XML.getFilter(),
+          initialFile,
+          FileFilterEnum.XML.getExtensions()[0],
+          null);
 
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Exporting variants to " + file.getAbsolutePath());
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Exporting variants to {}", file.getAbsolutePath());
 
-                    try {
-                      Serializer.toFile(file, variantPkg);
+                try {
+                  Serializer.toFile(file, variantPkg);
 
-                      LOG.info("Exported variants succesfully");
-                    } catch (IOException e) {
-                      LOG.error("Could not export variants", e);
-                    }
+                  LOG.info("Exported variants successfully");
+                } catch (IOException e) {
+                  LOG.error("Could not export variants", e);
+                }
 
-                    return null;
-                  }
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {
-                    DIYLC
-                        .ui()
-                        .info(
-                            getMsg("success"),
-                            String.format(getMsg("variants-exported"), file.getName()));
-                  }
+              @Override
+              public void complete(Void result) {
+                DIYLC.ui().success(String.format(getMsg("variants-exported"), file.getName()));
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("variant-export-failed") + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error(getMsg("variant-export-failed") + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Import variants.
+     TODO: should this be undoable?
+   */
   public static class ImportVariantsAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public ImportVariantsAction(IPlugInPort plugInPort) {
       super(plugInPort, "Import Variants");
@@ -867,48 +866,42 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportVariantsAction triggered");
 
-      final File file =
-          DialogFactory.getInstance()
-              .showOpenDialog(
-                  FileFilterEnum.XML.getFilter(),
-                  null,
-                  FileFilterEnum.XML.getExtensions()[0],
-                  null,
-                  DIYLC.ui().getOwnerFrame());
+      final File file = DialogFactory.getInstance().showOpenDialog(
+          FileFilterEnum.XML.getFilter(),
+          FileFilterEnum.XML.getExtensions()[0],
+          DIYLC.ui().getOwnerFrame());
 
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Integer>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Integer>() {
 
-                  @Override
-                  public Integer doInBackground() throws Exception {
-                    return plugInPort.importVariants(file.getAbsolutePath());
-                  }
+              @Override
+              public Integer doInBackground() throws Exception {
+                return plugInPort.importVariants(file.getAbsolutePath());
+              }
 
-                  @Override
-                  public void complete(Integer result) {
-                    DIYLC
-                        .ui()
-                        .info(
-                            getMsg("success"),
-                            String.format(getMsg("variants-imported"), result, file.getName()));
-                  }
+              @Override
+              public void complete(Integer result) {
+                DIYLC.ui().success(
+                    String.format(getMsg("variants-imported"), result, file.getName()));
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("variant-import-failed") + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error(getMsg("variant-import-failed") + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Export blocks. Not undoable.
+   */
   public static class ExportBlocksAction extends AbstractAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public ExportBlocksAction() {
       super();
@@ -925,7 +918,7 @@ public class ActionFactory {
 
       try {
         Map<String, List<IDIYComponent<?>>> blocks =
-            (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.BLOCKS_KEY);
+            (Map<String, List<IDIYComponent<?>>>) DIYLC.getObject(IPlugInPort.Key.BLOCKS);
         if (blocks == null || blocks.isEmpty()) {
           DIYLC.ui().error(getMsg("no-building-blocks"));
           return;
@@ -972,61 +965,56 @@ public class ActionFactory {
           new BuildingBlockPackage(selectedBlocks, System.getProperty("user.name"));
 
       File initialFile =
-          new File(
-              variantPkg.getOwner() == null
-                  ? "building blocks.xml"
-                  : ("building blocks by " + variantPkg.getOwner().toLowerCase() + ".xml"));
+          new File(variantPkg.getOwner() == null
+                   ? "building blocks.xml"
+                   : ("building blocks by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
-      final File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  DIYLC.ui().getOwnerFrame(),
-                  FileFilterEnum.XML.getFilter(),
-                  initialFile,
-                  FileFilterEnum.XML.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showSaveDialog(
+          FileFilterEnum.XML.getFilter(),
+          initialFile,
+          FileFilterEnum.XML.getExtensions()[0],
+          null);
 
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Void>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Void>() {
 
-                  @Override
-                  public Void doInBackground() throws Exception {
-                    LOG.debug("Exporting variants to " + file.getAbsolutePath());
-                    try {
-                      Serializer.toFile(file, variantPkg);
-                      LOG.info("Exported building blocks succesfully");
-                    } catch (IOException e) {
-                      LOG.error("Could not export building blocks", e);
-                    }
+              @Override
+              public Void doInBackground() throws Exception {
+                LOG.debug("Exporting variants to " + file.getAbsolutePath());
+                try {
+                  Serializer.toFile(file, variantPkg);
+                  LOG.info("Exported building blocks successfully");
+                } catch (IOException e) {
+                  LOG.error("Could not export building blocks", e);
+                }
 
-                    return null;
-                  }
+                return null;
+              }
 
-                  @Override
-                  public void complete(Void result) {
-                    DIYLC
-                        .ui()
-                        .info(
-                            getMsg("success"),
-                            String.format(getMsg("building-blocks-exported"), file.getName()));
-                  }
+              @Override
+              public void complete(Void result) {
+                DIYLC.ui().success(
+                    String.format(getMsg("building-blocks-exported"), file.getName()));
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("building-block-export-failed") + e.getMessage());
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error(getMsg("building-block-export-failed") + e.getMessage());
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Import blocks.
+     TODO: should this be undoable?
+  */
   public static class ImportBlocksAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public ImportBlocksAction(IPlugInPort plugInPort) {
       super(plugInPort, getMsg("import-building-blocks"));
@@ -1036,49 +1024,41 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportBlocksAction triggered");
 
-      final File file =
-          DialogFactory.getInstance()
-              .showOpenDialog(
-                  FileFilterEnum.XML.getFilter(),
-                  null,
-                  FileFilterEnum.XML.getExtensions()[0],
-                  null,
-                  DIYLC.ui().getOwnerFrame());
+      final File file = DialogFactory.getInstance().showOpenDialog(
+          FileFilterEnum.XML.getFilter(),
+          FileFilterEnum.XML.getExtensions()[0]);
 
       if (file != null) {
-        DIYLC
-            .ui()
-            .executeBackgroundTask(
-                new ITask<Integer>() {
+        DIYLC.ui().executeBackgroundTask(
+            new ITask<Integer>() {
 
-                  @Override
-                  public Integer doInBackground() throws Exception {
-                    return plugInPort.importBlocks(file.getAbsolutePath());
-                  }
+              @Override
+              public Integer doInBackground() throws Exception {
+                return plugInPort.importBlocks(file.getAbsolutePath());
+              }
 
-                  @Override
-                  public void complete(Integer result) {
-                    DIYLC
-                        .ui()
-                        .info(
-                            getMsg("success"),
-                            String.format(
-                                getMsg("building-blocks-imported"), result, file.getName()));
-                  }
+              @Override
+              public void complete(Integer result) {
+                DIYLC.ui().success(
+                    String.format(getMsg("building-blocks-imported"), result, file.getName()));
+              }
 
-                  @Override
-                  public void failed(Exception e) {
-                    DIYLC.ui().error(getMsg("building-block-import-failed"), e);
-                  }
-                },
-                true);
+              @Override
+              public void failed(Exception e) {
+                DIYLC.ui().error(getMsg("building-block-import-failed"), e);
+              }
+            },
+            true);
       }
     }
   }
 
+  /**
+     Show template dialog. Not undoable.
+  */
   public static class TemplateDialogAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public TemplateDialogAction() {
       super(null, getMsg("show-template-dialog"), "Template Dialog", Icon.Form.icon());
@@ -1090,9 +1070,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Exit the program. Definitely not undoable.
+  */
   public static class ExitAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     public ExitAction(IPlugInPort plugInPort) {
       super(plugInPort, getMsg("exit"), "Quit", Icon.Exit.icon());
@@ -1109,9 +1092,12 @@ public class ActionFactory {
 
   // Edit menu actions.
 
+  /**
+     Cut. Undoable.
+  */
   public static class CutAction extends ActionFactoryAction {
 
-    private static final long serialVersionUID = 1L;
+    // private static final long serialVersionUID = 1L;
 
     private Clipboard clipboard;
     private ClipboardOwner clipboardOwner;
@@ -1126,12 +1112,16 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Cut triggered");
       clipboard.setContents(
-          new ComponentTransferable(cloneComponents(plugInPort.getSelectedComponents())),
+          new ComponentTransferable(cloneComponents(
+              plugInPort.getCurrentProject().getSelection())),
           clipboardOwner);
       plugInPort.deleteSelectedComponents();
     }
   }
 
+  /**
+     Paste. Undoable.
+  */
   public static class PasteAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1152,11 +1142,14 @@ public class ActionFactory {
             (List<IDIYComponent<?>>) clipboard.getData(ComponentTransferable.listFlavor);
         plugInPort.pasteComponents(cloneComponents(components), false);
       } catch (Exception ex) {
-        LOG.error("Coule not paste.", ex);
+        LOG.error("Could not paste.", ex);
       }
     }
   }
 
+  /**
+     Copy. Not undoable.
+  */
   public static class CopyAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1174,11 +1167,15 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Copy triggered");
       clipboard.setContents(
-          new ComponentTransferable(cloneComponents(plugInPort.getSelectedComponents())),
+          new ComponentTransferable(cloneComponents(
+              plugInPort.getCurrentProject().getSelection())),
           clipboardOwner);
     }
   }
 
+  /**
+     Duplicate. Undoable.
+  */
   public static class DuplicateAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1193,7 +1190,7 @@ public class ActionFactory {
       try {
         plugInPort.duplicateSelection();
       } catch (Exception ex) {
-        LOG.error("Coule not duplicate.", ex);
+        LOG.error("Could not duplicate.", ex);
       }
     }
   }
@@ -1210,6 +1207,9 @@ public class ActionFactory {
     return result;
   }
 
+  /**
+     Select all. Not undoable.
+  */
   public static class SelectAllAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1220,11 +1220,14 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info("Select All triggered");
+      LOG.trace("Select All triggered");
       plugInPort.selectAll(0);
     }
   }
 
+  /**
+     Group components. Undoable.
+  */
   public static class GroupAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1235,11 +1238,14 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info("Group Selection triggered");
-      plugInPort.groupSelectedComponents();
+      LOG.trace("Group Selection triggered");
+      plugInPort.getCurrentProject().groupSelection();
     }
   }
 
+  /**
+     Ungroup components. Undoable.
+  */
   public static class UngroupAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1250,11 +1256,14 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info("Ungroup Selection triggered");
-      plugInPort.ungroupSelectedComponents();
+      LOG.trace("Ungroup Selection triggered");
+      plugInPort.getCurrentProject().ungroupSelection();
     }
   }
 
+  /**
+     Edit project settings. Undoable.
+  */
   public static class EditProjectAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1283,6 +1292,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Nudge selection. Undoable.
+  */
   public static class NudgeAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1295,7 +1307,7 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Nudge triggered");
       Nudge n = new Nudge();
-      boolean metric = DIYLC.getBoolean(Presenter.METRIC_KEY, true);
+      boolean metric = DIYLC.getBoolean(IPlugInPort.Key.METRIC, true);
       if (metric) {
         n.setxOffset(new Size(0d, SizeUnit.mm));
         n.setyOffset(new Size(0d, SizeUnit.mm));
@@ -1315,6 +1327,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Edit selection properties. Undoable.
+  */
   public static class EditSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1335,6 +1350,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Delete selection. Undoable.
+  */
   public static class DeleteSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1350,6 +1368,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Save as template. Not undoable.
+  */
   public static class SaveAsTemplateAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1370,6 +1391,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Save as block. Not undoable.
+  */
   public static class SaveAsBlockAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1390,6 +1414,10 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Expand selection.
+     TODO: what does this do, should this be undoable?
+   */
   public static class ExpandSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1412,11 +1440,14 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info("Expand Selection triggered: " + expansionMode);
+      LOG.trace("Expand Selection triggered, mode {}", expansionMode);
       plugInPort.expandSelection(expansionMode);
     }
   }
 
+  /**
+     Rotate selection. Undoable.
+  */
   public static class RotateSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1439,6 +1470,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Mirror selection. Undoable.
+  */
   public static class MirrorSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1446,18 +1480,17 @@ public class ActionFactory {
     private int direction;
 
     public MirrorSelectionAction(IPlugInPort plugInPort, int direction) {
-      super(
-          plugInPort,
-          getMsg(
-              direction == IComponentTransformer.HORIZONTAL
-                  ? "mirror-horizontally"
-                  : "mirror-vertically"),
-          direction == IComponentTransformer.HORIZONTAL
-              ? "Mirror Horizontally"
-              : "Mirror Vertically",
-          direction == IComponentTransformer.HORIZONTAL
-              ? Icon.FlipHorizontal.icon()
-              : Icon.FlipVertical.icon());
+      super(plugInPort,
+            getMsg(direction == IComponentTransformer.HORIZONTAL
+                   ? "mirror-horizontally"
+                   : "mirror-vertically"),
+            direction == IComponentTransformer.HORIZONTAL
+            ? "Mirror Horizontally"
+            : "Mirror Vertically",
+            direction == IComponentTransformer.HORIZONTAL
+            ? Icon.FlipHorizontal.icon()
+            : Icon.FlipVertical.icon());
+      this.direction = direction;
     }
 
     @Override
@@ -1467,6 +1500,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Send to back. Undoable.
+  */
   public static class SendToBackAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1482,11 +1518,12 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Bring to front. Undoable.
+  */
   public static class BringToFrontAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
-
-    private IPlugInPort plugInPort;
 
     public BringToFrontAction(IPlugInPort plugInPort) {
       super(plugInPort, getMsg("bring-to-front"), "Bring to Front", Icon.Front.icon());
@@ -1499,6 +1536,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     TODO: what does this do, should this be undoable?
+   */
   public static class ConfigAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1537,6 +1577,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Select theme. Not undoable.
+  */
   public static class ThemeAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1559,6 +1602,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Use component browser. Not undoable.
+   */
   public static class ComponentBrowserAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1582,6 +1628,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Renumber selection. Undoable.
+  */
   public static class RenumberAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1600,6 +1649,9 @@ public class ActionFactory {
     }
   }
 
+  /**
+     Generate netlist. Not undoable.
+   */
   public static class GenerateNetlistAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1610,54 +1662,55 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      DIYLC
-          .ui()
-          .executeBackgroundTask(
-              new ITask<List<Netlist>>() {
+      DIYLC.ui().executeBackgroundTask(
+          new ITask<List<Netlist>>() {
 
-                @Override
-                public List<Netlist> doInBackground() throws Exception {
-                  return plugInPort.extractNetlists(true);
+            @Override
+            public List<Netlist> doInBackground() throws Exception {
+              return plugInPort.extractNetlists(true);
+            }
+
+            @Override
+            public void failed(Exception e) {
+              DIYLC.ui().error("Failed to generate the netlist.", e);
+            }
+
+            @Override
+            public void complete(List<Netlist> res) {
+              if (res == null) {
+                DIYLC.ui().info("The generated netlist is empty, nothing to show.");
+                return;
+              }
+              StringBuilder sb = new StringBuilder("<html>");
+
+              for (Netlist netlist : res) {
+                sb.append(
+                    "<p style=\"font-family: "
+                    + new JLabel().getFont().getName()
+                    + "; font-size: 9px\"><b>Switch configuration: ")
+                    .append(netlist.getSwitchSetup())
+                    .append("</b><br><br>Connected node groups:<br>");
+                for (Group v : netlist.getSortedGroups()) {
+                  sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
                 }
-
-                @Override
-                public void failed(Exception e) {
-                  DIYLC.ui().error("Failed to generate the netlist.", e);
-                }
-
-                @Override
-                public void complete(List<Netlist> res) {
-                  if (res == null) {
-                    DIYLC.ui().info("The generated netlist is empty, nothing to show.");
-                    return;
-                  }
-                  StringBuilder sb = new StringBuilder("<html>");
-
-                  for (Netlist netlist : res) {
-                    sb.append(
-                            "<p style=\"font-family: "
-                                + new JLabel().getFont().getName()
-                                + "; font-size: 9px\"><b>Switch configuration: ")
-                        .append(netlist.getSwitchSetup())
-                        .append("</b><br><br>Connected node groups:<br>");
-                    for (Group v : netlist.getSortedGroups()) {
-                      sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
-                    }
-                    sb.append("</p><br><hr>");
-                  }
-                  sb.append("</html>");
-                  new TextDialog(
-                          DIYLC.ui().getOwnerFrame().getRootPane(),
-                          sb.toString(),
-                          "DIYLC Netlist",
-                          new Dimension(600, 480))
-                      .setVisible(true);
-                }
-              },
-              true);
+                sb.append("</p><br><hr>");
+              }
+              sb.append("</html>");
+              new TextDialog(
+                  DIYLC.ui().getOwnerFrame().getRootPane(),
+                  sb.toString(),
+                  "DIYLC Netlist",
+                  new Dimension(600, 480))
+                  .setVisible(true);
+            }
+          },
+          true);
     }
   }
 
+  /**
+     Summarize netlist. Not undoable.
+  */
   public static class SummarizeNetlistAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1675,60 +1728,57 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-      DIYLC
-          .ui()
-          .executeBackgroundTask(
-              new ITask<List<Summary>>() {
+      DIYLC.ui().executeBackgroundTask(
+          new ITask<List<Summary>>() {
 
-                @Override
-                public List<Summary> doInBackground() throws Exception {
-                  List<Netlist> netlists = plugInPort.extractNetlists(true);
-                  if (netlists == null || netlists.isEmpty()) {
-                    throw new Exception(getMsg("empty-netlist"));
-                  }
+            @Override
+            public List<Summary> doInBackground() throws Exception {
+              List<Netlist> netlists = plugInPort.extractNetlists(true);
+              if (netlists == null || netlists.isEmpty()) {
+                throw new Exception(getMsg("empty-netlist"));
+              }
 
-                  return summarizer.summarize(netlists, null);
-                }
+              return summarizer.summarize(netlists, null);
+            }
 
-                @Override
-                public void failed(Exception e) {
-                  DIYLC.ui().info(summarizer.getName(), e);
-                }
+            @Override
+            public void failed(Exception e) {
+              DIYLC.ui().info(summarizer.getName(), e);
+            }
 
-                @Override
-                public void complete(List<Summary> res) {
-                  if (res == null) {
-                    DIYLC.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
-                    return;
-                  }
-                  StringBuilder sb = new StringBuilder("<html>");
+            @Override
+            public void complete(List<Summary> res) {
+              if (res == null) {
+                DIYLC.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
+                return;
+              }
+              StringBuilder sb = new StringBuilder("<html>");
 
-                  for (Summary summary : res) {
-                    sb.append("<p style=\"font-family: ")
-                        .append(summarizer.getFontName())
-                        .append("; font-size: 9px\">");
+              for (Summary summary : res) {
+                sb.append("<p style=\"font-family: ")
+                    .append(summarizer.getFontName())
+                    .append("; font-size: 9px\">");
 
-                    if (res.size() > 1)
-                      sb.append("<b>Switch configuration: ")
-                          .append(summary.getNetlist().getSwitchSetup())
-                          .append("</b><br><br>");
+                if (res.size() > 1)
+                  sb.append("<b>Switch configuration: ")
+                      .append(summary.getNetlist().getSwitchSetup())
+                      .append("</b><br><br>");
 
-                    sb.append(summary.getSummary());
+                sb.append(summary.getSummary());
 
-                    sb.append("</p><br>");
+                sb.append("</p><br>");
 
-                    if (res.size() > 1) sb.append("<hr>");
-                  }
-                  sb.append("</html>");
-                  new TextDialog(
-                          DIYLC.ui().getOwnerFrame().getRootPane(),
-                          sb.toString(),
-                          summarizer.getName(),
-                          new Dimension(600, 480))
-                      .setVisible(true);
-                }
-              },
-              true);
+                if (res.size() > 1) sb.append("<hr>");
+              }
+              sb.append("</html>");
+              new TextDialog(
+                  DIYLC.ui().getOwnerFrame().getRootPane(),
+                  sb.toString(),
+                  summarizer.getName(),
+                  new Dimension(600, 480)).setVisible(true);
+            }
+          },
+          true);
     }
   }
 }

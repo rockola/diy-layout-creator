@@ -137,7 +137,7 @@ public final class DropDownButtonFactory {
     }
 
     private PopupMenuListener getMenuListener() {
-      if (null == this.menuListener) {
+      if (this.menuListener == null) {
         this.menuListener =
             new PopupMenuListener() {
 

@@ -14,6 +14,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.diylc.DIYLC;
+
 public class Utils {
 
   private static final Logger LOG = LogManager.getLogger(Utils.class);
@@ -104,10 +106,6 @@ public class Utils {
     return checkOsName("mac");
   }
 
-  public static boolean isSolaris() {
-    return checkOsName("sunos");
-  }
-
   public static boolean isUnix() {
     // linux or unix
     return (checkOsName("nix") || checkOsName("nux"));
@@ -174,7 +172,11 @@ public class Utils {
     return builder.toString();
   }
 
-  public static String getUserDataDirectory(String appName) {
-    return System.getProperty("user.home") + File.separator + "." + appName + File.separator;
+  public static String getUserDataDirectory() {
+    return String.format("%s%s.%s%s",
+                         System.getProperty("user.home"),
+                         File.separator,
+                         DIYLC.getString("app.name"),
+                         File.separator);
   }
 }

@@ -256,10 +256,10 @@ public class TemplateDialog extends JDialog {
                         // zoomLevel
                         1.0,
                         true);
-                double xFactor = panelSize.getWidth() / dim.getWidth();
-                double yFactor = panelSize.getHeight() / dim.getHeight();
                 // TODO: set zoom level
-                // presenter.setZoomLevel(Math.min(xFactor, yFactor));
+                //double xFactor = panelSize.getWidth() / dim.getWidth();
+                //double yFactor = panelSize.getHeight() / dim.getHeight();
+                //presenter.setZoomLevel(Math.min(xFactor, yFactor));
                 getCanvasPanel().repaint();
               }
             }
@@ -288,7 +288,7 @@ public class TemplateDialog extends JDialog {
   public List<File> getFiles() {
     if (files == null) {
       files = new ArrayList<File>();
-      String s = Utils.getUserDataDirectory("diylc") + "templates";
+      String s = Utils.getUserDataDirectory() + "templates";
       File dir = new File(s);
       if (dir.exists()) {
         for (File f : dir.listFiles()) {

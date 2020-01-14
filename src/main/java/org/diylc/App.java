@@ -222,7 +222,9 @@ public class App {
   }
 
   public static void showTemplateDialog() {
-    if (templateDialog == null) templateDialog = new TemplateDialog(mainFrame);
+    if (templateDialog == null) {
+      templateDialog = new TemplateDialog(mainFrame);
+    }
     templateDialog.setVisible(true);
   }
 
@@ -238,7 +240,12 @@ public class App {
 
   // ****************************************************************
 
-  /** @param args */
+  /**
+     Application main method.
+     Starts the application, optionally loading a Project if specified in args.
+
+     @param args Command line arguments
+  */
   public static void main(String[] args) {
 
     final String appName = Config.getString("app.title");

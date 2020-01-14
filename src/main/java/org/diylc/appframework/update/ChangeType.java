@@ -21,33 +21,27 @@ package org.diylc.appframework.update;
 
 import org.apache.logging.log4j.LogManager;
 
+import org.diylc.DIYLC;
+
 public enum ChangeType {
-  BUG_FIX("Bug Fix"),
-  NEW_FEATURE("New Feature"),
-  IMPROVEMENT("Improvement");
+  BUG_FIX,
+  NEW_FEATURE,
+  IMPROVEMENT;
 
-  private String name;
-
-  private ChangeType(String name) {
-    this.name = name;
+  /**
+     Human readable string. Can be translated in resources.
+  */
+  public String theString() {
+    return DIYLC.getString("message.update." + this.toString().replace("_", "-"));
   }
 
-  @Override
-  public String toString() {
-    return name;
-  }
-
-  public static ChangeType parseName(String name) {
-    switch (name) {
-      case "Bug Fix":
-        return BUG_FIX;
-      case "New Feature":
-        return NEW_FEATURE;
-      case "Improvement":
-        return IMPROVEMENT;
-      default:
-        LogManager.getLogger(ChangeType.class).error("parseName({}) not a valid ChangeType", name);
-        return null;
+  public static ChangeType parse(String s) {
+    for (ChangeType changeType : ChangeType.values()) {
+      if (changeType.theString().equals(s)) {
+        return changeType;
+      }
     }
+    LogManager.getLogger(ChangeType.class).error("parse({}) not a valid ChangeType", s);
+    return null;
   }
 }

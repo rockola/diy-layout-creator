@@ -23,10 +23,13 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.common.Display;
+import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.boards.AbstractBoard;
@@ -78,7 +81,9 @@ import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 import org.diylc.presenter.Presenter;
 import org.diylc.utils.Constants;
+
 import org.nfunk.jep.JEP;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -108,7 +113,7 @@ public class V2FileParser implements IOldFileParser {
     parser.parseExpression(text);
 
     Double value = parser.getValue(); // in pixels
-    boolean metric = DIYLC.getBoolean(Presenter.METRIC_KEY, true);
+    boolean metric = DIYLC.getBoolean(IPlugInPort.Key.METRIC, true);
 
     return new Size(
         value / Constants.PIXELS_PER_INCH * (metric ? 25.4f : 1.0f),

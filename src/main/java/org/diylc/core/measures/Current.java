@@ -27,11 +27,5 @@ public class Current extends AbstractMeasure<CurrentUnit> {
 
   public Current(Double value, CurrentUnit unit) {
     super(value, unit);
-    // TODO Auto-generated constructor stub
-  }
-
-  @Override
-  public Current clone() throws CloneNotSupportedException {
-    return new Current(value, unit);
   }
 }

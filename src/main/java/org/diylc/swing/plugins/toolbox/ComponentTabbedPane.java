@@ -190,10 +190,9 @@ class ComponentTabbedPane extends JTabbedPane {
     final Container toolbar = getRecentToolbar();
     refreshRecentComponentsToolbar(
         toolbar,
-        (List<String>) DIYLC.getObject(IPlugInPort.RECENT_COMPONENTS_KEY,
-                                       new ArrayList<String>()));
+        (List<String>) DIYLC.getObject(IPlugInPort.Key.RECENT_COMPONENTS, new ArrayList<String>()));
     ConfigurationManager.addListener(
-        IPlugInPort.RECENT_COMPONENTS_KEY,
+        IPlugInPort.Key.RECENT_COMPONENTS,
         new IConfigListener() {
 
           @Override
@@ -229,9 +228,8 @@ class ComponentTabbedPane extends JTabbedPane {
       ComponentType componentType;
       try {
         componentType =
-            ComponentProcessor.getInstance()
-                .extractComponentTypeFrom(
-                    (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
+            ComponentProcessor.extractComponentTypeFrom(
+                (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
         Component button =
             ComponentButtonFactory.create(
                 plugInPort, componentType, createVariantPopup(componentType));

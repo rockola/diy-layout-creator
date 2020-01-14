@@ -323,7 +323,7 @@ public class RulerScrollPane extends JScrollPane {
     verticalRuler.invalidate();
   }
 
-  class Corner extends JComponent {
+  private static class Corner extends JComponent {
 
     private static final long serialVersionUID = 1L;
     private final int orientation;

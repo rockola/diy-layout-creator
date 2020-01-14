@@ -118,15 +118,22 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   }
 
   private String getStringValue() {
-    if (value == null || value.length == 0) return "";
+    if (value == null || value.length == 0) {
+      return "";
+    }
     StringBuilder sb = new StringBuilder();
     boolean isFirst = true;
     for (Capacitance c : value) {
-      if (isFirst) isFirst = false;
-      else sb.append("/");
+      if (isFirst) {
+        isFirst = false;
+      } else {
+        sb.append("/");
+      }
       sb.append(c == null || c.getValue() == null ? "" : format.format(c.getValue()));
     }
-    if (value[0] != null) sb.append(" " + value[0].getUnit() == null ? "" : value[0].getUnit());
+    if (value[0] != null) {
+      sb.append(" ").append(value[0].getUnit() == null ? "" : value[0].getUnit());
+    }
     return sb.toString();
   }
 

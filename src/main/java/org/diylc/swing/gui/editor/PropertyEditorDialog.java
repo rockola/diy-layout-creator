@@ -120,6 +120,7 @@ public class PropertyEditorDialog extends ButtonDialog {
       gbc.insets = new Insets(2, 2, 2, 2);
 
       Component editor = FieldEditorFactory.createFieldEditor(property);
+
       editor.addKeyListener(
           new KeyAdapter() {
 
@@ -127,11 +128,11 @@ public class PropertyEditorDialog extends ButtonDialog {
             public void keyPressed(KeyEvent e) {
               if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 getButton(OK).doClick();
-              } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                getButton(CANCEL).doClick();
               }
             }
           });
+      //editor.getInputMap().put(DIYLC.getKeyStroke("OK"), "TODO");
+
       editorPanel.add(editor, gbc);
 
       if (property.isDefaultable()) {

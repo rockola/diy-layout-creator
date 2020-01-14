@@ -38,6 +38,10 @@ public enum SizeUnit implements Unit {
     this.factor = factor;
   }
 
+  private SizeUnit(SizeUnit u) {
+    this.factor = u.factor;
+  }
+
   @Override
   public double getFactor() {
     return factor;

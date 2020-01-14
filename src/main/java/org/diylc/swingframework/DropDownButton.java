@@ -1,3 +1,22 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.diylc.swingframework;
 
 import java.awt.Color;
@@ -31,7 +50,8 @@ public class DropDownButton extends Box {
   private JButton dropDownButton;
   private boolean dropDownEnabled = false;
   private boolean mainRunsDefaultMenuOption = true;
-  private Icon enabledDownArrow, disDownArrow;
+  private transient Icon enabledDownArrow;
+  private transient Icon disDownArrow;
   private DropDownMenu menu;
   private MainButtonListener mainButtonListener = new MainButtonListener();
 
@@ -111,8 +131,8 @@ public class DropDownButton extends Box {
   /**
    * Set the behavior of the main button.
    *
-   * @param enable if true, a click on the main button will trigger an actionPerformed() on the
-   *     first item in the popup menu.
+   * @param enable if true, a click on the main button will trigger an
+   *     actionPerformed() on the first item in the popup menu.
    */
   public void setRunFirstMenuOption(boolean enable) {
     mainButton.removeActionListener(mainButtonListener);
@@ -122,8 +142,8 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * @return true if a click on the main button will trigger an actionPerformed() on the first item
-   *     in the popup menu.
+   * @return true if a click on the main button will trigger an
+   *     actionPerformed() on the first item in the popup menu.
    */
   public boolean getRunFirstMenuOption() {
     return mainRunsDefaultMenuOption;
@@ -163,8 +183,9 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * This object watches for insertion/deletion of menu items in the popup menu, and disables the
-   * drop-down button when the popup menu becomes empty.
+   * This object watches for insertion/deletion of menu items in the
+   * popup menu, and disables the drop-down button when the popup menu
+   * becomes empty.
    */
   private class MenuContainerListener implements ContainerListener {
     public void componentAdded(ContainerEvent e) {
@@ -177,10 +198,10 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * An adapter that wraps a border object, and chops some number of pixels off the right hand side
-   * of the border.
+   * An adapter that wraps a border object, and chops some number of
+   * pixels off the right hand side of the border.
    */
-  private class RightChoppedBorder implements Border {
+  private static class RightChoppedBorder implements Border {
     private Border b;
     private int w;
 
@@ -206,7 +227,7 @@ public class DropDownButton extends Box {
     }
   }
 
-  private class DropDownMenu extends JMenu {
+  private static class DropDownMenu extends JMenu {
 
     private static final long serialVersionUID = 1L;
 

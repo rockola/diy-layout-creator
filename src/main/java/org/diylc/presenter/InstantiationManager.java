@@ -204,9 +204,8 @@ public class InstantiationManager {
       // assign a new name if it already exists in the project
       if (existingNames.contains(component.getName())) {
         ComponentType componentType =
-            ComponentProcessor.getInstance()
-            .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>)
-                                          component.getClass());
+            ComponentProcessor.extractComponentTypeFrom(
+                (Class<? extends IDIYComponent<?>>) component.getClass());
         String newName = createUniqueName(componentType, allComponents);
         existingNames.add(newName);
         component.setName(newName);
@@ -267,6 +266,7 @@ public class InstantiationManager {
    * @return true if we need to refresh the canvas
    */
   public boolean updateSingleClick(Point scaledPoint, boolean snapToGrid, Size gridSpacing) {
+    LOG.trace("updateSingleClick({}, {}, {})", scaledPoint, snapToGrid, gridSpacing);
     if (potentialControlPoint == null) {
       potentialControlPoint = new Point(0, 0);
     }
@@ -304,7 +304,7 @@ public class InstantiationManager {
       ComponentType componentType, Template template, Point point, Project currentProject)
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException {
-    LOG.info("Instatiating component of type: " + componentType.getInstanceClass().getName());
+    LOG.info("Instantiating component of type {}", componentType.getInstanceClass().getName());
 
     // Instantiate the component.
     IDIYComponent<?> component =
@@ -328,9 +328,9 @@ public class InstantiationManager {
 
     // Write to recent components
     List<String> recentComponentTypes =
-        (List<String>)
-            DIYLC.getObject(
-                IPlugInPort.RECENT_COMPONENTS_KEY, (Object) new ArrayList<ComponentType>());
+        (List<String>) DIYLC.getObject(
+            IPlugInPort.Key.RECENT_COMPONENTS,
+            (Object) new ArrayList<ComponentType>());
     String className = componentType.getInstanceClass().getName();
     if (recentComponentTypes.size() == 0 || !recentComponentTypes.get(0).equals(className)) {
 
@@ -342,7 +342,7 @@ public class InstantiationManager {
       if (recentComponentTypes.size() > MAX_RECENT_COMPONENTS) {
         recentComponentTypes.remove(recentComponentTypes.size() - 1);
       }
-      DIYLC.putValue(IPlugInPort.RECENT_COMPONENTS_KEY, recentComponentTypes);
+      DIYLC.putValue(IPlugInPort.Key.RECENT_COMPONENTS, recentComponentTypes);
     }
 
     List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
@@ -393,8 +393,7 @@ public class InstantiationManager {
    */
   public void fillWithDefaultProperties(Object object, Template template) {
     // Extract properties.
-    List<PropertyWrapper> properties =
-        ComponentProcessor.getInstance().extractProperties(object.getClass());
+    List<PropertyWrapper> properties = ComponentProcessor.extractProperties(object.getClass());
     Map<String, PropertyWrapper> propertyCache = new HashMap<String, PropertyWrapper>();
     // Override with default values if available.
     for (PropertyWrapper property : properties) {
@@ -456,8 +455,7 @@ public class InstantiationManager {
       return;
     }
     List<PropertyWrapper> properties =
-        ComponentProcessor.getInstance()
-            .extractProperties(this.componentTypeSlot.getInstanceClass());
+        ComponentProcessor.extractProperties(this.componentTypeSlot.getInstanceClass());
     PropertyWrapper angleProperty = null;
     for (PropertyWrapper propertyWrapper : properties) {
       if (propertyWrapper.getType().getName().equals(Orientation.class.getName())

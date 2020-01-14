@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.miscutils;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -47,26 +48,23 @@ public class IconImageConverter implements Converter {
     int height = image.getIconHeight();
     int[] pixels = new int[width * height];
 
-    if (image != null) {
-      try {
-        PixelGrabber pg =
-            new PixelGrabber(image.getImage(), 0, 0, width, height, pixels, 0, width);
-        pg.grabPixels();
-        if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-          LOG.error("Failed to load image contents");
-        }
-      } catch (InterruptedException e) {
-        LOG.error("Image load interrupted");
+    try {
+      PixelGrabber pg = new PixelGrabber(image.getImage(), 0, 0, width, height, pixels, 0, width);
+      pg.grabPixels();
+      if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
+        LOG.error("Failed to load image contents");
       }
+    } catch (InterruptedException e) {
+      LOG.error("Image load interrupted");
     }
+
     LOG.debug("Writing image to file: " + width + "x" + height);
     writer.addAttribute("width", Integer.toString(width));
     writer.addAttribute("height", Integer.toString(height));
     StringBuilder dataBuilder = new StringBuilder();
     int n = 0;
     for (int pixel : pixels) {
-      dataBuilder.append(Integer.toString(pixel, 16));
-      dataBuilder.append(",");
+      dataBuilder.append(Integer.toString(pixel, 16)).append(",");
       n++;
       if (n % 16 == 0) {
         dataBuilder.append("\n");
@@ -95,19 +93,8 @@ public class IconImageConverter implements Converter {
 
     Toolkit toolkit = Toolkit.getDefaultToolkit();
     ColorModel colorModel = ColorModel.getRGBdefault();
-    Image image =
-        toolkit.createImage(new MemoryImageSource(width, height, colorModel, pixels, 0, width));
-
-    //		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    //		bimg.setRGB(0, 0, width, height, pixels, 0, width);
-    //		File outputfile = new File("c:\\saved.png");
-    //		try {
-    //			ImageIO.write(bimg, "png", outputfile);
-    //		} catch (IOException e) {
-    //			// TODO Auto-generated catch block
-    //			e.printStackTrace();
-    //		}
-    return new ImageIcon(image);
+    return new ImageIcon(
+        toolkit.createImage(new MemoryImageSource(width, height, colorModel, pixels, 0, width)));
   }
 
   @SuppressWarnings("rawtypes")

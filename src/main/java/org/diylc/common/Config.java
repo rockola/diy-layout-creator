@@ -101,7 +101,7 @@ public final class Config {
         Iterator<String> keys = c.getKeys();
         while (keys.hasNext()) {
           String key = keys.next();
-          LOG.trace("Key {}", key);
+          LOG.trace("Key [{}]=[{}]", key, c.getString(key));
         }
       }
     }
@@ -138,13 +138,13 @@ public final class Config {
    * <p>If contents is the empty string, return key in title case. This means that <key>Key</key>
    * can be stored simply as <key/>. Hyphens in _key_ are changed to spaces. Only the last part
    * after any dot ('.') is used.
-   *
-   * <p>TODO: use a proper title case function that can turn "bill of materials" into "Bill of
-   * Materials" (instead of "Bill Of Materials")
    */
   public static String getString(String key) {
     String s = config.getString(key);
-    if (s != null && s.isEmpty()) {
+    if (s == null) {
+      LOG.debug("getString({}) key not found", key);
+    } else if (s.isEmpty()) {
+      // use transformed key for empty values
       int beginIndex = key.lastIndexOf('.') > 0 ? key.lastIndexOf('.') + 1 : 0;
       return WordUtils.capitalizeFully(key.substring(beginIndex).replace('-', ' '));
     }

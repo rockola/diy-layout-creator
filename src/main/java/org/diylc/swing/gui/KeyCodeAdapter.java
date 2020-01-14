@@ -241,9 +241,10 @@ public class KeyCodeAdapter extends XmlAdapter<String, Integer> {
   // not being used ATM
   @Override
   public String marshal(Integer v) throws Exception {
-    Integer i = (Integer) v;
     for (Map.Entry<String, Integer> e : keyCodes.entrySet()) {
-      if (e.getValue() == v) return e.getKey();
+      if (e.getValue().equals(v)) {
+        return e.getKey();
+      }
     }
     return ""; // TODO: not found, throw Exception?
   }

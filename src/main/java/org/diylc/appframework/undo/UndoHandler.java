@@ -42,39 +42,31 @@ public class UndoHandler<T> {
 
   private static final Logger LOG = LogManager.getLogger(UndoHandler.class);
 
-  public static final int MAX_STACK_SIZE = 32;
+  public static final int MAX_STACK_SIZE = 32; // arbitrary
 
-  private Stack<Change> undoStack;
-  private Stack<Change> redoStack;
+  private Stack<Change> undoStack = new Stack<Change>();
+  private Stack<Change> redoStack = new Stack<Change>();
   private IUndoListener<T> listener;
 
-  private UndoAction undoAction;
-  private RedoAction redoAction;
+  private UndoAction undoAction = new UndoAction();
+  private RedoAction redoAction = new RedoAction();
 
   public UndoHandler(IUndoListener<T> listener) {
     super();
     this.listener = listener;
-    this.undoStack = new Stack<Change>();
-    this.redoStack = new Stack<Change>();
     refreshActions();
   }
 
   public UndoAction getUndoAction() {
-    if (undoAction == null) {
-      undoAction = new UndoAction();
-    }
     return undoAction;
   }
 
   public RedoAction getRedoAction() {
-    if (redoAction == null) {
-      redoAction = new RedoAction();
-    }
     return redoAction;
   }
 
   public void reset() {
-    LOG.info("Resetting undo/redo");
+    LOG.debug("Resetting Undo and Redo");
     undoStack.clear();
     redoStack.clear();
     refreshActions();
@@ -107,14 +99,14 @@ public class UndoHandler<T> {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (!undoStack.isEmpty()) {
-        LOG.info("Performing undo");
+      if (undoStack.isEmpty()) {
+        LOG.debug("No Undo actions available");
+      } else {
+        LOG.info("Performing Undo");
         Change currentState = undoStack.pop();
         redoStack.push(currentState);
         listener.actionPerformed(currentState.before);
         refreshActions();
-      } else {
-        LOG.warn("Could not perform undo");
       }
     }
   }
@@ -132,31 +124,29 @@ public class UndoHandler<T> {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (!redoStack.isEmpty()) {
-        LOG.info("Performing redo");
+      if (redoStack.isEmpty()) {
+        LOG.debug("No Redo actions available");
+      } else {
+        LOG.info("Performing Redo");
         Change currentState = redoStack.pop();
         undoStack.push(currentState);
         listener.actionPerformed(currentState.after);
         refreshActions();
-      } else {
-        LOG.warn("Could not perform undo");
       }
     }
   }
 
   private void refreshActions() {
     getUndoAction().setEnabled(!undoStack.isEmpty());
-    if (undoStack.isEmpty()) {
-      getUndoAction().putValue(Action.NAME, "Undo");
-    } else {
-      getUndoAction().putValue(Action.NAME, "Undo " + undoStack.peek().changeDescription);
-    }
+    getUndoAction().putValue(Action.NAME,
+                             "Undo" + (undoStack.isEmpty()
+                                       ? ""
+                                       : " " + undoStack.peek().changeDescription));
     getRedoAction().setEnabled(!redoStack.isEmpty());
-    if (redoStack.isEmpty()) {
-      getRedoAction().putValue(Action.NAME, "Redo");
-    } else {
-      getRedoAction().putValue(Action.NAME, "Redo " + redoStack.peek().changeDescription);
-    }
+    getRedoAction().putValue(Action.NAME,
+                             "Redo" + (redoStack.isEmpty()
+                                       ? ""
+                                       : " " + redoStack.peek().changeDescription));
     while (undoStack.size() > MAX_STACK_SIZE) {
       undoStack.remove(0);
     }

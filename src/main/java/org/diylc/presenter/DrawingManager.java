@@ -41,14 +41,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.DIYLC;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.DrawOption;
 import org.diylc.common.EventType;
 import org.diylc.common.GridType;
-import org.diylc.common.IComponentFiler;
+import org.diylc.common.IComponentFilter;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
@@ -60,8 +62,8 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.utils.Constants;
 
 /**
- * Utility that deals with painting {@link Project} on the {@link Graphics2D} and keeps areas taken
- * by each drawn component.
+ * Utility that deals with painting {@link Project} on the {@link
+ * Graphics2D} and keeps areas taken by each drawn component.
  *
  * @author Branislav Stojkovic
  */
@@ -85,10 +87,12 @@ public class DrawingManager {
   private Theme theme = (Theme) DIYLC.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
 
   // Keeps Area object of each drawn component.
-  private Map<IDIYComponent<?>, ComponentArea> componentAreaMap;
+  private Map<IDIYComponent<?>, ComponentArea> componentAreaMap =
+      new HashMap<IDIYComponent<?>, ComponentArea>();
   // Maps components to the last state they are drawn in. Also, used to
   // determine which components are invalidated when they are not in the map.
-  private Map<IDIYComponent<?>, ComponentState> lastDrawnStateMap;
+  private Map<IDIYComponent<?>, ComponentState> lastDrawnStateMap =
+      new HashMap<IDIYComponent<?>, ComponentState>();
 
   private Area continuityArea;
 
@@ -106,8 +110,6 @@ public class DrawingManager {
   public DrawingManager(MessageDispatcher<EventType> messageDispatcher) {
     super();
     this.messageDispatcher = messageDispatcher;
-    componentAreaMap = new HashMap<IDIYComponent<?>, ComponentArea>();
-    lastDrawnStateMap = new HashMap<IDIYComponent<?>, ComponentState>();
     String debugComponentAreasStr = System.getProperty(DEBUG_COMPONENT_AREAS);
     debugComponentAreas =
         debugComponentAreasStr != null && debugComponentAreasStr.equalsIgnoreCase("true");
@@ -115,6 +117,17 @@ public class DrawingManager {
     String debugContinuityAreasStr = System.getProperty(DEBUG_CONTINUITY_AREAS);
     debugContinuityAreas =
         debugContinuityAreasStr != null && debugContinuityAreasStr.equalsIgnoreCase("true");
+  }
+
+  private void logTraceComponentSet(
+      Collection<IDIYComponent<?>> components,
+      String setIdentifier) {
+    if (components != null && !components.isEmpty()) {
+      LOG.trace("{} components=", setIdentifier);
+      for (IDIYComponent<?> c : components) {
+        LOG.trace("{} {}", setIdentifier.toUpperCase(), c.getIdentifier());
+      }
+    }
   }
 
   /**
@@ -125,7 +138,6 @@ public class DrawingManager {
    * @param drawOptions
    * @param filter
    * @param selectionRect
-   * @param selectedComponents
    * @param lockedComponents
    * @param groupedComponents
    * @param controlPointSlot
@@ -138,28 +150,33 @@ public class DrawingManager {
       Graphics2D g2d,
       Project project,
       Set<DrawOption> drawOptions,
-      IComponentFiler filter,
+      IComponentFilter filter,
       Rectangle selectionRect,
-      Collection<IDIYComponent<?>> selectedComponents,
+      // Collection<IDIYComponent<?>> selectedComponents,
       Set<IDIYComponent<?>> lockedComponents,
       Set<IDIYComponent<?>> groupedComponents,
       List<Point> controlPointSlot,
       List<IDIYComponent<?>> componentSlot,
       boolean dragInProgress,
       Double externalZoom) {
+
     failedComponents.clear();
     if (project == null) {
       return failedComponents;
     }
+    LOG.trace(
+        "drawProject({}, ...) {}, externalZoom {}",
+        project,
+        dragInProgress ? "*DRAGGING*" : "not dragging",
+        externalZoom);
+    logTraceComponentSet(project.getSelection(), "selected");
+    logTraceComponentSet(lockedComponents, "locked");
+    logTraceComponentSet(groupedComponents, "grouped");
 
-    double zoom = 1d;
-    if (drawOptions.contains(DrawOption.ZOOM)) {
-      zoom = zoomLevel;
-    } else {
-      zoom = 1 / Constants.PIXEL_SIZE;
+    double zoom = (drawOptions.contains(DrawOption.ZOOM) ? zoomLevel : 1 / Constants.PIXEL_SIZE);
+    if (externalZoom != null) {
+      zoom *= externalZoom;
     }
-
-    if (externalZoom != null) zoom *= externalZoom;
 
     G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
 
@@ -171,21 +188,21 @@ public class DrawingManager {
     g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         antiAliasing
-            ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-            : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+        ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+        : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
     boolean hiQuality = DIYLC.highQualityRendering();
 
     g2d.setRenderingHint(
         RenderingHints.KEY_ALPHA_INTERPOLATION,
         hiQuality
-            ? RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY
-            : RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        ? RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY
+        : RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
     g2d.setRenderingHint(
         RenderingHints.KEY_COLOR_RENDERING,
         hiQuality
-            ? RenderingHints.VALUE_COLOR_RENDER_QUALITY
-            : RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        ? RenderingHints.VALUE_COLOR_RENDER_QUALITY
+        : RenderingHints.VALUE_COLOR_RENDER_SPEED);
     g2d.setRenderingHint(
         RenderingHints.KEY_RENDERING,
         hiQuality ? RenderingHints.VALUE_RENDER_QUALITY : RenderingHints.VALUE_RENDER_SPEED);
@@ -195,8 +212,8 @@ public class DrawingManager {
     g2d.setRenderingHint(
         RenderingHints.KEY_INTERPOLATION,
         hiQuality
-            ? RenderingHints.VALUE_INTERPOLATION_BILINEAR
-            : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        ? RenderingHints.VALUE_INTERPOLATION_BILINEAR
+        : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
     // AffineTransform initialTx = g2d.getTransform();
     Dimension d = getCanvasDimensions(project, zoom, drawOptions.contains(DrawOption.EXTRA_SPACE));
@@ -250,13 +267,13 @@ public class DrawingManager {
       float borderThickness = (float) (3f * (zoom > 1 ? 1 : zoom));
       g2d.setStroke(
           ObjectCache.getInstance()
-              .fetchStroke(
-                  borderThickness,
-                  new float[] {
-                    borderThickness * 4, borderThickness * 4,
-                  },
-                  0,
-                  BasicStroke.CAP_BUTT));
+          .fetchStroke(
+              borderThickness,
+              new float[] {
+                borderThickness * 4, borderThickness * 4,
+              },
+              0,
+              BasicStroke.CAP_BUTT));
       g2dWrapper.setColor(theme.getOutlineColor());
       extraSpaceRect =
           new Rectangle2D.Double(extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
@@ -272,26 +289,27 @@ public class DrawingManager {
       g2dWrapper.scale(zoom, zoom);
     }
 
-    // Composite mainComposite = g2d.getComposite();
-    // Composite alphaComposite =
-    // AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-
-    // g2dWrapper.resetTx();
-
-    // componentAreaMap.clear();
     for (IDIYComponent<?> component : project.getComponents()) {
       // Do not draw the component if it's filtered out.
       if (filter != null && !filter.testComponent(component)) {
         continue;
       }
       ComponentState state = ComponentState.NORMAL;
-      if (drawOptions.contains(DrawOption.SELECTION) && selectedComponents.contains(component)) {
-
+      if (drawOptions.contains(DrawOption.SELECTION)
+          && project.inSelection(component)) {
         state = dragInProgress ? ComponentState.DRAGGING : ComponentState.SELECTED;
       }
       // Do not track the area if component is not invalidated and was
       // drawn in the same state.
-      boolean trackArea = lastDrawnStateMap.get(component) != state;
+      ComponentState lastState = lastDrawnStateMap.get(component);
+      boolean trackArea = (lastState != state);
+      LOG.trace(
+          "Component {} {} lastState {} and state {} so trackArea is {}",
+          component.getIdentifier(),
+          componentAreaMap.get(component),
+          lastState,
+          state,
+          trackArea);
 
       synchronized (g2d) {
         g2dWrapper.startedDrawingComponent();
@@ -312,20 +330,36 @@ public class DrawingManager {
               g2dWrapper);
           if (g2dWrapper.isTrackingContinuityArea()) {
             LOG.info(
-                "Component {} of type {} did not stop tracking continuity area.",
-                component.getName(),
-                component.getClass().getName());
+                "Component {} did not stop tracking continuity area.",
+                component.getIdentifier());
             g2dWrapper.stopTrackingContinuityArea();
           }
         } catch (Exception e) {
-          LOG.error("Error drawing " + component.getName(), e);
+          LOG.error("Error drawing " + component.getIdentifier(), e);
           failedComponents.add(component);
         }
         ComponentArea area = g2dWrapper.finishedDrawingComponent();
         if (trackArea && area != null && !area.getOutlineArea().isEmpty()) {
+          LOG.trace(
+              "Adding component {} with area {} to componentAreaMap (size {})",
+              component.getIdentifier(),
+              area,
+              componentAreaMap.size());
+          component.setComponentArea(area);
           componentAreaMap.put(component, area);
           lastDrawnStateMap.put(component, state);
+        } else {
+          LOG.trace(
+              "Did not add component {} to componentAreaMap, trackArea is {}",
+              component.getIdentifier(),
+              trackArea);
         }
+        ComponentArea theArea = componentAreaMap.get(component);
+        LOG.trace(
+            "Component {} is {}in the map {}",
+            component.getIdentifier(),
+            theArea == null ? "not " : "",
+            theArea != null && theArea.getOutlineArea().isEmpty() ? "but outline is empty" : "");
       }
     }
 
@@ -336,11 +370,12 @@ public class DrawingManager {
         for (IDIYComponent<?> component : project.getComponents()) {
           for (int i = 0; i < component.getControlPointCount(); i++) {
             VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
+            boolean inSelection = project.inSelection(component);
             if ((groupedComponents.contains(component)
                     && (vp.isAlways()
-                        || (selectedComponents.contains(component) && vp.isWhenSelected()))
+                        || (inSelection && vp.isWhenSelected()))
                 || (!groupedComponents.contains(component)
-                    && !selectedComponents.contains(component)
+                    && !inSelection
                     && vp.isAlways()))) {
 
               g2dWrapper.setColor(CONTROL_POINT_COLOR);
@@ -356,11 +391,12 @@ public class DrawingManager {
         }
       }
       // Then draw the selected ones.
-      for (IDIYComponent<?> component : selectedComponents) {
+      for (IDIYComponent<?> component : project.getSelection()) {
         for (int i = 0; i < component.getControlPointCount(); i++) {
           VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
 
-          if (!groupedComponents.contains(component) && (vp.isWhenSelected() || vp.isAlways())) {
+          if (!groupedComponents.contains(component)
+              && (vp.isWhenSelected() || vp.isAlways())) {
 
             Point controlPoint = component.getControlPoint(i);
             int pointSize = CONTROL_POINT_SIZE;
@@ -397,7 +433,7 @@ public class DrawingManager {
               g2dWrapper);
 
         } catch (Exception e) {
-          LOG.error("Error drawing " + component.getName(), e);
+          LOG.error("Error drawing " + component.getIdentifier(), e);
           failedComponents.add(component);
         }
       }
@@ -441,6 +477,7 @@ public class DrawingManager {
       g2d.draw(selectionRect);
     }
 
+    /* commented out for now --ola 20200113
     // Draw component area for test
     if (debugComponentAreas) {
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -462,6 +499,7 @@ public class DrawingManager {
         for (Area a : area.getContinuityNegativeAreas()) g2d.draw(a);
       }
     }
+    */
 
     if (continuityArea != null && DIYLC.highlightContinuityArea()) {
       Composite oldComposite = g2d.getComposite();
@@ -489,21 +527,27 @@ public class DrawingManager {
   }
 
   public void setZoomLevel(double zoomLevel) {
-    this.zoomLevel = zoomLevel;
-    fireZoomChanged();
-    // ConfigurationManager.getInstance().writeValue(ZOOM_KEY, zoomLevel);
+    LOG.trace("setZoomLevel({})", zoomLevel);
+    if (this.zoomLevel != zoomLevel) {
+      this.zoomLevel = zoomLevel;
+      fireZoomChanged();
+      // TODO: save zoom level in config?
+    }
   }
 
   public void invalidateComponent(IDIYComponent<?> component) {
+    LOG.trace("invalidateComponent({})", component.getIdentifier());
     componentAreaMap.remove(component);
     lastDrawnStateMap.remove(component);
   }
 
   public ComponentArea getComponentArea(IDIYComponent<?> component) {
-    return componentAreaMap.get(component);
+    //return componentAreaMap.get(component);
+    return component.getComponentArea();
   }
 
   public void clearComponentAreaMap() {
+    LOG.trace("clearComponentAreaMap()");
     componentAreaMap.clear();
     lastDrawnStateMap.clear();
   }
@@ -513,12 +557,45 @@ public class DrawingManager {
   }
 
   public List<IDIYComponent<?>> findComponentsAt(Point point, Project project) {
+    LOG.trace("findComponentsAt({}, {})", point, project);
     List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
-    for (int i = 0; i < project.getComponents().size(); i++) {
-      ComponentArea area = componentAreaMap.get(project.getComponents().get(i));
-      if (area != null && area.getOutlineArea().contains(point)) {
-        components.add(0, project.getComponents().get(i));
+    LOG.trace("Project has {} components", project.getComponents().size());
+    LOG.trace("componentAreaMap size {}", componentAreaMap.size());
+    for (IDIYComponent<?> component : project.getComponents()) {
+      LOG.trace(
+          "findComponentsAt({}, {}) looking at component {}",
+          point,
+          project,
+          component.getIdentifier());
+      // NOTE: BIG CHANGE - look for area directly from component! //ola 20100113
+      //ComponentArea area = componentAreaMap.get(component);
+      ComponentArea area = component.getComponentArea();
+      if (area == null) {
+        LOG.trace(
+            "findComponentsAt({}, {}) component {} has no area",
+            point,
+            project,
+            component.getIdentifier());
+      } else {
+        boolean isPointInArea = area.getOutlineArea().contains(point);
+        LOG.trace(
+            "component {} outline area in area {} {} point {}",
+            component.getIdentifier(),
+            area,
+            isPointInArea ? "contains" : "does not contain",
+            point);
+        if (isPointInArea) {
+          components.add(0, component);
+        }
       }
+    }
+    if (!components.isEmpty()) {
+      LOG.trace("Found {} components", components.size());
+      for (IDIYComponent<?> c : components) {
+        LOG.trace("{} was found", c.getIdentifier());
+      }
+    } else {
+      LOG.trace("No components found");
     }
     return components;
   }
@@ -614,6 +691,7 @@ public class DrawingManager {
     List<Area> areas = new ArrayList<Area>();
     for (int i = 0; i < preliminaryAreas.size(); i++) {
       Area a = preliminaryAreas.get(i);
+      // SpotBugs notes that checkBreakout is never used! //ola 20200110
       // if (checkBreakout.get(i))
       areas.addAll(tryBreakout(a));
       // else

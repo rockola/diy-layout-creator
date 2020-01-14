@@ -55,6 +55,10 @@ import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ZoomableStroke;
 import org.diylc.core.IDrawingObserver;
@@ -64,13 +68,15 @@ import org.diylc.core.IDrawingObserver;
  * and creates an {@link Area} that corresponds to drawn
  * objects. Before each component is drawn, {@link #startedDrawingComponent()}
  * should be called. After the component is drawn, area may be
- * retrieved using {@link #finishedDrawingComponent()}. Graphics
- * configuration (color, font, etc) is reset between each two
+ * retrieved using {@link #finishedDrawingComponent()}.
+ * Graphics configuration (color, font, etc) is reset between each two
  * components.
  *
  * @author Branislav Stojkovic
  */
 class G2DWrapper extends Graphics2D implements IDrawingObserver {
+
+  private static final Logger LOG = LogManager.getLogger(G2DWrapper.class);
 
   public static int LINE_SENSITIVITY_MARGIN = 2;
   public static int CURVE_SENSITIVITY = 6;
@@ -140,7 +146,12 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     canvasGraphics.setTransform(originalTx);
     canvasGraphics.setComposite(originalComposite);
     canvasGraphics.setFont(originalFont);
-    return new ComponentArea(currentArea, continuityPositiveAreas, continuityNegativeAreas);
+    ComponentArea area = new ComponentArea(
+        currentArea,
+        continuityPositiveAreas,
+        continuityNegativeAreas);
+    LOG.trace("finishedDrawingComponent() area is {}", area);
+    return area;
   }
 
   @Override
@@ -554,7 +565,8 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
                            Color bgcolor,
                            ImageObserver observer) {
     // FIXME: map
-    return drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
+    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor,
+                                    observer);
   }
 
   @Override

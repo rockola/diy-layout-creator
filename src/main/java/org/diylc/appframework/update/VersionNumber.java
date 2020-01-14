@@ -101,11 +101,11 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
 
   @Override
   public int compareTo(VersionNumber o) {
-    int result = Integer.valueOf(major).compareTo(o.major);
+    int result = Integer.compare(major, o.major);
     if (result == 0) {
-      result = Integer.valueOf(minor).compareTo(o.minor);
+      result = Integer.compare(minor, o.minor);
       if (result == 0) {
-        result = Integer.valueOf(build).compareTo(o.build);
+        result = Integer.compare(build, o.build);
       }
     }
     return result;

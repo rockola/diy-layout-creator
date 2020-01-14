@@ -3208,7 +3208,7 @@
         <values>
           <entry>
             <string>Label Orientation</string>
-            <org.diylc.components.AbstractLeadedComponent_-LabelOriantation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOriantation>
+            <org.diylc.components.AbstractLeadedComponent_-LabelOrientation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOrientation>
           </entry>
           <entry>
             <string>Alpha</string>
@@ -3291,7 +3291,7 @@
         <values>
           <entry>
             <string>Label Orientation</string>
-            <org.diylc.components.AbstractLeadedComponent_-LabelOriantation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOriantation>
+            <org.diylc.components.AbstractLeadedComponent_-LabelOrientation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOrientation>
           </entry>
           <entry>
             <string>Alpha</string>
@@ -3359,7 +3359,7 @@
         <values>
           <entry>
             <string>Label Orientation</string>
-            <org.diylc.components.AbstractLeadedComponent_-LabelOriantation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOriantation>
+            <org.diylc.components.AbstractLeadedComponent_-LabelOrientation>Directional</org.diylc.components.AbstractLeadedComponent_-LabelOrientation>
           </entry>
           <entry>
             <string>Alpha</string>
@@ -3427,7 +3427,7 @@
         <values>
           <entry>
             <string>Label Orientation</string>
-            <org.diylc.components.AbstractLeadedComponent_-LabelOriantation>Horizontal</org.diylc.components.AbstractLeadedComponent_-LabelOriantation>
+            <org.diylc.components.AbstractLeadedComponent_-LabelOrientation>Horizontal</org.diylc.components.AbstractLeadedComponent_-LabelOrientation>
           </entry>
           <entry>
             <string>Value</string>

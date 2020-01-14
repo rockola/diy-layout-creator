@@ -44,7 +44,7 @@ import org.diylc.core.Project;
 
 public class AutoSavePlugin implements IPlugIn {
 
-  private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory("diylc") + "backup";
+  private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory() + "backup";
 
   private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
 
@@ -56,8 +56,6 @@ public class AutoSavePlugin implements IPlugIn {
   private IPlugInPort plugInPort;
   private long lastSave = 0;
 
-  private static final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-
   public AutoSavePlugin() {
     executor = Executors.newSingleThreadExecutor();
   }
@@ -66,8 +64,13 @@ public class AutoSavePlugin implements IPlugIn {
   public void connect(IPlugInPort plugInPort) {
     this.plugInPort = plugInPort;
     File dir = new File(AUTO_SAVE_PATH);
-    if (!dir.exists()) // create the directory if needed
-    dir.mkdirs();
+    if (!dir.exists()) { // create the directory if needed
+      boolean success = dir.mkdirs();
+      if (!success) {
+        String msg = String.format("Directories not created for path {}", AUTO_SAVE_PATH);
+        LOG.error(msg); //throw new Exception(msg);
+      }
+    }
   }
 
   @Override
@@ -77,33 +80,38 @@ public class AutoSavePlugin implements IPlugIn {
 
   @Override
   public void processMessage(EventType eventType, Object... params) {
-    if (eventType == EventType.PROJECT_MODIFIED) {
-      if (System.currentTimeMillis() - lastSave > BACKUP_FREQ_MS) {
-        executor.execute(
-            new Runnable() {
+    switch (eventType) {
+      case PROJECT_MODIFIED:
+        if (System.currentTimeMillis() - lastSave > BACKUP_FREQ_MS) {
+          executor.execute(
+              new Runnable() {
 
-              @Override
-              public void run() {
-                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+                @Override
+                public void run() {
+                  Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
-                lastSave = System.currentTimeMillis();
-                String fileName = generateBackupFileName(plugInPort.getCurrentFileName());
-                plugInPort.saveProjectToFile(fileName, true);
-                cleanupExtra();
-              }
-            });
-      }
-    } else if (eventType == EventType.PROJECT_LOADED) {
-      String fileName = (String) params[2];
-      if (fileName != null) {
-        String backupName = generateBackupFileName(fileName);
-        try {
-          copyFileUsingStream(new File(fileName), new File(backupName));
-          LOG.info("Copied loaded file to {}", backupName);
-        } catch (IOException e) {
-          LOG.error("Could not copy the loaded file to backup", e);
+                  lastSave = System.currentTimeMillis();
+                  String fileName = generateBackupFileName(plugInPort.getCurrentFileName());
+                  plugInPort.saveProjectToFile(fileName, true);
+                  cleanupExtra();
+                }
+              });
         }
-      }
+        break;
+      case PROJECT_LOADED:
+        String fileName = (String) params[2];
+        if (fileName != null) {
+          String backupName = generateBackupFileName(fileName);
+          try {
+            copyFileUsingStream(new File(fileName), new File(backupName));
+            LOG.info("Copied loaded file to {}", backupName);
+          } catch (IOException e) {
+            LOG.error("Could not copy the loaded file to backup", e);
+          }
+        }
+        break;
+      default:
+
     }
   }
 
@@ -129,7 +137,7 @@ public class AutoSavePlugin implements IPlugIn {
         + File.separator
         + name
         + "."
-        + dateFormat.format(date)
+        + new SimpleDateFormat("yyyyMMdd-HHmmss").format(date)
         + (nth < 2 ? "" : "-" + nth)
         + Project.FILE_SUFFIX;
   }
@@ -181,7 +189,7 @@ public class AutoSavePlugin implements IPlugIn {
 
           @Override
           public int compare(File o1, File o2) {
-            return Long.valueOf(o1.lastModified()).compareTo(o2.lastModified());
+            return Long.compare(o1.lastModified(), o2.lastModified());
           }
         });
     long totalSize = 0;
@@ -191,7 +199,10 @@ public class AutoSavePlugin implements IPlugIn {
     while (i < files.length && totalSize > maxTotalSize) {
       totalSize -= files[i].length();
       LOG.info("Maximum backup size exceeded. Deleting old backup file {}", files[i].getName());
-      files[i].delete();
+      boolean success = files[i].delete();
+      if (!success) {
+        LOG.error("Could not delete autosave file {} '{}'", i, files[i].getName());
+      }
       i++;
     }
   }

@@ -24,6 +24,23 @@
       <donate>Donate</donate>
       <about>About</about>      
     </help>
+    <config>
+      <anti-aliasing/>
+      <auto-create-pads>Auto-Create Pads</auto-create-pads>
+      <auto-edit-mode>Auto-Edit Mode</auto-edit-mode>
+      <continuous-creation/>
+      <export-grid/>
+      <extra-working-area/>
+      <hardware-acceleration/>
+      <hi-quality-rendering>Hi-Quality Rendering</hi-quality-rendering>
+      <highlight-connected-areas/>
+      <mouse-wheel-zoom/>
+      <outline-mode/>
+      <show-rulers/>
+      <show-grid/>
+      <snap-to-grid/>
+      <sticky-points/>
+    </config>
   </menu>
   <message>
     <error/>
@@ -54,9 +71,14 @@
       <unrotatable-components>Selection contains components that cannot be rotated. Do you want to exclude them?</unrotatable-components>
       <unmirrorable-components>Selection contains components that cannot be mirrored. Do you want to exclude them?</unmirrorable-components>
       <confirm-mirroring>Mirroring operation will change the circuit. Do you want to continue?</confirm-mirroring>
+      <mirror-selection/>
+      <bring-selection-to-front/>
+      <send-selection-to-back/>
       <bottom-reached>Selected component(s) have reached the bottom of their layer. Do you want to force the selection to the back?</bottom-reached>
       <top-reached>Selected component(s) have reached the top of their layer. Do you want to force the selection to the top?</top-reached>
       <selection-edit-error>Error occurred while editing selection. Check the log for details.</selection-edit-error>
+      <confirm-variant-overwrite>A variant with that name already exists. Overwrite?</confirm-variant-overwrite>
+      <save-as-variant/>
     </presenter>
     <infoDialog>
       <highlight-continuity>Click on a component to highlight continuity area directly or indirectly connected to it. In this mode components cannot be moved or edited. In order to continue editing, this mode needs to be switched OFF.</highlight-continuity>
@@ -157,5 +179,19 @@
       <view-count/>
       <download-to-local-drive/>
     </cloud>
+    <update>
+      <bug-fix/>
+      <new-feature/>
+      <improvement/>
+      <released-on>released on</released-on>
+      <version-short-format>%s v%s released on %s</version-short-format>
+      <versions-not-found>Could not obtain update information.</versions-not-found>
+      <browser-not-launched>Browser not launched.</browser-not-launched>      
+    </update>
+    <memorybar>
+      <tooltip>%s MB of %s MB free
+Max %s MB is available
+Click to run the garbage collector</tooltip>
+    </memorybar>
   </message>
 </configuration>

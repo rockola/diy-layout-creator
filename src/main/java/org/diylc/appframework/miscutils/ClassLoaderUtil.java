@@ -46,7 +46,7 @@ public class ClassLoaderUtil {
   public static void addURL(URL u) throws IOException {
 
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-    URL urls[] = sysLoader.getURLs();
+    URL[] urls = sysLoader.getURLs();
     for (int i = 0; i < urls.length; i++) {
       if (urls[i].toString().equalsIgnoreCase(u.toString())) {
         LOG.debug("URL " + u + " is already in the classpath.");
@@ -58,8 +58,8 @@ public class ClassLoaderUtil {
       Method method = sysClass.getDeclaredMethod("addURL", parameters);
       method.setAccessible(true);
       method.invoke(sysLoader, new Object[] {u});
-    } catch (Throwable t) {
-      LOG.error("Error, could not add URL to system classloader", t);
+    } catch (Throwable throwable) {
+      LOG.error("Error, could not add URL to system classloader", throwable);
       throw new IOException("Error, could not add URL to system classloader");
     }
   }

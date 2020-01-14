@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.common;
 
@@ -26,8 +24,9 @@ import java.lang.reflect.Method;
 import org.diylc.core.IPropertyValidator;
 
 /**
- * Entity class for editable properties extracted from component objects. Represents a single
- * editable property together with it's current value.
+ * Entity class for editable properties extracted from component
+ * objects. Represents a single editable property together with it's
+ * current value.
  *
  * @author Branislav Stojkovic
  */
@@ -148,7 +147,25 @@ public class PropertyWrapper implements Cloneable {
   // }
   // return new Property(name, type, value);
   // }
+  /*
   @Override
+  public PropertyWrapper clone() throws CloneNotSupportedException {
+    PropertyWrapper c = (PropertyWrapper) super.clone();
+    c.name = this.name;
+    c.type = this.type;
+    c.value = this.value.clone();
+    c.setter = this.setter;
+    c.getter = this.getter;
+    c.defaultable = this.defaultable;
+    c.validator = this.validator;
+    c.unique = this.unique;
+    c.changed = this.changed;
+    c.sortOrder = this.sortOrder;
+    c.ownerObject = this.ownerObject;
+    return c;
+  }
+  */
+
   public Object clone() throws CloneNotSupportedException {
     PropertyWrapper clone =
         new PropertyWrapper(
@@ -156,10 +173,9 @@ public class PropertyWrapper implements Cloneable {
             this.type,
             this.getter,
             this.setter,
-            this.defaultable,
-            this.validator,
+            this.defaultable, this.validator,
             this.sortOrder);
-    clone.value = this.value;
+    clone.value = this.value; // NOTE: not copied! //ola 20100110
     clone.changed = this.changed;
     clone.unique = this.unique;
     return clone;

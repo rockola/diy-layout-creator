@@ -33,7 +33,7 @@ import org.diylc.core.IDIYComponent;
  *
  * @author Branislav Stojkovic
  */
-public class Group implements Comparable<Group> {
+public class Group implements Cloneable, Comparable<Group> {
 
   private Set<Node> nodes = new HashSet<Node>();
 
@@ -96,8 +96,8 @@ public class Group implements Comparable<Group> {
   }
 
   @Override
-  public Group clone() {
-    Group g = new Group();
+  public Group clone() throws CloneNotSupportedException {
+    Group g = (Group) super.clone();
     g.nodes.addAll(nodes);
     return g;
   }

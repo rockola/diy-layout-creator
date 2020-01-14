@@ -214,13 +214,9 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
 
       body[3] = lugs;
 
-      // Rotate everything that's of Area type, e.g. everything but lines.
       if (rotation != null) {
-        for (Shape shape : body) {
-          if (shape instanceof Area) {
-            Area area = (Area) shape;
-            area.transform(rotation);
-          }
+        for (Area area : body) {
+          area.transform(rotation);
         }
       }
     }

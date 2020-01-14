@@ -54,29 +54,19 @@ public class ComponentProcessor {
 
   private static final Logger LOG = LogManager.getLogger(ComponentProcessor.class);
 
-  private static ComponentProcessor instance;
+  private static Map<String, List<PropertyWrapper>> propertyCache;
+  private static Map<String, IPropertyValidator> propertyValidatorCache;
+  private static Map<String, ComponentType> componentTypeMap;
+  private static Map<String, IComponentTransformer> componentTransformerMap;
 
-  private Map<String, List<PropertyWrapper>> propertyCache;
-  private Map<String, IPropertyValidator> propertyValidatorCache;
-  private Map<String, ComponentType> componentTypeMap;
-  private Map<String, IComponentTransformer> componentTransformerMap;
-
-  public static ComponentProcessor getInstance() {
-    if (instance == null) {
-      instance = new ComponentProcessor();
-    }
-    return instance;
+  static {
+    propertyCache = new HashMap<String, List<PropertyWrapper>>();
+    componentTypeMap = new HashMap<String, ComponentType>();
+    propertyValidatorCache = new HashMap<String, IPropertyValidator>();
+    componentTransformerMap = new HashMap<String, IComponentTransformer>();
   }
 
-  private ComponentProcessor() {
-    super();
-    this.propertyCache = new HashMap<String, List<PropertyWrapper>>();
-    this.componentTypeMap = new HashMap<String, ComponentType>();
-    this.propertyValidatorCache = new HashMap<String, IPropertyValidator>();
-    this.componentTransformerMap = new HashMap<String, IComponentTransformer>();
-  }
-
-  public ComponentType extractComponentTypeFrom(Class<? extends IDIYComponent<?>> clazz) {
+  public static ComponentType extractComponentTypeFrom(Class<? extends IDIYComponent<?>> clazz) {
     if (componentTypeMap.containsKey(clazz.getName())) {
       return componentTypeMap.get(clazz.getName());
     }
@@ -156,7 +146,7 @@ public class ComponentProcessor {
    * @param clazz
    * @return
    */
-  public List<PropertyWrapper> extractProperties(Class<?> clazz) {
+  public static List<PropertyWrapper> extractProperties(Class<?> clazz) {
     if (propertyCache.containsKey(clazz.getName())) {
       return cloneProperties(propertyCache.get(clazz.getName()));
     }
@@ -198,7 +188,7 @@ public class ComponentProcessor {
     return cloneProperties(properties);
   }
 
-  private List<PropertyWrapper> cloneProperties(List<PropertyWrapper> properties) {
+  private static List<PropertyWrapper> cloneProperties(List<PropertyWrapper> properties) {
     List<PropertyWrapper> result = new ArrayList<PropertyWrapper>(properties.size());
     for (PropertyWrapper propertyWrapper : properties) {
       try {
@@ -216,7 +206,7 @@ public class ComponentProcessor {
    * @param selectedComponents
    * @return
    */
-  public List<PropertyWrapper> getMutualSelectionProperties(
+  public static List<PropertyWrapper> getMutualSelectionProperties(
       Collection<IDIYComponent<?>> selectedComponents) throws Exception {
     if (selectedComponents.isEmpty()) {
       return null;
@@ -243,7 +233,7 @@ public class ComponentProcessor {
       for (PropertyWrapper oldProperty : properties) {
         if (newProperties.contains(oldProperty)) {
           PropertyWrapper newProperty = newProperties.get(newProperties.indexOf(oldProperty));
-          if (newProperty.getValue() != null && newProperty.getValue() != null) {
+          if (newProperty.getValue() != null && oldProperty.getValue() != null) {
             if (!newProperty.getValue().equals(oldProperty.getValue()))
               // Values don't match, so the property is not unique
               // valued.
@@ -259,7 +249,8 @@ public class ComponentProcessor {
     return properties;
   }
 
-  private IPropertyValidator getPropertyValidator(Class<? extends IPropertyValidator> clazz) {
+  private static IPropertyValidator getPropertyValidator(
+      Class<? extends IPropertyValidator> clazz) {
     if (propertyValidatorCache.containsKey(clazz.getName())) {
       return propertyValidatorCache.get(clazz.getName());
     }
@@ -274,7 +265,7 @@ public class ComponentProcessor {
     return validator;
   }
 
-  private IComponentTransformer getComponentTransformer(
+  private static IComponentTransformer getComponentTransformer(
       Class<? extends IComponentTransformer> clazz) {
     if (clazz == null) return null;
     if (componentTransformerMap.containsKey(clazz.getName())) {

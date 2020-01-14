@@ -117,7 +117,9 @@ public class FileClassLoader extends URLClassLoader {
       }
       return createClass(bytes);
     } finally {
-      fis.close();
+      if (fis != null) {
+        fis.close();
+      }
     }
   }
 

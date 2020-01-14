@@ -31,7 +31,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.components.autocreate.SolderPadAutoCreator;
 import org.diylc.core.Theme;
 import org.diylc.images.Icon;
-import org.diylc.swing.ActionFactory;
+import org.diylc.swing.action.ActionFactory;
 
 /**
  * Controls configuration menu.
@@ -57,21 +57,22 @@ public class ConfigPlugin implements IPlugIn {
   public void connect(IPlugInPort plugInPort) {
     final ConfigActions actions = new ConfigActions();
 
-    actions.add("Anti-Aliasing", IPlugInPort.ANTI_ALIASING_KEY, true);
-    actions.add("Auto-Create Pads", SolderPadAutoCreator.AUTO_PADS_KEY, false);
-    actions.add("Auto-Edit Mode", IPlugInPort.AUTO_EDIT_KEY, true);
-    actions.add("Continuous Creation", IPlugInPort.CONTINUOUS_CREATION_KEY, false);
-    actions.add("Export Grid", IPlugInPort.EXPORT_GRID_KEY, false);
-    actions.add("Extra Working Area", IPlugInPort.EXTRA_SPACE_KEY, true);
-    actions.add("Hardware Acceleration", IPlugInPort.HARDWARE_ACCELERATION, false);
-    actions.add("Hi-Quality Rendering", IPlugInPort.HI_QUALITY_RENDER_KEY, false);
-    actions.add("Highlight Connected Areas", IPlugInPort.HIGHLIGHT_CONTINUITY_AREA, false);
-    actions.add("Mouse Wheel Zoom", IPlugInPort.WHEEL_ZOOM_KEY, false);
-    actions.add("Outline Mode", IPlugInPort.OUTLINE_KEY, false);
-    actions.add("Show Rulers", IPlugInPort.SHOW_RULERS_KEY, true);
-    actions.add("Show Grid", IPlugInPort.SHOW_GRID_KEY, true);
-    actions.add("Snap to Grid", IPlugInPort.SNAP_TO_GRID_KEY, true);
-    actions.add("Sticky Points", IPlugInPort.STICKY_POINTS_KEY, true);
+    // TODO: get default values from config?
+    actions.add("anti-aliasing", IPlugInPort.Key.ANTI_ALIASING, true);
+    actions.add("auto-create-pads", SolderPadAutoCreator.AUTO_PADS_KEY, false);
+    actions.add("auto-edit-mode", IPlugInPort.Key.AUTO_EDIT, true);
+    actions.add("continuous-creation", IPlugInPort.Key.CONTINUOUS_CREATION, false);
+    actions.add("export-grid", IPlugInPort.Key.EXPORT_GRID, false);
+    actions.add("extra-working-area", IPlugInPort.Key.EXTRA_SPACE, true);
+    actions.add("hardware-acceleration", IPlugInPort.Key.HARDWARE_ACCELERATION, false);
+    actions.add("hi-quality-rendering", IPlugInPort.Key.HI_QUALITY_RENDER, false);
+    actions.add("highlight-connected-areas", IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA, false);
+    actions.add("mouse-wheel-zoom", IPlugInPort.Key.WHEEL_ZOOM, false);
+    actions.add("outline-mode", IPlugInPort.Key.OUTLINE, false);
+    actions.add("show-rulers", IPlugInPort.Key.SHOW_RULERS, true);
+    actions.add("show-grid", IPlugInPort.Key.SHOW_GRID, true);
+    actions.add("snap-to-grid", IPlugInPort.Key.SNAP_TO_GRID, true);
+    actions.add("sticky-points", IPlugInPort.Key.STICKY_POINTS, true);
 
     actions.injectActions(plugInPort, CONFIG_MENU);
 
@@ -83,9 +84,8 @@ public class ConfigPlugin implements IPlugIn {
           try {
             Theme theme = (Theme) Serializer.fromFile(file);
             LOG.debug("Found theme: " + theme.getName());
-            DIYLC
-                .ui()
-                .injectMenuAction(ActionFactory.createThemeAction(plugInPort, theme), THEME_MENU);
+            DIYLC.ui().injectMenuAction(
+                ActionFactory.createThemeAction(plugInPort, theme), THEME_MENU);
           } catch (Exception e) {
             LOG.error("Could not load theme file " + file.getName(), e);
           }
@@ -95,14 +95,10 @@ public class ConfigPlugin implements IPlugIn {
 
     DIYLC.ui().injectSubmenu(COMPONENT_BROWSER_MENU, Icon.Hammer, CONFIG_MENU);
 
-    DIYLC
-        .ui()
-        .injectMenuAction(
-            ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), COMPONENT_BROWSER_MENU);
-    DIYLC
-        .ui()
-        .injectMenuAction(
-            ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), COMPONENT_BROWSER_MENU);
+    DIYLC.ui().injectMenuAction(
+        ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), COMPONENT_BROWSER_MENU);
+    DIYLC.ui().injectMenuAction(
+        ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), COMPONENT_BROWSER_MENU);
   }
 
   @Override

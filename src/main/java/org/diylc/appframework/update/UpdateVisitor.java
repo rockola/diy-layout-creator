@@ -85,6 +85,7 @@ public class UpdateVisitor extends AbstractVisitor {
         LOG.debug("Version number is {}", versionNumber);
         version = new Version(versionNumber);
         versions.add(version);
+        break;
       case DATE_LEVEL:
         for (DateTimeFormatter f : formatters) {
           try {
@@ -104,7 +105,7 @@ public class UpdateVisitor extends AbstractVisitor {
         break;
       case CHANGE_LEVEL:
         LOG.debug("Reading {} as change type", nodeContent);
-        ChangeType changeType = ChangeType.parseName(nodeContent);
+        ChangeType changeType = ChangeType.parse(nodeContent);
         if (changeType != null) {
           change = version.addChange(new Change(changeType));
         } else {

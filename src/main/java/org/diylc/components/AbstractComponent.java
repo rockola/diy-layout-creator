@@ -29,16 +29,20 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+
 import org.diylc.common.Config;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.presenter.ComponentArea; // should probably be in this package!
 
 /**
- * Abstract implementation of {@link IDIYComponent} that contains component name and toString.
+ * Abstract implementation of {@link IDIYComponent} that contains
+ * component name and toString.
  *
- * <p>IMPORTANT: to improve performance, all fields except for <code>Point</code> and <code>Point
- * </code> arrays should be immutable. Failing to comply with this can result in annoying and hard
- * to trace bugs.
+ * <p>IMPORTANT: to improve performance, all fields except for
+ * <code>Point</code> and <code>Point </code> arrays should be
+ * immutable. Failing to comply with this can result in annoying and
+ * hard to trace bugs.
  *
  * @author Branislav Stojkovic
  * @param <T>
@@ -56,6 +60,30 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   public static Color METAL_COLOR = Color.decode("#759DAF");
   public static Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
   public static Color COPPER_COLOR = Color.decode("#DA8A67");
+
+  private static int componentSequenceNumber = 0;
+  protected transient int sequenceNumber = 0;
+  private int nextSequenceNumber() {
+    componentSequenceNumber = componentSequenceNumber + 1;
+    return componentSequenceNumber;
+  }
+
+  private transient ComponentArea componentArea;
+  public ComponentArea getComponentArea() { return componentArea; }
+  public void setComponentArea(ComponentArea area) { componentArea = area; }
+
+  @Override
+  public String getIdentifier() {
+    if (sequenceNumber == 0) {
+      // has to be inited here as won't/can't be inited when unmarshaling
+      sequenceNumber = nextSequenceNumber();
+    }
+    return String.format(
+        "<%s id=%d name=\"%s\"/>",
+        this.getClass().getName(),
+        sequenceNumber,
+        getName());
+  }
 
   @EditableProperty(defaultable = false)
   @Override
@@ -153,7 +181,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
         // Copy over all non-static, non-final fields that are declared
         // in AbstractComponent or one of it's child classes
         for (Field field : fields) {
-          if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
+          if (!Modifier.isStatic(field.getModifiers())
+              && !Modifier.isFinal(field.getModifiers())) {
             field.setAccessible(true);
             Object value = field.get(this);
 
@@ -183,7 +212,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
       return newInstance;
     } catch (Exception e) {
       throw new CloneNotSupportedException(
-          "Could not clone the component. Reason: " + e.getMessage());
+          "Could not clone the component. " + e.getMessage());
     }
   }
 

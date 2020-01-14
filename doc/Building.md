@@ -60,3 +60,30 @@ mr () {
 This builds a fat JAR containing all the required JAR files in the ````./target```` directory.
 
 **To do:** proper application packaging for OSX/Windows/Linux
+
+## Participate in development
+
+First, get your own personal copy of the source tree (see above).
+
+[SpotBugs](https://spotbugs.github.io) can be used to look for bugs
+and otherwise suspicious code. See the 
+[SpotBugs website](https://spotbugs.github.io) for further info.
+
+The following Maven goals are available:
+
+### mvn spotbugs:spotbugs
+
+Creates a SpotBugs analysis file (see below). The project needs to
+have been compiled first (SpotBugs analyzes the bytecode).
+
+### mvn spotbugs:check
+
+As above, except fails if any bugs are found.
+
+### mvn spotbugs:gui
+
+Launches the SpotBugs GUI and shows the analysis result.
+
+### mvn spotbugs:help
+
+Displays a help message for the SpotBugs Maven plugin.

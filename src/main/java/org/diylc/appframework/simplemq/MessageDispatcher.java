@@ -21,27 +21,11 @@ public class MessageDispatcher<E extends Enum<E>> {
 
   private static final Logger LOG = LogManager.getLogger(MessageDispatcher.class);
 
-  private Map<IMessageListener<E>, EnumSet<E>> listenerMap = new HashMap<>();
-  //    new HashMap<IMessageListener<E>, EnumSet<E>>();
   private Map<E, List<IMessageListener<E>>> subscriptions = new HashMap<>();
   private Object mutex = new Object();
   private ExecutorService threadFactory;
 
   public MessageDispatcher() {}
-
-  public void registerListener(IMessageListener<E> listener) {
-    if (listener.getSubscribedEventTypes() != null) {
-      synchronized (mutex) {
-        listenerMap.put(listener, listener.getSubscribedEventTypes());
-      }
-    }
-  }
-
-  public void unregisterListener(IMessageListener<E> listener) {
-    synchronized (mutex) {
-      listenerMap.remove(listener);
-    }
-  }
 
   public void subscribe(IMessageListener<E> listener, E eventType) {
     if (subscriptions.get(eventType) == null) {
@@ -52,11 +36,16 @@ public class MessageDispatcher<E extends Enum<E>> {
     if (!subscribers.contains(listener)) {
       subscribers.add(listener);
     }
-    LOG.debug("subscribe(<listener>, {}): {} subscribers", eventType, subscribers.size());
+    LOG.debug(
+        "subscribe({}, {}): {} subscribers",
+        listener.getClass().getName(),
+        eventType,
+        subscribers.size());
     int i = 1;
     for (IMessageListener<E> subscriber : subscribers) {
       LOG.debug(
-          "subscribe(<listener>, {}): subscriber #{} is a {}",
+          "subscribe({}, {}): subscriber #{} is a {}",
+          listener.getClass().getName(),
           eventType,
           i,
           subscriber.getClass().getName());
@@ -65,8 +54,10 @@ public class MessageDispatcher<E extends Enum<E>> {
   }
 
   public void subscribe(IMessageListener<E> listener, EnumSet<E> eventTypes) {
-    for (E e : eventTypes) {
-      subscribe(listener, e);
+    if (eventTypes != null) {
+      for (E e : eventTypes) {
+        subscribe(listener, e);
+      }
     }
   }
 
@@ -93,21 +84,4 @@ public class MessageDispatcher<E extends Enum<E>> {
       }
     }
   }
-  /*
-  public void dispatchMessage(E eventType, Object... params) {
-    List<IMessageListener<E>> listeners = new ArrayList<IMessageListener<E>>();
-    for (Map.Entry<IMessageListener<E>, EnumSet<E>> entry : listenerMap.entrySet()) {
-      if (entry.getValue().contains(eventType)) {
-        listeners.add(entry.getKey());
-      }
-    }
-    for (IMessageListener<E> listener : listeners) {
-      try {
-        listener.processMessage(eventType, params);
-      } catch (Exception e) {
-        LOG.error("Listener threw an exception", e);
-      }
-    }
-  }
-  */
 }

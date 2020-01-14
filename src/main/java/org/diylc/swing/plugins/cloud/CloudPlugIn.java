@@ -70,16 +70,16 @@ public class CloudPlugIn implements IPlugIn {
 
   private CloudBrowserFrame cloudBrowser;
 
+  private String getMsg(String key) {
+    return Config.getString("message.cloud." + key);
+  }
+
   private void menuEntry(AbstractAction action) {
-    DIYLC.ui().injectMenuAction(action, DIYLC.getString("cloud.title"));
+    DIYLC.ui().injectMenuAction(action, getMsg("title"));
   }
 
   private void separator() {
     menuEntry(null);
-  }
-
-  private String getMsg(String key) {
-    return Config.getString("message.cloud." + key);
   }
 
   public CloudPlugIn() {

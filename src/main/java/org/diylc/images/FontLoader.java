@@ -1,7 +1,9 @@
 package org.diylc.images;
 
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public final class FontLoader {
             FontLoader.class.getResourceAsStream(String.format("/fonts/%s.ttf", name));
         font = Font.createFont(Font.TRUETYPE_FONT, is);
         fonts.put(name, font);
-      } catch (Exception ex) {
+      } catch (IOException | FontFormatException ex) {
         font = new Font("serif", style, size);
       }
     }

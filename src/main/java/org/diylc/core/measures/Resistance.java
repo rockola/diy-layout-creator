@@ -54,19 +54,8 @@ public class Resistance extends AbstractMeasure<ResistanceUnit> {
         Color.blue
       };
 
-  // public Resistance() {
-  // super();
-  // // TODO Auto-generated constructor stub
-  // }
-
   public Resistance(Double value, ResistanceUnit multiplier) {
     super(value, multiplier);
-    // TODO Auto-generated constructor stub
-  }
-
-  @Override
-  public Resistance clone() throws CloneNotSupportedException {
-    return new Resistance(value, unit);
   }
 
   public Color[] getColorCode(ResistorColorCode resistorColorCode) {
