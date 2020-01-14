@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.awt;
 
 import java.awt.Font;
@@ -28,6 +29,7 @@ import java.awt.font.GlyphVector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.VerticalAlignment;
 
@@ -49,8 +51,11 @@ public class StringUtils {
     List<String> lines = wrap(text, textMetrics, maxWidth);
     int lineHeight = textMetrics.getHeight();
 
-    if (horizontalAlignment == HorizontalAlignment.CENTER) x += maxWidth / 2;
-    else if (horizontalAlignment == HorizontalAlignment.RIGHT) x += maxWidth;
+    if (horizontalAlignment == HorizontalAlignment.CENTER) {
+      x += maxWidth / 2;
+    } else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
+      x += maxWidth;
+    }
 
     for (String line : lines) {
       drawCenteredText(g2d, line, x, y, horizontalAlignment, VerticalAlignment.BOTTOM);
@@ -74,11 +79,14 @@ public class StringUtils {
    */
   public static List<String> wrap(String str, FontMetrics fm, int maxWidth) {
     List<String> lines = splitIntoLines(str);
-    if (lines.size() == 0) return lines;
+    if (lines.size() == 0) {
+      return lines;
+    }
 
     ArrayList<String> strings = new ArrayList<String>();
-    for (Iterator<String> iter = lines.iterator(); iter.hasNext(); )
+    for (Iterator<String> iter = lines.iterator(); iter.hasNext(); ) {
       wrapLineInto((String) iter.next(), strings, fm, maxWidth);
+    }
     return strings;
   }
 
@@ -102,22 +110,28 @@ public class StringUtils {
 
       width = fm.stringWidth(before);
       int pos;
-      if (width > maxWidth) // Too long
-      pos = findBreakBefore(line, guess);
-      else { // Too short or possibly just right
+      if (width > maxWidth) {// Too long
+        pos = findBreakBefore(line, guess);
+      } else { // Too short or possibly just right
         pos = findBreakAfter(line, guess);
         if (pos != -1) { // Make sure this doesn't make us too long
           before = line.substring(0, pos).trim();
-          if (fm.stringWidth(before) > maxWidth) pos = findBreakBefore(line, guess);
+          if (fm.stringWidth(before) > maxWidth) {
+            pos = findBreakBefore(line, guess);
+          }
         }
       }
-      if (pos == -1) pos = guess; // Split in the middle of the word
+      if (pos == -1) {
+        pos = guess; // Split in the middle of the word
+      }
 
       list.add(line.substring(0, pos).trim());
       line = line.substring(pos).trim();
       len = line.length();
     }
-    if (len > 0) list.add(line);
+    if (len > 0) {
+      list.add(line);
+    }
   }
 
   /**
@@ -130,7 +144,9 @@ public class StringUtils {
   public static int findBreakBefore(String line, int start) {
     for (int i = start; i >= 0; --i) {
       char c = line.charAt(i);
-      if (Character.isWhitespace(c) || c == '-') return i;
+      if (Character.isWhitespace(c) || c == '-') {
+        return i;
+      }
     }
     return -1;
   }
@@ -146,7 +162,9 @@ public class StringUtils {
     int len = line.length();
     for (int i = start; i < len; ++i) {
       char c = line.charAt(i);
-      if (Character.isWhitespace(c) || c == '-') return i;
+      if (Character.isWhitespace(c) || c == '-') {
+        return i;
+      }
     }
     return -1;
   }
@@ -176,17 +194,22 @@ public class StringUtils {
       char c = str.charAt(i);
       if (c == '\r') {
         int newlineLength = 1;
-        if ((i + 1) < len && str.charAt(i + 1) == '\n') newlineLength = 2;
+        if ((i + 1) < len && str.charAt(i + 1) == '\n') {
+          newlineLength = 2;
+        }
         strings.add(str.substring(lineStart, i));
         lineStart = i + newlineLength;
-        if (newlineLength == 2) // skip \n next time through loop
-        ++i;
+        if (newlineLength == 2) { // skip \n next time through loop
+          ++i;
+        }
       } else if (c == '\n') {
         strings.add(str.substring(lineStart, i));
         lineStart = i + 1;
       }
     }
-    if (lineStart < len) strings.add(str.substring(lineStart));
+    if (lineStart < len) {
+      strings.add(str.substring(lineStart));
+    }
 
     return strings;
   }

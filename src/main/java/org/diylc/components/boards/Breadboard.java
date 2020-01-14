@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.components.boards;
 
 import java.awt.AlphaComposite;
@@ -220,7 +221,9 @@ public class Breadboard extends AbstractComponent<Void> {
       double offset = section * 18 * spacing;
       for (int y = 0; y < psHoleCount - 1; y++) {
         for (int x = 0; x < 2; x++) {
-          if ((y + 1) % 6 == 0) continue;
+          if ((y + 1) % 6 == 0) {
+            continue;
+          }
           int holeX = (int) (point.x + offset + (x + 2) * spacing);
           int holeY = (int) (point.y + (y + 1 + powerOffset) * spacing);
           g2d.setColor(HOLE_COLOR);
@@ -377,7 +380,9 @@ public class Breadboard extends AbstractComponent<Void> {
 
   @EditableProperty
   public Orientation getOrientation() {
-    if (orientation == null) orientation = Orientation.DEFAULT;
+    if (orientation == null) {
+      orientation = Orientation.DEFAULT;
+    }
     return orientation;
   }
 
@@ -387,7 +392,9 @@ public class Breadboard extends AbstractComponent<Void> {
 
   @EditableProperty(name = "Size")
   public BreadboardSize getBreadboardSize() {
-    if (breadboardSize == null) breadboardSize = BreadboardSize.Half;
+    if (breadboardSize == null) {
+      breadboardSize = BreadboardSize.Half;
+    }
     return breadboardSize;
   }
 
@@ -397,7 +404,9 @@ public class Breadboard extends AbstractComponent<Void> {
 
   @EditableProperty(name = "Power Strip")
   public PowerStripPosition getPowerStripPosition() {
-    if (powerStripPosition == null) powerStripPosition = PowerStripPosition.Inline;
+    if (powerStripPosition == null) {
+      powerStripPosition = PowerStripPosition.Inline;
+    }
     return powerStripPosition;
   }
 
@@ -418,9 +427,11 @@ public class Breadboard extends AbstractComponent<Void> {
   @SuppressWarnings("incomplete-switch")
   @Override
   public Point getControlPoint(int index) {
-    if (index == 0) return point;
+    if (index == 0) {
+      return point;
+    }
     double spacing = SPACING.convertToPixels();
-    int holeCount = getBreadboardSize() == BreadboardSize.Full ? 63 : 30;
+    int holeCount = (getBreadboardSize() == BreadboardSize.Full) ? 63 : 30;
     // adjust the angle
     double theta = 0;
     switch (getOrientation()) {
@@ -455,7 +466,9 @@ public class Breadboard extends AbstractComponent<Void> {
 
   @Override
   public void setControlPoint(Point point, int index) {
-    if (index == 0) this.point.setLocation(point);
+    if (index == 0) {
+      this.point.setLocation(point);
+    }
   }
 
   @Override

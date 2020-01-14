@@ -48,7 +48,9 @@ public class UpdateChecker {
     this.updateFileURL = updateFileURL;
   }
 
-  private static String getMsg(String key) { return App.getString("message.update." + key); }
+  private static String getMsg(String key) {
+    return App.getString("message.update." + key);
+  }
 
   @SuppressWarnings("unchecked")
   public List<Version> findNewVersions() throws Exception {

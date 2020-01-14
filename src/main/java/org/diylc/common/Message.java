@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.io.BufferedReader;
@@ -61,7 +62,9 @@ public final class Message {
       }
       String ret = renderer.render(document);
       LOG.info("getHtml({}) returns [{}]", name, ret);
-      if (wrapInHtmlTags && ret != null) ret = "<html>" + ret + "</html>";
+      if (wrapInHtmlTags && ret != null) {
+        ret = "<html>" + ret + "</html>";
+      }
       return ret;
     } catch (Exception e) {
       LOG.error("getHtml(" + name + ") failed", e);

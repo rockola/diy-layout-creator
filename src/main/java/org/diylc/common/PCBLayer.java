@@ -19,6 +19,7 @@
     along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.common;
 
 public enum PCBLayer {
@@ -30,5 +31,5 @@ public enum PCBLayer {
 
   public String toString() {
     return name().substring(1);
-  };
+  }
 }

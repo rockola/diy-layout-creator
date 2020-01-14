@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
 package org.diylc.components;
 
 import java.awt.AlphaComposite;
@@ -111,7 +112,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       points = new Point[] {points[0], points[1], calculateLabelPosition(points[0], points[1])};
       // to make standing components backward compatible and not show a label until the user
       // switches the display to something else
-      if (isStanding()) display = Display.NONE;
+      if (isStanding()) {
+        display = Display.NONE;
+      }
     }
     return points;
   }
@@ -282,8 +285,11 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       }
 
       Composite newComposite = null;
-      if (!decorateAboveBorder()) decorateComponentBody(g2d, outlineMode);
-      else newComposite = g2d.getComposite();
+      if (!decorateAboveBorder()) {
+        decorateComponentBody(g2d, outlineMode);
+      } else {
+        newComposite = g2d.getComposite();
+      }
 
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(getOutlineStrokeSize()));
@@ -459,7 +465,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       g2d.setColor(getLeadColorForPainting(componentState));
       g2d.fill(lineShape);
 
-      if (isCopperArea) observer.stopTrackingContinuityArea();
+      if (isCopperArea) {
+        observer.stopTrackingContinuityArea();
+      }
 
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
       Color leadColor = getLeadColorForPainting(componentState);
@@ -470,7 +478,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       g2d.setStroke(stroke);
       g2d.draw(line);
 
-      if (isCopperArea) observer.stopTrackingContinuityArea();
+      if (isCopperArea) {
+        observer.stopTrackingContinuityArea();
+      }
     }
   }
 
@@ -507,7 +517,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return 1f;
   }
 
-  /** @return default component length. */
+  /**
+     @return default component length.
+  */
   protected abstract Size getDefaultLength();
 
   /**
@@ -526,8 +538,11 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   /**
    * Controls how component shape should be placed relative to start and end point.
    *
-   * @return <code>true<code> if shape rect should be used to center the component or <code>false</code>
-   *         to place the component relative to <code>length</code> and <code>width</code> values.
+   * Returns <code>true<code> if shape rect should be used to center
+   * the component or <code>false</code> to place the component
+   * relative to <code>length</code> and <code>width</code> values.
+   *
+   * @return true (default unless child class overrides)
    */
   protected boolean useShapeRectAsPosition() {
     return true;
@@ -676,7 +691,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   @EditableProperty(name = "Label Orientation")
   public LabelOrientation getLabelOrientation() {
-    if (labelOrientation == null) labelOrientation = LabelOrientation.Directional;
+    if (labelOrientation == null) {
+      labelOrientation = LabelOrientation.Directional;
+    }
     return labelOrientation;
   }
 
@@ -686,13 +703,12 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   @Override
   public String getInternalLinkName(int index1, int index2) {
-    if ((index1 == 0 && index2 == 1) || (index2 == 0 && index1 == 1)) return getName();
-    return null;
+    return ((index1 == 0 && index2 == 1) || (index2 == 0 && index1 == 1)) ? getName() : null;
   }
 
   /**
-   * Override this method with @EditableProperty annotation in child classes where standing mode is
-   * supported
+   * Override this method with @EditableProperty annotation in child
+   * classes where standing mode is supported
    *
    * @return
    */

@@ -29,7 +29,11 @@ public abstract class AbstractMultiPartComponent<T> extends AbstractTransparentC
   public Area getBodyOutline() {
     Area[] body = getBody();
     Area outline = new Area();
-    for (Area b : body) if (b != null) outline.add(b);
+    for (Area b : body) {
+      if (b != null) {
+        outline.add(b);
+      }
+    }
     return outline;
   }
 }

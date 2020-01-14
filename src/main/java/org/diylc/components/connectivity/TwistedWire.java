@@ -1,20 +1,23 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.components.connectivity;
 
 import java.awt.BasicStroke;
@@ -31,6 +34,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
@@ -94,14 +98,6 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
     int thickness =
         (int) (gauge.diameterIn() * Constants.PIXELS_PER_INCH * (1 + 2 * INSULATION_THICKNESS_PCT))
             - 1;
-    Color curveColor1 =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color;
-    Color curveColor2 =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color2;
 
     if (firstLeadArea == null || secondLeadArea == null) {
       firstLeadArea = new Area();
@@ -117,6 +113,10 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
       }
     }
 
+    Color curveColor1 =
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color;
     g2d.setColor(curveColor1);
     g2d.fill(firstLeadArea);
 
@@ -127,6 +127,10 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
       drawingObserver.startTracking();
     }
 
+    Color curveColor2 =
+        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
+            ? SELECTION_COLOR
+            : color2;
     g2d.setColor(curveColor2);
     g2d.fill(secondLeadArea);
 
@@ -336,21 +340,23 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
 
     Stroke stroke;
 
-    if (stripe)
-      stroke =
-          ObjectCache.getInstance()
-              .fetchStroke(
-                  thickness,
-                  new float[] {thickness / 2, thickness * 2},
-                  thickness * 10,
-                  BasicStroke.CAP_BUTT);
-    else stroke = ObjectCache.getInstance().fetchBasicStroke(thickness);
+    if (stripe) {
+      stroke = ObjectCache.getInstance().fetchStroke(
+          thickness,
+          new float[] {thickness / 2, thickness * 2},
+          thickness * 10,
+          BasicStroke.CAP_BUTT);
+    } else {
+      stroke = ObjectCache.getInstance().fetchBasicStroke(thickness);
+    }
 
     double segmentLength = thickness * 6;
 
     // Convert to polygon
     List<Line2D> polygon = new ArrayList<Line2D>();
-    for (CubicCurve2D curve : curves) polygon.addAll(split(curve, segmentLength));
+    for (CubicCurve2D curve : curves) {
+      polygon.addAll(split(curve, segmentLength));
+    }
 
     List<Path2D> firstCurves = new ArrayList<Path2D>();
     List<Path2D> secondCurves = new ArrayList<Path2D>();
@@ -447,7 +453,9 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
 
     double length = Double.MAX_VALUE;
 
-    if (p1.distance(p2) <= segmentLength) length = calculateLength(curve, segmentLength / 10);
+    if (p1.distance(p2) <= segmentLength) {
+      length = calculateLength(curve, segmentLength / 10);
+    }
 
     if (length <= segmentLength) {
       res.add(new Line2D.Double(p1, p2));

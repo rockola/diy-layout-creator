@@ -17,19 +17,19 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components;
 
 import java.awt.geom.GeneralPath;
 
 /**
- * <p>Creates a {@link GeneralPath} with rounded edges. To create a
+ * Creates a {@link GeneralPath} with rounded edges. To create a
  * rounded path, follow these steps:
  *
  * <ul>
  *   <li>instantiate a {@link RoundedPath}
  *   <li>place a starting point using {@link RoundedPath#moveTo(double, double)}
- *   <li>create a polygon using a series of {@link
- *       RoundedPath#lineTo(double, double)} calls
+ *   <li>create a polygon using a series of {@link RoundedPath#lineTo(double, double)} calls
  *   <li>call {@link RoundedPath#getPath()} to get a rounded path
  * </ul>
  *

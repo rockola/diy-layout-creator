@@ -17,9 +17,11 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.util.List;
+
 import org.diylc.netlist.Netlist;
 import org.diylc.netlist.Node;
 import org.diylc.netlist.Summary;
@@ -37,8 +39,7 @@ public interface INetlistAnalyzer {
    * Summarizes all {@link Netlist}s provided.
    *
    * @param netlists
-   * @param preferredOutput optional, needed only where there's more
-   *        than one possible output node.
+   * @param preferredOutput optional, needed only where there's more than one possible output node.
    * @return
    * @throws TreeException
    */

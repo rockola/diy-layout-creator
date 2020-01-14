@@ -19,6 +19,7 @@
     along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.common;
 
 public class BadPositionException extends Exception {

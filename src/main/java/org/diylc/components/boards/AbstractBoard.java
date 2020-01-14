@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.boards;
 
 import java.awt.AlphaComposite;
@@ -236,7 +235,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
   @EditableProperty(name = "X")
   public CoordinateType getxType() {
-    if (xType == null) xType = CoordinateType.Numbers;
+    if (xType == null) {
+      xType = CoordinateType.Numbers;
+    }
     return xType;
   }
 
@@ -246,7 +247,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
   @EditableProperty(name = "Coordinates")
   public CoordinateDisplay getCoordinateDisplay() {
-    if (coordinateDisplay == null) coordinateDisplay = CoordinateDisplay.One_Side;
+    if (coordinateDisplay == null) {
+      coordinateDisplay = CoordinateDisplay.One_Side;
+    }
     return coordinateDisplay;
   }
 
@@ -256,7 +259,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
   @EditableProperty(name = "Coordinate Origin")
   public CoordinateOrigin getCoordinateOrigin() {
-    if (coordinateOrigin == null) coordinateOrigin = CoordinateOrigin.Top_Left;
+    if (coordinateOrigin == null) {
+      coordinateOrigin = CoordinateOrigin.Top_Left;
+    }
     return coordinateOrigin;
   }
 
@@ -266,7 +271,9 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
   @EditableProperty(name = "Y")
   public CoordinateType getyType() {
-    if (yType == null) yType = CoordinateType.Letters;
+    if (yType == null) {
+      yType = CoordinateType.Letters;
+    }
     return yType;
   }
 
@@ -329,7 +336,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     @Override
     public String toString() {
       return super.toString().replace('_', ' ');
-    };
+    }
   }
 
   public static enum CoordinateOrigin {
@@ -341,6 +348,6 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     @Override
     public String toString() {
       return super.toString().replace('_', ' ');
-    };
+    }
   }
 }

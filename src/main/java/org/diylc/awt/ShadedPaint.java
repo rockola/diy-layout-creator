@@ -16,8 +16,8 @@
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
+
 package org.diylc.awt;
 
 import java.awt.Color;
@@ -55,15 +55,20 @@ public class ShadedPaint implements Paint {
     if (r == 0 && g == 0 && b == 0) {
       this.c2 = new Color(i, i, i);
     } else {
-      if (r > 0 && r < i) r = i;
-      if (g > 0 && g < i) g = i;
-      if (b > 0 && b < i) b = i;
+      if (r > 0 && r < i) {
+        r = i;
+      }
+      if (g > 0 && g < i) {
+        g = i;
+      }
+      if (b > 0 && b < i) {
+        b = i;
+      }
 
-      this.c2 =
-          new Color(
-              Math.min((int) (r / shadeFactor), 255),
-              Math.min((int) (g / shadeFactor), 255),
-              Math.min((int) (b / shadeFactor), 255));
+      this.c2 = new Color(
+          Math.min((int) (r / shadeFactor), 255),
+          Math.min((int) (g / shadeFactor), 255),
+          Math.min((int) (b / shadeFactor), 255));
     }
   }
 
@@ -83,8 +88,9 @@ public class ShadedPaint implements Paint {
       Rectangle2D userBounds,
       AffineTransform xform,
       RenderingHints hints) {
-    if (context == null || !context.getColorModel().equals(cm))
+    if (context == null || !context.getColorModel().equals(cm)) {
       context = new ShadedPaintContext(cm, p1, p2, xform, c1, c2);
+    }
     return context;
   }
 }

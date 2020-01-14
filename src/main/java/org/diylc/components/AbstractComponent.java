@@ -18,6 +18,7 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.components;
 
 import java.awt.Color;
@@ -63,14 +64,21 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
   private static int componentSequenceNumber = 0;
   protected transient int sequenceNumber = 0;
+
   private int nextSequenceNumber() {
     componentSequenceNumber = componentSequenceNumber + 1;
     return componentSequenceNumber;
   }
 
   private transient ComponentArea componentArea;
-  public ComponentArea getComponentArea() { return componentArea; }
-  public void setComponentArea(ComponentArea area) { componentArea = area; }
+
+  public ComponentArea getComponentArea() {
+    return componentArea;
+  }
+
+  public void setComponentArea(ComponentArea area) {
+    componentArea = area;
+  }
 
   @Override
   public String getIdentifier() {
@@ -122,7 +130,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   }
 
   /**
-   * Returns darker color if possible, or lighter if it's already dark
+   * Returns darker color if possible, or lighter if it's already dark.
    *
    * @param color
    * @return
@@ -218,8 +226,12 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
   @Override
   public boolean equalsTo(IDIYComponent<?> other) {
-    if (other == null) return false;
-    if (!other.getClass().equals(this.getClass())) return false;
+    if (other == null) {
+      return false;
+    }
+    if (!other.getClass().equals(this.getClass())) {
+      return false;
+    }
     Class<?> clazz = this.getClass();
     while (AbstractComponent.class.isAssignableFrom(clazz)) {
       Field[] fields = clazz.getDeclaredFields();
@@ -234,7 +246,9 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
           try {
             Object value = field.get(this);
             Object otherValue = field.get(other);
-            if (!compareObjects(value, otherValue)) return false;
+            if (!compareObjects(value, otherValue)) {
+              return false;
+            }
           } catch (Exception e) {
             throw new RuntimeException(e);
           }
@@ -245,11 +259,16 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   }
 
   private boolean compareObjects(Object o1, Object o2) {
-    if (o1 == null && o2 == null) return true;
-    if (o1 == null || o2 == null) return false;
+    if (o1 == null && o2 == null) {
+      return true;
+    }
+    if (o1 == null || o2 == null) {
+      return false;
+    }
     if (o1.getClass().isArray()) {
-      if (o1.getClass().getComponentType() == byte.class)
+      if (o1.getClass().getComponentType() == byte.class) {
         return Arrays.equals((byte[]) o1, (byte[]) o2);
+      }
       return Arrays.equals((Object[]) o1, (Object[]) o2);
     }
     return o1.equals(o2);

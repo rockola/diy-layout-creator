@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.awt.Rectangle;
@@ -81,9 +82,10 @@ public enum EventType {
    */
   PROJECT_MODIFIED,
   /**
-   * Called when control points under the cursor are changed. A single
-   * parameter is passed, an instance of <code>Map<IDIYComponent<?>,
-   * Set<Integer>></code> containing all the components and indices of
+   * Called when control points under the cursor are changed.
+   * A single parameter is passed, an instance of
+   * <code>Map<IDIYComponent<?>, Set<Integer>></code>
+   * containing all the components and indices of
    * their control points that are under the cursor.
    */
   AVAILABLE_CTRL_POINTS_CHANGED,

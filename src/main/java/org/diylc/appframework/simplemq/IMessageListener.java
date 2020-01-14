@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.simplemq;
 
 import java.util.EnumSet;
@@ -44,8 +45,8 @@ public interface IMessageListener<E extends Enum<E>> {
    * {@link SwingUtilities#invokeLater} if event processing needs to
    * take place in the EDT.
    *
-   * @param eventType
-   * @param params
+   * @param eventType Received event.
+   * @param params Message parameters.
    */
   void processMessage(E eventType, Object... params);
 }

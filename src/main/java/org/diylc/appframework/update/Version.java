@@ -17,11 +17,12 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.update;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,34 +125,57 @@ public class Version implements Serializable, Comparable<Version> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
     Version other = (Version) obj;
     if (changes == null) {
-      if (other.changes != null) return false;
-    } else if (!changes.equals(other.changes)) return false;
+      if (other.changes != null) {
+        return false;
+      }
+    } else if (!changes.equals(other.changes)) {
+      return false;
+    }
     if (name == null) {
-      if (other.name != null) return false;
-    } else if (!name.equals(other.name)) return false;
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
     if (releaseDate == null) {
-      if (other.releaseDate != null) return false;
-    } else if (!releaseDate.equals(other.releaseDate)) return false;
+      if (other.releaseDate != null) {
+        return false;
+      }
+    } else if (!releaseDate.equals(other.releaseDate)) {
+      return false;
+    }
     if (versionNumber == null) {
-      if (other.versionNumber != null) return false;
-    } else if (!versionNumber.equals(other.versionNumber)) return false;
+      if (other.versionNumber != null) {
+        return false;
+      }
+    } else if (!versionNumber.equals(other.versionNumber)) {
+      return false;
+    }
     return true;
   }
 
   private String releaseNameToString(boolean withSpace) {
-    if (name == null || name.isEmpty()) return "";
+    if (name == null || name.isEmpty()) {
+      return "";
+    }
     return (name + (withSpace ? " " : ""));
   }
 
   private String releaseDateToString(boolean withText) {
-    if (releaseDate == null) return "";
+    if (releaseDate == null) {
+      return "";
+    }
     return ((withText ? "released on " : "")
-        + new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
+            + new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
   }
 
   private String versionNumberToString(boolean withSpace) {

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components;
 
 import java.awt.AlphaComposite;
@@ -26,6 +27,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
+
+import org.apache.commons.text.WordUtils;
+
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
@@ -77,7 +81,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
       ComponentState componentState,
       IDrawingObserver drawingObserver);
 
-  /** @return default color. */
+  /**
+     @return default color.
+  */
   protected abstract Color getDefaultColor();
 
   @Override
@@ -309,7 +315,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   @EditableProperty(name = "Style")
   public LineStyle getStyle() {
-    if (style == null) style = LineStyle.SOLID;
+    if (style == null) {
+      style = LineStyle.SOLID;
+    }
     return style;
   }
 
@@ -319,7 +327,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   @EditableProperty
   public Boolean getSmooth() {
-    if (smooth == null) this.smooth = true;
+    if (smooth == null) {
+      this.smooth = true;
+    }
     return this.smooth;
   }
 
@@ -342,7 +352,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
     @Override
     public String toString() {
-      return name().substring(0, 1) + name().substring(1).toLowerCase();
+      return WordUtils.capitalize(name());
     }
   }
 }

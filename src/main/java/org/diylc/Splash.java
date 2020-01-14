@@ -75,7 +75,9 @@ public class Splash {
                     @Override
                     public void run() {
                       renderSplashFrame(splashScreen, g, frame);
-                      if (splashScreen.isVisible()) splashScreen.update();
+                      if (splashScreen.isVisible()) {
+                        splashScreen.update();
+                      }
                     }
                   });
               try {

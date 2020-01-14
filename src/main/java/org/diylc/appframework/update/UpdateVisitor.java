@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.appframework.update;
 
 import java.time.LocalDateTime;
@@ -27,8 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Text;

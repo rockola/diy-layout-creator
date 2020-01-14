@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -87,7 +86,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
+      final Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
         g2d.setComposite(
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
@@ -137,7 +136,6 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       int totalLength = length + width / 2;
       int terminalDiameter = (int) TERMINAL_DIAMETER.convertToPixels();
       int terminalSpacing = (int) TERMINAL_SPACING.convertToPixels();
-      int terminalBorder = (int) TERMINAL_BORDER.convertToPixels();
 
       Area mainArea = new Area(new Rectangle2D.Double(x, y - width / 2, length, width));
       mainArea.add(
@@ -165,6 +163,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
       body[1] = terminalArea;
 
+      int terminalBorder = (int) TERMINAL_BORDER.convertToPixels();
       terminalArea =
           new Area(
               new Ellipse2D.Double(

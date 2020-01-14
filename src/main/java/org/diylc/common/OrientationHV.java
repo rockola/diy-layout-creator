@@ -21,12 +21,14 @@
 */
 package org.diylc.common;
 
+import org.apache.commons.text.WordUtils;
+
 public enum OrientationHV {
   VERTICAL,
   HORIZONTAL;
 
   @Override
   public String toString() {
-    return name().substring(0, 1) + name().substring(1).toLowerCase();
+    return WordUtils.capitalize(name());
   }
 }

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.awt;
 
 import java.awt.Color;
@@ -76,7 +77,7 @@ public class ShadedPaintContext implements PaintContext {
   double y1;
   double dx;
   double dy;
-  int interp[];
+  int[] interp;
   Raster saved;
   ColorModel model;
 
@@ -207,8 +208,12 @@ public class ShadedPaintContext implements PaintContext {
 
   /**
    * Return a Raster containing the colors generated for the graphics operation.
+   * Parameters specify the area in device space for which colors are generated.
    *
-   * @param x,y,w,h The area in device space for which colors are generated.
+   * @param x X coordinate of color area.
+   * @param y Y coordinate of color area.
+   * @param w Width of color area.
+   * @param h Height of color area.
    */
   public Raster getRaster(int x, int y, int w, int h) {
     Raster rast = saved;

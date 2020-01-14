@@ -19,7 +19,10 @@
     along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.common;
+
+import org.apache.commons.text.WordUtils;
 
 public enum LineStyle {
   SOLID,
@@ -28,6 +31,6 @@ public enum LineStyle {
 
   @Override
   public String toString() {
-    return name().substring(0, 1) + name().substring(1).toLowerCase();
+    return WordUtils.capitalize(name());
   }
 }

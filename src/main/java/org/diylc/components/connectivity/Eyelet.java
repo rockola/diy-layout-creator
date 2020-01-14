@@ -1,29 +1,29 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.connectivity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -77,11 +77,11 @@ public class Eyelet extends AbstractComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    int diameter = getClosestOdd((int) size.convertToPixels());
-    int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
     g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
     g2d.setColor(color);
     drawingObserver.startTrackingContinuityArea(true);
+
+    int diameter = getClosestOdd((int) size.convertToPixels());
     g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
     drawingObserver.stopTrackingContinuityArea();
     g2d.setColor(
@@ -89,7 +89,9 @@ public class Eyelet extends AbstractComponent<String> {
             ? SELECTION_COLOR
             : color.darker());
     g2d.drawOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
+
     g2d.setColor(Constants.CANVAS_COLOR);
+    int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
     g2d.fillOval(
         point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
     g2d.setColor(

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.boards;
 
 import java.awt.AlphaComposite;
@@ -81,12 +82,13 @@ public class BlankBoard extends AbstractBoard {
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(boardColor);
-      if (getType() == Type.SQUARE)
+      if (getType() == Type.SQUARE) {
         g2d.fillRect(
             firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-      else
+      } else {
         g2d.fillOval(
             firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
+      }
       g2d.setComposite(oldComposite);
     }
     // Do not track any changes that follow because the whole board has been
@@ -96,12 +98,13 @@ public class BlankBoard extends AbstractBoard {
         componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
             ? SELECTION_COLOR
             : borderColor);
-    if (getType() == Type.SQUARE)
+    if (getType() == Type.SQUARE) {
       g2d.drawRect(
           firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-    else
+    } else {
       g2d.drawOval(
           firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
+    }
   }
 
   @Override

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
  * <http://www.gnu.org/licenses/>.
  */
+
 package org.diylc.common;
 
 import javax.swing.Icon;

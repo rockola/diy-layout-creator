@@ -51,8 +51,9 @@ public class Utils {
         Class.forName("com.apple.eio.FileManager")
             .getDeclaredMethod("openURL", new Class[] {String.class})
             .invoke(null, new Object[] {url});
-      } else if (osName.startsWith("Windows"))
+      } else if (osName.startsWith("Windows")) {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+      }
       else { // assume Unix or Linux
         String browser = null;
         for (String b : browsers) {
@@ -62,7 +63,9 @@ public class Utils {
             Runtime.getRuntime().exec(new String[] {browser = b, url});
           }
         }
-        if (browser == null) throw new Exception(Arrays.toString(browsers));
+        if (browser == null) {
+          throw new Exception(Arrays.toString(browsers));
+        }
       }
     }
   }
@@ -86,6 +89,7 @@ public class Utils {
           // from this object to the clone
           fields[i].set(clone, clone(fields[i].get(o)));
         } catch (IllegalArgumentException | IllegalAccessException e) {
+          LOG.debug("clone() exception", e);
         }
       }
     }
@@ -138,15 +142,17 @@ public class Utils {
 
   private static String stripFilenameExtension(String file) {
     int i = file.length() - 1;
-    while (file.charAt(i) != '.' && i > 0) i--;
+    while (file.charAt(i) != '.' && i > 0) {
+      i--;
+    }
     return file.substring(0, i);
   }
 
   /**
    * Creates a rectangle with opposite corners in the specified points.
    *
-   * @param p1
-   * @param p2
+   * @param p1 First corner.
+   * @param p2 Second corner.
    * @return new Rectangle
    */
   public static Rectangle createRectangle(Point p1, Point p2) {

@@ -331,7 +331,8 @@ public class App {
       }
     }
 
-    if (ConfigurationManager.isFileWithErrors())
+    if (ConfigurationManager.isFileWithErrors()) {
       mainFrame.warn(Message.getHTML("configuration-file-errors"));
+    }
   }
 }

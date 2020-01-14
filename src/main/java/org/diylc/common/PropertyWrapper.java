@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.lang.reflect.InvocationTargetException;
@@ -193,23 +194,47 @@ public class PropertyWrapper implements Cloneable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     PropertyWrapper other = (PropertyWrapper) obj;
-    if (defaultable != other.defaultable) return false;
+    if (defaultable != other.defaultable) {
+      return false;
+    }
     if (getter == null) {
-      if (other.getter != null) return false;
-    } else if (!getter.equals(other.getter)) return false;
+      if (other.getter != null) {
+        return false;
+      }
+    } else if (!getter.equals(other.getter)) {
+      return false;
+    }
     if (name == null) {
-      if (other.name != null) return false;
-    } else if (!name.equals(other.name)) return false;
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
     if (setter == null) {
-      if (other.setter != null) return false;
-    } else if (!setter.equals(other.setter)) return false;
+      if (other.setter != null) {
+        return false;
+      }
+    } else if (!setter.equals(other.setter)) {
+      return false;
+    }
     if (type == null) {
-      if (other.type != null) return false;
-    } else if (!type.equals(other.type)) return false;
+      if (other.type != null) {
+        return false;
+      }
+    } else if (!type.equals(other.type)) {
+      return false;
+    }
     return true;
   }
 

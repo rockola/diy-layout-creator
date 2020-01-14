@@ -340,7 +340,9 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   @EditableProperty
   public Orientation getOrientation() {
-    if (orientation == null) orientation = Orientation.DEFAULT;
+    if (orientation == null) {
+      orientation = Orientation.DEFAULT;
+    }
 
     return orientation;
   }
@@ -354,7 +356,9 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
   }
 
   protected void applyOrientation(Shape[] body) {
-    if (getOrientation() == Orientation.DEFAULT) return;
+    if (getOrientation() == Orientation.DEFAULT) {
+      return;
+    }
 
     Point first = getControlPoints()[0];
     double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
@@ -370,7 +374,9 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   @Override
   public String getControlPointNodeName(int index) {
-    if (index >= 3) return null;
+    if (index >= 3) {
+      return null;
+    }
     return Integer.toString(index + 1);
   }
 

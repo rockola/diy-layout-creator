@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.common;
 
 import java.awt.Cursor;
@@ -125,7 +126,7 @@ public interface IPlugInPort
    *
    * @param project
    * @param freshStart
-   * @param optional file name when loading from a file
+   * @param filename Optional file name when loading from a file.
    */
   void loadProject(Project project, boolean freshStart, String filename);
 
@@ -147,10 +148,14 @@ public interface IPlugInPort
    */
   void saveProjectToFile(String fileName, boolean isBackup);
 
-  /** @return the current file name. */
+  /**
+     @return the current file name.
+  */
   String getCurrentFileName();
 
-  /** @return true if the current project is modified. */
+  /**
+     @return true if the current project is modified.
+  */
   boolean isProjectModified();
 
   /**
@@ -196,7 +201,7 @@ public interface IPlugInPort
   double getZoomLevel();
 
   /**
-   * Changes current zoom level where <code>zoomLevel = 1.0d</code> means 100%
+   * Changes current zoom level where <code>zoomLevel = 1.0d</code> means 100%.
    *
    * @param zoomLevel new zoom leve
    */
@@ -213,8 +218,7 @@ public interface IPlugInPort
   /**
    * Selects all components in the project.
    *
-   * @param int layer if > 0, designates which layer to select. If <=
-   *     0 we should select all regardless of layer
+   * @param layer If > 0, designates layer to select. If <= 0, select all regardless of layer.
    */
   void selectAll(int layer);
 
