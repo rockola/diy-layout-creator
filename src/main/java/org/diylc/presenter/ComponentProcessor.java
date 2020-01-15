@@ -71,41 +71,27 @@ public class ComponentProcessor {
     if (componentTypeMap.containsKey(clazz.getName())) {
       return componentTypeMap.get(clazz.getName());
     }
-    String name;
-    String description;
-    CreationMethod creationMethod;
-    String category;
-    String namePrefix;
-    String author;
-    Icon icon;
-    double zOrder;
-    boolean flexibleZOrder;
-    BomPolicy bomPolicy;
-    boolean autoEdit;
-    IComponentTransformer transformer;
-    KeywordPolicy keywordPolicy;
-    String keywordTag;
-    if (clazz.isAnnotationPresent(ComponentDescriptor.class)) {
-      ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);
-      name = annotation.name();
-      description = annotation.description();
-      creationMethod = annotation.creationMethod();
-      category = annotation.category();
-      namePrefix = annotation.instanceNamePrefix();
-      author = annotation.author();
-      zOrder = annotation.zOrder();
-      flexibleZOrder = annotation.flexibleZOrder();
-      bomPolicy = annotation.bomPolicy();
-      autoEdit = annotation.autoEdit();
-      transformer = getComponentTransformer(annotation.transformer());
-      keywordPolicy = annotation.keywordPolicy();
-      keywordTag = annotation.keywordTag();
-    } else { // default
+    if (!clazz.isAnnotationPresent(ComponentDescriptor.class)) {
       return null;
     }
-    icon = null;
-    // Draw component icon.
+    ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);
+    String name = annotation.name();
+    String description = annotation.description();
+    CreationMethod creationMethod = annotation.creationMethod();
+    String category = annotation.category();
+    String namePrefix = annotation.instanceNamePrefix();
+    String author = annotation.author();
+    Icon icon = null;
+    double zOrder = annotation.zOrder();
+    boolean flexibleZOrder = annotation.flexibleZOrder();
+    BomPolicy bomPolicy = annotation.bomPolicy();
+    boolean autoEdit = annotation.autoEdit();
+    IComponentTransformer transformer = getComponentTransformer(annotation.transformer());
+    KeywordPolicy keywordPolicy = annotation.keywordPolicy();
+    String keywordTag = annotation.keywordTag();
+
     try {
+      // Draw component icon.
       IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
       Image image = new BufferedImage(Presenter.ICON_SIZE,
                                       Presenter.ICON_SIZE,
@@ -113,30 +99,27 @@ public class ComponentProcessor {
       Graphics2D g2d = (Graphics2D) image.getGraphics();
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      // g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-      // RenderingHints.VALUE_STROKE_PURE);
       componentInstance.drawIcon(g2d, Presenter.ICON_SIZE, Presenter.ICON_SIZE);
       icon = new ImageIcon(image);
     } catch (Exception e) {
       LOG.error("Error drawing component icon for " + clazz.getName(), e);
     }
-    ComponentType componentType =
-        new ComponentType(
-            name,
-            description,
-            creationMethod,
-            category,
-            namePrefix,
-            author,
-            icon,
-            clazz,
-            zOrder,
-            flexibleZOrder,
-            bomPolicy,
-            autoEdit,
-            transformer,
-            keywordPolicy,
-            keywordTag);
+    ComponentType componentType = new ComponentType(
+        name,
+        description,
+        creationMethod,
+        category,
+        namePrefix,
+        author,
+        icon,
+        clazz,
+        zOrder,
+        flexibleZOrder,
+        bomPolicy,
+        autoEdit,
+        transformer,
+        keywordPolicy,
+        keywordTag);
     componentTypeMap.put(clazz.getName(), componentType);
     return componentType;
   }
