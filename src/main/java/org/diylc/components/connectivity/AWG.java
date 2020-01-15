@@ -20,7 +20,9 @@
 
 package org.diylc.components.connectivity;
 
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Map;
 
 public enum AWG {
   _8(8),
@@ -44,6 +46,14 @@ public enum AWG {
   _44(44);
 
   private final int gauge;
+
+  private static final Map<Integer, AWG> gauges = new HashMap<Integer, AWG>();
+
+  static {
+    for (AWG awg : EnumSet.allOf(AWG.class)) {
+      gauges.put(awg.getGauge(), awg);
+    }
+  }
 
   AWG(int i) {
     this.gauge = i;
@@ -70,5 +80,9 @@ public enum AWG {
 
   public int getGauge() {
     return gauge;
+  }
+
+  public static AWG getGauge(int value) {
+    return gauges.get(value);
   }
 }

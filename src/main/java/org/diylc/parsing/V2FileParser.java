@@ -121,16 +121,6 @@ public class V2FileParser implements IOldFileParser {
         metric ? SizeUnit.mm : SizeUnit.in);
   }
 
-  private AWG gaugeFromInt(int gauge) {
-    // TODO: cache into a HashMap
-    for (AWG awg : AWG.class.getEnumConstants()) {
-      if (gauge == awg.getGauge()) {
-        return awg;
-      }
-    }
-    return null;
-  }
-
   @Override
   public Project parseFile(Element root, List<String> warnings) {
     Project project = new Project();
@@ -467,7 +457,7 @@ public class V2FileParser implements IOldFileParser {
                 }
               }
               num = num * 2 + 8;
-              AWG gauge = gaugeFromInt(num);
+              AWG gauge = AWG.getGauge(num);
               if (gauge == null) {
                 LOG.error("Unknown gauge {}", num);
               } else {
