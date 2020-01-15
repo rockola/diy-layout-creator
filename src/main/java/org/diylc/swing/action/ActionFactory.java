@@ -1532,7 +1532,7 @@ public class ActionFactory {
   }
 
   /**
-     TODO: what does this do, should this be undoable?
+     Configuration options settable via checkbox in UI. Not undoable.
    */
   public static class ConfigAction extends ActionFactoryAction {
 
