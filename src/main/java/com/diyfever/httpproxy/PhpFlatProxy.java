@@ -38,9 +38,9 @@ public class PhpFlatProxy implements IFlatProxy {
 
   @Override
   public InputStream invoke(String url, String methodName, Map<String, Object> params) {
-    InputStream serverInput;
-    URL phpUrl = new java.net.URL(createPhpFileName(url, methodName));
+    InputStream serverInput = null;
     try {
+      URL phpUrl = new java.net.URL(createPhpFileName(url, methodName));
       // Call the server.
       /*
       MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -77,11 +77,11 @@ public class PhpFlatProxy implements IFlatProxy {
         }
       }
       serverInput = ClientHttpRequest.post(phpUrl, paramList.toArray());
-      return serverInput;
     } catch (IOException e) {
       LOG.error(e);
+      throw new RuntimeException(e);
     }
-    return null;
+    return serverInput;
   }
 
   @Override
