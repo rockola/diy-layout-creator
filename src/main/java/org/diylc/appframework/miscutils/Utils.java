@@ -40,10 +40,9 @@ public class Utils {
   public static void openURL(String url) throws Exception {
     try { // attempt to use Desktop library from JDK 1.6+
       Class<?> d = Class.forName("java.awt.Desktop");
-      d.getDeclaredMethod("browse", new Class[] {java.net.URI.class})
-          .invoke(
-              d.getDeclaredMethod("getDesktop").invoke(null),
-              new Object[] {java.net.URI.create(url)});
+      d.getDeclaredMethod("browse", new Class[] {java.net.URI.class}).invoke(
+          d.getDeclaredMethod("getDesktop").invoke(null),
+          new Object[] {java.net.URI.create(url)});
       // above code mimicks: java.awt.Desktop.getDesktop().browse()
     } catch (Exception ignore) { // library not available or failed
       String osName = System.getProperty("os.name");
