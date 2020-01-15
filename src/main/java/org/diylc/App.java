@@ -157,8 +157,8 @@ public class App {
   }
 
   // ****************************************************************
-  public static boolean snapToGrid() {
-    return getBoolean(IPlugInPort.Key.SNAP_TO_GRID, true);
+  public static boolean antiAliasing() {
+    return getBoolean(IPlugInPort.Key.ANTI_ALIASING, true);
   }
 
   public static boolean autoEdit() {
@@ -169,8 +169,16 @@ public class App {
     return getBoolean(IPlugInPort.Key.CONTINUOUS_CREATION);
   }
 
-  public static boolean stickyPoints() {
-    return getBoolean(IPlugInPort.Key.STICKY_POINTS, true);
+  public static boolean exportGrid() {
+    return getBoolean(IPlugInPort.Key.EXPORT_GRID);
+  }
+
+  public static boolean extraSpace() {
+    return getBoolean(IPlugInPort.Key.EXTRA_SPACE, true);
+  }
+
+  public static boolean hardwareAcceleration() {
+    return getBoolean(IPlugInPort.Key.HARDWARE_ACCELERATION);
   }
 
   public static boolean highQualityRendering() {
@@ -181,12 +189,12 @@ public class App {
     return getBoolean(IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA);
   }
 
-  public static boolean hardwareAcceleration() {
-    return getBoolean(IPlugInPort.Key.HARDWARE_ACCELERATION);
+  public static boolean isDebug(IPlugInPort.Debug key) {
+    return getBoolean(key);
   }
 
-  public static boolean antiAliasing() {
-    return getBoolean(IPlugInPort.Key.ANTI_ALIASING, true);
+  public static boolean metric() {
+    return getBoolean(Presenter.Key.METRIC, true);
   }
 
   public static boolean outlineMode() {
@@ -197,20 +205,16 @@ public class App {
     return getBoolean(IPlugInPort.Key.SHOW_GRID, true);
   }
 
-  public static boolean exportGrid() {
-    return getBoolean(IPlugInPort.Key.EXPORT_GRID);
-  }
-
-  public static boolean extraSpace() {
-    return getBoolean(IPlugInPort.Key.EXTRA_SPACE, true);
+  public static boolean snapToGrid() {
+    return getBoolean(IPlugInPort.Key.SNAP_TO_GRID, true);
   }
 
   public static boolean showRulers() {
     return getBoolean(IPlugInPort.Key.SHOW_RULERS, true);
   }
 
-  public static boolean metric() {
-    return getBoolean(Presenter.Key.METRIC, true);
+  public static boolean stickyPoints() {
+    return getBoolean(IPlugInPort.Key.STICKY_POINTS, true);
   }
 
   public static boolean wheelZoom() {
