@@ -71,6 +71,7 @@ public enum AWG {
   }
 
   public double diameterIn() {
+    // TODO magic numbers
     return Math.pow(Math.E, -1.12436 - 0.11594 * getValue());
   }
 
