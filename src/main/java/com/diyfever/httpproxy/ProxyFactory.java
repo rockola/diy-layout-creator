@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.codehaus.commons.compiler.ISimpleCompiler;
 import org.codehaus.janino.CompilerFactory;
 
@@ -37,7 +39,7 @@ public class ProxyFactory {
   }
 
   /**
-   * Dynamically creates proxy class and instatiates it. All methods
+   * Dynamically creates proxy class and instantiates it. All methods
    * from the specified interface <code>clazz</code> are implemented
    * in the dynamically created class. Method parameters that are
    * annotated with {@link ParamName} annotation are named according
@@ -117,13 +119,11 @@ public class ProxyFactory {
       LOG.debug("Compiling {}", code);
       ISimpleCompiler compiler = new CompilerFactory().newSimpleCompiler();
       compiler.cook(code);
-      T instance =
-          (T)
-              compiler
-                  .getClassLoader()
-                  .loadClass(newClassName)
-                  .getConstructors()[0]
-                  .newInstance(flatProxy);
+      T instance = (T) compiler
+                   .getClassLoader()
+                   .loadClass(newClassName)
+                   .getConstructors()[0]
+                   .newInstance(flatProxy);
 
       LOG.info("Successfully instantiated proxy ({}, {})",
                interfaceName, url);
@@ -144,12 +144,10 @@ public class ProxyFactory {
       }
     }
     LOG.warn(
-        "@"
-            + ParamName.class.getSimpleName()
-            + " annotation not present for method "
-            + method.getName()
-            + ", at index "
-            + parameterIndex);
+        "@{} annotation not present for method {} at index {}",
+        ParamName.class.getSimpleName(),
+        method.getName(),
+        parameterIndex);
     return "param" + parameterIndex;
   }
 
@@ -159,11 +157,11 @@ public class ProxyFactory {
     temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
 
     if (!(temp.delete())) {
-      throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
+      throw new IOException("Could not delete temp file " + temp.getAbsolutePath());
     }
 
     if (!(temp.mkdir())) {
-      throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
+      throw new IOException("Could not create temp directory " + temp.getAbsolutePath());
     }
 
     return (temp);
