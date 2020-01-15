@@ -63,8 +63,8 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.utils.Constants;
 
 /**
- * Utility that deals with painting {@link Project} on the {@link
- * Graphics2D} and keeps areas taken by each drawn component.
+ * Utility that deals with painting {@link Project} on the {@link Graphics2D}
+ * and stores areas taken by each drawn component in the component.
  *
  * @author Branislav Stojkovic
  */
