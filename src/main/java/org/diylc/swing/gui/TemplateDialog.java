@@ -74,7 +74,6 @@ public class TemplateDialog extends JDialog {
 
   private JList fileList;
   private JPanel canvasPanel;
-  private Presenter presenter;
   private List<File> files;
   private JCheckBox showTemplatesBox;
   private JPanel mainPanel;
@@ -87,52 +86,6 @@ public class TemplateDialog extends JDialog {
     super(owner, "Templates");
     setModal(true);
     setResizable(false);
-    /*
-    this.presenter = new Presenter(new IView() {
-
-    	@Override
-    	public int showConfirmDialog(String message, String title,
-    				     int optionType, int messageType) {
-    	    return JOptionPane.showConfirmDialog(TemplateDialog.this,
-    						 message, title, optionType, messageType);
-    	}
-
-    	@Override
-    	public void showMessage(String message, String title, int messageType) {
-    	    JOptionPane.showMessageDialog(TemplateDialog.this,
-    					  message, title, messageType);
-    	}
-
-    	@Override
-    	public File promptFileSave() {
-    	    return null;
-    	}
-
-    	@Override
-    	public boolean editProperties(List<PropertyWrapper> properties,
-    				      Set<PropertyWrapper> defaultedProperties) {
-    	    return false;
-    	}
-        });
-    */
-    // this.presenter.installPlugin(new IPlugIn() {
-    //
-    // @Override
-    // public void connect(IPlugInPort plugInPort) {
-    // }
-    //
-    // @Override
-    // public EnumSet<EventType> getSubscribedEventTypes() {
-    // return EnumSet.of(EventType.REPAINT);
-    // }
-    //
-    // @Override
-    // public void processMessage(EventType eventType, Object... params) {
-    // if (eventType == EventType.REPAINT) {
-    // getCanvasPanel().repaint();
-    // }
-    // }
-    // });
     setContentPane(getMainPanel());
     pack();
     setLocationRelativeTo(owner);
@@ -188,15 +141,14 @@ public class TemplateDialog extends JDialog {
   public JButton getLoadButton() {
     if (loadButton == null) {
       loadButton = new JButton("Load Template");
-      loadButton.addActionListener(
-          new ActionListener() {
+      loadButton.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              App.ui().getPresenter().loadProject(templateProject, true, null);
-              dispose();
-            }
-          });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            App.ui().getPresenter().loadProject(templateProject, true, null);
+            dispose();
+          }
+        });
     }
     return loadButton;
   }
@@ -309,20 +261,19 @@ public class TemplateDialog extends JDialog {
 
   public JPanel getCanvasPanel() {
     if (canvasPanel == null) {
-      canvasPanel =
-          new JPanel() {
+      canvasPanel = new JPanel() {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void paint(Graphics g) {
-              super.paint(g);
-              Presenter.drawProject(
-                  templateProject,
-                  (Graphics2D) g,
-                  EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING));
-            }
-          };
+          @Override
+          public void paint(Graphics g) {
+            super.paint(g);
+            Presenter.drawProject(
+                templateProject,
+                (Graphics2D) g,
+                EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING));
+          }
+        };
       canvasPanel.setBackground(Color.white);
       canvasPanel.setPreferredSize(panelSize);
     }
