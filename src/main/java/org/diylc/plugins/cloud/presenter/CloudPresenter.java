@@ -21,8 +21,8 @@
 
 package org.diylc.plugins.cloud.presenter;
 
+import com.diyfever.httpproxy.IFlatProxy;
 import com.diyfever.httpproxy.PhpFlatProxy;
-import com.diyfever.httpproxy.ProxyFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,6 +45,7 @@ import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.CommentEntity;
 import org.diylc.plugins.cloud.model.IServiceAPI;
 import org.diylc.plugins.cloud.model.ProjectEntity;
+import org.diylc.plugins.cloud.model.ServiceAPI;
 import org.diylc.plugins.cloud.model.UserEntity;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
@@ -58,19 +59,15 @@ import org.diylc.presenter.ComponentProcessor;
 public class CloudPresenter {
 
   public static final CloudPresenter Instance = new CloudPresenter();
-
-  private static String USERNAME_KEY = "cloud.Username";
-  private static String TOKEN_KEY = "cloud.token";
-
-  private static String ERROR = "Error";
-
-  private static String LOGIN_FAILED = getMsg("login-failed");
-
   private static final Logger LOG = LogManager.getLogger(CloudPresenter.class);
   private static final Object SUCCESS = App.getString("message.success");
 
-  private IServiceAPI service;
-  private String serviceUrl;
+  private static String USERNAME_KEY = "cloud.Username";
+  private static String TOKEN_KEY = "cloud.token";
+  private static String ERROR = "Error";
+
+  private final IFlatProxy proxy = new PhpFlatProxy();
+  private final IServiceAPI service = new ServiceAPI(proxy);
   private String machineId;
   private String[] categories;
 
@@ -83,12 +80,13 @@ public class CloudPresenter {
   }
 
   private IServiceAPI getService() {
-    if (service == null) {
-      serviceUrl = App.getString(IServiceAPI.URL_KEY, App.getURL("api.base").toString());
-      ProxyFactory factory = new ProxyFactory(new PhpFlatProxy());
-      service = factory.createProxy(IServiceAPI.class, serviceUrl);
-    }
     return service;
+  }
+
+  private void validateLogin() throws CloudException {
+    if (currentUsername() == null || currentToken() == null) {
+      throw new CloudException(App.getString("message.cloud.login-failed"));
+    }
   }
 
   public boolean logIn(String username, String password) throws CloudException {
@@ -165,7 +163,7 @@ public class CloudPresenter {
           throw new CloudException("Could not fetch categories from the server.");
         if (res instanceof List<?>) {
           @SuppressWarnings("unchecked")
-          List<String> cats = (List<String>) res;
+            List<String> cats = (List<String>) res;
           cats.add(0, "");
           categories = cats.toArray(new String[0]);
         } else {
@@ -190,26 +188,25 @@ public class CloudPresenter {
       Integer projectId)
       throws IOException, CloudException {
 
-    if (currentUsername() == null || currentToken() == null)
-      throw new CloudException(LOGIN_FAILED);
+    validateLogin();
 
     LOG.info("Uploading new project '{}'", projectName);
     try {
-      String res =
-          getService()
-              .uploadProject(
-                  currentUsername(),
-                  currentToken(),
-                  getMachineId(),
-                  projectName,
-                  category,
-                  description,
-                  diylcVersion,
-                  keywords,
-                  thumbnail,
-                  project,
-                  projectId);
-      if (!res.equals(SUCCESS)) throw new CloudException(res);
+      String res = getService().uploadProject(
+          currentUsername(),
+          currentToken(),
+          getMachineId(),
+          projectName,
+          category,
+          description,
+          diylcVersion,
+          keywords,
+          thumbnail,
+          project,
+          projectId);
+      if (!res.equals(SUCCESS)) {
+        throw new CloudException(res);
+      }
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -218,24 +215,21 @@ public class CloudPresenter {
   public void updateProjectDetails(ProjectEntity project, String diylcVersion)
       throws IOException, CloudException {
 
-    if (currentUsername() == null || currentToken() == null)
-      throw new CloudException(LOGIN_FAILED);
+    validateLogin();
     LOG.info("Updating project with id {}", project.getId());
     try {
-      String res =
-          getService()
-              .uploadProject(
-                  currentUsername(),
-                  currentToken(),
-                  getMachineId(),
-                  project.getName(),
-                  project.getCategoryForDisplay(),
-                  project.getDescription(),
-                  diylcVersion,
-                  project.getKeywords(),
-                  null,
-                  null,
-                  project.getId());
+      String res = getService().uploadProject(
+          currentUsername(),
+          currentToken(),
+          getMachineId(),
+          project.getName(),
+          project.getCategoryForDisplay(),
+          project.getDescription(),
+          diylcVersion,
+          project.getKeywords(),
+          null,
+          null,
+          project.getId());
       if (!res.equals(SUCCESS)) throw new CloudException(res);
     } catch (Exception e) {
       throw new CloudException(e);
@@ -244,9 +238,7 @@ public class CloudPresenter {
 
   public void deleteProject(int projectId) throws CloudException {
 
-    if (currentUsername() == null || currentToken() == null)
-      throw new CloudException(LOGIN_FAILED);
-
+    validateLogin();
     LOG.info("Deleting project with id {}", projectId);
     try {
       String res = getService().deleteProject(currentUsername(), currentToken(), getMachineId(),
@@ -259,9 +251,7 @@ public class CloudPresenter {
 
   public void postComment(int projectId, String comment) throws CloudException {
 
-    if (currentUsername() == null || currentToken() == null)
-      throw new CloudException(LOGIN_FAILED);
-
+    validateLogin();
     LOG.info("Posting a new comment to project {}", projectId);
 
     try {
@@ -374,7 +364,7 @@ public class CloudPresenter {
 
     if (res instanceof List<?>) {
       @SuppressWarnings("unchecked")
-      List<ProjectEntity> projects = (List<ProjectEntity>) res;
+        List<ProjectEntity> projects = (List<ProjectEntity>) res;
       LOG.info("Received {} results. Downloading thumbnails...", projects.size());
       // Download thumbnails and replace urls with local paths
       // to speed up loading in the main thread
@@ -413,7 +403,7 @@ public class CloudPresenter {
       if (res instanceof String) throw new CloudException(res.toString());
       if (res instanceof List<?>) {
         @SuppressWarnings("unchecked")
-        List<CommentEntity> comments = (List<CommentEntity>) res;
+          List<CommentEntity> comments = (List<CommentEntity>) res;
         return comments;
       }
       throw new CloudException("Unexpected server response received for comments: "
