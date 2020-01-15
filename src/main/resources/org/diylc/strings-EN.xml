@@ -25,6 +25,8 @@
       <about>About</about>      
     </help>
     <config>
+      <title>Config</title>
+      <theme/>
       <anti-aliasing/>
       <auto-create-pads>Auto-Create Pads</auto-create-pads>
       <auto-edit-mode>Auto-Edit Mode</auto-edit-mode>
@@ -40,6 +42,8 @@
       <show-grid/>
       <snap-to-grid/>
       <sticky-points/>
+      <component-browser>Toolbox</component-browser>
+      <developer>Developer Tools</developer>
       <debug-component-areas/>
       <debug-continuity-areas/>
     </config>

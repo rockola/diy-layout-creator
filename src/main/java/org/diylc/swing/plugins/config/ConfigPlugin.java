@@ -45,9 +45,6 @@ public class ConfigPlugin implements IPlugIn {
 
   private static final Logger LOG = LogManager.getLogger(ConfigPlugin.class);
 
-  private static final String CONFIG_MENU = "Config";
-  private static final String THEME_MENU = "Theme";
-  private static final String COMPONENT_BROWSER_MENU = "Toolbox";
   public static final String COMPONENT_BROWSER = "componentBrowser";
   public static final String SEARCHABLE_TREE = "Searchable Tree";
   public static final String TABBED_TOOLBAR = "Tabbed Toolbar";
@@ -77,18 +74,24 @@ public class ConfigPlugin implements IPlugIn {
     actions.add("snap-to-grid", IPlugInPort.Key.SNAP_TO_GRID, true);
     actions.add("sticky-points", IPlugInPort.Key.STICKY_POINTS, true);
 
-    actions.injectActions(plugInPort, CONFIG_MENU);
+    final String configMenu = App.getString("menu.config.title");
 
-    File themeDir = new File("themes");
+    actions.injectActions(plugInPort, configMenu);
+
+    // Themes
+    // TODO - get default themes from resources
+    File themeDir = new File(Utils.getUserDataDirectory() + "themes");
     if (themeDir.exists()) {
-      App.ui().injectSubmenu(THEME_MENU, Icon.Pens, CONFIG_MENU);
+      final String themeMenu = App.getString("menu.config.theme");
+      App.ui().injectSubmenu(themeMenu, Icon.Pens, configMenu);
       for (File file : themeDir.listFiles()) {
         if (file.getName().toLowerCase().endsWith(".xml")) {
           try {
             Theme theme = (Theme) Serializer.fromFile(file);
             LOG.debug("Found theme: " + theme.getName());
             App.ui().injectMenuAction(
-                ActionFactory.createThemeAction(plugInPort, theme), THEME_MENU);
+                ActionFactory.createThemeAction(plugInPort, theme),
+                themeMenu);
           } catch (Exception e) {
             LOG.error("Could not load theme file " + file.getName(), e);
           }
@@ -96,19 +99,24 @@ public class ConfigPlugin implements IPlugIn {
       }
     }
 
-    App.ui().injectSubmenu(COMPONENT_BROWSER_MENU, Icon.Hammer, CONFIG_MENU);
+    // Toolbox
+    final String componentBrowserMenu = App.getString("menu.config.component-browser");
+    App.ui().injectSubmenu(componentBrowserMenu, Icon.Hammer, configMenu);
     App.ui().injectMenuAction(
-        ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), COMPONENT_BROWSER_MENU);
+        ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE),
+        componentBrowserMenu);
     App.ui().injectMenuAction(
-        ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), COMPONENT_BROWSER_MENU);
+        ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR),
+        componentBrowserMenu);
 
+    // Developer Tools
     final ConfigActions developerActions = new ConfigActions();
-
-    App.ui().injectSubmenu(DEVELOPER_MENU, Icon.Screwdriver, CONFIG_MENU);
+    final String developerMenu = App.getString("menu.config.developer");
+    App.ui().injectSubmenu(developerMenu, Icon.Screwdriver, configMenu);
     // TODO: get default values from Config - developer might want to always set these
     actions.add("debug-component-areas", IPlugInPort.Debug.COMPONENT_AREA, false);
     actions.add("debug-continuity-areas", IPlugInPort.Debug.CONTINUITY_AREA, false);
-    actions.injectActions(plugInPort, CONFIG_MENU);
+    actions.injectActions(plugInPort, developerMenu);
   }
 
   @Override
