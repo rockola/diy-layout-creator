@@ -266,18 +266,20 @@ public class ComponentProcessor {
 
   private static IComponentTransformer getComponentTransformer(
       Class<? extends IComponentTransformer> clazz) {
-    if (clazz == null) return null;
-    if (componentTransformerMap.containsKey(clazz.getName())) {
-      return componentTransformerMap.get(clazz.getName());
+    IComponentTransformer transformer = null;
+    if (clazz != null) {
+      transformer = componentTransformerMap.get(clazz.getName());
+      if (transformer == null) {
+        try {
+          transformer = clazz.newInstance();
+          componentTransformerMap.put(clazz.getName(), transformer);
+        } catch (Exception e) {
+          LOG.error("Could not instantiate validator for " + clazz.getName(), e);
+          // TODO throw exception? if instantiation fails, null is returned,
+          // but is this really the correct behaviour?
+        }
+      }
     }
-    IComponentTransformer transformer;
-    try {
-      transformer = clazz.newInstance();
-    } catch (Exception e) {
-      LOG.error("Could not instantiate validator for " + clazz.getName(), e);
-      return null;
-    }
-    componentTransformerMap.put(clazz.getName(), transformer);
     return transformer;
   }
 }
