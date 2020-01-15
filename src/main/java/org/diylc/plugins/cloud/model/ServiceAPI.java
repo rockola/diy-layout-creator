@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.diylc.App;
+
 /**
    Instance of DIYLC service API proxy created with
    com.diyfever.httpproxy.ProxyFactory at runtime, saved here to avoid
@@ -13,12 +15,78 @@ import java.util.Map;
 public class ServiceAPI implements IServiceAPI {
 
   private com.diyfever.httpproxy.IFlatProxy proxy;
-  private static final String apiUrl = "http://www.diy-fever.com/diylc/api/v1";
-
-  public ServiceAPI(com.diyfever.httpproxy.IFlatProxy proxy) { this.proxy = proxy; }
+  private static final String apiUrl = App.getURL("api.base").toString();
 
   private Object sendRequest(String requestName, Map<String, Object> params) {
     return (Object) proxy.invokeAndDeserialize(apiUrl, requestName, params);
+  }
+
+  public ServiceAPI(com.diyfever.httpproxy.IFlatProxy proxy) { this.proxy = proxy; }
+
+  // API
+
+  public String createUser(
+      String username,
+      String password,
+      String email,
+      String website,
+      String bio) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("password", password);
+    params.put("email", email);
+    params.put("website", website);
+    params.put("bio", bio);
+    return (String) sendRequest("createUser", params);
+  }
+
+  public String updateUserDetails(
+      String username,
+      String token,
+      String machineId,
+      String email,
+      String website,
+      String bio) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("token", token);
+    params.put("machineId", machineId);
+    params.put("email", email);
+    params.put("website", website);
+    params.put("bio", bio);
+    return (String) sendRequest("updateUserDetails", params);
+  }
+
+  public String login(String username, String password, String machineId) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("password", password);
+    params.put("machineId", machineId);
+    return (String) sendRequest("login", params);
+  }
+
+  public Object getUserDetails(String username, String token, String machineId) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("token", token);
+    params.put("machineId", machineId);
+    return (Object) sendRequest("getUserDetails", params);
+  }
+
+  public String loginWithToken(String username, String token, String machineId) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("token", token);
+    params.put("machineId", machineId);
+    return (String) sendRequest("loginWithToken", params);
+  }
+
+  public String updatePassword(String username, String oldPassword, String newPassword) {
+    Map<String, Object> params = new HashMap<String, Object>();
+    params.put("username", username);
+    params.put("oldPassword", oldPassword);
+    params.put("newPassword", newPassword);
+    return (String) sendRequest("updatePassword", params);
   }
 
   public Object search(
@@ -91,29 +159,9 @@ public class ServiceAPI implements IServiceAPI {
     return (String) sendRequest("postComment", params);
   }
 
-  public String updatePassword(String username, String oldPassword, String newPassword) {
+  public List getCategories() {
     Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("oldPassword", oldPassword);
-    params.put("newPassword", newPassword);
-    return (String) sendRequest("updatePassword", params);
-  }
-
-  public String updateUserDetails(
-      String username,
-      String token,
-      String machineId,
-      String email,
-      String website,
-      String bio) {
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("token", token);
-    params.put("machineId", machineId);
-    params.put("email", email);
-    params.put("website", website);
-    params.put("bio", bio);
-    return (String) sendRequest("updateUserDetails", params);
+    return (List<String>) sendRequest("getCategories", params);
   }
 
   public List getSortings() {
@@ -125,49 +173,5 @@ public class ServiceAPI implements IServiceAPI {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("projectId", projectId);
     return (Object) sendRequest("getComments", params);
-  }
-
-  public String login(String username, String password, String machineId) {
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("password", password);
-    params.put("machineId", machineId);
-    return (String) sendRequest("login", params);
-  }
-
-  public String loginWithToken(String username, String token, String machineId) {
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("token", token);
-    params.put("machineId", machineId);
-    return (String) sendRequest("loginWithToken", params);
-  }
-
-  public String createUser(
-      String username,
-      String password,
-      String email,
-      String website,
-      String bio) {
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("password", password);
-    params.put("email", email);
-    params.put("website", website);
-    params.put("bio", bio);
-    return (String) sendRequest("createUser", params);
-  }
-
-  public List getCategories() {
-    Map<String, Object> params = new HashMap<String, Object>();
-    return (List) sendRequest("getCategories", params);
-  }
-
-  public Object getUserDetails(String username, String token, String machineId) {
-    Map<String, Object> params = new HashMap<String, Object>();
-    params.put("username", username);
-    params.put("token", token);
-    params.put("machineId", machineId);
-    return (Object) sendRequest("getUserDetails", params);
   }
 }
