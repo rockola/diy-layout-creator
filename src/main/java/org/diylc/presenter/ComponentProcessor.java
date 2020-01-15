@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import java.awt.Graphics2D;
@@ -233,15 +234,13 @@ public class ComponentProcessor {
       for (PropertyWrapper oldProperty : properties) {
         if (newProperties.contains(oldProperty)) {
           PropertyWrapper newProperty = newProperties.get(newProperties.indexOf(oldProperty));
-          if (newProperty.getValue() != null && oldProperty.getValue() != null) {
-            if (!newProperty.getValue().equals(oldProperty.getValue()))
-              // Values don't match, so the property is not unique
-              // valued.
+          if (((newProperty.getValue() != null && oldProperty.getValue() != null)
+               && !newProperty.getValue().equals(oldProperty.getValue()))
+              || newProperty.getValue() != oldProperty.getValue()) {
+              // Values don't match, so the property is not unique valued.
               oldProperty.setUnique(false);
-          } else if ((newProperty.getValue() == null && oldProperty.getValue() != null)
-              || (newProperty.getValue() != null && oldProperty.getValue() == null)) {
-            oldProperty.setUnique(false);
-          }
+            }
+
         }
       }
     }
