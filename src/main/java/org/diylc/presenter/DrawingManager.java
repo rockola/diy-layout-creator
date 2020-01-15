@@ -454,11 +454,12 @@ public class DrawingManager {
     }
 
     // Draw component/continuity areas when debugging
-    if (App.isDebug(IPlugInPort.Debug.COMPONENT_AREA)
-        || App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA) {
+    final boolean debugComponentAreas = App.isDebug(IPlugInPort.Debug.COMPONENT_AREA);
+    final boolean debugContinuityAreas = App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA);
+    if (debugComponentAreas || debugContinuityAreas) {
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
       for (IDIYComponent<?> component : project.getComponents()) {
-        Area area = component.getArea();
+        ComponentArea area = component.getArea();
         if (debugComponentAreas) {
           g2d.setColor(Color.red);
           g2d.draw(area.getOutlineArea());
@@ -475,7 +476,6 @@ public class DrawingManager {
         }
       }
     }
-    */
 
     if (continuityArea != null && App.highlightContinuityArea()) {
       Composite oldComposite = g2d.getComposite();
@@ -522,14 +522,6 @@ public class DrawingManager {
     return component.getArea();
   }
 
-  public void clearComponentAreaMap() {
-    LOG.trace("clearComponentAreaMap()");
-    TODO for all components:
-        component.resetArea();
-        component.resetState();
-        (or invalidateComponent(component))
-  }
-
   public void clearContinuityArea() {
     this.continuityArea = null;
   }
@@ -538,7 +530,6 @@ public class DrawingManager {
     LOG.trace("findComponentsAt({}, {})", point, project);
     List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
     LOG.trace("Project has {} components", project.getComponents().size());
-    LOG.trace("componentAreaMap size {}", componentAreaMap.size());
     for (IDIYComponent<?> component : project.getComponents()) {
       LOG.trace(
           "findComponentsAt({}, {}) looking at component {}",
@@ -638,7 +629,7 @@ public class DrawingManager {
     List<Boolean> checkBreakout = new ArrayList<Boolean>();
     Set<Connection> connections = new HashSet<Connection>();
     for (IDIYComponent<?> c : project.getComponents()) {
-      ComponentArea a = getArea(c);
+      ComponentArea a = c.getArea();
 
       if (c instanceof IContinuity) {
         for (int i = 0; i < c.getControlPointCount() - 1; i++)

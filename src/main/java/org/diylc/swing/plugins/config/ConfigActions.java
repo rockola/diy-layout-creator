@@ -43,6 +43,10 @@ public class ConfigActions {
     add(name, action.toString(), defaultValue);
   }
 
+  public void add(String name, IPlugInPort.Debug action, boolean defaultValue) {
+    add(name, action.toString(), defaultValue);
+  }
+
   public void injectActions(IPlugInPort plugInPort, String menuName) {
     for (ConfigAction a : actions) {
       App.ui().injectMenuAction(ActionFactory.createConfigAction(

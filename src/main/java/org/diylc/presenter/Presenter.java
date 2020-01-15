@@ -241,7 +241,6 @@ public class Presenter implements IPlugInPort {
   public void loadProject(Project project, boolean freshStart, String filename) {
     LOG.trace("loadProject({}, {})", project.getTitle(), freshStart);
     this.currentProject = project;
-    drawingManager.clearComponentAreaMap();
     drawingManager.clearContinuityArea();
     currentProject.clearSelection();
     dispatchMessage(EventType.PROJECT_LOADED, project, freshStart, filename);

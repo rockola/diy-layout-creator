@@ -85,7 +85,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
      Clears component area.
   */
   public void resetArea() {
-    setComponentArea(null);
+    setArea(null);
   }
 
   private transient ComponentState componentState;

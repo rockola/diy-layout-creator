@@ -60,9 +60,17 @@ public interface IDIYComponent<T> extends Serializable {
   */
   public String getIdentifier();
 
-  public ComponentArea getComponentArea();
+  public ComponentArea getArea();
 
-  public void setComponentArea(ComponentArea area);
+  public void setArea(ComponentArea area);
+
+  public void resetArea();
+
+  public ComponentState getState();
+
+  public void setState(ComponentState state);
+
+  public void resetState();
 
   /**
      @return component instance name.

@@ -190,7 +190,7 @@ public class App {
   }
 
   public static boolean isDebug(IPlugInPort.Debug key) {
-    return getBoolean(key);
+    return getBoolean(key.toString());
   }
 
   public static boolean metric() {
