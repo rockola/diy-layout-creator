@@ -159,14 +159,14 @@ public class ServiceAPI implements IServiceAPI {
     return (String) sendRequest("postComment", params);
   }
 
-  public List getCategories() {
+  public List<String> getCategories() {
     Map<String, Object> params = new HashMap<String, Object>();
     return (List<String>) sendRequest("getCategories", params);
   }
 
-  public List getSortings() {
+  public List<String> getSortings() {
     Map<String, Object> params = new HashMap<String, Object>();
-    return (List) sendRequest("getSortings", params);
+    return (List<String>) sendRequest("getSortings", params);
   }
 
   public Object getComments(int projectId) {
