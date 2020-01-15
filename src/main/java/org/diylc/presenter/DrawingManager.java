@@ -79,24 +79,11 @@ public class DrawingManager {
 
   private static boolean SHADE_EXTRA_SPACE = true;
 
-  public static String DEBUG_COMPONENT_AREAS = "org.diylc.debugComponentAreas";
-  public static String DEBUG_CONTINUITY_AREAS = "org.diylc.debugContinuityAreas";
-
   public static Color CONTROL_POINT_COLOR = Color.blue;
   public static Color SELECTED_CONTROL_POINT_COLOR = Color.green;
 
   private Theme theme = (Theme) App.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-
-  // Keeps Area object of each drawn component.
-  private Map<IDIYComponent<?>, ComponentArea> componentAreaMap =
-      new HashMap<IDIYComponent<?>, ComponentArea>();
-  // Maps components to the last state they are drawn in. Also, used to
-  // determine which components are invalidated when they are not in the map.
-  private Map<IDIYComponent<?>, ComponentState> lastDrawnStateMap =
-      new HashMap<IDIYComponent<?>, ComponentState>();
-
   private Area continuityArea;
-
   private Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private Composite lockedComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
@@ -105,19 +92,9 @@ public class DrawingManager {
 
   private MessageDispatcher<EventType> messageDispatcher;
 
-  private boolean debugComponentAreas;
-  private boolean debugContinuityAreas;
-
   public DrawingManager(MessageDispatcher<EventType> messageDispatcher) {
     super();
     this.messageDispatcher = messageDispatcher;
-    String debugComponentAreasStr = System.getProperty(DEBUG_COMPONENT_AREAS);
-    debugComponentAreas =
-        debugComponentAreasStr != null && debugComponentAreasStr.equalsIgnoreCase("true");
-
-    String debugContinuityAreasStr = System.getProperty(DEBUG_CONTINUITY_AREAS);
-    debugContinuityAreas =
-        debugContinuityAreasStr != null && debugContinuityAreasStr.equalsIgnoreCase("true");
   }
 
   private void logTraceComponentSet(
@@ -302,12 +279,12 @@ public class DrawingManager {
       }
       // Do not track the area if component is not invalidated and was
       // drawn in the same state.
-      ComponentState lastState = lastDrawnStateMap.get(component);
+      ComponentState lastState = component.getState();
       boolean trackArea = (lastState != state);
       LOG.trace(
           "Component {} {} lastState {} and state {} so trackArea is {}",
           component.getIdentifier(),
-          componentAreaMap.get(component),
+          component.getArea(),
           lastState,
           state,
           trackArea);
@@ -342,25 +319,23 @@ public class DrawingManager {
         ComponentArea area = g2dWrapper.finishedDrawingComponent();
         if (trackArea && area != null && !area.getOutlineArea().isEmpty()) {
           LOG.trace(
-              "Adding component {} with area {} to componentAreaMap (size {})",
+              "Setting area for component {} to {}",
               component.getIdentifier(),
-              area,
-              componentAreaMap.size());
-          component.setComponentArea(area);
-          componentAreaMap.put(component, area);
-          lastDrawnStateMap.put(component, state);
+              area);
+          component.setArea(area);
+          component.setState(state);
         } else {
           LOG.trace(
-              "Did not add component {} to componentAreaMap, trackArea is {}",
+              "Did not set area for component {}, trackArea is {}",
               component.getIdentifier(),
               trackArea);
         }
-        ComponentArea theArea = componentAreaMap.get(component);
+        ComponentArea theArea = component.getArea();
         LOG.trace(
-            "Component {} is {}in the map {}",
+            "Component {} {} area{}",
             component.getIdentifier(),
-            theArea == null ? "not " : "",
-            theArea != null && theArea.getOutlineArea().isEmpty() ? "but outline is empty" : "");
+            theArea == null ? "does not have" : "has",
+            theArea != null && theArea.getOutlineArea().isEmpty() ? " but outline is empty" : "");
       }
     }
 
@@ -478,26 +453,26 @@ public class DrawingManager {
       g2d.draw(selectionRect);
     }
 
-    /* commented out for now --ola 20200113
-    // Draw component area for test
-    if (debugComponentAreas) {
+    // Draw component/continuity areas when debugging
+    if (App.isDebug(IPlugInPort.Debug.COMPONENT_AREA)
+        || App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA) {
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      g2d.setColor(Color.red);
-      for (ComponentArea area : componentAreaMap.values()) {
-        g2d.draw(area.getOutlineArea());
-      }
-    }
-
-    // Draw continuity area for test
-    if (debugContinuityAreas) {
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      g2d.setColor(Color.green);
-      for (ComponentArea area : componentAreaMap.values()) {
-        for (Area a : area.getContinuityPositiveAreas()) g2d.draw(a);
-      }
-      g2d.setColor(Color.blue);
-      for (ComponentArea area : componentAreaMap.values()) {
-        for (Area a : area.getContinuityNegativeAreas()) g2d.draw(a);
+      for (IDIYComponent<?> component : project.getComponents()) {
+        Area area = component.getArea();
+        if (debugComponentAreas) {
+          g2d.setColor(Color.red);
+          g2d.draw(area.getOutlineArea());
+        }
+        if (debugContinuityAreas) {
+          g2d.setColor(Color.green);
+          for (Area continuityPositive : area.getContinuityPositiveAreas()) {
+            g2d.draw(continuityPositive);
+          }
+          g2d.setColor(Color.blue);
+          for (Area continuityNegative : area.getContinuityNegativeAreas()) {
+            g2d.draw(continuityNegative);
+          }
+        }
       }
     }
     */
@@ -538,19 +513,21 @@ public class DrawingManager {
 
   public void invalidateComponent(IDIYComponent<?> component) {
     LOG.trace("invalidateComponent({})", component.getIdentifier());
-    componentAreaMap.remove(component);
-    lastDrawnStateMap.remove(component);
+    component.resetArea();
+    component.resetState();
   }
 
   public ComponentArea getComponentArea(IDIYComponent<?> component) {
     //return componentAreaMap.get(component);
-    return component.getComponentArea();
+    return component.getArea();
   }
 
   public void clearComponentAreaMap() {
     LOG.trace("clearComponentAreaMap()");
-    componentAreaMap.clear();
-    lastDrawnStateMap.clear();
+    TODO for all components:
+        component.resetArea();
+        component.resetState();
+        (or invalidateComponent(component))
   }
 
   public void clearContinuityArea() {
@@ -570,7 +547,7 @@ public class DrawingManager {
           component.getIdentifier());
       // NOTE: BIG CHANGE - look for area directly from component! //ola 20100113
       //ComponentArea area = componentAreaMap.get(component);
-      ComponentArea area = component.getComponentArea();
+      ComponentArea area = component.getArea();
       if (area == null) {
         LOG.trace(
             "findComponentsAt({}, {}) component {} has no area",
@@ -661,7 +638,7 @@ public class DrawingManager {
     List<Boolean> checkBreakout = new ArrayList<Boolean>();
     Set<Connection> connections = new HashSet<Connection>();
     for (IDIYComponent<?> c : project.getComponents()) {
-      ComponentArea a = getComponentArea(c);
+      ComponentArea a = getArea(c);
 
       if (c instanceof IContinuity) {
         for (int i = 0; i < c.getControlPointCount() - 1; i++)

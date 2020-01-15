@@ -32,9 +32,10 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import org.diylc.common.Config;
-import org.diylc.core.IDIYComponent;
+import org.diylc.core.IDIYComponent; // should probably be in this package
+import org.diylc.core.ComponentState; // should probably be in this package
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.presenter.ComponentArea; // should probably be in this package!
+import org.diylc.presenter.ComponentArea; // should probably be in this package
 
 /**
  * Abstract implementation of {@link IDIYComponent} that contains
@@ -72,12 +73,33 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
   private transient ComponentArea componentArea;
 
-  public ComponentArea getComponentArea() {
+  public ComponentArea getArea() {
     return componentArea;
   }
 
-  public void setComponentArea(ComponentArea area) {
+  public void setArea(ComponentArea area) {
     componentArea = area;
+  }
+
+  /**
+     Clears component area.
+  */
+  public void resetArea() {
+    setComponentArea(null);
+  }
+
+  private transient ComponentState componentState;
+
+  public ComponentState getState() {
+    return componentState;
+  }
+
+  public void setState(ComponentState state) {
+    componentState = state;
+  }
+
+  public void resetState() {
+    setState(null);
   }
 
   @Override

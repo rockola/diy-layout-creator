@@ -101,6 +101,14 @@ public class ConfigPlugin implements IPlugIn {
         ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), COMPONENT_BROWSER_MENU);
     App.ui().injectMenuAction(
         ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), COMPONENT_BROWSER_MENU);
+
+    final ConfigActions developerActions = new ConfigActions();
+
+    App.ui().injectSubmenu(DEVELOPER_MENU, Icon.Screwdriver, CONFIG_MENU);
+    // TODO: get default values from Config - developer might want to always set these
+    actions.add("debug-component-areas", IPlugInPort.Debug.COMPONENT_AREA, false);
+    actions.add("debug-continuity-areas", IPlugInPort.Debug.CONTINUITY_AREA, false);
+    actions.injectActions(plugInPort, CONFIG_MENU);
   }
 
   @Override

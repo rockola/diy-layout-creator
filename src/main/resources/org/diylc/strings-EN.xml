@@ -40,6 +40,8 @@
       <show-grid/>
       <snap-to-grid/>
       <sticky-points/>
+      <debug-component-areas/>
+      <debug-continuity-areas/>
     </config>
   </menu>
   <message>

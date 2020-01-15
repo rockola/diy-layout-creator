@@ -87,6 +87,11 @@ public interface IPlugInPort
     WHEEL_ZOOM
   }
 
+  public enum Debug {
+    COMPONENT_AREA,
+    CONTINUITY_AREA
+  }
+
   public static final int DND_TOGGLE_STICKY = 0x1;
   public static final int DND_TOGGLE_SNAP = 0x40000000;
 
