@@ -115,9 +115,9 @@ public class ConfigPlugin implements IPlugIn {
     final String developerMenu = App.getString("menu.config.developer");
     App.ui().injectSubmenu(developerMenu, Icon.Screwdriver, configMenu);
     // TODO: get default values from Config - developer might want to always set these
-    actions.add("debug-component-areas", IPlugInPort.Debug.COMPONENT_AREA, false);
-    actions.add("debug-continuity-areas", IPlugInPort.Debug.CONTINUITY_AREA, false);
-    actions.injectActions(plugInPort, developerMenu);
+    developerActions.add("debug-component-areas", IPlugInPort.Debug.COMPONENT_AREA, false);
+    developerActions.add("debug-continuity-areas", IPlugInPort.Debug.CONTINUITY_AREA, false);
+    developerActions.injectActions(plugInPort, developerMenu);
   }
 
   @Override
