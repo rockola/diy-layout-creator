@@ -139,14 +139,6 @@ public class Utils {
     return classes;
   }
 
-  private static String stripFilenameExtension(String file) {
-    int i = file.length() - 1;
-    while (file.charAt(i) != '.' && i > 0) {
-      i--;
-    }
-    return file.substring(0, i);
-  }
-
   /**
    * Creates a rectangle with opposite corners in the specified points.
    *
