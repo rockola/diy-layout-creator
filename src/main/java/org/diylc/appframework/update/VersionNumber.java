@@ -30,13 +30,13 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
   private int minor;
   private int build;
 
-  private final void initComponents(int major, int minor, int build) {
+  private void initComponents(int major, int minor, int build) {
     this.major = major;
     this.minor = minor;
     this.build = build;
   }
 
-  private final void initComponents(String versionString) {
+  private void initComponents(String versionString) {
     String[] versionComponents = versionString.split("\\.", 0);
     initComponents(
         Integer.parseInt(versionComponents[0]),
