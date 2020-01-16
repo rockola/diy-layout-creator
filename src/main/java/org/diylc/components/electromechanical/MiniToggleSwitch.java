@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.components.electromechanical;
 
@@ -284,13 +282,11 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       return;
     }
     Shape body = getBody();
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+    Theme theme = (Theme) ConfigurationManager.getInstance()
+                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
-      Composite oldComposite = g2d.getComposite();
+      final Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
         g2d.setComposite(
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
@@ -458,7 +454,9 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
 
   @EditableProperty(name = "Border")
   public Color getBorderColor() {
-    if (borderColor == null) borderColor = BORDER_COLOR;
+    if (borderColor == null) {
+      borderColor = BORDER_COLOR;
+    }
     return borderColor;
   }
 
@@ -496,13 +494,19 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       case _4PDT_off:
       case _5PDT_off:
         return 3;
+      default:
+        throw new RuntimeException(
+            "getPositionCount(): unhandled switch type " + switchType
+            + " for " + this.getClass().getName());
     }
     return 2;
   }
 
   @Override
   public String getPositionName(int position) {
-    if (switchType.name().endsWith("_off") && position == 2) return "OFF";
+    if (switchType.name().endsWith("_off") && position == 2) {
+      return "OFF";
+    }
     return "ON" + Integer.toString(position + 1);
   }
 
@@ -528,6 +532,10 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
             && index2 % 3 == position + 1;
       case _DP3T_mustang:
         return (index2 - index1) < 3 && index1 % 3 == 0 && index2 % 3 == position + 1;
+      default:
+        throw new RuntimeException(
+            "arePointsConnected(): unhandled switch type " + switchType.toString()
+            + " for " + this.getClass().getName());
     }
     return false;
   }
