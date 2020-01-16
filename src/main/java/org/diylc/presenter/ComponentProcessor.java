@@ -33,8 +33,10 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.ComponentType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.PropertyWrapper;
@@ -67,13 +69,30 @@ public class ComponentProcessor {
     componentTransformerMap = new HashMap<String, IComponentTransformer>();
   }
 
-  public static ComponentType extractComponentTypeFrom(Class<? extends IDIYComponent<?>> clazz) {
+  /**
+     Extract component type from class.
+     Class should implement IDIYComponent or be a subclass of one that does.
+     Also, class should have a ComponentDescriptor annotation.
+
+     NOTE: Could - and indeed should - this be done at compile time?
+     Runtime handling is of course required if components are to be
+     loaded from external JARs.
+
+     @param clazz The class.
+     @returns component type
+   */
+  public static ComponentType extractComponentTypeFrom(
+      Class<? extends IDIYComponent<?>> clazz) {
+
+    /* have we already seen this class? if so, get it from cache */
     if (componentTypeMap.containsKey(clazz.getName())) {
       return componentTypeMap.get(clazz.getName());
     }
+    /* does this class have the required annotation? can't do much if not */
     if (!clazz.isAnnotationPresent(ComponentDescriptor.class)) {
       return null;
     }
+    /* good to go, let's look at the annotation */
     ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);
     String name = annotation.name();
     String description = annotation.description();
@@ -91,7 +110,7 @@ public class ComponentProcessor {
     String keywordTag = annotation.keywordTag();
 
     try {
-      // Draw component icon.
+      // Draw component icon for later use
       IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
       Image image = new BufferedImage(Presenter.ICON_SIZE,
                                       Presenter.ICON_SIZE,
@@ -127,8 +146,8 @@ public class ComponentProcessor {
   /**
    * Extracts all editable properties from the component class.
    *
-   * @param clazz
-   * @return
+   * @param clazz The class.
+   * @return list of properties.
    */
   public static List<PropertyWrapper> extractProperties(Class<?> clazz) {
     if (propertyCache.containsKey(clazz.getName())) {
@@ -138,19 +157,18 @@ public class ComponentProcessor {
     for (Method getter : clazz.getMethods()) {
       if (getter.getName().startsWith("get")) {
         try {
-          if (getter.isAnnotationPresent(EditableProperty.class)
+          EditableProperty annotation = getter.getAnnotation(EditableProperty.class);
+          if (annotation != null
               && !getter.isAnnotationPresent(Deprecated.class)) {
-
-            EditableProperty annotation = getter.getAnnotation(EditableProperty.class);
-            String name;
-            if (annotation.name().equals("")) {
-              name = getter.getName().substring(3);
-            } else {
-              name = annotation.name();
-            }
+            /* We are interested in this method if it
+               a) is named as a getter (starts with "get")
+               b) has @EditableProperty annotation
+               c) does not have @Deprecated annotation
+            */
+            String field = getter.getName().substring(3); // part after "get"
+            String name = annotation.name().equals("") ? field : annotation.name();
             IPropertyValidator validator = getPropertyValidator(annotation.validatorClass());
-            Method setter =
-                clazz.getMethod("set" + getter.getName().substring(3), getter.getReturnType());
+            Method setter = clazz.getMethod("set" + field, getter.getReturnType());
             PropertyWrapper property =
                 new PropertyWrapper(
                     name,
@@ -163,7 +181,7 @@ public class ComponentProcessor {
             properties.add(property);
           }
         } catch (NoSuchMethodException e) {
-          LOG.debug("No matching setter found for \"" + getter.getName() + "\". Skipping...");
+          LOG.debug("No matching setter found for {}, skipping", getter.getName());
         }
       }
     }
@@ -196,10 +214,9 @@ public class ComponentProcessor {
       return null;
     }
     List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
-
     List<IDIYComponent<?>> selectedList = new ArrayList<IDIYComponent<?>>(selectedComponents);
-
     IDIYComponent<?> firstComponent = selectedList.get(0);
+
     properties.addAll(extractProperties(firstComponent.getClass()));
     // Initialize values
     for (PropertyWrapper property : properties) {
@@ -220,10 +237,9 @@ public class ComponentProcessor {
           if (((newProperty.getValue() != null && oldProperty.getValue() != null)
                && !newProperty.getValue().equals(oldProperty.getValue()))
               || newProperty.getValue() != oldProperty.getValue()) {
-              // Values don't match, so the property is not unique valued.
-              oldProperty.setUnique(false);
-            }
-
+            // Values don't match, so the property is not unique valued.
+            oldProperty.setUnique(false);
+          }
         }
       }
     }
@@ -241,6 +257,8 @@ public class ComponentProcessor {
       validator = clazz.newInstance();
     } catch (Exception e) {
       LOG.error("Could not instantiate validator for " + clazz.getName(), e);
+      // TODO throw exception? if instantiation fails, null is returned,
+      // but is this really the correct behaviour?
       return null;
     }
     propertyValidatorCache.put(clazz.getName(), validator);
