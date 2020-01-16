@@ -90,6 +90,7 @@ public class UpdateVisitor extends AbstractVisitor {
         versions.add(version);
         break;
       case DATE_LEVEL:
+        boolean formatSuccess = false;
         for (DateTimeFormatter f : formatters) {
           try {
             LOG.debug("Reading {} as release date", nodeContent);
@@ -100,10 +101,16 @@ public class UpdateVisitor extends AbstractVisitor {
             releaseDate = Date.from(releaseDateAsLDT.toInstant(ZoneOffset.UTC));
             LOG.debug("Release date is {}", releaseDate);
             version.setReleaseDate(releaseDate);
+            formatSuccess = true;
+            break; // from for-loop
           } catch (DateTimeParseException e) {
-            // f could not parse node contents,
-            // let's hope another formatter can
+            // f could not parse node contents, let's hope another formatter can
+            LOG.debug("{} could not parse {}", f, nodeContent);
           }
+        }
+        if (!formatSuccess) {
+          // none of the formatters worked
+          LOG.warn("None of the formatters could parse {}", nodeContent);
         }
         break;
       case CHANGE_LEVEL:
