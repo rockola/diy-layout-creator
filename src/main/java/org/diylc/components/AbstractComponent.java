@@ -320,4 +320,14 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   public boolean canPointMoveFreely(int pointIndex) {
     return true;
   }
+
+  @Override
+  public void nudge(int offsetX, int offsetY) {
+    for (int i = 0; i < getControlPointCount(); i++) {
+      Point p = getControlPoint(i);
+      p.x += offsetX;
+      p.y += offsetY;
+      setControlPoint(p, i);
+    }
+  }
 }

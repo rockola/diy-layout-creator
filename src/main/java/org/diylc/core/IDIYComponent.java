@@ -176,6 +176,17 @@ public interface IDIYComponent<T> extends Serializable {
   boolean canPointMoveFreely(int pointIndex);
 
   /**
+     Move all control points of the component by an offset.
+
+     Offset is specified separately for both horizontal and vertical
+     directions.
+
+     @param offsetX X offset
+     @param offsetY Y offset
+   */
+  void nudge(int offsetX, int offsetY);
+
+  /**
    * Draws the component onto the {@link Graphics2D}.
    *
    * @param g2d
