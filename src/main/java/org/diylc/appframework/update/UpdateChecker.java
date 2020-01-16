@@ -113,26 +113,4 @@ public class UpdateChecker {
         Config.getString("font.sans-serif"),
         bodyHtml.toString());
   }
-
-  private static String convertChangeTypeToHTML(ChangeType changeType) {
-    String color = null;
-    switch (changeType) {
-      case BUG_FIX:
-        color = "red";
-        break;
-      case NEW_FEATURE:
-        color = "blue";
-        break;
-      case IMPROVEMENT:
-        color = "green";
-        break;
-      default:
-        //color = "black";
-    }
-    if (color == null) {
-      return changeType.theString();
-    }
-
-    return "<font color=\"" + color + "\">" + changeType.theString() + "</font>";
-  }
 }
