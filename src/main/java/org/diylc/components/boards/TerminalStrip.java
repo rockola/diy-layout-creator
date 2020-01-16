@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.boards;
 
 import java.awt.AlphaComposite;
@@ -423,24 +422,8 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBoardColor());
     g2d.fill(mainArea);
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : getBorderColor();
-    }
+    final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-
     g2d.setColor(finalBorderColor);
     g2d.draw(mainArea);
 
@@ -449,23 +432,7 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     g2d.fill(terminalArea);
     drawingObserver.stopTrackingContinuityArea();
 
-    Color finalTerminalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalTerminalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalTerminalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : TERMINAL_BORDER_COLOR;
-    }
-
+    final Color finalTerminalBorderColor = tryBorderColor(outlineMode, TERMINAL_BORDER_COLOR);
     g2d.setColor(finalTerminalBorderColor);
     g2d.draw(terminalArea);
 
@@ -481,21 +448,15 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     g2d.setColor(BORDER_COLOR);
     g2d.drawRect(width / 4, 1, width / 2, height - 4);
     int terminalSize = getClosestOdd(height / 5);
-    Area terminal =
-        new Area(
-            new RoundRectangle2D.Double(
-                2 * width / 32, height / 5, width - 4 * width / 32, terminalSize, radius, radius));
-    terminal.subtract(
-        new Area(
-            new Ellipse2D.Double(
-                2 * width / 32 + holeSize, height * 3 / 10 - holeSize / 2, holeSize, holeSize)));
-    terminal.subtract(
-        new Area(
-            new Ellipse2D.Double(
-                width - 2 * width / 32 - holeSize * 2,
-                height * 3 / 10 - holeSize / 2,
-                holeSize,
-                holeSize)));
+    Area terminal = new Area(new RoundRectangle2D.Double(
+        2 * width / 32, height / 5, width - 4 * width / 32, terminalSize, radius, radius));
+    terminal.subtract(new Area(new Ellipse2D.Double(
+        2 * width / 32 + holeSize, height * 3 / 10 - holeSize / 2, holeSize, holeSize)));
+    terminal.subtract(new Area(new Ellipse2D.Double(
+        width - 2 * width / 32 - holeSize * 2,
+        height * 3 / 10 - holeSize / 2,
+        holeSize,
+        holeSize)));
 
     g2d.setColor(TERMINAL_COLOR);
     g2d.fill(terminal);

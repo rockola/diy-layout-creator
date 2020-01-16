@@ -73,10 +73,7 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
       IDrawingObserver drawingObserver) {
     float thickness = (float) size.convertToPixels();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(thickness));
-    Color curveColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color;
+    Color curveColor = tryColor(false, color);
     g2d.setColor(curveColor);
     drawingObserver.startTrackingContinuityArea(true);
     g2d.draw(curve);

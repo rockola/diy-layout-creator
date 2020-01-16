@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.passive;
 
 import java.awt.Color;
@@ -114,27 +113,13 @@ public class TransformerCore extends AbstractComponent<Void> {
       return;
     }
 
-    Color finalColor;
-    if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
-      finalColor = SELECTION_COLOR;
-    } else if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalColor = theme.getOutlineColor();
-    } else {
-      finalColor = color;
-    }
-
-    double theta =
-        Math.atan2(
-                this.controlPoints[1].y - this.controlPoints[0].y,
-                this.controlPoints[1].x - this.controlPoints[0].x)
-            + Math.PI / 2;
+    double theta = Math.atan2(
+        this.controlPoints[1].y - this.controlPoints[0].y,
+        this.controlPoints[1].x - this.controlPoints[0].x)
+                   + Math.PI / 2;
     double spacing = SPACING.convertToPixels();
-    // System.out.println(theta);
 
+    Color finalColor = tryColor(outlineMode, color);
     g2d.setColor(finalColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 

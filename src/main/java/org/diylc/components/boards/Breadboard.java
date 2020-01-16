@@ -63,7 +63,6 @@ public class Breadboard extends AbstractComponent<Void> {
   public static Color BORDER_COLOR = Color.black;
   public static Size BODY_ARC = new Size(3d, SizeUnit.mm);
   public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color SELECTION_COLOR = Color.red;
   public static Color HOLE_COLOR = Color.decode("#EEEEEE");
 
   public static Color PLUS_COLOR = Color.red;
@@ -119,10 +118,8 @@ public class Breadboard extends AbstractComponent<Void> {
     int width = (int) (23 * project.getGridSpacing().convertToPixels());
     int height = (int) ((holeCount + 1) * project.getGridSpacing().convertToPixels());
     g2d.fillRoundRect(point.x, point.y, width, height, bodyArc, bodyArc);
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : BORDER_COLOR);
+    // NOTE: ignoring outline mode, may not be correct
+    g2d.setColor(tryBorderColor(false, BORDER_COLOR));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.drawRoundRect(point.x, point.y, width, height, bodyArc, bodyArc);
 

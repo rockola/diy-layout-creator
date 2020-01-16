@@ -1,20 +1,23 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.components.passive;
 
 import java.awt.AlphaComposite;
@@ -29,6 +32,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -406,18 +410,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
         g2d.draw(shaftShape);
       }
       g2d.setComposite(oldComposite);
-      Color finalBorderColor;
-      if (outlineMode) {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : theme.getOutlineColor();
-      } else {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : borderColor;
-      }
+      Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
       g2d.setColor(finalBorderColor);
       g2d.draw(mainShape);
     }
@@ -435,31 +428,8 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
     // Draw label.
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : LABEL_COLOR;
-    }
 
-    String label = "";
-    label =
-        (getDisplay() == Display.NAME)
-            ? getName()
-            : (getValue() == null ? "" : getValue().toString());
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
-
+    Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D bodyRect = getBody()[0].getBounds2D();
@@ -473,6 +443,17 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     int x = (panelWidth - textWidth) / 2;
     int y = (panelHeight - textHeight) / 2 + fontMetrics.getAscent();
 
+    String label = "";
+    label =
+        (getDisplay() == Display.NAME)
+            ? getName()
+            : (getValue() == null ? "" : getValue().toString());
+    if (getDisplay() == Display.NONE) {
+      label = "";
+    }
+    if (getDisplay() == Display.BOTH) {
+      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
+    }
     g2d.drawString(label, (int) (bodyRect.getX() + x), (int) (bodyRect.getY() + y));
   }
 

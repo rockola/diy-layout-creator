@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.semiconductors;
 
 import java.awt.AlphaComposite;
@@ -321,18 +322,8 @@ public class TransistorTO220 extends AbstractTransistorPackage {
     if (folded) {
       int leadThickness = getClosestOdd(LEAD_THICKNESS.convertToPixels());
       int leadLength = (int) getLeadLength().convertToPixels();
-      Color finalPinColor;
-      Color finalPinBorderColor;
-      if (outlineMode) {
-        finalPinColor = new Color(0, 0, 0, 0);
-        finalPinBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : theme.getOutlineColor();
-      } else {
-        finalPinColor = METAL_COLOR;
-        finalPinBorderColor = METAL_COLOR.darker();
-      }
+      Color finalPinColor = outlineMode ? new Color(0, 0, 0, 0) : METAL_COLOR;
+      Color finalPinBorderColor = tryBorderColor(outlineMode, METAL_COLOR.darker());
       for (Point point : controlPoints) {
         switch (orientation) {
           case DEFAULT:

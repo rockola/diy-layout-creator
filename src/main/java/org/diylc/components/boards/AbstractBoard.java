@@ -90,10 +90,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : borderColor);
+    // NOTE: original implementation ignored outline mode here, keeping it that way
+    g2d.setColor(tryBorderColor(false, borderColor));
     g2d.drawRect(
         firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
   }

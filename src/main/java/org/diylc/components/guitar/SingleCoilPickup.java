@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.guitar;
 
 import java.awt.AlphaComposite;
@@ -129,46 +128,24 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBaseColor());
     g2d.fill(body[4]);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getColor());
-    if (body[3] == null) g2d.fill(body[0]);
-    else g2d.fill(body[3]);
+    if (body[3] == null) {
+      g2d.fill(body[0]);
+    } else {
+      g2d.fill(body[3]);
+    }
 
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getLugColor());
     g2d.fill(body[1]);
     g2d.setColor(outlineMode ? theme.getOutlineColor() : darkerOrLighter(LUG_COLOR));
     g2d.draw(body[1]);
 
-    // g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
-    // g2d.fill(body[3]);
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : darkerOrLighter(getBaseColor());
-    }
-
+    Color finalBorderColor = tryBorderColor(darkerOrLighter(getBaseColor()));
     g2d.setColor(finalBorderColor);
     g2d.draw(body[4]);
 
-    if (outlineMode) {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : darkerOrLighter(color);
-    }
-
+    finalBorderColor = tryBorderColor(darkerOrLighter(color));
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     if (body[3] != null) g2d.draw(body[3]);
@@ -181,8 +158,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
     }
 
     drawMainLabel(g2d, project, outlineMode, componentState);
-
-    drawlTerminalLabels(g2d, finalBorderColor, project);
+    drawTerminalLabels(g2d, finalBorderColor, project);
   }
 
   @Override
@@ -443,10 +419,6 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         bodyLength,
         bodyWidth,
         bodyWidth);
-
-    // g2d.setColor(Color.gray);
-    // g2d.drawLine(width / 2, 4 * width / 32, width / 2, 4 * width / 32);
-    // g2d.drawLine(width / 2, height - 4 * width / 32, width / 2, height - 4 * width / 32);
 
     g2d.setColor(METAL_COLOR);
     int poleSize = 2;

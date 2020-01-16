@@ -77,10 +77,7 @@ public class GroundFill extends AbstractComponent<Void> {
       Project project,
       IDrawingObserver drawingObserver) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    Color fillColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color;
+    Color fillColor = tryColor(false, color);
     g2d.setColor(fillColor);
     int[] xPoints = new int[controlPoints.length];
     int[] yPoints = new int[controlPoints.length];

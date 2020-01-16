@@ -102,18 +102,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
       return;
     }
 
-    Color finalColor;
-    if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
-      finalColor = SELECTION_COLOR;
-    } else if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalColor = theme.getOutlineColor();
-    } else {
-      finalColor = color;
-    }
+    final Color finalColor = tryColor(outlineMode, color);
     g2d.setColor(finalColor);
 
     if (this.body == null) {
@@ -146,22 +135,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
     // Draw label
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : LABEL_COLOR;
-    }
+    final Color finalLabelColor = tryLabelColor(LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     String label = "";
     label = display == Display.NAME ? getName() : (getValue() == null ? "" : getValue().toString());

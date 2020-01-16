@@ -69,10 +69,7 @@ public class Dot extends AbstractComponent<Void> {
       return;
     }
     int diameter = getClosestOdd((int) getSize().convertToPixels());
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color);
+    g2d.setColor(tryColor(false, color);
     g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
   }
 

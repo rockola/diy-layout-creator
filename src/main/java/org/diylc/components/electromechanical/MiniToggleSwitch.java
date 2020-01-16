@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -38,7 +39,6 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ISwitch;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -282,8 +282,6 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       return;
     }
     Shape body = getBody();
-    Theme theme = (Theme) ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
       final Composite oldComposite = g2d.getComposite();
@@ -295,18 +293,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       g2d.fill(body);
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      Color finalBorderColor;
-      if (outlineMode) {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : theme.getOutlineColor();
-      } else {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : getBorderColor();
-      }
+      final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor);
       g2d.setColor(finalBorderColor);
       g2d.draw(body);
     }
@@ -319,7 +306,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     int lugHeight = getClosestOdd((int) LUG_THICKNESS.convertToPixels());
     for (Point p : controlPoints) {
       if (outlineMode) {
-        g2d.setColor(theme.getOutlineColor());
+        g2d.setColor(defaultTheme.getOutlineColor());
         g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       } else {
         g2d.setColor(CIRCLE_COLOR);

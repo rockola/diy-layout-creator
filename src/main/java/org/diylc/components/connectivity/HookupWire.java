@@ -76,48 +76,39 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
     int thickness =
         (int) (gauge.diameterIn() * Constants.PIXELS_PER_INCH * (1 + 2 * INSULATION_THICKNESS_PCT))
             - 1;
-    Color curveColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color;
-    g2d.setColor(curveColor);
+
     Stroke stroke = null;
     switch (getStyle()) {
       case SOLID:
         stroke = ObjectCache.getInstance().fetchBasicStroke(thickness);
         break;
       case DASHED:
-        stroke =
-            ObjectCache.getInstance()
-                .fetchStroke(
-                    thickness,
-                    new float[] {thickness * 2, thickness * 3},
-                    thickness * 4,
-                    BasicStroke.CAP_SQUARE);
+        stroke = ObjectCache.getInstance().fetchStroke(
+            thickness,
+            new float[] {thickness * 2, thickness * 3},
+            thickness * 4,
+            BasicStroke.CAP_SQUARE);
         break;
       case DOTTED:
-        stroke =
-            ObjectCache.getInstance()
-                .fetchStroke(
-                    thickness,
-                    new float[] {thickness / 4, thickness * 3},
-                    0,
-                    BasicStroke.CAP_ROUND);
+        stroke = ObjectCache.getInstance().fetchStroke(
+            thickness,
+            new float[] {thickness / 4, thickness * 3},
+            0,
+            BasicStroke.CAP_ROUND);
         break;
     }
 
     if (stroke != null) {
+      g2d.setColor(tryColor(false, color));
       Shape s = stroke.createStrokedShape(curve);
       g2d.fill(s);
 
       if (getStriped()) {
-        stroke =
-            ObjectCache.getInstance()
-            .fetchStroke(
-                thickness,
-                new float[] {thickness / 2, thickness * 2},
-                thickness * 10,
-                BasicStroke.CAP_BUTT);
+        stroke = ObjectCache.getInstance().fetchStroke(
+            thickness,
+            new float[] {thickness / 2, thickness * 2},
+            thickness * 10,
+            BasicStroke.CAP_BUTT);
         if (stroke != null) {
           Shape stripe = stroke.createStrokedShape(curve);
           g2d.setColor(getStripeColor());

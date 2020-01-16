@@ -131,7 +131,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
       lastUpdatePointIndex = -1;
     }
 
-    if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
+    if (isSelectedOrDragging()) {
       // Do not track guidelines.
       drawingObserver.stopTracking();
       g2d.setStroke(Constants.DASHED_STROKE);

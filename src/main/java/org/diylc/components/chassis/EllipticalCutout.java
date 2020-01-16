@@ -75,10 +75,7 @@ public class EllipticalCutout extends AbstractShape {
     // Do not track any changes that follow because the whole oval has been
     // tracked so far.
     drawingObserver.stopTracking();
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : borderColor);
+    g2d.setColor(tryBorderColor(false, borderColor));
     g2d.drawOval(
         firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
   }

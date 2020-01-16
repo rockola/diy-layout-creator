@@ -92,11 +92,7 @@ public class PolygonalCutout extends AbstractShape {
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
-    Color lineColor =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : borderColor;
-    g2d.setColor(lineColor);
+    g2d.setColor(tryBorderColor(false, borderColor));
     g2d.drawPolygon(xPoints, yPoints, controlPoints.length);
   }
 

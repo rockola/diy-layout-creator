@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -30,6 +29,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -41,7 +41,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -176,23 +175,7 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
     g2d.setComposite(oldComposite);
     //    }
 
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-    Color finalBorderColor;
-    if (outlineMode) {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : BORDER_COLOR;
-    }
-
+    final Color finalBorderColor = tryBorderColor(BORDER_COLOR);
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     if (!outlineMode) {
@@ -208,7 +191,7 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
       g2d.fill(body[3]);
     }
 
-    g2d.setColor(outlineMode ? theme.getOutlineColor() : METAL_COLOR.darker());
+    g2d.setColor(outlineMode ? defaultTheme.getOutlineColor() : METAL_COLOR.darker());
     g2d.draw(body[3]);
 
     if (!outlineMode && getPolarity() != DCPolarity.NONE) {

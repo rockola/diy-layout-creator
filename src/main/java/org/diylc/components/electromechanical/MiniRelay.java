@@ -40,7 +40,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -372,32 +371,17 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     for (Point point : controlPoints) {
       if (!outlineMode) {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);
+      g2d.setColor(outlineMode ? defaultTheme.getOutlineColor() : PIN_BORDER_COLOR);
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : BORDER_COLOR;
-    }
+    final Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     if (outlineMode) {
@@ -413,18 +397,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     }
     // Draw label.
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : LABEL_COLOR;
-    }
+    Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     String label = "";
     label = display == Display.VALUE ? getValue() : getName();

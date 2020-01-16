@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.tube;
 
 import java.awt.Color;
@@ -27,6 +26,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -73,18 +73,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    Color finalColor;
-    if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
-      finalColor = SELECTION_COLOR;
-    } else if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalColor = theme.getOutlineColor();
-    } else {
-      finalColor = color;
-    }
+    Color finalColor = tryColor(outlineMode, color);
     g2d.setColor(finalColor);
 
     // Draw tube
@@ -103,22 +92,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
     // Draw label
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : LABEL_COLOR;
-    }
+    Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
 
     Rectangle rect = body[2] != null ? body[2].getBounds() : body[1].getBounds();

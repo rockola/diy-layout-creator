@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.guitar;
 
 import java.awt.AlphaComposite;
@@ -97,23 +98,7 @@ public class PBassPickup extends AbstractSingleOrHumbuckerPickup {
     g2d.fill(body[1]);
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : color.darker();
-    }
-
+    Color finalBorderColor = tryBorderColor(outlineMode, color.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     g2d.draw(body[1]);
@@ -125,30 +110,8 @@ public class PBassPickup extends AbstractSingleOrHumbuckerPickup {
       g2d.draw(body[3]);
     }
 
-    //    Color finalLabelColor;
-    //    if (outlineMode) {
-    //      Theme theme =
-    //          (Theme) ConfigurationManager.getInstance().readObject(IPlugInPort.THEME_KEY,
-    // Constants.DEFAULT_THEME);
-    //      finalLabelColor =
-    //          componentState == ComponentState.SELECTED || componentState ==
-    // ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-    //              : theme.getOutlineColor();
-    //    } else {
-    //      finalLabelColor =
-    //          componentState == ComponentState.SELECTED || componentState ==
-    // ComponentState.DRAGGING ? LABEL_COLOR_SELECTED
-    //              : LABEL_COLOR;
-    //    }
-    //    g2d.setColor(finalLabelColor);
-    //    g2d.setFont(project.getFont());
-    //    Rectangle bounds = body[0].getBounds();
-    //    drawCenteredText(g2d, value, bounds.x + bounds.width / 2, bounds.y + bounds.height / 2,
-    // HorizontalAlignment.CENTER,
-    //        VerticalAlignment.CENTER);
     drawMainLabel(g2d, project, outlineMode, componentState);
-
-    drawlTerminalLabels(g2d, finalBorderColor, project);
+    drawTerminalLabels(g2d, finalBorderColor, project);
   }
 
   @SuppressWarnings("incomplete-switch")

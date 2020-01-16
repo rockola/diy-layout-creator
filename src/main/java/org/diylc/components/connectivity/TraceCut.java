@@ -58,7 +58,6 @@ public class TraceCut extends AbstractComponent<Void> {
   public static Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm);
   public static Color FILL_COLOR = Color.white;
   public static Color BORDER_COLOR = Color.red;
-  public static Color SELECTION_COLOR = Color.red;
   public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
 
   private Size size = SIZE;
@@ -81,23 +80,16 @@ public class TraceCut extends AbstractComponent<Void> {
       return;
     }
     g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
+    g2d.setColor(tryColor(false, boardColor));
     int size = getClosestOdd((int) this.size.convertToPixels());
     int cutWidth = getClosestOdd((int) CUT_WIDTH.convertToPixels());
     if (getCutBetweenHoles()) {
       int holeSpacing = getClosestOdd(getHoleSpacing().convertToPixels());
-      g2d.setColor(
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : boardColor);
       drawingObserver.startTrackingContinuityArea(false);
       g2d.fillRect(
           point.x - holeSpacing / 2 - cutWidth / 2, point.y - size / 2 - 1, cutWidth, size + 2);
       drawingObserver.stopTrackingContinuityArea();
     } else {
-      g2d.setColor(
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : boardColor);
       drawingObserver.startTrackingContinuityArea(false);
       g2d.fillRoundRect(point.x - size / 2, point.y - size / 2, size, size, size, size);
       drawingObserver.stopTrackingContinuityArea();

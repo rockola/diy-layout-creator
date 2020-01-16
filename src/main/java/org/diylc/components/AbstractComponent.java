@@ -16,7 +16,6 @@
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 package org.diylc.components;
@@ -63,6 +62,11 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   public static Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
   public static Color COPPER_COLOR = Color.decode("#DA8A67");
 
+  protected static final Theme defaultTheme =
+      (Theme) ConfigurationManager.getInstance().readObject(
+          IPlugInPort.THEME_KEY,
+          Constants.DEFAULT_THEME);
+
   private static int componentSequenceNumber = 0;
   protected transient int sequenceNumber = 0;
 
@@ -100,6 +104,78 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
   public void resetState() {
     setState(null);
+  }
+
+  public boolean isSelectedOrDragging() {
+    return (componentState == ComponentState.SELECTED
+            || componentState == ComponentState.DRAGGING);
+  }
+
+  private Color getColorUnlessSelectedOrDragging(
+      boolean outlineMode,
+      Color selectedOrDraggingColor,
+      Color color) {
+    if (isSelectedOrDragging()) {
+      return selectedOrDraggingColor;
+    }
+    return outlineMode ? defaultTheme.getOutlineColor() : color;
+  }
+
+  /**
+     Use color unless in outline mode, selected, or dragging.
+
+     If in outline mode, returns outline color specified in theme.
+     Otherwise if selected or dragging, returns SELECTION_COLOR.
+     Finally, returns the given color.
+
+     @param outlineMode true if outline mode color should override.
+     @param color Color to use unless outline mode/selection/drag overrides.
+     @returns color
+   */
+  public Color tryColor(boolean outlineMode, Color color) {
+    return getColorUnlessSelectedOrDragging(outlineMode, SELECTION_COLOR, color);
+  }
+
+  /**
+     Use border color unless in outline mode, selected, or dragging.
+
+     Defaults to calling tryColor, which means using SELECTION_COLOR
+     when not in outline mode and selected or dragging. Override this
+     in subclass if different selected/dragging color is needed.
+
+     @param outlineMode true if outline mode color should override.
+     @param color Color to use unless outline mode/selection/drag overrides.
+     @returns color
+   */
+  public Color tryBorderColor(boolean outlineMode, Color color) {
+    return tryColor(outlineMode, color);
+  }
+
+  /**
+     Use color unless in outline mode, selected, or dragging.
+
+     If in outline mode, returns outline color specified in theme.
+     Otherwise if selected or dragging, returns LABEL_COLOR_SELECTED.
+     Finally, returns the given color.
+
+     @param outlineMode true if outline mode color should override.
+     @param color Color to use unless outline mode/selection/drag overrides.
+     @returns color
+   */
+  public Color tryLabelColor(boolean outlineMode, Color color) {
+    return getColorUnlessSelectedOrDragging(outlineMode, LABEL_COLOR_SELECTED, color);
+  }
+
+  /**
+     Use color unless selected or dragging.
+
+     If selected or dragging, returns SELECTION_COLOR.
+
+     @param color Color to use unless selected or dragging.
+     @returns color unless selected or dragging, defaults to SELECTION_COLOR otherwise
+   */
+  public Color tryLeadColor(Color color) {
+    return getColorUnlessSelectedOrDragging(false, SELECTION_COLOR, color);
   }
 
   @Override

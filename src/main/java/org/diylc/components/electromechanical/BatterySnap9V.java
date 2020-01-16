@@ -99,23 +99,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       g2d.setComposite(oldComposite);
     }
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : color.brighter();
-    }
-
+    final Color finalBorderColor = tryBorderColor(outlineMode, color.brighter());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     g2d.setColor(METAL_COLOR.darker());

@@ -55,9 +55,10 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 /**
- * Base class for all leaded components such as resistors or capacitors. Has two control points and
- * draws leads between them. Also, it positions and draws the shape of the component as specified by
- * a child class.
+ * Base class for all leaded components such as resistors or
+ * capacitors. Has two control points and draws leads between
+ * them. Also, it positions and draws the shape of the component as
+ * specified by a child class.
  *
  * @author Branislav Stojkovic
  */
@@ -179,23 +180,8 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getStandingBodyColor());
       g2d.fill(body);
       g2d.setComposite(oldComposite);
-      Color finalBorderColor;
-      if (outlineMode) {
-        Theme theme =
-            (Theme)
-                ConfigurationManager.getInstance()
-                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : theme.getOutlineColor();
-      } else {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : borderColor;
-      }
 
+      Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
       g2d.setColor(finalBorderColor);
       g2d.draw(body);
@@ -231,14 +217,14 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
           leadArea.add(new Area(leadStroke.createStrokedShape(line)));
 
           g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-          Color leadColor = getLeadColorForPainting(componentState);
+          Color leadColor = getLeadColorForPainting();
           g2d.setColor(leadColor);
           g2d.fill(leadArea);
           g2d.setColor(leadColor.darker());
           g2d.draw(leadArea);
         } else {
           g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-          Color leadColor = getLeadColorForPainting(componentState);
+          Color leadColor = getLeadColorForPainting();
           g2d.setColor(leadColor);
           drawLeads(g2d, theta, leadLength);
         }
@@ -292,22 +278,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(getOutlineStrokeSize()));
-      Color finalBorderColor;
-      if (outlineMode) {
-        Theme theme =
-            (Theme)
-                ConfigurationManager.getInstance()
-                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : theme.getOutlineColor();
-      } else {
-        finalBorderColor =
-            componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                ? SELECTION_COLOR
-                : borderColor;
-      }
+      Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
       g2d.setColor(finalBorderColor);
       g2d.draw(shape);
 
@@ -323,22 +294,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     if (useShapeRectAsPosition()) {
       g2d.translate(shapeRect.x, shapeRect.y);
     }
-    Color finalLabelColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : labelColor;
-    }
+    Color finalLabelColor = tryLabelColor(outlineMode, labelColor);
     g2d.setColor(finalLabelColor);
     String label = "";
     label = display == Display.NAME ? getName() : (getValue() == null ? "" : getValue().toString());
@@ -461,7 +417,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     if (shouldShadeLeads()) {
       Shape lineShape = stroke.createStrokedShape(line);
 
-      g2d.setColor(getLeadColorForPainting(componentState));
+      g2d.setColor(getLeadColorForPainting());
       g2d.fill(lineShape);
 
       if (isCopperArea) {
@@ -469,11 +425,11 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       }
 
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-      Color leadColor = getLeadColorForPainting(componentState);
+      Color leadColor = getLeadColorForPainting();
       g2d.setColor(leadColor.darker());
       g2d.draw(lineShape);
     } else {
-      g2d.setColor(getLeadColorForPainting(componentState));
+      g2d.setColor(getLeadColorForPainting());
       g2d.setStroke(stroke);
       g2d.draw(line);
 
@@ -557,10 +513,8 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   /**
      @return default lead color. Override this method to change it.
   */
-  protected Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-        ? SELECTION_COLOR
-        : getLeadColor();
+  protected Color getLeadColorForPainting() {
+    return tryLeadColor(getLeadColor());
   }
 
   @EditableProperty(name = "Lead Color")

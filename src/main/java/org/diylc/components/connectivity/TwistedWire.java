@@ -113,10 +113,7 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
       }
     }
 
-    Color curveColor1 =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color;
+    final Color curveColor1 = tryColor(false, color);
     g2d.setColor(curveColor1);
     g2d.fill(firstLeadArea);
 
@@ -127,10 +124,7 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
       drawingObserver.startTracking();
     }
 
-    Color curveColor2 =
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color2;
+    final Color curveColor2 = tryColor(false, color2);
     g2d.setColor(curveColor2);
     g2d.fill(secondLeadArea);
 

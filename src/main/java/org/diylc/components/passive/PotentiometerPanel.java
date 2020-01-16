@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.passive;
 
 import java.awt.AlphaComposite;
@@ -348,36 +347,14 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           if (i == 3) drawingObserver.stopTrackingContinuityArea();
         }
         g2d.setComposite(oldComposite);
-        Color finalBorderColor;
-        if (outlineMode) {
-          finalBorderColor =
-              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                  ? SELECTION_COLOR
-                  : theme.getOutlineColor();
-        } else {
-          finalBorderColor =
-              componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-                  ? SELECTION_COLOR
-                  : getBorderColor();
-        }
+        Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
         g2d.setColor(finalBorderColor);
         g2d.draw(shape);
       }
     }
     // Draw caption.
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : LABEL_COLOR;
-    }
+    Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D bodyRect = getBody()[3].getBounds2D();

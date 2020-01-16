@@ -1,20 +1,23 @@
 /*
- *
- * DIY Layout Creator (DIYLC). Copyright (c) 2009-2018 held jointly by the individual authors.
- *
- * This file is part of DIYLC.
- *
- * DIYLC is free software: you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * DIYLC is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with DIYLC. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.components.guitar;
 
 import java.awt.AlphaComposite;
@@ -30,6 +33,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -133,23 +137,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : color.darker();
-    }
-
+    final Color finalBorderColor = tryBorderColor(outlineMode, color.darker());
     g2d.setColor(finalBorderColor);
     if (getType() != HumbuckerType.Filtertron) g2d.draw(body[0]);
     if (body[1] != null) g2d.draw(body[1]);
@@ -180,7 +168,7 @@ public class HumbuckerPickup extends AbstractGuitarPickup {
 
     drawMainLabel(g2d, project, outlineMode, componentState);
 
-    drawlTerminalLabels(g2d, finalBorderColor, project);
+    drawTerminalLabels(g2d, finalBorderColor, project);
   }
 
   @Override

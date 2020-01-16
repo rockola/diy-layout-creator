@@ -74,10 +74,7 @@ public class CutLine extends AbstractTransparentComponent<Void> {
       IDrawingObserver drawingObserver) {
     int w = getClosestOdd((int) getWidth().convertToPixels());
     int l = getClosestOdd((int) getLength().convertToPixels());
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : color);
+    g2d.setColor(tryColor(false, color));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(w));
 
     Composite oldComposite = g2d.getComposite();

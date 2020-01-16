@@ -19,7 +19,7 @@ public abstract class AbstractMultiPartComponent<T> extends AbstractTransparentC
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    if (componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING) {
+    if (isSelectedOrDragging()) {
       g2d.setColor(SELECTION_COLOR);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
       g2d.draw(getBodyOutline());

@@ -86,10 +86,7 @@ public class ChassisPanel extends AbstractShape {
     // Do not track any changes that follow because the whole rect has been
     // tracked so far.
     drawingObserver.stopTracking();
-    g2d.setColor(
-        componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-            ? SELECTION_COLOR
-            : borderColor);
+    g2d.setColor(tryBorderColor(false, borderColor));
     g2d.drawRoundRect(
         firstPoint.x,
         firstPoint.y,
