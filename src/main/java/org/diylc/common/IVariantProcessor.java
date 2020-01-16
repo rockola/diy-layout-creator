@@ -26,7 +26,7 @@ import org.diylc.core.Template;
 
 public interface IVariantProcessor {
 
-  public static final String DEFAULT_TEMPLATES_KEY = "defaultTemplates";
+  String DEFAULT_TEMPLATES_KEY = "defaultTemplates";
 
   void saveSelectedComponentAsVariant(String variantName);
 
