@@ -60,9 +60,11 @@ public interface IPlugInPort
         IBlockProcessor,
         INetlistProcessor {
 
-  public static final String THEME_KEY = "theme";
+  String THEME_KEY = "theme";
+  int DND_TOGGLE_STICKY = 0x1;
+  int DND_TOGGLE_SNAP = 0x40000000;
 
-  public enum Key {
+  enum Key {
     ABNORMAL_EXIT,
     ANTI_ALIASING,
     AUTO_EDIT,
@@ -87,13 +89,10 @@ public interface IPlugInPort
     WHEEL_ZOOM
   }
 
-  public enum Debug {
+  enum Debug {
     COMPONENT_AREA,
     CONTINUITY_AREA
   }
-
-  public static final int DND_TOGGLE_STICKY = 0x1;
-  public static final int DND_TOGGLE_SNAP = 0x40000000;
 
   /**
    * Returns size of the canvas that takes project dimensions into
