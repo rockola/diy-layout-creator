@@ -35,24 +35,19 @@ import org.apache.logging.log4j.Logger;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 public class Version implements Serializable, Comparable<Version> {
 
   private static final long serialVersionUID = 1L;
-
   private static Logger LOG = LogManager.getLogger(Version.class);
-
   private static Parser parser = Parser.builder().build();
-  private static HtmlRenderer renderer = HtmlRenderer.builder().softbreak(" ").build();
+  private static String UPDATE_MD = "org/diylc/update.md";
 
   private VersionNumber versionNumber;
   private Date releaseDate;
   private String name;
   private List<Change> changes;
   private String url;
-
-  private static String UPDATE_MD = "org/diylc/update.md";
 
   public Version(VersionNumber versionNumber, Date releaseDate, String name, String url) {
     super();
