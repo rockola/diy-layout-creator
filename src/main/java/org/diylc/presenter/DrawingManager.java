@@ -72,7 +72,7 @@ public class DrawingManager {
 
   private static final Logger LOG = LogManager.getLogger(DrawingManager.class);
 
-  public static int CONTROL_POINT_SIZE = 7;
+  public static final int CONTROL_POINT_SIZE = 7;
   public static double EXTRA_SPACE = 0.25;
 
   public static final String ZOOM_KEY = "zoom";
@@ -83,7 +83,6 @@ public class DrawingManager {
   public static Color SELECTED_CONTROL_POINT_COLOR = Color.green;
 
   private Theme theme = (Theme) App.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-  private Area continuityArea;
   private Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private Composite lockedComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
@@ -125,7 +124,7 @@ public class DrawingManager {
    * @return
    */
   public List<IDIYComponent<?>> drawProject(
-      Graphics2D g2d,
+      Graphics2D graphicsContext,
       Project project,
       Set<DrawOption> drawOptions,
       IComponentFilter filter,
@@ -156,343 +155,349 @@ public class DrawingManager {
       zoom *= externalZoom;
     }
 
-    G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
+    final Graphics2D g2d = (Graphics2D) graphicsContext.create();
+    try {
+      G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
 
-    boolean antiAliasing = drawOptions.contains(DrawOption.ANTIALIASING);
+      boolean antiAliasing = drawOptions.contains(DrawOption.ANTIALIASING);
 
-    g2d.setRenderingHint(
-        RenderingHints.KEY_ANTIALIASING,
-        antiAliasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-    g2d.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING,
-        antiAliasing
-        ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
-        : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_ANTIALIASING,
+          antiAliasing ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING,
+          antiAliasing
+          ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
+          : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-    boolean hiQuality = App.highQualityRendering();
+      boolean hiQuality = App.highQualityRendering();
 
-    g2d.setRenderingHint(
-        RenderingHints.KEY_ALPHA_INTERPOLATION,
-        hiQuality
-        ? RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY
-        : RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-    g2d.setRenderingHint(
-        RenderingHints.KEY_COLOR_RENDERING,
-        hiQuality
-        ? RenderingHints.VALUE_COLOR_RENDER_QUALITY
-        : RenderingHints.VALUE_COLOR_RENDER_SPEED);
-    g2d.setRenderingHint(
-        RenderingHints.KEY_RENDERING,
-        hiQuality ? RenderingHints.VALUE_RENDER_QUALITY : RenderingHints.VALUE_RENDER_SPEED);
-    g2d.setRenderingHint(
-        RenderingHints.KEY_DITHERING,
-        hiQuality ? RenderingHints.VALUE_DITHER_ENABLE : RenderingHints.VALUE_DITHER_DISABLE);
-    g2d.setRenderingHint(
-        RenderingHints.KEY_INTERPOLATION,
-        hiQuality
-        ? RenderingHints.VALUE_INTERPOLATION_BILINEAR
-        : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_ALPHA_INTERPOLATION,
+          hiQuality
+          ? RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY
+          : RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_COLOR_RENDERING,
+          hiQuality
+          ? RenderingHints.VALUE_COLOR_RENDER_QUALITY
+          : RenderingHints.VALUE_COLOR_RENDER_SPEED);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_RENDERING,
+          hiQuality ? RenderingHints.VALUE_RENDER_QUALITY : RenderingHints.VALUE_RENDER_SPEED);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_DITHERING,
+          hiQuality ? RenderingHints.VALUE_DITHER_ENABLE : RenderingHints.VALUE_DITHER_DISABLE);
+      g2d.setRenderingHint(
+          RenderingHints.KEY_INTERPOLATION,
+          hiQuality
+          ? RenderingHints.VALUE_INTERPOLATION_BILINEAR
+          : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
-    // AffineTransform initialTx = g2d.getTransform();
-    Dimension d = getCanvasDimensions(project, zoom, drawOptions.contains(DrawOption.EXTRA_SPACE));
+      // AffineTransform initialTx = g2d.getTransform();
+      Dimension d = getCanvasDimensions(
+          project,
+          zoom,
+          drawOptions.contains(DrawOption.EXTRA_SPACE));
 
-    g2dWrapper.setColor(theme.getBgColor());
-    g2dWrapper.fillRect(0, 0, d.width, d.height);
-    g2d.clip(new Rectangle(new Point(0, 0), d));
+      g2dWrapper.setColor(theme.getBgColor());
+      g2dWrapper.fillRect(0, 0, d.width, d.height);
+      g2d.clip(new Rectangle(new Point(0, 0), d));
 
-    GridType gridType = GridType.LINES;
-    if (drawOptions.contains(DrawOption.GRID) && gridType != GridType.NONE) {
-      double zoomStep = project.getGridSpacing().convertToPixels() * zoom;
-      float gridThickness = (float) (1f * (zoom > 1 ? 1 : zoom));
-      if (gridType == GridType.CROSSHAIR) {
-        g2d.setStroke(
-            new BasicStroke(
-                gridThickness,
-                BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER,
-                10f,
-                new float[] {(float) zoomStep / 2, (float) zoomStep / 2},
-                (float) zoomStep / 4));
-      } else if (gridType == GridType.DOT) {
-        g2d.setStroke(
-            new BasicStroke(
-                gridThickness,
-                BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER,
-                10f,
-                new float[] {1f, (float) zoomStep - 1},
-                0f));
-      } else {
-        g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(gridThickness));
-      }
-
-      g2dWrapper.setColor(theme.getGridColor());
-      for (double i = zoomStep; i < d.width; i += zoomStep) {
-        g2dWrapper.draw(new Line2D.Double(i, 0, i, d.height - 1));
-      }
-      for (double j = zoomStep; j < d.height; j += zoomStep) {
-        g2dWrapper.draw(new Line2D.Double(0, j, d.width - 1, j));
-      }
-    }
-
-    Rectangle2D extraSpaceRect = null;
-    AffineTransform extraSpaceTx = null;
-    // manage extra space
-    double extraSpace = 0;
-    if (drawOptions.contains(DrawOption.EXTRA_SPACE)) {
-      Dimension dInner = getCanvasDimensions(project, zoom, false);
-      extraSpace = getExtraSpace(project) * zoom;
-      float borderThickness = (float) (3f * (zoom > 1 ? 1 : zoom));
-      g2d.setStroke(
-          ObjectCache.getInstance()
-          .fetchStroke(
-              borderThickness,
-              new float[] {
-                borderThickness * 4, borderThickness * 4,
-              },
-              0,
-              BasicStroke.CAP_BUTT));
-      g2dWrapper.setColor(theme.getOutlineColor());
-      extraSpaceRect =
-          new Rectangle2D.Double(extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
-      g2d.draw(extraSpaceRect);
-      extraSpaceTx = g2d.getTransform();
-
-      // translate to the new (0, 0)
-      g2d.transform(AffineTransform.getTranslateInstance(extraSpace, extraSpace));
-    }
-
-    // apply zoom
-    if (Math.abs(1.0 - zoom) > 1e-4) {
-      g2dWrapper.scale(zoom, zoom);
-    }
-
-    for (IDIYComponent<?> component : project.getComponents()) {
-      // Do not draw the component if it's filtered out.
-      if (filter != null && !filter.testComponent(component)) {
-        continue;
-      }
-      ComponentState state = ComponentState.NORMAL;
-      if (drawOptions.contains(DrawOption.SELECTION)
-          && project.inSelection(component)) {
-        state = dragInProgress ? ComponentState.DRAGGING : ComponentState.SELECTED;
-      }
-      // Do not track the area if component is not invalidated and was
-      // drawn in the same state.
-      ComponentState lastState = component.getState();
-      boolean trackArea = (lastState != state);
-      LOG.trace(
-          "Component {} {} lastState {} and state {} so trackArea is {}",
-          component.getIdentifier(),
-          component.getArea(),
-          lastState,
-          state,
-          trackArea);
-
-      synchronized (g2d) {
-        g2dWrapper.startedDrawingComponent();
-        if (!trackArea) {
-          g2dWrapper.stopTracking();
-        }
-        // Draw locked components in a new composite.
-        if (lockedComponents.contains(component)) {
-          g2d.setComposite(lockedComposite);
-        }
-        // Draw the component through the g2dWrapper.
-        try {
-          component.draw(
-              g2dWrapper,
-              state,
-              drawOptions.contains(DrawOption.OUTLINE_MODE),
-              project,
-              g2dWrapper);
-          if (g2dWrapper.isTrackingContinuityArea()) {
-            LOG.info(
-                "Component {} did not stop tracking continuity area.",
-                component.getIdentifier());
-            g2dWrapper.stopTrackingContinuityArea();
-          }
-        } catch (Exception e) {
-          LOG.error("Error drawing " + component.getIdentifier(), e);
-          failedComponents.add(component);
-        }
-        ComponentArea area = g2dWrapper.finishedDrawingComponent();
-        if (trackArea && area != null && !area.getOutlineArea().isEmpty()) {
-          LOG.trace(
-              "Setting area for component {} to {}",
-              component.getIdentifier(),
-              area);
-          component.setArea(area);
-          component.setState(state);
+      GridType gridType = GridType.LINES;
+      if (drawOptions.contains(DrawOption.GRID) && gridType != GridType.NONE) {
+        double zoomStep = project.getGridSpacing().convertToPixels() * zoom;
+        float gridThickness = (float) (1f * (zoom > 1 ? 1 : zoom));
+        if (gridType == GridType.CROSSHAIR) {
+          g2d.setStroke(
+              new BasicStroke(
+                  gridThickness,
+                  BasicStroke.CAP_BUTT,
+                  BasicStroke.JOIN_MITER,
+                  10f,
+                  new float[] {(float) zoomStep / 2, (float) zoomStep / 2},
+                  (float) zoomStep / 4));
+        } else if (gridType == GridType.DOT) {
+          g2d.setStroke(
+              new BasicStroke(
+                  gridThickness,
+                  BasicStroke.CAP_BUTT,
+                  BasicStroke.JOIN_MITER,
+                  10f,
+                  new float[] {1f, (float) zoomStep - 1},
+                  0f));
         } else {
-          LOG.trace(
-              "Did not set area for component {}, trackArea is {}",
-              component.getIdentifier(),
-              trackArea);
+          g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(gridThickness));
         }
-        ComponentArea theArea = component.getArea();
-        LOG.trace(
-            "Component {} {} area{}",
-            component.getIdentifier(),
-            theArea == null ? "does not have" : "has",
-            theArea != null && theArea.getOutlineArea().isEmpty() ? " but outline is empty" : "");
-      }
-    }
 
-    // Draw control points.
-    if (drawOptions.contains(DrawOption.CONTROL_POINTS)) {
-      // Draw unselected points first to make sure they are below.
-      if (dragInProgress || drawOptions.contains(DrawOption.OUTLINE_MODE)) {
-        for (IDIYComponent<?> component : project.getComponents()) {
+        g2dWrapper.setColor(theme.getGridColor());
+        for (double i = zoomStep; i < d.width; i += zoomStep) {
+          g2dWrapper.draw(new Line2D.Double(i, 0, i, d.height - 1));
+        }
+        for (double j = zoomStep; j < d.height; j += zoomStep) {
+          g2dWrapper.draw(new Line2D.Double(0, j, d.width - 1, j));
+        }
+      }
+
+      Rectangle2D extraSpaceRect = null;
+      AffineTransform extraSpaceTx = null;
+      // manage extra space
+      double extraSpace = 0;
+      if (drawOptions.contains(DrawOption.EXTRA_SPACE)) {
+        Dimension dInner = getCanvasDimensions(project, zoom, false);
+        extraSpace = getExtraSpace(project) * zoom;
+        float borderThickness = (float) (3f * (zoom > 1 ? 1 : zoom));
+        g2d.setStroke(
+            ObjectCache.getInstance()
+            .fetchStroke(
+                borderThickness,
+                new float[] {
+                  borderThickness * 4, borderThickness * 4,
+                },
+                0,
+                BasicStroke.CAP_BUTT));
+        g2dWrapper.setColor(theme.getOutlineColor());
+        extraSpaceRect =
+            new Rectangle2D.Double(extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
+        g2d.draw(extraSpaceRect);
+        extraSpaceTx = g2d.getTransform();
+
+        // translate to the new (0, 0)
+        g2d.transform(AffineTransform.getTranslateInstance(extraSpace, extraSpace));
+      }
+
+      // apply zoom
+      if (Math.abs(1.0 - zoom) > 1e-4) {
+        g2dWrapper.scale(zoom, zoom);
+      }
+
+      for (IDIYComponent<?> component : project.getComponents()) {
+        // Do not draw the component if it's filtered out.
+        if (filter != null && !filter.testComponent(component)) {
+          continue;
+        }
+        ComponentState state = ComponentState.NORMAL;
+        if (drawOptions.contains(DrawOption.SELECTION)
+            && project.inSelection(component)) {
+          state = dragInProgress ? ComponentState.DRAGGING : ComponentState.SELECTED;
+        }
+        // Do not track the area if component is not invalidated and was
+        // drawn in the same state.
+        ComponentState lastState = component.getState();
+        boolean trackArea = (lastState != state);
+        LOG.trace(
+            "Component {} {} lastState {} and state {} so trackArea is {}",
+            component.getIdentifier(),
+            component.getArea(),
+            lastState,
+            state,
+            trackArea);
+
+        synchronized (g2d) {
+          g2dWrapper.startedDrawingComponent();
+          if (!trackArea) {
+            g2dWrapper.stopTracking();
+          }
+          // Draw locked components in a new composite.
+          if (lockedComponents.contains(component)) {
+            g2d.setComposite(lockedComposite);
+          }
+          // Draw the component through the g2dWrapper.
+          try {
+            component.draw(
+                g2dWrapper,
+                state,
+                drawOptions.contains(DrawOption.OUTLINE_MODE),
+                project,
+                g2dWrapper);
+            if (g2dWrapper.isTrackingContinuityArea()) {
+              LOG.info(
+                  "Component {} did not stop tracking continuity area.",
+                  component.getIdentifier());
+              g2dWrapper.stopTrackingContinuityArea();
+            }
+          } catch (Exception e) {
+            LOG.error("Error drawing " + component.getIdentifier(), e);
+            failedComponents.add(component);
+          }
+          ComponentArea area = g2dWrapper.finishedDrawingComponent();
+          if (trackArea && area != null && !area.getOutlineArea().isEmpty()) {
+            LOG.trace(
+                "Setting area for component {} to {}",
+                component.getIdentifier(),
+                area);
+            component.setArea(area);
+            component.setState(state);
+          } else {
+            LOG.trace(
+                "Did not set area for component {}, trackArea is {}",
+                component.getIdentifier(),
+                trackArea);
+          }
+          ComponentArea theArea = component.getArea();
+          LOG.trace(
+              "Component {} {} area{}",
+              component.getIdentifier(),
+              theArea == null ? "does not have" : "has",
+              theArea != null && theArea.getOutlineArea().isEmpty() ? " but outline is empty" : "");
+        }
+      }
+
+      // Draw control points.
+      if (drawOptions.contains(DrawOption.CONTROL_POINTS)) {
+        // Draw unselected points first to make sure they are below.
+        if (dragInProgress || drawOptions.contains(DrawOption.OUTLINE_MODE)) {
+          for (IDIYComponent<?> component : project.getComponents()) {
+            for (int i = 0; i < component.getControlPointCount(); i++) {
+              VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
+              boolean inSelection = project.inSelection(component);
+              if ((groupedComponents.contains(component)
+                   && (vp.isAlways()
+                       || (inSelection && vp.isWhenSelected()))
+                   || (!groupedComponents.contains(component)
+                       && !inSelection
+                       && vp.isAlways()))) {
+
+                g2dWrapper.setColor(CONTROL_POINT_COLOR);
+                Point controlPoint = component.getControlPoint(i);
+                int pointSize = CONTROL_POINT_SIZE - 2;
+                g2dWrapper.fillOval(
+                    controlPoint.x - pointSize / 2,
+                    controlPoint.y - pointSize / 2,
+                    pointSize,
+                    pointSize);
+              }
+            }
+          }
+        }
+        // Then draw the selected ones.
+        for (IDIYComponent<?> component : project.getSelection()) {
           for (int i = 0; i < component.getControlPointCount(); i++) {
             VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
-            boolean inSelection = project.inSelection(component);
-            if ((groupedComponents.contains(component)
-                    && (vp.isAlways()
-                        || (inSelection && vp.isWhenSelected()))
-                || (!groupedComponents.contains(component)
-                    && !inSelection
-                    && vp.isAlways()))) {
 
-              g2dWrapper.setColor(CONTROL_POINT_COLOR);
+            if (!groupedComponents.contains(component)
+                && (vp.isWhenSelected() || vp.isAlways())) {
+
               Point controlPoint = component.getControlPoint(i);
-              int pointSize = CONTROL_POINT_SIZE - 2;
+              int pointSize = CONTROL_POINT_SIZE;
+
+              g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR.darker());
               g2dWrapper.fillOval(
                   controlPoint.x - pointSize / 2,
                   controlPoint.y - pointSize / 2,
                   pointSize,
                   pointSize);
+              g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR);
+              g2dWrapper.fillOval(
+                  controlPoint.x - CONTROL_POINT_SIZE / 2 + 1,
+                  controlPoint.y - CONTROL_POINT_SIZE / 2 + 1,
+                  CONTROL_POINT_SIZE - 2,
+                  CONTROL_POINT_SIZE - 2);
             }
           }
         }
       }
-      // Then draw the selected ones.
-      for (IDIYComponent<?> component : project.getSelection()) {
-        for (int i = 0; i < component.getControlPointCount(); i++) {
-          VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
 
-          if (!groupedComponents.contains(component)
-              && (vp.isWhenSelected() || vp.isAlways())) {
+      // Draw component slot in a separate composite.
+      if (componentSlot != null) {
+        g2dWrapper.startedDrawingComponent();
+        g2dWrapper.setComposite(slotComposite);
+        for (IDIYComponent<?> component : componentSlot) {
+          try {
 
-            Point controlPoint = component.getControlPoint(i);
-            int pointSize = CONTROL_POINT_SIZE;
+            component.draw(
+                g2dWrapper,
+                ComponentState.NORMAL,
+                drawOptions.contains(DrawOption.OUTLINE_MODE),
+                project,
+                g2dWrapper);
 
+          } catch (Exception e) {
+            LOG.error("Error drawing " + component.getIdentifier(), e);
+            failedComponents.add(component);
+          }
+        }
+        g2dWrapper.finishedDrawingComponent();
+      }
+
+      // Draw control points of the component in the slot.
+      if (controlPointSlot != null) {
+        for (Point point : controlPointSlot) {
+          if (point != null) {
             g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR.darker());
             g2dWrapper.fillOval(
-                controlPoint.x - pointSize / 2,
-                controlPoint.y - pointSize / 2,
-                pointSize,
-                pointSize);
+                point.x - CONTROL_POINT_SIZE / 2,
+                point.y - CONTROL_POINT_SIZE / 2,
+                CONTROL_POINT_SIZE,
+                CONTROL_POINT_SIZE);
             g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR);
             g2dWrapper.fillOval(
-                controlPoint.x - CONTROL_POINT_SIZE / 2 + 1,
-                controlPoint.y - CONTROL_POINT_SIZE / 2 + 1,
+                point.x - CONTROL_POINT_SIZE / 2 + 1,
+                point.y - CONTROL_POINT_SIZE / 2 + 1,
                 CONTROL_POINT_SIZE - 2,
                 CONTROL_POINT_SIZE - 2);
           }
         }
       }
-    }
 
-    // Draw component slot in a separate composite.
-    if (componentSlot != null) {
-      g2dWrapper.startedDrawingComponent();
-      g2dWrapper.setComposite(slotComposite);
-      for (IDIYComponent<?> component : componentSlot) {
-        try {
+      // Go back to the original transformation and zoom in to draw the
+      // selection rectangle and other similar elements.
+      // g2d.setTransform(initialTx);
+      // if ((drawOptions.contains(DrawOption.ZOOM)) && (Math.abs(1.0 -
+      // zoomLevel) > 1e-4)) {
+      // g2d.scale(zoomLevel, zoomLevel);
+      // }
 
-          component.draw(
-              g2dWrapper,
-              ComponentState.NORMAL,
-              drawOptions.contains(DrawOption.OUTLINE_MODE),
-              project,
-              g2dWrapper);
-
-        } catch (Exception e) {
-          LOG.error("Error drawing " + component.getIdentifier(), e);
-          failedComponents.add(component);
-        }
+      // At the end draw selection rectangle if needed.
+      if (drawOptions.contains(DrawOption.SELECTION) && (selectionRect != null)) {
+        g2d.setColor(Color.white);
+        g2d.draw(selectionRect);
+        g2d.setColor(Color.black);
+        g2d.setStroke(Constants.DASHED_STROKE);
+        g2d.draw(selectionRect);
       }
-      g2dWrapper.finishedDrawingComponent();
-    }
 
-    // Draw control points of the component in the slot.
-    if (controlPointSlot != null) {
-      for (Point point : controlPointSlot) {
-        if (point != null) {
-          g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR.darker());
-          g2dWrapper.fillOval(
-              point.x - CONTROL_POINT_SIZE / 2,
-              point.y - CONTROL_POINT_SIZE / 2,
-              CONTROL_POINT_SIZE,
-              CONTROL_POINT_SIZE);
-          g2dWrapper.setColor(SELECTED_CONTROL_POINT_COLOR);
-          g2dWrapper.fillOval(
-              point.x - CONTROL_POINT_SIZE / 2 + 1,
-              point.y - CONTROL_POINT_SIZE / 2 + 1,
-              CONTROL_POINT_SIZE - 2,
-              CONTROL_POINT_SIZE - 2);
-        }
-      }
-    }
-
-    // Go back to the original transformation and zoom in to draw the
-    // selection rectangle and other similar elements.
-    // g2d.setTransform(initialTx);
-    // if ((drawOptions.contains(DrawOption.ZOOM)) && (Math.abs(1.0 -
-    // zoomLevel) > 1e-4)) {
-    // g2d.scale(zoomLevel, zoomLevel);
-    // }
-
-    // At the end draw selection rectangle if needed.
-    if (drawOptions.contains(DrawOption.SELECTION) && (selectionRect != null)) {
-      g2d.setColor(Color.white);
-      g2d.draw(selectionRect);
-      g2d.setColor(Color.black);
-      g2d.setStroke(Constants.DASHED_STROKE);
-      g2d.draw(selectionRect);
-    }
-
-    // Draw component/continuity areas when debugging
-    final boolean debugComponentAreas = App.isDebug(IPlugInPort.Debug.COMPONENT_AREA);
-    final boolean debugContinuityAreas = App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA);
-    if (debugComponentAreas || debugContinuityAreas) {
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      for (IDIYComponent<?> component : project.getComponents()) {
-        ComponentArea area = component.getArea();
-        if (debugComponentAreas) {
-          g2d.setColor(Color.red);
-          g2d.draw(area.getOutlineArea());
-        }
-        if (debugContinuityAreas) {
-          g2d.setColor(Color.green);
-          for (Area continuityPositive : area.getContinuityPositiveAreas()) {
-            g2d.draw(continuityPositive);
+      // Draw component/continuity areas when debugging
+      final boolean debugComponentAreas = App.isDebug(IPlugInPort.Debug.COMPONENT_AREA);
+      final boolean debugContinuityAreas = App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA);
+      if (debugComponentAreas || debugContinuityAreas) {
+        g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
+        for (IDIYComponent<?> component : project.getComponents()) {
+          ComponentArea area = component.getArea();
+          if (debugComponentAreas) {
+            g2d.setColor(Color.red);
+            g2d.draw(area.getOutlineArea());
           }
-          g2d.setColor(Color.blue);
-          for (Area continuityNegative : area.getContinuityNegativeAreas()) {
-            g2d.draw(continuityNegative);
+          if (debugContinuityAreas) {
+            g2d.setColor(Color.green);
+            for (Area continuityPositive : area.getContinuityPositiveAreas()) {
+              g2d.draw(continuityPositive);
+            }
+            g2d.setColor(Color.blue);
+            for (Area continuityNegative : area.getContinuityNegativeAreas()) {
+              g2d.draw(continuityNegative);
+            }
           }
         }
       }
-    }
 
-    if (continuityArea != null && App.highlightContinuityArea()) {
-      Composite oldComposite = g2d.getComposite();
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-      g2d.setColor(Color.green);
-      g2d.fill(continuityArea);
-      g2d.setComposite(oldComposite);
-    }
+      if (project.hasContinuityArea() && App.highlightContinuityArea()) {
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        g2d.setColor(Color.green);
+        g2d.fill(project.getContinuityArea());
+      }
 
-    // shade extra space
-    if (SHADE_EXTRA_SPACE && extraSpaceRect != null) {
-      Area extraSpaceArea = new Area(new Rectangle2D.Double(0, 0, d.getWidth(), d.getHeight()));
-      extraSpaceArea.subtract(new Area(extraSpaceRect));
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05f));
-      g2d.setTransform(extraSpaceTx);
-      g2d.setColor(theme.getOutlineColor());
-      g2d.fill(extraSpaceArea);
+      // shade extra space
+      if (SHADE_EXTRA_SPACE && extraSpaceRect != null) {
+        Area extraSpaceArea = new Area(new Rectangle2D.Double(0, 0, d.getWidth(), d.getHeight()));
+        extraSpaceArea.subtract(new Area(extraSpaceRect));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05f));
+        g2d.setTransform(extraSpaceTx);
+        g2d.setColor(theme.getOutlineColor());
+        g2d.fill(extraSpaceArea);
+      }
+    } finally {
+      g2d.dispose();
     }
 
     return failedComponents;
@@ -520,53 +525,6 @@ public class DrawingManager {
   public ComponentArea getComponentArea(IDIYComponent<?> component) {
     //return componentAreaMap.get(component);
     return component.getArea();
-  }
-
-  public void clearContinuityArea() {
-    this.continuityArea = null;
-  }
-
-  public List<IDIYComponent<?>> findComponentsAt(Point point, Project project) {
-    LOG.trace("findComponentsAt({}, {})", point, project);
-    List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
-    LOG.trace("Project has {} components", project.getComponents().size());
-    for (IDIYComponent<?> component : project.getComponents()) {
-      LOG.trace(
-          "findComponentsAt({}, {}) looking at component {}",
-          point,
-          project,
-          component.getIdentifier());
-      // NOTE: BIG CHANGE - look for area directly from component! //ola 20100113
-      //ComponentArea area = componentAreaMap.get(component);
-      ComponentArea area = component.getArea();
-      if (area == null) {
-        LOG.trace(
-            "findComponentsAt({}, {}) component {} has no area",
-            point,
-            project,
-            component.getIdentifier());
-      } else {
-        boolean isPointInArea = area.getOutlineArea().contains(point);
-        LOG.trace(
-            "component {} outline area in area {} {} point {}",
-            component.getIdentifier(),
-            area,
-            isPointInArea ? "contains" : "does not contain",
-            point);
-        if (isPointInArea) {
-          components.add(0, component);
-        }
-      }
-    }
-    if (!components.isEmpty()) {
-      LOG.trace("Found {} components", components.size());
-      for (IDIYComponent<?> c : components) {
-        LOG.trace("{} was found", c.getIdentifier());
-      }
-    } else {
-      LOG.trace("No components found");
-    }
-    return components;
   }
 
   public static double getExtraSpace(Project project) {
@@ -608,186 +566,5 @@ public class DrawingManager {
     this.theme = theme;
     App.putValue(IPlugInPort.THEME_KEY, theme);
     if (messageDispatcher != null) messageDispatcher.dispatchMessage(EventType.REPAINT);
-  }
-
-  public void findContinuityAreaAtPoint(Project project, Point p) {
-    List<Area> areas = getContinuityAreas(project);
-
-    for (Area a : areas) {
-      if (a.contains(p)) {
-        continuityArea = a;
-        return;
-      }
-    }
-
-    continuityArea = null;
-  }
-
-  public List<Area> getContinuityAreas(Project project) {
-    // Find all individual continuity areas for all components
-    List<Area> preliminaryAreas = new ArrayList<Area>();
-    List<Boolean> checkBreakout = new ArrayList<Boolean>();
-    Set<Connection> connections = new HashSet<Connection>();
-    for (IDIYComponent<?> c : project.getComponents()) {
-      ComponentArea a = c.getArea();
-
-      if (c instanceof IContinuity) {
-        for (int i = 0; i < c.getControlPointCount() - 1; i++)
-          for (int j = i + 1; j < c.getControlPointCount(); j++)
-            if (((IContinuity) c).arePointsConnected(i, j))
-              connections.add(new Connection(c.getControlPoint(i), c.getControlPoint(j)));
-      }
-
-      if (a == null || a.getOutlineArea() == null) continue;
-      if (a.getContinuityPositiveAreas() != null)
-        for (Area a1 : a.getContinuityPositiveAreas()) {
-          preliminaryAreas.add(a1);
-          checkBreakout.add(false);
-        }
-      if (a.getContinuityNegativeAreas() != null) {
-        for (Area na : a.getContinuityNegativeAreas())
-          for (int i = 0; i < preliminaryAreas.size(); i++) {
-            Area a1 = preliminaryAreas.get(i);
-            if (a1.intersects(na.getBounds2D())) {
-              a1.subtract(na);
-              checkBreakout.set(i, true);
-            }
-          }
-      }
-    }
-
-    // Check if we need to break some areas out in case they are interrupted
-    List<Area> areas = new ArrayList<Area>();
-    for (int i = 0; i < preliminaryAreas.size(); i++) {
-      Area a = preliminaryAreas.get(i);
-      // SpotBugs notes that checkBreakout is never used! //ola 20200110
-      // if (checkBreakout.get(i))
-      areas.addAll(tryBreakout(a));
-      // else
-      // areas.add(a);
-    }
-
-    expandConnections(connections);
-
-    crunchAreas(areas, connections);
-
-    return areas;
-  }
-
-  public void expandConnections(Set<Connection> connections) {
-    Set<Connection> toAdd = new HashSet<Connection>();
-    for (Connection c1 : connections)
-      for (Connection c2 : connections) {
-        if (c1 == c2) continue;
-        if (c1.getP1().distance(c2.getP1()) < CONTROL_POINT_SIZE)
-          toAdd.add(new Connection(c1.getP2(), c2.getP2()));
-        if (c1.getP1().distance(c2.getP2()) < CONTROL_POINT_SIZE)
-          toAdd.add(new Connection(c1.getP2(), c2.getP1()));
-        if (c1.getP2().distance(c2.getP1()) < CONTROL_POINT_SIZE)
-          toAdd.add(new Connection(c1.getP1(), c2.getP2()));
-        if (c1.getP2().distance(c2.getP2()) < CONTROL_POINT_SIZE)
-          toAdd.add(new Connection(c1.getP1(), c2.getP1()));
-      }
-    if (connections.addAll(toAdd)) expandConnections(connections);
-  }
-
-  /**
-   * Merges all areas that either overlap or are joined by connections.
-   *
-   * @param areas
-   * @param connections
-   * @return
-   */
-  private boolean crunchAreas(List<Area> areas, Set<Connection> connections) {
-    boolean isChanged = false;
-
-    List<Area> newAreas = new ArrayList<Area>();
-    List<Boolean> consumed = new ArrayList<Boolean>();
-    for (int i = 0; i < areas.size(); i++) {
-      consumed.add(false);
-    }
-    for (int i = 0; i < areas.size(); i++) {
-      for (int j = i + 1; j < areas.size(); j++) {
-        if (consumed.get(j)) continue;
-        Area a1 = areas.get(i);
-        Area a2 = areas.get(j);
-        Area intersection = null;
-        if (a1.getBounds2D().intersects(a2.getBounds())) {
-          intersection = new Area(a1);
-          intersection.intersect(a2);
-        }
-        if (intersection != null && !intersection.isEmpty()) {
-          // if the two areas intersect, make a union and
-          // consume the second area
-          a1.add(a2);
-          consumed.set(j, true);
-        } else {
-          // maybe there's a connection between them
-          for (Connection p : connections) {
-            // use getBounds to optimize the computation,
-            // don't get into complex math if not needed
-            if ((a1.getBounds().contains(p.getP1())
-                    && a2.getBounds().contains(p.getP2())
-                    && a1.contains(p.getP1())
-                    && a2.contains(p.getP2()))
-                || (a1.getBounds().contains(p.getP2()) && a2.getBounds().contains(p.getP1()))
-                    && a1.contains(p.getP2())
-                    && a2.contains(p.getP1())) {
-
-              a1.add(a2);
-              consumed.set(j, true);
-              break;
-            }
-          }
-        }
-      }
-    }
-    for (int i = 0; i < areas.size(); i++)
-      if (!consumed.get(i)) newAreas.add(areas.get(i));
-      else isChanged = true;
-
-    if (isChanged) {
-      areas.clear();
-      areas.addAll(newAreas);
-      crunchAreas(areas, connections);
-    }
-
-    return isChanged;
-  }
-
-  private List<Area> tryBreakout(Area a) {
-    List<Area> toReturn = new ArrayList<Area>();
-    Path2D p = null;
-    PathIterator pathIterator = a.getPathIterator(null);
-    while (!pathIterator.isDone()) {
-      double[] coord = new double[6];
-      int type = pathIterator.currentSegment(coord);
-      switch (type) {
-        case PathIterator.SEG_MOVETO:
-          if (p != null) {
-            Area partArea = new Area(p);
-            toReturn.add(partArea);
-          }
-          p = new Path2D.Double();
-          p.moveTo(coord[0], coord[1]);
-          break;
-        case PathIterator.SEG_LINETO:
-          p.lineTo(coord[0], coord[1]);
-          break;
-        case PathIterator.SEG_CUBICTO:
-          p.curveTo(coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]);
-          break;
-        case PathIterator.SEG_QUADTO:
-          p.quadTo(coord[0], coord[1], coord[2], coord[3]);
-          break;
-      }
-      pathIterator.next();
-    }
-    if (p != null) {
-      Area partArea = new Area(p);
-      toReturn.add(partArea);
-    }
-
-    return toReturn;
   }
 }

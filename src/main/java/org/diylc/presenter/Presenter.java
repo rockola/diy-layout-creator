@@ -93,6 +93,8 @@ import org.diylc.utils.Constants;
 public class Presenter implements IPlugInPort {
 
   private static final Logger LOG = LogManager.getLogger(Presenter.class);
+  private static final InstantiationManager instantiationManager =
+      InstantiationManager.getInstance();
 
   private String getMsg(String key) {
     return App.getString("message.presenter." + key);
@@ -142,11 +144,11 @@ public class Presenter implements IPlugInPort {
   // Utilities
   private DrawingManager drawingManager;
   private ProjectFileManager projectFileManager;
-  private static InstantiationManager instantiationManager = new InstantiationManager();
 
   private Rectangle selectionRect;
 
-  private MessageDispatcher<EventType> messageDispatcher;
+  private static MessageDispatcher<EventType> messageDispatcher =
+      new MessageDispatcher<EventType>();
 
   // D&D
   private boolean dragInProgress = false;
@@ -160,7 +162,6 @@ public class Presenter implements IPlugInPort {
   public Presenter() {
     super();
     plugIns = new ArrayList<IPlugIn>();
-    messageDispatcher = new MessageDispatcher<EventType>();
     lockedComponents = new HashSet<IDIYComponent<?>>();
     currentProject = new Project();
     drawingManager = new DrawingManager(messageDispatcher);
@@ -168,7 +169,7 @@ public class Presenter implements IPlugInPort {
     upgradeVariants();
   }
 
-  public void dispatchMessage(EventType eventType, Object... params) {
+  public static void dispatchMessage(EventType eventType, Object... params) {
     messageDispatcher.dispatchMessage(eventType, params);
   }
 
@@ -241,7 +242,6 @@ public class Presenter implements IPlugInPort {
   public void loadProject(Project project, boolean freshStart, String filename) {
     LOG.trace("loadProject({}, {})", project.getTitle(), freshStart);
     this.currentProject = project;
-    drawingManager.clearContinuityArea();
     currentProject.clearSelection();
     dispatchMessage(EventType.PROJECT_LOADED, project, freshStart, filename);
     dispatchMessage(EventType.REPAINT);
@@ -587,8 +587,7 @@ public class Presenter implements IPlugInPort {
    */
   public List<IDIYComponent<?>> findComponentsAtScaled(Point point) {
     LOG.trace("findComponentsAtScaled({})", point);
-    List<IDIYComponent<?>> components =
-        drawingManager.findComponentsAt(point, currentProject);
+    List<IDIYComponent<?>> components = currentProject.findComponentsAt(point);
     Iterator<IDIYComponent<?>> iterator = components.iterator();
     while (iterator.hasNext()) {
       IDIYComponent<?> component = iterator.next();
@@ -705,11 +704,12 @@ public class Presenter implements IPlugInPort {
                           oldProject,
                           currentProject.clone(),
                           "Add " + componentTypeSlot.getName());
-          drawingManager.clearContinuityArea();
+          //drawingManager.clearContinuityArea();
           projectFileManager.notifyFileChange();
         }
       } else if (App.getBoolean(Key.HIGHLIGHT_CONTINUITY_AREA, false)) {
-        drawingManager.findContinuityAreaAtPoint(currentProject, scaledPoint);
+        // NOTE: findContinuityAreaAtPoint(scaledPoint) has SIDE EFFECTS only!
+        currentProject.findContinuityAreaAtPoint(scaledPoint);
         dispatchMessage(EventType.REPAINT);
       } else {
         List<IDIYComponent<?>> newSelection =
@@ -844,7 +844,7 @@ public class Presenter implements IPlugInPort {
           currentProject.clone(),
           rotate ? "Rotate Selection" : "Mirror Selection");
       dispatchMessage(EventType.REPAINT);
-      drawingManager.clearContinuityArea();
+      //drawingManager.clearContinuityArea();
       return true;
     }
 
@@ -1091,7 +1091,7 @@ public class Presenter implements IPlugInPort {
     dispatchMessage(
         EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Move Selection");
     dispatchMessage(EventType.REPAINT);
-    drawingManager.clearContinuityArea();
+    //drawingManager.clearContinuityArea();
   }
 
   @Override
@@ -1395,7 +1395,7 @@ public class Presenter implements IPlugInPort {
       rotateComponents(currentProject.getSelection(), direction, isSnapToGrid());
       dispatchMessage(
           EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Rotate Selection");
-      drawingManager.clearContinuityArea();
+      // drawingManager.clearContinuityArea();
       dispatchMessage(EventType.REPAINT);
     }
   }
@@ -1444,7 +1444,7 @@ public class Presenter implements IPlugInPort {
       dispatchMessage(
           EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Mirror Selection");
       dispatchMessage(EventType.REPAINT);
-      drawingManager.clearContinuityArea();
+      // drawingManager.clearContinuityArea();
     }
   }
 
@@ -1566,7 +1566,7 @@ public class Presenter implements IPlugInPort {
     if (!preDragProject.equals(currentProject)) {
       dispatchMessage(
           EventType.PROJECT_MODIFIED, preDragProject, currentProject.clone(), "Drag");
-      drawingManager.clearContinuityArea();
+      // drawingManager.clearContinuityArea();
       projectFileManager.notifyFileChange();
     }
     dispatchMessage(EventType.REPAINT);
@@ -1618,6 +1618,8 @@ public class Presenter implements IPlugInPort {
         }
         currentProject.getComponents().add(cloned);
       } catch (Exception e) {
+        LOG.error("duplicateSelection() something went wrong", e);
+        throw new RuntimeException(e);
       }
     }
 
@@ -1625,7 +1627,7 @@ public class Presenter implements IPlugInPort {
     updateSelection();
 
     dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Duplicate");
-    drawingManager.clearContinuityArea();
+    // drawingManager.clearContinuityArea();
     projectFileManager.notifyFileChange();
     dispatchMessage(EventType.REPAINT);
   }
@@ -1648,7 +1650,7 @@ public class Presenter implements IPlugInPort {
     // Finally, remove the components themselves.
     currentProject.removeSelection();
     dispatchMessage(EventType.PROJECT_MODIFIED, oldProject, currentProject.clone(), "Delete");
-    drawingManager.clearContinuityArea();
+    // drawingManager.clearContinuityArea();
     projectFileManager.notifyFileChange();
     dispatchMessage(EventType.REPAINT);
   }
@@ -2182,7 +2184,7 @@ public class Presenter implements IPlugInPort {
             oldProject,
             currentProject.clone(),
             "Edit Selection");
-        drawingManager.clearContinuityArea();
+        // drawingManager.clearContinuityArea();
         projectFileManager.notifyFileChange();
       }
       dispatchMessage(EventType.REPAINT);
@@ -2222,7 +2224,7 @@ public class Presenter implements IPlugInPort {
             EventType.PROJECT_MODIFIED,
             oldProject, currentProject.clone(),
             "Edit Project");
-        drawingManager.clearContinuityArea();
+        // drawingManager.clearContinuityArea();
         projectFileManager.notifyFileChange();
       }
       drawingManager.fireZoomChanged();
@@ -2473,7 +2475,7 @@ public class Presenter implements IPlugInPort {
           oldProject,
           currentProject.clone(),
           "Edit Selection");
-      drawingManager.clearContinuityArea();
+      // drawingManager.clearContinuityArea();
       projectFileManager.notifyFileChange();
     }
     dispatchMessage(EventType.REPAINT);
@@ -2854,7 +2856,7 @@ public class Presenter implements IPlugInPort {
     for (int i = 0; i < switches.size(); i++) positions[i] = 0;
 
     // grab continuity areas
-    List<Area> continuity = drawingManager.getContinuityAreas(currentProject);
+    List<Area> continuity = currentProject.getContinuityAreas();
 
     int i = switches.size() - 1;
     while (i >= 0) {
@@ -2912,7 +2914,6 @@ public class Presenter implements IPlugInPort {
     // }
     // LOG.debug(sb.toString());
 
-    double t = DrawingManager.CONTROL_POINT_SIZE;
     for (int i = 0; i < nodes.size() - 1; i++)
       for (int j = i + 1; j < nodes.size(); j++) {
         Node node1 = nodes.get(i);
@@ -2924,11 +2925,13 @@ public class Presenter implements IPlugInPort {
         String commonPoint2 = node2.getComponent().getCommonPointName(node2.getPointIndex());
 
         // try both directions
-        if (point1.distance(point2) < t
-            || checkGraphConnection(
-                point1, point2, connections, continuityAreas, new boolean[connections.size()])
-            || checkGraphConnection(
-                point2, point1, connections, continuityAreas, new boolean[connections.size()])
+        if (point1.distance(point2) < DrawingManager.CONTROL_POINT_SIZE
+            || checkGraphConnectionBothWays(
+                point1,
+                point2,
+                connections,
+                continuityAreas,
+                new boolean[connections.size()])
             || (commonPoint1 != null && commonPoint1.equalsIgnoreCase(commonPoint2))) {
           boolean added = false;
           // add to an existing vertex if possible
@@ -2978,40 +2981,58 @@ public class Presenter implements IPlugInPort {
       List<Connection> connections,
       List<Area> continuityAreas,
       boolean[] visited) {
-    double t = DrawingManager.CONTROL_POINT_SIZE;
 
-    if (point1.distance(point2) < t) return true;
+    final double epsilon = DrawingManager.CONTROL_POINT_SIZE;
+
+    if (point1.distance(point2) < epsilon) {
+      return true;
+    }
 
     for (Area a : continuityAreas) {
-      if (a.contains(point1) && a.contains(point2)) return true;
+      if (a.contains(point1) && a.contains(point2)) {
+        return true;
+      }
     }
 
     for (int i = 0; i < connections.size(); i++) {
-      if (visited[i]) continue;
+      if (visited[i]) {
+        continue;
+      }
 
       Connection c = connections.get(i);
-      if (point1.distance(c.getP1()) < t) {
+      if (point1.distance(c.getP1()) < epsilon) {
         visited[i] = true;
-        if (checkGraphConnection(c.getP2(), point2, connections, continuityAreas, visited))
+        if (checkGraphConnection(c.getP2(), point2, connections, continuityAreas, visited)) {
           return true;
+        }
       }
-      if (point1.distance(c.getP2()) < t) {
+      if (point1.distance(c.getP2()) < epsilon) {
         visited[i] = true;
-        if (checkGraphConnection(c.getP1(), point2, connections, continuityAreas, visited))
+        if (checkGraphConnection(c.getP1(), point2, connections, continuityAreas, visited)) {
           return true;
+        }
       }
     }
 
     return false;
   }
 
+  private boolean checkGraphConnectionBothWays(
+      Point2D point1,
+      Point2D point2,
+      List<Connection> connections,
+      List<Area> continuityAreas,
+      boolean[] visited) {
+    return checkGraphConnection(point1, point2, connections, continuityAreas, visited)
+        || checkGraphConnection(point2, point1, connections, continuityAreas, visited);
+  }
+
   @SuppressWarnings("unchecked")
   private List<Connection> getConnections(Map<ISwitch, Integer> switchPositions) {
     Set<Connection> connections = new HashSet<Connection>();
     for (IDIYComponent<?> c : currentProject.getComponents()) {
-      ComponentType type =
-          ComponentProcessor.extractComponentTypeFrom(
-              (Class<? extends IDIYComponent<?>>) c.getClass());
+      ComponentType type = ComponentProcessor.extractComponentTypeFrom(
+          (Class<? extends IDIYComponent<?>>) c.getClass());
       // handle direct connections
       if (c instanceof IContinuity) {
         for (int i = 0; i < c.getControlPointCount() - 1; i++)
@@ -3031,7 +3052,7 @@ public class Presenter implements IPlugInPort {
       }
     }
 
-    drawingManager.expandConnections(connections);
+    currentProject.expandConnections(connections);
 
     return new ArrayList<Connection>(connections);
   }

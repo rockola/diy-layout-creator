@@ -21,6 +21,10 @@
 package org.diylc.core;
 
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,18 +41,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.diylc.appframework.update.VersionNumber;
+import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
+import org.diylc.common.EventType;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
 
+import org.diylc.presenter.ComponentArea; // needed for findComponentsAt
+import org.diylc.presenter.ComponentProcessor; // needed by createUniqueName
+import org.diylc.presenter.Connection; // needed by continuity area methods
+import org.diylc.presenter.DrawingManager; // needed for CONTROL_POINT_SIZE only
+import org.diylc.presenter.InstantiationManager; // needed by createUniqueName
+import org.diylc.presenter.Presenter; // needed for dispatchMessage
+
 /**
- * Entity class that defines a project. Contains project properties
- * and a collection of components.This class is serialized to
- * file. Some filed getters are tagged with {@link EditableProperty}
- * to enable for user to edit them.
+ * Project entity class. Contains project properties and a collection
+ * of components.This class is serialized to file. Some field getters
+ * are tagged with {@link EditableProperty} to enable user editing.
  *
  * @author Branislav Stojkovic
  */
@@ -56,6 +68,7 @@ public class Project implements Serializable, Cloneable {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(Project.class);
+  private static final int CONTROL_POINT_SIZE = DrawingManager.CONTROL_POINT_SIZE;
 
   public static final String FILE_SUFFIX = ".diy";
 
@@ -79,8 +92,8 @@ public class Project implements Serializable, Cloneable {
   private Font font = DEFAULT_FONT;
 
   private transient Set<IDIYComponent<?>> selection = new HashSet<IDIYComponent<?>>();
-  // should really be called "instantiated"
-  private transient Date created = new Date();
+  private transient Area continuityArea;
+  private transient Date created = new Date(); // should really be called "instantiated"
   private transient int sequenceNumber = nextSequenceNumber();
 
   private static int projectSequenceNumber = 0;
@@ -131,6 +144,209 @@ public class Project implements Serializable, Cloneable {
     return selection.contains(c);
   }
 
+  /* Continuity area methods */
+
+  private void clearContinuityArea() {
+    this.continuityArea = null;
+  }
+
+  public boolean hasContinuityArea() {
+    return this.continuityArea != null;
+  }
+
+  public Area getContinuityArea() {
+    return this.continuityArea;
+  }
+
+  public Area findContinuityAreaAtPoint(Point p) {
+    List<Area> areas = getContinuityAreas();
+
+    for (Area a : areas) {
+      if (a.contains(p)) {
+        this.continuityArea = a;
+        return a;
+      }
+    }
+
+    this.continuityArea = null;
+    return null;
+  }
+
+  public List<Area> getContinuityAreas() {
+    // Find all individual continuity areas for all components
+    List<Area> preliminaryAreas = new ArrayList<Area>();
+    List<Boolean> checkBreakout = new ArrayList<Boolean>();
+    Set<Connection> connections = new HashSet<Connection>();
+    for (IDIYComponent<?> c : getComponents()) {
+      ComponentArea a = c.getArea();
+
+      if (c instanceof IContinuity) {
+        for (int i = 0; i < c.getControlPointCount() - 1; i++)
+          for (int j = i + 1; j < c.getControlPointCount(); j++)
+            if (((IContinuity) c).arePointsConnected(i, j))
+              connections.add(new Connection(c.getControlPoint(i), c.getControlPoint(j)));
+      }
+
+      if (a == null || a.getOutlineArea() == null) continue;
+      if (a.getContinuityPositiveAreas() != null)
+        for (Area a1 : a.getContinuityPositiveAreas()) {
+          preliminaryAreas.add(a1);
+          checkBreakout.add(false);
+        }
+      if (a.getContinuityNegativeAreas() != null) {
+        for (Area na : a.getContinuityNegativeAreas())
+          for (int i = 0; i < preliminaryAreas.size(); i++) {
+            Area a1 = preliminaryAreas.get(i);
+            if (a1.intersects(na.getBounds2D())) {
+              a1.subtract(na);
+              checkBreakout.set(i, true);
+            }
+          }
+      }
+    }
+
+    // Check if we need to break some areas out in case they are interrupted
+    List<Area> areas = new ArrayList<Area>();
+    for (int i = 0; i < preliminaryAreas.size(); i++) {
+      Area a = preliminaryAreas.get(i);
+      // SpotBugs notes that checkBreakout is never used! //ola 20200110
+      // if (checkBreakout.get(i))
+      areas.addAll(tryBreakout(a));
+      // else
+      // areas.add(a);
+    }
+
+    expandConnections(connections);
+    crunchAreas(areas, connections);
+
+    return areas;
+  }
+
+  public void expandConnections(Set<Connection> connections) {
+    Set<Connection> toAdd = new HashSet<Connection>();
+    for (Connection c1 : connections) {
+      for (Connection c2 : connections) {
+        if (c1 != c2) {
+          if (c1.getP1().distance(c2.getP1()) < CONTROL_POINT_SIZE) {
+            toAdd.add(new Connection(c1.getP2(), c2.getP2()));
+          }
+          if (c1.getP1().distance(c2.getP2()) < CONTROL_POINT_SIZE) {
+            toAdd.add(new Connection(c1.getP2(), c2.getP1()));
+          }
+          if (c1.getP2().distance(c2.getP1()) < CONTROL_POINT_SIZE) {
+            toAdd.add(new Connection(c1.getP1(), c2.getP2()));
+          }
+          if (c1.getP2().distance(c2.getP2()) < CONTROL_POINT_SIZE) {
+            toAdd.add(new Connection(c1.getP1(), c2.getP1()));
+          }
+        }
+      }
+    }
+    if (connections.addAll(toAdd)) {
+      expandConnections(connections);
+    }
+  }
+
+  /**
+   * Merges all areas that either overlap or are joined by connections.
+   *
+   * @param areas
+   * @param connections
+   * @return
+   */
+  private boolean crunchAreas(List<Area> areas, Set<Connection> connections) {
+    boolean isChanged = false;
+
+    List<Area> newAreas = new ArrayList<Area>();
+    List<Boolean> consumed = new ArrayList<Boolean>();
+    for (int i = 0; i < areas.size(); i++) {
+      consumed.add(false);
+    }
+    for (int i = 0; i < areas.size(); i++) {
+      for (int j = i + 1; j < areas.size(); j++) {
+        if (consumed.get(j)) continue;
+        Area a1 = areas.get(i);
+        Area a2 = areas.get(j);
+        Area intersection = null;
+        if (a1.getBounds2D().intersects(a2.getBounds())) {
+          intersection = new Area(a1);
+          intersection.intersect(a2);
+        }
+        if (intersection != null && !intersection.isEmpty()) {
+          // if the two areas intersect, make a union and
+          // consume the second area
+          a1.add(a2);
+          consumed.set(j, true);
+        } else {
+          // maybe there's a connection between them
+          for (Connection p : connections) {
+            // use getBounds to optimize the computation,
+            // don't get into complex math if not needed
+            if ((a1.getBounds().contains(p.getP1())
+                    && a2.getBounds().contains(p.getP2())
+                    && a1.contains(p.getP1())
+                    && a2.contains(p.getP2()))
+                || (a1.getBounds().contains(p.getP2()) && a2.getBounds().contains(p.getP1()))
+                    && a1.contains(p.getP2())
+                    && a2.contains(p.getP1())) {
+
+              a1.add(a2);
+              consumed.set(j, true);
+              break;
+            }
+          }
+        }
+      }
+    }
+    for (int i = 0; i < areas.size(); i++)
+      if (!consumed.get(i)) newAreas.add(areas.get(i));
+      else isChanged = true;
+
+    if (isChanged) {
+      areas.clear();
+      areas.addAll(newAreas);
+      crunchAreas(areas, connections);
+    }
+
+    return isChanged;
+  }
+
+  private List<Area> tryBreakout(Area a) {
+    List<Area> toReturn = new ArrayList<Area>();
+    Path2D p = null;
+    PathIterator pathIterator = a.getPathIterator(null);
+    while (!pathIterator.isDone()) {
+      double[] coord = new double[6];
+      int type = pathIterator.currentSegment(coord);
+      switch (type) {
+        case PathIterator.SEG_MOVETO:
+          if (p != null) {
+            Area partArea = new Area(p);
+            toReturn.add(partArea);
+          }
+          p = new Path2D.Double();
+          p.moveTo(coord[0], coord[1]);
+          break;
+        case PathIterator.SEG_LINETO:
+          p.lineTo(coord[0], coord[1]);
+          break;
+        case PathIterator.SEG_CUBICTO:
+          p.curveTo(coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]);
+          break;
+        case PathIterator.SEG_QUADTO:
+          p.quadTo(coord[0], coord[1], coord[2], coord[3]);
+          break;
+      }
+      pathIterator.next();
+    }
+    if (p != null) {
+      Area partArea = new Area(p);
+      toReturn.add(partArea);
+    }
+
+    return toReturn;
+  }
+
   /**
      Remove certain components from this project.
    */
@@ -167,8 +383,60 @@ public class Project implements Serializable, Cloneable {
     selection.add(c);
   }
 
+  private IDIYComponent<?> copyWithUniqueName(
+      IDIYComponent<?> original) throws CloneNotSupportedException {
+    IDIYComponent<?> theCopy = original.clone();
+    /* TODO simplify unique name creation
+       TODO make it possible to do this for a number of components
+       so that existing components need to be traversed only once */
+    ComponentType componentType =
+        ComponentProcessor.extractComponentTypeFrom(
+            (Class<? extends IDIYComponent<?>>) theCopy.getClass());
+    theCopy.setName(InstantiationManager.getInstance().createUniqueName(
+        componentType,
+        getComponents()));
+    return theCopy;
+  }
+
   /**
-   * Removes all the groups that contain at least one of the specified components.
+     Duplicate selection.
+  */
+  public void duplicateSelection() {
+    int offset = getGridSpacing().asPixels();
+    Set<IDIYComponent<?>> newSelection = new HashSet<>();
+    /*
+      copy all selected components, move the copies by offset in both
+      X and Y directions, place copies in project, set selection to
+      copies, notify listeners of project change
+    */
+    try {
+      for (IDIYComponent<?> component : getSelection()) {
+        IDIYComponent<?> duplicateComponent = copyWithUniqueName(component);
+        // TODO make sure duplicateComponent name is unique
+        duplicateComponent.nudge(offset, offset);
+        newSelection.add(duplicateComponent);
+      }
+    } catch (CloneNotSupportedException e) {
+      LOG.fatal("duplicateSelection() could not clone component", e);
+      throw new RuntimeException(e);
+    }
+    getComponents().addAll(newSelection);
+    clearContinuityArea();
+    setSelection(newSelection);
+    // TODO clear continuity area
+    // TODO notify project change (this is now unsaved & also in need of autosave)
+    redraw();
+  }
+
+  /**
+     Send Repaint message to change listeners.
+  */
+  private void redraw() {
+    Presenter.dispatchMessage(EventType.REPAINT);
+  }
+
+  /**
+   * Remove all groups that contain at least one of the specified components.
    *
    * @param components
    */
@@ -260,7 +528,7 @@ public class Project implements Serializable, Cloneable {
   /**
    * List of components sorted by z-order ascending.
    *
-   * @return
+   * @return a list of all components in the project
    */
   public List<IDIYComponent<?>> getComponents() {
     return components;
@@ -318,6 +586,51 @@ public class Project implements Serializable, Cloneable {
   public void setFontSize(int size) {
     font = getFont().deriveFont((float) size);
   }
+
+  public List<IDIYComponent<?>> findComponentsAt(Point point) {
+    LOG.trace("findComponentsAt({}) {}", point, this);
+    List<IDIYComponent<?>> found = new ArrayList<IDIYComponent<?>>();
+    LOG.trace("Project has {} components", getComponents().size());
+    for (IDIYComponent<?> component : getComponents()) {
+      LOG.trace(
+          "findComponentsAt({}) {} looking at component {}",
+          point,
+          this,
+          component.getIdentifier());
+      // NOTE: BIG CHANGE - look for area directly from component! //ola 20100113
+      //ComponentArea area = componentAreaMap.get(component);
+      ComponentArea area = component.getArea();
+      if (area == null) {
+        LOG.trace(
+            "findComponentsAt({}) {} component {} has no area",
+            point,
+            this,
+            component.getIdentifier());
+      } else {
+        boolean isPointInArea = area.getOutlineArea().contains(point);
+        LOG.trace(
+            "component {} outline area in area {} {} point {}",
+            component.getIdentifier(),
+            area,
+            isPointInArea ? "contains" : "does not contain",
+            point);
+        if (isPointInArea) {
+          found.add(0, component);
+        }
+      }
+    }
+    if (!found.isEmpty()) {
+      LOG.trace("Found {} components", found.size());
+      for (IDIYComponent<?> c : found) {
+        LOG.trace("{} was found", c.getIdentifier());
+      }
+    } else {
+      LOG.trace("No components found");
+    }
+    return found;
+  }
+
+
 
   @Override
   public int hashCode() {
