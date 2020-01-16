@@ -5,8 +5,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,8 +21,6 @@ public class MessageDispatcher<E extends Enum<E>> {
   private static final Logger LOG = LogManager.getLogger(MessageDispatcher.class);
 
   private Map<E, List<IMessageListener<E>>> subscriptions = new HashMap<>();
-  private Object mutex = new Object();
-  private ExecutorService threadFactory;
 
   public MessageDispatcher() {}
 
