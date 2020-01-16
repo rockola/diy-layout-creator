@@ -55,15 +55,9 @@ import org.diylc.core.measures.Size;
 public class InstantiationManager {
 
   private static final Logger LOG = LogManager.getLogger(InstantiationManager.class);
+  private static final InstantiationManager instantiationManager = new InstantiationManager();
 
-  public static int MAX_RECENT_COMPONENTS = 16;
-
-  private ComponentType componentTypeSlot;
-  private Template template;
-  private List<IDIYComponent<?>> componentSlot;
-  private Point firstControlPoint;
-  private Point potentialControlPoint;
-
+  public static final int MAX_RECENT_COMPONENTS = 16;
   public static final ComponentType clipboardType =
       new ComponentType(
           "Clipboard contents",
@@ -99,7 +93,17 @@ public class InstantiationManager {
           KeywordPolicy.NEVER_SHOW,
           null);
 
-  public InstantiationManager() {}
+  private ComponentType componentTypeSlot;
+  private Template template;
+  private List<IDIYComponent<?>> componentSlot;
+  private Point firstControlPoint;
+  private Point potentialControlPoint;
+
+  private InstantiationManager() {}
+
+  public static InstantiationManager getInstance() {
+    return instantiationManager;
+  }
 
   public ComponentType getComponentTypeSlot() {
     return componentTypeSlot;
