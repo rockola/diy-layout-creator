@@ -495,9 +495,11 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       case _5PDT_off:
         return 3;
       default:
+        /* TODO: is it OK to just "return 2" in the default case? if not,
         throw new RuntimeException(
             "getPositionCount(): unhandled switch type " + switchType
             + " for " + this.getClass().getName());
+        */
     }
     return 2;
   }
@@ -533,9 +535,12 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       case _DP3T_mustang:
         return (index2 - index1) < 3 && index1 % 3 == 0 && index2 % 3 == position + 1;
       default:
+        /* All existing cases are handled above; if cases are added,
+           maybe we should
         throw new RuntimeException(
             "arePointsConnected(): unhandled switch type " + switchType.toString()
             + " for " + this.getClass().getName());
+        */
     }
     return false;
   }
