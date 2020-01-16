@@ -45,10 +45,12 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
     this.borderColor = COLOR;
   }
 
+  /* unnecessary override
   @Override
   public Color getBodyColor() {
     return super.getBodyColor();
   }
+  */
 
   @Override
   protected boolean shouldShadeLeads() {
