@@ -107,6 +107,7 @@ public class BlankBoard extends AbstractBoard {
     }
   }
 
+  /* unnecessary overrides
   @Override
   public CoordinateType getxType() {
     // Override to prevent editing.
@@ -130,6 +131,7 @@ public class BlankBoard extends AbstractBoard {
     // Override to prevent editing.
     return super.getCoordinateColor();
   }
+  */
 
   @EditableProperty(name = "Shape")
   public Type getType() {
