@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -95,7 +94,6 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     updateControlPoints();
   }
 
-  @SuppressWarnings("incomplete-switch")
   private void updateControlPoints() {
     Point firstPoint = controlPoints[0];
     int hSpacing = (int) HORIZONTAL_SPACING.convertToPixels();
@@ -116,6 +114,8 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
         case _270:
           theta = Math.PI * 3 / 2;
           break;
+        default:
+          // do nothing
       }
       AffineTransform rotation =
           AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
@@ -206,17 +206,18 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
                 .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
-      Composite oldComposite = g2d.getComposite();
+      final Composite oldComposite = g2d.getComposite();
       if (alpha < MAX_ALPHA) {
         g2d.setComposite(
             AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
       }
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
-      for (Area a : body)
+      for (Area a : body) {
         if (a != null) {
           g2d.fill(a);
           break;
         }
+      }
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
       Color finalBorderColor;
@@ -226,7 +227,11 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
         finalBorderColor = getBorderColor();
       }
       g2d.setColor(finalBorderColor);
-      for (Area a : body) if (a != null) g2d.draw(a);
+      for (Area a : body) {
+        if (a != null) {
+          g2d.draw(a);
+        }
+      }
     }
     // Do not track these changes because the whole switch has been tracked
     // so far.
@@ -258,33 +263,13 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   @SuppressWarnings("incomplete-switch")
   public Area[] getBody() {
     if (body == null) {
-      Point firstPoint = controlPoints[0];
-      int vSpacing = (int) VERTICAL_SPACING.convertToPixels();
-
-      double cutoutRadius;
-      double cutoutLength;
-      double cutoutWidth;
-      double cutoutSlant;
-      double baseLength;
-      double baseWidth = SIMPLE_BASE_WIDTH.convertToPixels();
-      ;
-      double baseRadius;
-      double length;
-      double outerRadius;
-      double holeDiameter = HOLE_DIAMETER.convertToPixels();
-      double holeSpacing = HOLE_SPACING.convertToPixels();
-
       body = new Area[3];
 
-      cutoutRadius = SIMPLE_CUTOUT_RADIUS.convertToPixels();
-      baseRadius = SIMPLE_BASE_RADIUS.convertToPixels();
-      cutoutLength = SIMPLE_CUTOUT_LENGTH.convertToPixels();
-      cutoutWidth = SIMPLE_CUTOUT_WIDTH.convertToPixels();
-      cutoutSlant = SIMPLE_CUTOUT_SLANT.convertToPixels();
-      baseLength = SIMPLE_BASE_LENGTH.convertToPixels();
-      length = SIMPLE_LENGTH.convertToPixels();
-      outerRadius = SIMPLE_OUTER_RADIUS.convertToPixels();
-
+      Point firstPoint = controlPoints[0];
+      double baseLength = SIMPLE_BASE_LENGTH.convertToPixels();
+      double baseWidth = SIMPLE_BASE_WIDTH.convertToPixels();
+      double length = SIMPLE_LENGTH.convertToPixels();
+      int vSpacing = (int) VERTICAL_SPACING.convertToPixels();
       Point[] outerPoints =
           new Point[] {
             new Point(
@@ -309,38 +294,43 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
                 (int) Math.round(firstPoint.x - baseLength / 2),
                 (int) Math.round(firstPoint.y + vSpacing / 2 - baseWidth / 2)),
           };
-
+      double baseRadius = SIMPLE_BASE_RADIUS.convertToPixels();
+      double outerRadius = SIMPLE_OUTER_RADIUS.convertToPixels();
       double[] outerRadiuses =
           new double[] {
-            baseRadius / 2, outerRadius, baseRadius / 2, baseRadius / 2, outerRadius, baseRadius / 2
+            baseRadius / 2,
+            outerRadius,
+            baseRadius / 2,
+            baseRadius / 2,
+            outerRadius,
+            baseRadius / 2
           };
 
+      double holeDiameter = HOLE_DIAMETER.convertToPixels();
+      double holeSpacing = HOLE_SPACING.convertToPixels();
       body[0] = new Area(new RoundedPolygon(outerPoints, outerRadiuses));
-      body[0].subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  firstPoint.x - holeSpacing / 2 - holeDiameter / 2,
-                  firstPoint.y + vSpacing / 2 - holeDiameter / 2,
-                  holeDiameter,
-                  holeDiameter)));
-      body[0].subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  firstPoint.x + holeSpacing / 2 - holeDiameter / 2,
-                  firstPoint.y + vSpacing / 2 - holeDiameter / 2,
-                  holeDiameter,
-                  holeDiameter)));
+      body[0].subtract(new Area(new Ellipse2D.Double(
+          firstPoint.x - holeSpacing / 2 - holeDiameter / 2,
+          firstPoint.y + vSpacing / 2 - holeDiameter / 2,
+          holeDiameter,
+          holeDiameter)));
+      body[0].subtract(new Area(new Ellipse2D.Double(
+          firstPoint.x + holeSpacing / 2 - holeDiameter / 2,
+          firstPoint.y + vSpacing / 2 - holeDiameter / 2,
+          holeDiameter,
+          holeDiameter)));
+      body[1] = new Area(new RoundRectangle2D.Double(
+          firstPoint.x - baseLength / 2,
+          firstPoint.y + vSpacing / 2 - baseWidth / 2,
+          baseLength,
+          baseWidth,
+          baseRadius,
+          baseRadius));
 
-      body[1] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  firstPoint.x - baseLength / 2,
-                  firstPoint.y + vSpacing / 2 - baseWidth / 2,
-                  baseLength,
-                  baseWidth,
-                  baseRadius,
-                  baseRadius));
-
+      double cutoutLength = SIMPLE_CUTOUT_LENGTH.convertToPixels();
+      double cutoutRadius = SIMPLE_CUTOUT_RADIUS.convertToPixels();
+      double cutoutSlant = SIMPLE_CUTOUT_SLANT.convertToPixels();
+      double cutoutWidth = SIMPLE_CUTOUT_WIDTH.convertToPixels();
       Point[] cutoutPoints =
           new Point[] {
             new Point(firstPoint.x, (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2)),
@@ -383,10 +373,16 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
           case _270:
             theta = Math.PI * 3 / 2;
             break;
+          default:
+            // do nothing
         }
         AffineTransform rotation =
             AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
-        for (Area a : body) if (a != null) a.transform(rotation);
+        for (Area a : body) {
+          if (a != null) {
+            a.transform(rotation);
+          }
+        }
       }
     }
     return body;
@@ -400,18 +396,17 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     int terminal = (int) (4f * width / 32);
     int terminalSpacingH = (int) (7f * width / 32);
     int terminalSpacingV = (int) (4f * width / 32);
-    RoundedPolygon poly =
-        new RoundedPolygon(
-            new Point[] {
-              new Point(width / 2, height / 5),
-              new Point(width - margin - slant, height / 5),
-              new Point(width - margin, height / 5 + slant),
-              new Point(width - margin, height * 4 / 5),
-              new Point(margin, height * 4 / 5),
-              new Point(margin, height / 5 + slant),
-              new Point(margin + slant, height / 5),
-            },
-            new double[] {2d});
+    RoundedPolygon poly = new RoundedPolygon(
+        new Point[] {
+          new Point(width / 2, height / 5),
+          new Point(width - margin - slant, height / 5),
+          new Point(width - margin, height / 5 + slant),
+          new Point(width - margin, height * 4 / 5),
+          new Point(margin, height * 4 / 5),
+          new Point(margin, height / 5 + slant),
+          new Point(margin + slant, height / 5),
+        },
+        new double[] {2d});
     g2d.fill(poly);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(poly);
@@ -427,7 +422,9 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
 
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
-    if (bodyColor == null) bodyColor = BODY_COLOR;
+    if (bodyColor == null) {
+      bodyColor = BODY_COLOR;
+    }
     return bodyColor;
   }
 
@@ -437,7 +434,9 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
 
   @EditableProperty(name = "Border")
   public Color getBorderColor() {
-    if (borderColor == null) borderColor = BORDER_COLOR;
+    if (borderColor == null) {
+      borderColor = BORDER_COLOR;
+    }
     return borderColor;
   }
 
