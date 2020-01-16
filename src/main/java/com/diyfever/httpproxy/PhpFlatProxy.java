@@ -34,7 +34,7 @@ import org.diylc.appframework.Serializer;
 public class PhpFlatProxy implements IFlatProxy {
 
   private static final Logger LOG = LogManager.getLogger(PhpFlatProxy.class);
-  private final OkHttpClient httpClient = new OkHttpClient();
+  //private final OkHttpClient httpClient = new OkHttpClient();
 
   @Override
   public InputStream invoke(String url, String methodName, Map<String, Object> params) {
