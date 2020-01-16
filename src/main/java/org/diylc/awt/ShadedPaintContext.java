@@ -41,13 +41,11 @@ public class ShadedPaintContext implements PaintContext {
   static WeakReference<Raster> cached;
 
   static synchronized Raster getCachedRaster(ColorModel cm, int w, int h) {
-    if (cm == cachedModel) {
-      if (cached != null) {
-        Raster ras = (Raster) cached.get();
-        if (ras != null && ras.getWidth() >= w && ras.getHeight() >= h) {
-          cached = null;
-          return ras;
-        }
+    if (cm == cachedModel && cached != null) {
+      Raster ras = (Raster) cached.get();
+      if (ras != null && ras.getWidth() >= w && ras.getHeight() >= h) {
+        cached = null;
+        return ras;
       }
     }
     return cm.createCompatibleWritableRaster(w, h);
