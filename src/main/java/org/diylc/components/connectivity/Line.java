@@ -161,13 +161,6 @@ public class Line extends AbstractLeadedComponent<Void> {
     return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
   }
 
-  @Override
-  public Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-        ? SELECTION_COLOR
-        : color;
-  }
-
   public Polygon getArrow() {
     if (arrow == null) {
       arrow = new Polygon();

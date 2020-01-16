@@ -95,11 +95,4 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
   public void setLabelPosition(LabelPosition labelPosition) {
     this.labelPosition = labelPosition;
   }
-
-  @Override
-  protected Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-        ? SELECTION_COLOR
-        : getLeadColor();
-  }
 }

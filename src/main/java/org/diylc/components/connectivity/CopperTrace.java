@@ -75,13 +75,6 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   }
 
   @Override
-  protected Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-        ? SELECTION_COLOR
-        : getLeadColor();
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
   }

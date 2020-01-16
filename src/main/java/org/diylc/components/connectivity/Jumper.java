@@ -74,13 +74,6 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
   }
 
   @Override
-  public Color getLeadColorForPainting(ComponentState componentState) {
-    return componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-        ? SELECTION_COLOR
-        : getLeadColor();
-  }
-
-  @Override
   @EditableProperty(name = "Color")
   public Color getLeadColor() {
     if (color != null) {
