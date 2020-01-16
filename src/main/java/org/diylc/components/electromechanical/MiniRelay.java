@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -363,7 +362,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
       return;
     }
     Area mainArea = getBody()[0];
-    Composite oldComposite = g2d.getComposite();
+    final Composite oldComposite = g2d.getComposite();
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
@@ -427,7 +426,6 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
               : LABEL_COLOR;
     }
     g2d.setColor(finalLabelColor);
-    FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     String label = "";
     label = display == Display.VALUE ? getValue() : getName();
     if (display == Display.NONE) {
@@ -436,6 +434,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     if (display == Display.BOTH) {
       label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
     }
+    FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());
     int textWidth = (int) (rect.getWidth());
@@ -456,7 +455,9 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     int pinSize = 2 * width / 32;
     g2d.setColor(PIN_COLOR);
     for (int i = 0; i < 4; i++) {
-      if (i == 1) continue;
+      if (i == 1) {
+        continue;
+      }
       g2d.fillOval(width / 4, (height / 5) * (i + 1) - 1, pinSize, pinSize);
       g2d.fillOval(3 * width / 4 - pinSize, (height / 5) * (i + 1) - 1, pinSize, pinSize);
     }
@@ -516,6 +517,6 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
 
     public String toString() {
       return name().replace('_', '-');
-    };
+    }
   }
 }
