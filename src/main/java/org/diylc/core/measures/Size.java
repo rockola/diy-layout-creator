@@ -33,6 +33,11 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     super(s.value, s.unit);
   }
 
+  /**
+     Convert to pixels.
+     Return value can be fractional. Use this when the return value is used in calculations.
+     Integer (int) values are returned directly by asPixels().
+  */
   public double convertToPixels() {
     // double factor = getUnit().getFactor() / SizeUnit.in.getFactor();
     // int grids = (int) (factor * getValue() * Constants.GRIDS_PER_INCH);
@@ -41,6 +46,13 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     // * (grids + remainder));
     return getValue() * getUnit().getFactor()
         / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
+  }
+
+  /**
+    Convert to an integer number of pixels.
+  */
+  public int asPixels() {
+    return (int) convertToPixels();
   }
 
   public static Size parseSize(String value) {
