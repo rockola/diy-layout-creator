@@ -1183,9 +1183,11 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Duplicate triggered");
       try {
-        plugInPort.duplicateSelection();
+        // plugInPort.duplicateSelection();
+        plugInPort.getCurrentProject().duplicateSelection();
       } catch (Exception ex) {
-        LOG.error("Could not duplicate.", ex);
+        LOG.error("Could not duplicate", ex);
+        throw new RuntimeException(ex);
       }
     }
   }
