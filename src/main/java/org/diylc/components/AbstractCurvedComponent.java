@@ -346,7 +346,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
     private int count;
 
-    private PointCount(int count) {
+    PointCount(int count) {
       this.count = count;
     }
 
