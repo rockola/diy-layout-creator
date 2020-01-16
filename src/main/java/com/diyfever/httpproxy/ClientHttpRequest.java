@@ -97,6 +97,7 @@ public class ClientHttpRequest {
     this(new URL(urlString));
   }
 
+  /* not used
   private void postCookies() {
     StringBuffer cookieList = new StringBuffer();
 
@@ -112,9 +113,10 @@ public class ClientHttpRequest {
       connection.setRequestProperty("Cookie", cookieList.toString());
     }
   }
+  */
 
   /**
-   * adds a cookie to the requst
+   * adds a cookie to the request
    *
    * @param name cookie name
    * @param value cookie value
@@ -174,7 +176,6 @@ public class ClientHttpRequest {
   private static void pipe(InputStream in, OutputStream out) throws IOException {
     byte[] buf = new byte[500000];
     int nread;
-    int navailable;
     int total = 0;
     synchronized (in) {
       while ((nread = in.read(buf, 0, buf.length)) >= 0) {
