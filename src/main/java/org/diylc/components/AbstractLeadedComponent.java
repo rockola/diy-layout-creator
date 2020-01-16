@@ -97,7 +97,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       this.length = new Size(getDefaultLength());
       this.width = new Size(getDefaultWidth());
     } catch (NullPointerException e) {
-      // This will happen if components do not have any shape.
+      // This is fine for components which do not have a shape
     }
     points[2] = calculateLabelPosition(points[0], points[1]);
   }
