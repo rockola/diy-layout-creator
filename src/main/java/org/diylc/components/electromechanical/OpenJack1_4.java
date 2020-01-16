@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.electromechanical;
 
 import java.awt.AlphaComposite;
@@ -31,6 +30,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
+
+import org.apache.commons.text.WordUtils;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -98,8 +100,8 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
 
+    Shape[] body = getBody();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     //    if (componentState != ComponentState.DRAGGING) {
     Composite oldComposite = g2d.getComposite();
@@ -137,17 +139,17 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     drawingObserver.startTrackingContinuityArea(true);
     g2d.fill(body[1]);
     g2d.fill(body[2]);
-    if (body[3] != null) g2d.fill(body[3]);
+    if (body[3] != null) {
+      g2d.fill(body[3]);
+    }
     drawingObserver.stopTrackingContinuityArea();
 
     g2d.setComposite(oldComposite);
     //    }
 
     if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
+      Theme theme = (Theme) ConfigurationManager.getInstance()
+                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
       finalBorderColor = theme.getOutlineColor();
     } else {
       finalBorderColor = BASE_COLOR.darker();
@@ -156,7 +158,9 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     g2d.setColor(finalBorderColor);
     g2d.draw(body[1]);
     g2d.draw(body[2]);
-    if (body[3] != null) g2d.draw(body[3]);
+    if (body[3] != null) {
+      g2d.draw(body[3]);
+    }
 
     // draw labels
     if (showLabels) {
@@ -189,34 +193,27 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
         rotation.transform(ringOrSwitchLabel, ringOrSwitchLabel);
         rotation.transform(sleeveLabel, sleeveLabel);
       }
-      StringUtils.drawCenteredText(
-          g2d, "T", tipLabel.x, tipLabel.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-      StringUtils.drawCenteredText(
-          g2d,
-          "S",
-          sleeveLabel.x,
-          sleeveLabel.y,
-          HorizontalAlignment.CENTER,
-          VerticalAlignment.CENTER);
-      if (getType() == OpenJackType.STEREO)
-        StringUtils.drawCenteredText(
-            g2d,
-            "R",
-            ringOrSwitchLabel.x,
-            ringOrSwitchLabel.y,
-            HorizontalAlignment.CENTER,
-            VerticalAlignment.CENTER);
-      if (getType() == OpenJackType.SWITCHED)
-        StringUtils.drawCenteredText(
-            g2d,
-            "Sw",
-            ringOrSwitchLabel.x,
-            ringOrSwitchLabel.y,
-            HorizontalAlignment.CENTER,
-            VerticalAlignment.CENTER);
+      drawJackConnectionLabel(g2d, "T", tipLabel);
+      drawJackConnectionLabel(g2d, "S", sleeveLabel);
+      if (getType() == OpenJackType.STEREO) {
+        drawJackConnectionLabel(g2d, "R", ringOrSwitchLabel);
+      } else if (getType() == OpenJackType.SWITCHED) {
+        // are there no stereo switched jacks?
+        drawJackConnectionLabel(g2d, "Sw", ringOrSwitchLabel);
+      }
     }
 
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
+  }
+
+  private void drawJackConnectionLabel(Graphics2D g2d, String text, Point position) {
+    StringUtils.drawCenteredText(
+        g2d,
+        text,
+        position.x,
+        position.y,
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
   }
 
   public Area[] getBody() {
@@ -444,9 +441,11 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
   @EditableProperty
   public Integer getAngle() {
     if (angle == null) {
-      if (orientation != null && orientation != Orientation.DEFAULT)
+      if (orientation != null && orientation != Orientation.DEFAULT) {
         angle = Integer.parseInt(orientation.name().replace("_", ""));
-      else angle = 0;
+      } else {
+        angle = 0;
+      }
     }
     return angle;
   }
@@ -485,10 +484,21 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
 
   @Override
   public String getControlPointNodeName(int index) {
-    if (index == 0) return "Tip";
-    if (index == 1) return "Sleeve";
-    if (index == 2 && getType() == OpenJackType.STEREO) return "Ring";
-    if (index == 2 && getType() == OpenJackType.SWITCHED) return "Shunt";
+    switch (index) {
+      case 0:
+        return "Tip";
+      case 1:
+        return "Sleeve";
+      case 2:
+        if (getType() == OpenJackType.STEREO) {
+          return "Ring";
+        } else if (getType() == OpenJackType.SWITCHED) {
+          return "Shunt";
+        }
+        break;
+      default:
+        // if none of the above, let's return null and let the caller figure it out
+    }
     return null;
   }
 
@@ -504,7 +514,7 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
 
     @Override
     public String toString() {
-      return name().substring(0, 1) + name().substring(1).toLowerCase();
+      return WordUtils.capitalize(name());
     }
   }
 }
