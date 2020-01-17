@@ -41,7 +41,6 @@ import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
@@ -316,10 +315,6 @@ public class PotentiometerPanel extends AbstractPotentiometer {
       Project project,
       IDrawingObserver drawingObserver) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     Area[] body = getBody();
     for (int i = 0; i < body.length; i++) {
       Area shape = body[i];

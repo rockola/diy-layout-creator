@@ -34,6 +34,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.ShadedPaint;
 import org.diylc.awt.StringUtils;
@@ -46,7 +47,6 @@ import org.diylc.common.VerticalAlignment;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;

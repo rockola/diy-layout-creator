@@ -45,7 +45,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -256,10 +255,6 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
       return;
     }
     int pinSize = (int) PIN_DIAMETER.convertToPixels() / 2 * 2;
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
 
     for (Point point : controlPoints) {
@@ -267,7 +262,7 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);
+      g2d.setColor(tryBorderColor(outlineMode, PIN_BORDER_COLOR));
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
 

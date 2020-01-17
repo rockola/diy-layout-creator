@@ -31,6 +31,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -44,7 +45,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -243,17 +243,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     g2d.setComposite(oldComposite);
     //    }
 
-    Color finalBorderColor;
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-    if (outlineMode) {
-      finalBorderColor = theme.getOutlineColor();
-    } else {
-      finalBorderColor = BORDER_COLOR;
-    }
-
+    final Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
     g2d.setColor(finalBorderColor);
     for (int i = 0; i < body.length - 1; i++) {
       g2d.draw(body[i]);
@@ -265,7 +255,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
       g2d.setColor(METAL_COLOR);
       g2d.fill(pins);
     }
-    g2d.setColor(outlineMode ? theme.getOutlineColor() : METAL_COLOR.darker());
+    g2d.setColor(tryColor(outlineMode, METAL_COLOR.darker()));
     g2d.draw(pins);
 
     final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);

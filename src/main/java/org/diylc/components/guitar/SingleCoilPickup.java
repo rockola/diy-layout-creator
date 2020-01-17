@@ -41,7 +41,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
@@ -120,11 +119,6 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
 
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBaseColor());
     g2d.fill(body[4]);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getColor());
@@ -136,7 +130,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getLugColor());
     g2d.fill(body[1]);
-    g2d.setColor(outlineMode ? theme.getOutlineColor() : darkerOrLighter(LUG_COLOR));
+    g2d.setColor(tryColor(outlineMode, darkerOrLighter(LUG_COLOR)));
     g2d.draw(body[1]);
 
     g2d.setComposite(oldComposite);

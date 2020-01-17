@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -34,7 +35,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -192,11 +192,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(body[0]);
 
-    // NOTE: here color was set in inverse order i.e. if selected or
-    // dragging, it was set to SELECTION_COLOR and outlineMode was
-    // only checked if that was not the case. Assuming that to be a
-    // bug (everywhere else it was the other way round)
-    Color finalColor = getColor(outlineMode, color);
+    Color finalColor = tryColor(outlineMode, color);
     g2d.setColor(finalColor);
     g2d.draw(body[1]);
   }

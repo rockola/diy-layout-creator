@@ -40,7 +40,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
@@ -312,13 +311,7 @@ public class TransistorTO220 extends AbstractTransistorPackage {
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
 
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-
     // Draw pins.
-
     if (folded) {
       int leadThickness = getClosestOdd(LEAD_THICKNESS.convertToPixels());
       int leadLength = (int) getLeadLength().convertToPixels();
@@ -380,12 +373,7 @@ public class TransistorTO220 extends AbstractTransistorPackage {
     }
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
-    Color finalTabColor;
-    if (outlineMode) {
-      finalTabColor = theme.getOutlineColor();
-    } else {
-      finalTabColor = tabColor;
-    }
+    Color finalTabColor = tryColor(outlineMode, tabColor);
     g2d.setColor(finalTabColor);
     g2d.fill(tabArea);
     g2d.setComposite(oldComposite);
@@ -394,19 +382,7 @@ public class TransistorTO220 extends AbstractTransistorPackage {
       g2d.setColor(tabBorderColor);
       g2d.draw(tabArea);
     }
-    Color finalBorderColor;
-
-    if (outlineMode) {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : theme.getOutlineColor();
-    } else {
-      finalBorderColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? SELECTION_COLOR
-              : borderColor;
-    }
+    Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
     g2d.setColor(finalBorderColor);
     g2d.draw(mainArea);
     if (folded) {
@@ -415,18 +391,7 @@ public class TransistorTO220 extends AbstractTransistorPackage {
 
     // Draw label.
     g2d.setFont(project.getFont());
-    Color finalLabelColor;
-    if (outlineMode) {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : theme.getOutlineColor();
-    } else {
-      finalLabelColor =
-          componentState == ComponentState.SELECTED || componentState == ComponentState.DRAGGING
-              ? LABEL_COLOR_SELECTED
-              : getLabelColor();
-    }
+    Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     String label = "";
     label = (getDisplay() == Display.NAME) ? getName() : getValue();

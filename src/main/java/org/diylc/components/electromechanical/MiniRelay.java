@@ -377,7 +377,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? defaultTheme.getOutlineColor() : PIN_BORDER_COLOR);
+      g2d.setColor(tryBorderColor(outlineMode, PIN_BORDER_COLOR));
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
 

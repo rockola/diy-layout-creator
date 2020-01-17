@@ -33,6 +33,7 @@ import java.util.Arrays;
 import org.diylc.common.Config;
 import org.diylc.core.IDIYComponent; // should probably be in this package
 import org.diylc.core.ComponentState; // should probably be in this package
+import org.diylc.core.Theme;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.presenter.ComponentArea; // should probably be in this package
 
@@ -62,10 +63,9 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   public static Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
   public static Color COPPER_COLOR = Color.decode("#DA8A67");
 
-  protected static final Theme defaultTheme =
-      (Theme) ConfigurationManager.getInstance().readObject(
-          IPlugInPort.THEME_KEY,
-          Constants.DEFAULT_THEME);
+  protected static final Theme defaultTheme = (Theme) ConfigurationManager.getObject(
+      Theme.THEME_KEY,
+      Constants.DEFAULT_THEME);
 
   private static int componentSequenceNumber = 0;
   protected transient int sequenceNumber = 0;
@@ -176,6 +176,23 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
    */
   public Color tryLeadColor(Color color) {
     return getColorUnlessSelectedOrDragging(false, SELECTION_COLOR, color);
+  }
+
+  /**
+     Draw or fill rectangle according to outline mode.
+  */
+  public void drawFillRect(
+      Graphics2D g2d,
+      boolean outlineMode,
+      int x,
+      int y,
+      int width,
+      int height) {
+    if (outlineMode) {
+      g2d.drawRect(x, y, width, height);
+    } else {
+      g2d.fillRect(x, y, width, height);
+    }
   }
 
   @Override

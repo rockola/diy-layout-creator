@@ -41,7 +41,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -179,10 +178,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
       return;
     }
     Area[] body = getBody();
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
       Composite oldComposite = g2d.getComposite();
@@ -198,14 +193,13 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
         }
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      Color finalBorderColor;
-      if (outlineMode) {
-        finalBorderColor = theme.getOutlineColor();
-      } else {
-        finalBorderColor = getBorderColor();
-      }
+      final Color finalBorderColor = tryBorderColor(getBorderColor());
       g2d.setColor(finalBorderColor);
-      for (Area a : body) if (a != null) g2d.draw(a);
+      for (Area a : body) {
+        if (a != null) {
+          g2d.draw(a);
+        }
+      }
     }
     // Do not track these changes because the whole switch has been tracked
     // so far.

@@ -1,23 +1,21 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 package org.diylc.components.passive;
 
@@ -35,7 +33,6 @@ import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
-import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
@@ -219,16 +216,7 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
         markerArea.intersect((Area) getBodyShape());
         g2d.fill(markerArea);
       }
-      Color finalTickColor;
-      if (outlineMode) {
-        Theme theme =
-            (Theme)
-                ConfigurationManager.getInstance()
-                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-        finalTickColor = theme.getOutlineColor();
-      } else {
-        finalTickColor = tickColor;
-      }
+      Color finalTickColor = tryColor(outlineMode, tickColor);
       g2d.setColor(finalTickColor);
       g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(2));
       g2d.drawLine(

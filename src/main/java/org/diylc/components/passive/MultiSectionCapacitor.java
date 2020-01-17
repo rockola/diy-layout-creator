@@ -30,6 +30,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.text.Format;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -43,7 +44,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -405,7 +405,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         g2d.setColor(pinColor);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? theme.getOutlineColor() : pinColor.darker());
+      g2d.setColor(tryColor(outlineMode, pinColor.darker()));
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
 

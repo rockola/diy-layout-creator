@@ -31,6 +31,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -45,7 +46,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -308,16 +308,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getCoilColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.fill(coilArea);
-    Color finalBorderColor;
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor = theme.getOutlineColor();
-    } else {
-      finalBorderColor = getCoilBorderColor();
-    }
+    Color finalBorderColor = tryColor(outlineMode, getCoilBorderColor());
     g2d.setColor(finalBorderColor);
     g2d.draw(coilArea);
 

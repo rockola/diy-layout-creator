@@ -39,7 +39,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -200,10 +199,6 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
       return;
     }
     Area[] body = getBody();
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     // Draw body if available.
     if (body != null) {
       final Composite oldComposite = g2d.getComposite();
@@ -220,12 +215,7 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
       }
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      Color finalBorderColor;
-      if (outlineMode) {
-        finalBorderColor = theme.getOutlineColor();
-      } else {
-        finalBorderColor = getBorderColor();
-      }
+      Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
       g2d.setColor(finalBorderColor);
       for (Area a : body) {
         if (a != null) {
@@ -233,8 +223,7 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
         }
       }
     }
-    // Do not track these changes because the whole switch has been tracked
-    // so far.
+    // Do not track these changes, the whole switch has been tracked.
     drawingObserver.stopTracking();
 
     // Draw lugs.
@@ -247,14 +236,9 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
       lugWidth = p;
     }
 
+    g2d.setColor(tryColor(outlineMode, METAL_COLOR));
     for (Point p : controlPoints) {
-      if (outlineMode) {
-        g2d.setColor(theme.getOutlineColor());
-        g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
-      } else {
-        g2d.setColor(METAL_COLOR);
-        g2d.fillRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
-      }
+      drawFillRect(g2d, outlineMode, p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
     }
 
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);

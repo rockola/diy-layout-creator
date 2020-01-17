@@ -43,7 +43,6 @@ import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
@@ -389,10 +388,6 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Shape mainShape = getBody()[0];
     Shape shaftShape = getBody()[1];
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
     if (mainShape != null) {
       g2d.setColor(bodyColor);
       Composite oldComposite = g2d.getComposite();
@@ -422,7 +417,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
         g2d.setColor(PIN_COLOR);
         g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
       }
-      g2d.setColor(outlineMode ? theme.getOutlineColor() : PIN_BORDER_COLOR);
+      g2d.setColor(tryBorderColor(outlineMode, PIN_BORDER_COLOR));
       g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
     }
 

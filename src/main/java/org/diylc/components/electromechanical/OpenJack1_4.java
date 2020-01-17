@@ -45,7 +45,6 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -103,29 +102,16 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
 
     Shape[] body = getBody();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    //    if (componentState != ComponentState.DRAGGING) {
+
     Composite oldComposite = g2d.getComposite();
     if (alpha < MAX_ALPHA) {
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
     g2d.fill(body[0]);
-
     g2d.setComposite(oldComposite);
-    //    }
 
-    Color finalBorderColor;
-
-    if (outlineMode) {
-      Theme theme =
-          (Theme)
-              ConfigurationManager.getInstance()
-                  .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor = theme.getOutlineColor();
-    } else {
-      finalBorderColor = WAFER_COLOR.darker();
-    }
-
+    Color finalBorderColor = tryBorderColor(outlineMode, WAFER_COLOR.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
 
@@ -145,16 +131,7 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     drawingObserver.stopTrackingContinuityArea();
 
     g2d.setComposite(oldComposite);
-    //    }
-
-    if (outlineMode) {
-      Theme theme = (Theme) ConfigurationManager.getInstance()
-                    .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-      finalBorderColor = theme.getOutlineColor();
-    } else {
-      finalBorderColor = BASE_COLOR.darker();
-    }
-
+    finalBorderColor = tryBorderColor(outlineMode, BASE_COLOR.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[1]);
     g2d.draw(body[2]);

@@ -191,7 +191,7 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
       g2d.fill(body[3]);
     }
 
-    g2d.setColor(outlineMode ? defaultTheme.getOutlineColor() : METAL_COLOR.darker());
+    g2d.setColor(tryColor(outlineMode, METAL_COLOR.darker()));
     g2d.draw(body[3]);
 
     if (!outlineMode && getPolarity() != DCPolarity.NONE) {

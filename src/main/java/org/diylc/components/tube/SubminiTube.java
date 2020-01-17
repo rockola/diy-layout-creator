@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.tube;
 
 import java.awt.AlphaComposite;
@@ -39,7 +40,6 @@ import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
@@ -383,13 +383,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
 
-    Theme theme =
-        (Theme)
-            ConfigurationManager.getInstance()
-                .readObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
-
     // Draw pins.
-
     if (folded) {
       int leadThickness = getClosestOdd(LEAD_THICKNESS.convertToPixels());
       int leadLength = (int) getLeadLength().convertToPixels();
