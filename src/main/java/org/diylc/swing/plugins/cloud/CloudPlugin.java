@@ -443,7 +443,7 @@ public class CloudPlugin implements IPlugIn {
                 @Override
                 public String[] doInBackground() throws Exception {
                   LOG.debug("Uploading from " + file.getAbsolutePath());
-                  thumbnailPresenter.loadProjectFromFile(file.getAbsolutePath());
+                  thumbnailPresenter.loadProject(file.getAbsolutePath());
                   return CloudPresenter.Instance.getCategories();
                 }
 
