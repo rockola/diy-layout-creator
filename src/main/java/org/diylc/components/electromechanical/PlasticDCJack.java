@@ -175,7 +175,7 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
     g2d.setComposite(oldComposite);
     //    }
 
-    final Color finalBorderColor = tryBorderColor(BORDER_COLOR);
+    final Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     if (!outlineMode) {

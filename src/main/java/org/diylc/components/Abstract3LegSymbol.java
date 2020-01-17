@@ -135,7 +135,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
     // Draw label
     g2d.setFont(project.getFont());
-    final Color finalLabelColor = tryLabelColor(LABEL_COLOR);
+    final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     String label = "";
     label = display == Display.NAME ? getName() : (getValue() == null ? "" : getValue().toString());

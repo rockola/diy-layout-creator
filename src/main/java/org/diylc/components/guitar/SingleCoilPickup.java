@@ -135,11 +135,11 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor = tryBorderColor(darkerOrLighter(getBaseColor()));
+    Color finalBorderColor = tryBorderColor(outlineMode, darkerOrLighter(getBaseColor()));
     g2d.setColor(finalBorderColor);
     g2d.draw(body[4]);
 
-    finalBorderColor = tryBorderColor(darkerOrLighter(color));
+    finalBorderColor = tryBorderColor(outlineMode, darkerOrLighter(color));
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
     if (body[3] != null) g2d.draw(body[3]);

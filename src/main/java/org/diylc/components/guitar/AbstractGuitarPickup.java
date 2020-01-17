@@ -124,7 +124,7 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
 
   protected void drawMainLabel(
       Graphics2D g2d, Project project, boolean outlineMode, ComponentState componentState) {
-    final Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor);
+    final Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     g2d.setFont(project.getFont().deriveFont(Font.BOLD));
     Rectangle bounds = getBody()[0].getBounds();

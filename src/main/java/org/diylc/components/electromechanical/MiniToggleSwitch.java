@@ -293,7 +293,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       g2d.fill(body);
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor);
+      final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
       g2d.setColor(finalBorderColor);
       g2d.draw(body);
     }
@@ -306,7 +306,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     int lugHeight = getClosestOdd((int) LUG_THICKNESS.convertToPixels());
     for (Point p : controlPoints) {
       if (outlineMode) {
-        g2d.setColor(defaultTheme.getOutlineColor());
+        g2d.setColor(theme.getOutlineColor());
         g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       } else {
         g2d.setColor(CIRCLE_COLOR);

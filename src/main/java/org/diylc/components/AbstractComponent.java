@@ -22,6 +22,7 @@ package org.diylc.components;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
@@ -30,6 +31,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.core.IDIYComponent; // should probably be in this package
 import org.diylc.core.ComponentState; // should probably be in this package
@@ -63,19 +65,18 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   public static Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
   public static Color COPPER_COLOR = Color.decode("#DA8A67");
 
-  protected static final Theme defaultTheme = (Theme) ConfigurationManager.getObject(
-      Theme.THEME_KEY,
-      Constants.DEFAULT_THEME);
+  protected static Theme theme = (Theme) App.getObject(Theme.THEME_KEY, Theme.DEFAULT_THEME);
+
+  protected transient int sequenceNumber = 0;
 
   private static int componentSequenceNumber = 0;
-  protected transient int sequenceNumber = 0;
+
+  private transient ComponentArea componentArea;
 
   private int nextSequenceNumber() {
     componentSequenceNumber = componentSequenceNumber + 1;
     return componentSequenceNumber;
   }
-
-  private transient ComponentArea componentArea;
 
   public ComponentArea getArea() {
     return componentArea;
@@ -118,7 +119,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     if (isSelectedOrDragging()) {
       return selectedOrDraggingColor;
     }
-    return outlineMode ? defaultTheme.getOutlineColor() : color;
+    return outlineMode ? theme.getOutlineColor() : color;
   }
 
   /**
@@ -340,7 +341,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   }
 
   @Override
-  public boolean equalsTo(IDIYComponent<?> other) {
+  public boolean isEqualTo(IDIYComponent<?> other) {
     if (other == null) {
       return false;
     }

@@ -193,7 +193,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
         }
       g2d.setComposite(oldComposite);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      final Color finalBorderColor = tryBorderColor(getBorderColor());
+      final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
       g2d.setColor(finalBorderColor);
       for (Area a : body) {
         if (a != null) {
@@ -227,7 +227,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
     // Draw label.
     g2d.setFont(project.getFont());
-    final Color finalLabelColor = tryLabelColor(labelColor);
+    final Color finalLabelColor = tryLabelColor(outlineMode, labelColor);
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     String label = "";
