@@ -3,45 +3,37 @@ package org.diylc.swingframework.images;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
+import java.awt.Image;
+
+import org.diylc.images.Icon;
 
 public enum CursorLoader {
-  ScrollCenter("scroll_center.png"),
-  ScrollN("scroll_n.png"),
-  ScrollNE("scroll_ne.png"),
-  ScrollE("scroll_e.png"),
-  ScrollSE("scroll_se.png"),
-  ScrollS("scroll_s.png"),
-  ScrollSW("scroll_sw.png"),
-  ScrollW("scroll_w.png"),
-  ScrollNW("scroll_nw.png");
+  ScrollCenter(Icon.Scroll_Center),
+  ScrollN(Icon.Scroll_N),
+  ScrollNE(Icon.Scroll_NE),
+  ScrollE(Icon.Scroll_E),
+  ScrollSE(Icon.Scroll_SE),
+  ScrollS(Icon.Scroll_S),
+  ScrollSW(Icon.Scroll_SW),
+  ScrollW(Icon.Scroll_W),
+  ScrollNW(Icon.Scroll_NW);
 
-  private String name;
-  private Cursor cursor = null;
+  private Icon icon;
+  private Cursor cursor;
 
-  private CursorLoader(String name) {
-    this.name = name;
+  CursorLoader(Icon icon) {
+    this.icon = icon;
+    this.cursor = icon.image() == null
+                  ? Cursor.getDefaultCursor()
+                  : Toolkit.getDefaultToolkit().createCustomCursor(
+                        icon.image(),
+                        new Point(
+                            icon.image().getWidth(null) / 2,
+                            icon.image().getHeight(null) / 2),
+                        "custom:" + name());
   }
 
   public Cursor getCursor() {
-    if (cursor == null) {
-      Toolkit toolkit = Toolkit.getDefaultToolkit();
-      URL imgURL = getClass().getResource(name);
-      BufferedImage image;
-      try {
-        image = ImageIO.read(imgURL);
-      } catch (IOException e) {
-        e.printStackTrace();
-        return Cursor.getDefaultCursor();
-      }
-      int width = image.getWidth(null);
-      int height = image.getHeight(null);
-      cursor =
-          toolkit.createCustomCursor(image, new Point(width / 2, height / 2), "custom:" + name);
-    }
-    return cursor;
+    return this.cursor;
   }
 }
