@@ -20,13 +20,14 @@
 
 package org.diylc.awt;
 
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
+import org.diylc.components.Area;
+
 /**
- * Creates an are covered by the two circles and the area between them
+ * Creates an area covered by the two circles and the area between them
  * bordered by the two external common tangents.
  *
  * @author Branislav Stojkovic
@@ -36,7 +37,7 @@ public class TwoCircleTangent extends Area {
   public TwoCircleTangent(Point2D p1, Point2D p2, double r1, double r2) {
     double d = p1.distance(p2);
     double h = Math.sqrt(d * d - (r1 - r2) * (r1 - r2));
-    double y = Math.sqrt(h * h + r2 * r2);
+    double y = Math.hypot(h, r2);
     Area a = new Area(new Ellipse2D.Double(p1.getX() - r1, p1.getY() - r1, r1 * 2, r1 * 2));
 
     a.add(new Area(new Ellipse2D.Double(p2.getX() - r2, p2.getY() - r2, r2 * 2, r2 * 2)));
