@@ -65,29 +65,28 @@ public class AnimatedCloudGlassPane extends JPanel implements MouseListener, Key
     setCursor(new Cursor(Cursor.WAIT_CURSOR));
     setOpaque(false);
     setBackground(bgColor);
-
     setLayout(new GridBagLayout());
+    animationTimer = new Timer(
+        20,
+        new ActionListener() {
 
-    animationTimer =
-        new Timer(
-            20,
-            new ActionListener() {
-
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                repaint();
-              }
-            });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            repaint();
+          }
+        });
   }
 
   @Override
-  public void setVisible(boolean aFlag) {
-    if (aFlag) {
+  public void setVisible(boolean visible) {
+    if (visible) {
       startTime = System.currentTimeMillis();
       animationTimer.start();
-    } else animationTimer.stop();
-    super.setVisible(aFlag);
-  };
+    } else {
+      animationTimer.stop();
+    }
+    super.setVisible(visible);
+  }
 
   private void createBackBuffer() {
     GraphicsConfiguration gc = getGraphicsConfiguration();
@@ -145,19 +144,19 @@ public class AnimatedCloudGlassPane extends JPanel implements MouseListener, Key
   }
 
   @Override
-  public void mouseClicked(final MouseEvent pArg0) {}
+  public void mouseClicked(final MouseEvent e) {}
 
   @Override
-  public void mouseEntered(final MouseEvent pArg0) {}
+  public void mouseEntered(final MouseEvent e) {}
 
   @Override
-  public void mouseExited(final MouseEvent pArg0) {}
+  public void mouseExited(final MouseEvent e) {}
 
   @Override
-  public void mousePressed(final MouseEvent pArg0) {}
+  public void mousePressed(final MouseEvent e) {}
 
   @Override
-  public void mouseReleased(final MouseEvent pArg0) {}
+  public void mouseReleased(final MouseEvent e) {}
 
   @Override
   public void keyPressed(KeyEvent e) {}
