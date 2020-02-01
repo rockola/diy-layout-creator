@@ -59,13 +59,16 @@ public class SIL_ICTransformer implements IComponentTransformer {
     Orientation o = ic.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0) oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length) oValue = 0;
+    if (oValue < 0) {
+      oValue = Orientation.values().length - 1;
+    }
+    if (oValue >= Orientation.values().length) {
+      oValue = 0;
+    }
     o = Orientation.values()[oValue];
     ic.setOrientation(o);
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public void mirror(IDIYComponent<?> component, Point center, int direction) {
     SIL_IC ic = (SIL_IC) component;
@@ -79,6 +82,8 @@ public class SIL_ICTransformer implements IComponentTransformer {
           break;
         case _270:
           o = Orientation._90;
+          break;
+        default:
       }
 
       for (int i = 0; i < ic.getControlPointCount(); i++) {
@@ -95,6 +100,8 @@ public class SIL_ICTransformer implements IComponentTransformer {
           break;
         case _180:
           o = Orientation.DEFAULT;
+          break;
+        default:
       }
 
       for (int i = 0; i < ic.getControlPointCount(); i++) {
