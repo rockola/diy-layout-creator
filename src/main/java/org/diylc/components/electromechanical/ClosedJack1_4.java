@@ -20,7 +20,6 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -28,18 +27,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
 import org.diylc.components.transform.ClosedJackTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -53,15 +50,15 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "Closed 1/4\" Jack",
+    name = "Closed Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
-    description = "Enclosed panel mount 1/4\" phono jack",
+    description = "Enclosed panel mount phono jack",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "J",
     autoEdit = false,
     transformer = ClosedJackTransformer.class)
-public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
+public class ClosedJack extends AbstractJack {
 
   private static final long serialVersionUID = 1L;
 
@@ -77,6 +74,7 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
   private static Color LABEL_COLOR = Color.white;
   private static Size BODY_WIDTH = new Size(0.65d, SizeUnit.in);
   private static Size BODY_LENGTH = new Size(0.8d, SizeUnit.in);
+  private static JackSize JACK_SIZE = JackSize.QUARTER_INCH;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private JackType type = JackType.MONO;
@@ -105,33 +103,13 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
     }
 
     // Apply rotation if necessary
-    double angle = getAngle();
+    double angle = orientation.getTheta();
     if (angle != 0) {
       AffineTransform rotation = AffineTransform.getRotateInstance(angle, x, y);
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }
     }
-  }
-
-  private double getAngle() {
-    // Apply rotation if necessary
-    double angle;
-    switch (orientation) {
-      case _90:
-        angle = Math.PI / 2;
-        break;
-      case _180:
-        angle = Math.PI;
-        break;
-      case _270:
-        angle = Math.PI * 3 / 2;
-        break;
-      default:
-        angle = 0;
-    }
-
-    return angle;
   }
 
   public Area[] getBody() {
@@ -146,18 +124,16 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
       int lugHoleSize = (int) LUG_HOLE_SIZE.convertToPixels();
       int bodyLength = (int) BODY_LENGTH.convertToPixels();
       int bodyWidth = (int) BODY_WIDTH.convertToPixels();
-      body[0] = new Area(new Rectangle(x + lugLength, y - bodyWidth / 2, bodyLength, bodyWidth));
+      body[0] = Area.rect(x + lugLength, y - bodyWidth / 2, bodyLength, bodyWidth);
 
       int shaftLength = (int) SHAFT_LENGTH.convertToPixels();
       int shaftWidth = (int) SHAFT_WIDTH.convertToPixels();
-      Area shaft =
-          new Area(
-              new Rectangle(
-                  x + lugLength + bodyLength, y - shaftWidth / 2, shaftLength, shaftWidth));
+      Area shaft = Area.rect(
+          x + lugLength + bodyLength, y - shaftWidth / 2, shaftLength, shaftWidth);
       body[1] = shaft;
 
-      double angle = getAngle();
       AffineTransform rotation = null;
+      double angle = orientation.getTheta();
       if (angle != 0) {
         rotation = AffineTransform.getRotateInstance(angle, x, y);
       }
@@ -196,18 +172,9 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
 
       for (int i = 0; i < untransformedControlPoints.length; i++) {
         Point point = untransformedControlPoints[i];
-        Area lug =
-            new Area(
-                new Ellipse2D.Double(
-                    point.x - lugWidth / 2, point.y - lugWidth / 2, lugWidth, lugWidth));
-        lug.add(new Area(new Rectangle(point.x, point.y - lugWidth / 2, lugLength, lugWidth)));
-        lug.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    point.x - lugHoleSize / 2,
-                    point.y - lugHoleSize / 2,
-                    lugHoleSize,
-                    lugHoleSize)));
+        Area lug = Area.circle(point, lugWidth);
+        lug.add(Area.rect(point.x, point.y - lugWidth / 2, lugLength, lugWidth));
+        lug.subtract(Area.circle(point, lugHoleSize));
         lugs.add(lug);
       }
 
@@ -215,7 +182,9 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
 
       if (rotation != null) {
         for (Area area : body) {
-          area.transform(rotation);
+          if (area != null) {
+            area.transform(rotation);
+          }
         }
       }
     }
@@ -234,11 +203,7 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
     // Rectangle bounds = body.getBounds();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    //    if (componentState != ComponentState.DRAGGING) {
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
     g2d.fill(body[0]);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : SHAFT_COLOR);
@@ -246,7 +211,6 @@ public class ClosedJack1_4 extends AbstractMultiPartComponent<String> {
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR);
     g2d.fill(body[3]);
     g2d.setComposite(oldComposite);
-    //    }
 
     Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
     g2d.setColor(finalBorderColor);
