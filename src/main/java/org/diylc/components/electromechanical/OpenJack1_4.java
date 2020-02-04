@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -41,6 +40,7 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -103,10 +103,7 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     Shape[] body = getBody();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
     g2d.fill(body[0]);
     g2d.setComposite(oldComposite);
@@ -115,22 +112,17 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
 
-    //    if (componentState != ComponentState.DRAGGING) {
-    oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
-
     drawingObserver.startTrackingContinuityArea(true);
+    oldComposite = setTransparency(g2d);
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
     g2d.fill(body[1]);
     g2d.fill(body[2]);
     if (body[3] != null) {
       g2d.fill(body[3]);
     }
+    g2d.setComposite(oldComposite);
     drawingObserver.stopTrackingContinuityArea();
 
-    g2d.setComposite(oldComposite);
     finalBorderColor = tryBorderColor(outlineMode, BASE_COLOR.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[1]);
@@ -199,104 +191,77 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
 
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      int outerDiameter = getClosestOdd(OUTER_DIAMETER.convertToPixels());
-      int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
-      int ringDiameter = getClosestOdd(RING_DIAMETER.convertToPixels());
-      int springLength = (int) SPRING_LENGTH.convertToPixels();
-      int springWidth = (int) SPRING_WIDTH.convertToPixels();
-      int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
-      int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
+      final int outerDiameter = getClosestOdd(OUTER_DIAMETER.convertToPixels());
+      final int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
+      final int ringDiameter = getClosestOdd(RING_DIAMETER.convertToPixels());
+      final int springLength = (int) SPRING_LENGTH.convertToPixels();
+      final int springWidth = (int) SPRING_WIDTH.convertToPixels();
+      final int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
+      final int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
+      final int centerY = y + springLength - holeToEdge;
 
-      int centerY = y + springLength - holeToEdge;
-
-      Area wafer =
-          new Area(
-              new Ellipse2D.Double(
-                  x - outerDiameter / 2,
-                  centerY - outerDiameter / 2,
-                  outerDiameter,
-                  outerDiameter));
-      wafer.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
-
+      Area wafer = new Area(new Ellipse2D.Double(
+          x - outerDiameter / 2,
+          centerY - outerDiameter / 2,
+          outerDiameter,
+          outerDiameter));
+      wafer.subtract(new Area(new Ellipse2D.Double(
+          x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
       body[0] = wafer;
 
-      Area tip =
-          new Area(
-              new RoundRectangle2D.Double(
-                  x - springWidth / 2,
-                  y - holeToEdge,
-                  springWidth,
-                  springLength - ringDiameter / 2,
-                  springWidth,
-                  springWidth));
-      tip.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area tip = new Area(new RoundRectangle2D.Double(
+          x - springWidth / 2,
+          y - holeToEdge,
+          springWidth,
+          springLength - ringDiameter / 2,
+          springWidth,
+          springWidth));
+      tip.subtract(new Area(new Ellipse2D.Double(
+          x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
       tip.subtract(wafer);
-
       body[1] = tip;
 
-      Area sleeve =
-          new Area(
-              new RoundRectangle2D.Double(
-                  x - springWidth / 2,
-                  y - holeToEdge,
-                  springWidth,
-                  springLength,
-                  springWidth,
-                  springWidth));
-      sleeve.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area sleeve = new Area(new RoundRectangle2D.Double(
+          x - springWidth / 2,
+          y - holeToEdge,
+          springWidth,
+          springLength,
+          springWidth,
+          springWidth));
+      sleeve.subtract(new Area(new Ellipse2D.Double(
+          x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
       sleeve.transform(
           AffineTransform.getRotateInstance(
               getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
               x,
               centerY));
-      sleeve.add(
-          new Area(
-              new Ellipse2D.Double(
-                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
-      sleeve.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x - innerDiameter / 2,
-                  centerY - innerDiameter / 2,
-                  innerDiameter,
-                  innerDiameter)));
-
+      sleeve.add(new Area(new Ellipse2D.Double(
+          x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
+      sleeve.subtract(new Area(new Ellipse2D.Double(
+          x - innerDiameter / 2,
+          centerY - innerDiameter / 2,
+          innerDiameter,
+          innerDiameter)));
       body[2] = sleeve;
 
       if (getType() != OpenJackType.MONO) {
-        Area ringOrSwitch =
-            new Area(
-                new RoundRectangle2D.Double(
-                    x - springWidth / 2,
-                    y - holeToEdge,
-                    springWidth,
-                    springLength,
-                    springWidth,
-                    springWidth));
-        ringOrSwitch.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
+        Area ringOrSwitch = new Area(new RoundRectangle2D.Double(
+            x - springWidth / 2,
+            y - holeToEdge,
+            springWidth,
+            springLength,
+            springWidth,
+            springWidth));
+        ringOrSwitch.subtract(new Area(new Ellipse2D.Double(
+            x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
         ringOrSwitch.transform(
             AffineTransform.getRotateInstance(
                 getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA, x, centerY));
-        ringOrSwitch.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x - outerDiameter / 2,
-                    centerY - outerDiameter / 2,
-                    outerDiameter,
-                    outerDiameter)));
-
+        ringOrSwitch.subtract(new Area(new Ellipse2D.Double(
+            x - outerDiameter / 2,
+            centerY - outerDiameter / 2,
+            outerDiameter,
+            outerDiameter)));
         body[3] = ringOrSwitch;
       }
 
@@ -320,19 +285,18 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
   private void updateControlPoints() {
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
-
-    int springLength = (int) SPRING_LENGTH.convertToPixels();
-    int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
-
-    int centerY = y + springLength - holeToEdge;
+    final int springLength = (int) SPRING_LENGTH.convertToPixels();
+    final int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
+    final int centerY = y + springLength - holeToEdge;
 
     AffineTransform.getRotateInstance(
-            getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA, x, centerY)
-        .transform(controlPoints[0], controlPoints[1]);
+            getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
+            x,
+            centerY).transform(controlPoints[0], controlPoints[1]);
     AffineTransform.getRotateInstance(
-            getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA, x, centerY)
-        .transform(controlPoints[0], controlPoints[2]);
-
+            getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA,
+            x,
+            centerY).transform(controlPoints[0], controlPoints[2]);
     // Rotate if needed
     if (getTheta() != 0) {
       AffineTransform rotation = AffineTransform.getRotateInstance(getTheta(), x, y);
@@ -352,28 +316,25 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 4);
 
     g2d.rotate(RING_THETA, width / 2, height / 2);
-
     g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 4);
 
     g2d.setColor(WAFER_COLOR);
-    g2d.draw(
-        new Ellipse2D.Double(
-            width / 2 - waferDiameter / 2,
-            height / 2 - waferDiameter / 2,
-            waferDiameter,
-            waferDiameter));
+    g2d.draw(new Ellipse2D.Double(
+        width / 2 - waferDiameter / 2,
+        height / 2 - waferDiameter / 2,
+        waferDiameter,
+        waferDiameter));
 
     g2d.setColor(BASE_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2f * width / 32));
-    g2d.draw(
-        new Ellipse2D.Double(
-            width / 2 - sleeveDiameter / 2,
-            height / 2 - sleeveDiameter / 2,
-            sleeveDiameter,
-            sleeveDiameter));
+    g2d.draw(new Ellipse2D.Double(
+        width / 2 - sleeveDiameter / 2,
+        height / 2 - sleeveDiameter / 2,
+        sleeveDiameter,
+        sleeveDiameter));
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
-    g2d.rotate(-Math.PI / 2, width / 2, height / 2);
+    g2d.rotate(-HALF_PI, width / 2, height / 2);
 
     g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 3);
   }
