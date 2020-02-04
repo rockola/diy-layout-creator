@@ -20,7 +20,6 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -28,18 +27,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
 import org.diylc.components.transform.CliffJackTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -105,33 +102,13 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     }
 
     // Apply rotation if necessary
-    double angle = getAngle();
+    double angle = orientation.getTheta();
     if (angle != 0) {
       AffineTransform rotation = AffineTransform.getRotateInstance(angle, x, y);
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }
     }
-  }
-
-  private double getAngle() {
-    // Apply rotation if necessary
-    double angle;
-    switch (orientation) {
-      case _90:
-        angle = Math.PI / 2;
-        break;
-      case _180:
-        angle = Math.PI;
-        break;
-      case _270:
-        angle = Math.PI * 3 / 2;
-        break;
-      default:
-        angle = 0;
-    }
-
-    return angle;
   }
 
   public Area[] getBody() {
@@ -143,46 +120,37 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
       int bodyWidth = (int) BODY_WIDTH.convertToPixels();
       int centerX = (controlPoints[0].x + controlPoints[3].x) / 2;
       int centerY = (controlPoints[0].y + controlPoints[3].y) / 2;
-      body[0] =
-          new Area(
-              new Rectangle(
-                  centerX - bodyLength / 2, centerY - bodyWidth / 2, bodyLength, bodyWidth));
+      body[0] = Area.centeredRect(centerX, centerY, bodyLength, bodyWidth);
 
       int tailLength = (int) TAIL_LENGTH.convertToPixels();
-      body[1] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  centerX - bodyLength / 2 - tailLength,
-                  centerY - bodyWidth / 4,
-                  tailLength * 2,
-                  bodyWidth / 2,
-                  tailLength,
-                  tailLength));
+      body[1] = Area.roundRect(
+          centerX - bodyLength / 2 - tailLength,
+          centerY - bodyWidth / 4,
+          tailLength * 2,
+          bodyWidth / 2,
+          tailLength);
       Area tailArea = new Area(body[1]);
       tailArea.subtract(new Area(body[0]));
       body[1] = tailArea;
 
-      body[2] =
-          new Area(
-              new Rectangle(
-                  centerX + bodyLength / 2, centerY - bodyWidth / 4, tailLength, bodyWidth / 2));
+      body[2] = Area.rect(
+          centerX + bodyLength / 2,
+          centerY - bodyWidth / 4,
+          tailLength,
+          bodyWidth / 2);
 
-      body[3] =
-          new Area(
-              new Rectangle(
-                  centerX + bodyLength / 2 + tailLength,
-                  centerY - bodyWidth / 4,
-                  tailLength,
-                  bodyWidth / 2));
+      body[3] = Area.rect(
+          centerX + bodyLength / 2 + tailLength,
+          centerY - bodyWidth / 4,
+          tailLength,
+          bodyWidth / 2);
       tailArea = new Area(body[3]);
       int radius = bodyLength / 2 + tailLength * 2;
-      tailArea.intersect(
-          new Area(
-              new Ellipse2D.Double(centerX - radius, centerY - radius, radius * 2, radius * 2)));
+      tailArea.intersect(Area.circle(centerX, centerY, radius * 2));
       body[3] = tailArea;
 
       // Apply rotation if necessary
-      double angle = getAngle();
+      double angle = orientation.getTheta();
       if (angle != 0) {
         AffineTransform rotation = AffineTransform.getRotateInstance(angle, centerX, centerY);
         for (int i = 0; i < body.length; i++) {
@@ -196,22 +164,13 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
 
       // Create pins.
       Area pins = new Area();
-
       int pinWidth = (int) PIN_WIDTH.convertToPixels();
       int pinThickness = (int) PIN_THICKNESS.convertToPixels();
       for (int i = 0; i < getControlPointCount(); i++) {
-        Point point = getControlPoint(i);
-        Rectangle pin;
-        if (orientation == Orientation.DEFAULT || orientation == Orientation._180) {
-          pin =
-              new Rectangle(
-                  point.x - pinWidth / 2, point.y - pinThickness / 2, pinWidth, pinThickness);
-        } else {
-          pin =
-              new Rectangle(
-                  point.x - pinThickness / 2, point.y - pinWidth / 2, pinThickness, pinWidth);
-        }
-        pins.add(new Area(pin));
+        boolean flip = !(orientation == Orientation.DEFAULT || orientation == Orientation._180);
+        int width = flip ? pinWidth : pinThickness;
+        int thickness = flip ? pinThickness : pinWidth;
+        pins.add(Area.centeredRect(getControlPoint(i), width, thickness));
       }
 
       body[4] = pins;
@@ -229,19 +188,16 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
     Shape[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    //    if (componentState != ComponentState.DRAGGING) {
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
     for (int i = 0; i < body.length - 1; i++) {
-      // Nut is brighter colored.
-      if (i == body.length - 2) g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : NUT_COLOR);
+      if (i == body.length - 2) {
+        // Nut is brighter colored.
+        g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : NUT_COLOR);
+      }
       g2d.fill(body[i]);
     }
     g2d.setComposite(oldComposite);
-    //    }
 
     final Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
     g2d.setColor(finalBorderColor);
@@ -271,55 +227,44 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int bodyWidth = getClosestOdd(width * 3 / 5);
-    int tailWidth = getClosestOdd(width * 3 / 9);
+    final int bodyWidth = getClosestOdd(width * 3 / 5);
+    final int tailWidth = getClosestOdd(width * 3 / 9);
+    final int w128 = 4 * 32 / width;
 
-    g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect(
+    // body
+    Area.roundRect(
         (width - tailWidth) / 2,
         height / 2,
         tailWidth,
         height / 2 - 2 * 32 / height,
-        4 * 32 / width,
-        4 * 32 / width);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        (width - tailWidth) / 2,
-        height / 2,
-        tailWidth,
-        height / 2 - 2 * 32 / height,
-        4 * 32 / width,
-        4 * 32 / width);
+        w128).drawBordered(g2d, BODY_COLOR, BORDER_COLOR);
 
-    g2d.setColor(NUT_COLOR);
-    g2d.fillRoundRect(
+    // nut
+    Area.roundRect(
         (width - tailWidth) / 2,
         2 * 32 / height,
         tailWidth,
         height / 2,
-        4 * 32 / width,
-        4 * 32 / width);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        (width - tailWidth) / 2,
-        2 * 32 / height,
-        tailWidth,
-        height / 2,
-        4 * 32 / width,
-        4 * 32 / width);
+        w128).drawBordered(g2d, NUT_COLOR, BORDER_COLOR);
 
-    g2d.setColor(BODY_COLOR);
-    g2d.fillRect((width - bodyWidth) / 2, height / 7 + 1, bodyWidth, height * 5 / 7);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect((width - bodyWidth) / 2, height / 7 + 1, bodyWidth, height * 5 / 7);
+    // "area": what is this part?
+    Area.rect(
+        (width - bodyWidth) / 2,
+        height / 7 + 1,
+        bodyWidth,
+        height * 5 / 7).drawBordered(g2d, BODY_COLOR, BORDER_COLOR);
 
+    final int pinX1 = getClosestOdd((width - bodyWidth * 3 / 4) / 2);
+    final int pinX2 = getClosestOdd((width + bodyWidth * 3 / 4) / 2) - 1;
+    final int y14 = width * 2 / 8;
+    final int y38 = width * 3 / 8;
+    final int y58 = width * 5 / 8;
+    final int y34 = width * 6 / 8;
     g2d.setColor(METAL_COLOR);
-    int pinX1 = getClosestOdd((width - bodyWidth * 3 / 4) / 2);
-    int pinX2 = getClosestOdd((width + bodyWidth * 3 / 4) / 2) - 1;
-    g2d.drawLine(pinX1, width * 2 / 8, pinX1, width * 3 / 8);
-    g2d.drawLine(pinX1, width * 5 / 8, pinX1, width * 6 / 8);
-    g2d.drawLine(pinX2, width * 2 / 8, pinX2, width * 3 / 8);
-    g2d.drawLine(pinX2, width * 5 / 8, pinX2, width * 6 / 8);
+    g2d.drawLine(pinX1, y14, pinX1, y38);
+    g2d.drawLine(pinX1, y58, pinX1, y34);
+    g2d.drawLine(pinX2, y14, pinX2, y38);
+    g2d.drawLine(pinX2, y58, pinX2, y34);
   }
 
   @Override
