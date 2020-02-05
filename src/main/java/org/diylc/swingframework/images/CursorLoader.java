@@ -1,9 +1,9 @@
 package org.diylc.swingframework.images;
 
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Image;
 
 import org.diylc.images.Icon;
 
