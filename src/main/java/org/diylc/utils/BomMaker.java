@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.utils;
 
 import java.util.ArrayList;
@@ -74,11 +75,10 @@ public class BomMaker {
           }
         });
     for (IDIYComponent<?> component : sortedComponents) {
-      @SuppressWarnings("unchecked")
-      ComponentType type =
-          ComponentProcessor.extractComponentTypeFrom(
-              (Class<? extends IDIYComponent<?>>) component.getClass());
-      if (type.getBomPolicy() == BomPolicy.NEVER_SHOW) continue;
+      ComponentType type = ComponentType.extractFrom(component);
+      if (type.getBomPolicy() == BomPolicy.NEVER_SHOW) {
+        continue;
+      }
       String name = component.getName();
       String value;
       try {
