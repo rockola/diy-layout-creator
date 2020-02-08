@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +36,10 @@ import org.apache.logging.log4j.Logger;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
+
+import org.diylc.parsing.XmlNode;
+
+import org.w3c.dom.Element;
 
 public class Version implements Serializable, Comparable<Version> {
 
@@ -71,7 +76,7 @@ public class Version implements Serializable, Comparable<Version> {
   }
 
   public Date getReleaseDate() {
-    return releaseDate;
+    return new Date(releaseDate.getTime());
   }
 
   public void setReleaseDate(Date releaseDate) {
@@ -193,7 +198,8 @@ public class Version implements Serializable, Comparable<Version> {
     ClassLoader loader = Version.class.getClassLoader();
     BufferedReader reader = null;
     try {
-      reader = new BufferedReader(new InputStreamReader(loader.getResourceAsStream(UPDATE_MD)));
+      reader = new BufferedReader(new InputStreamReader(
+          loader.getResourceAsStream(UPDATE_MD), StandardCharsets.UTF_8));
       Node document = parser.parse(reader.lines().collect(Collectors.joining("\n")));
       UpdateVisitor v = new UpdateVisitor();
       document.accept(v);
