@@ -28,7 +28,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.diylc.appframework.simplemq.IMessageListener;
@@ -53,46 +52,10 @@ import org.diylc.core.measures.Size;
  * @see EventType
  */
 public interface IPlugInPort
-    extends
-        IMouseProcessor,
-        IKeyProcessor,
-        IVariantProcessor,
-        IBlockProcessor,
-        INetlistProcessor {
+    extends IMouseProcessor, IKeyProcessor, IVariantProcessor, IBlockProcessor {
 
-  String THEME_KEY = "theme";
   int DND_TOGGLE_STICKY = 0x1;
   int DND_TOGGLE_SNAP = 0x40000000;
-
-  enum Key {
-    ABNORMAL_EXIT,
-    ANTI_ALIASING,
-    AUTO_EDIT,
-    BLOCKS,
-    CONTINUOUS_CREATION,
-    EXPORT_GRID,
-    EXTRA_SPACE,
-    FAVORITES,
-    HARDWARE_ACCELERATION,
-    HEARTBEAT,
-    HIGHLIGHT_CONTINUITY_AREA,
-    HI_QUALITY_RENDER,
-    METRIC,
-    OUTLINE,
-    RECENT_COMPONENTS,
-    RECENT_FILES,
-    SHOW_GRID,
-    SHOW_RULERS,
-    SNAP_TO_GRID,
-    STICKY_POINTS,
-    TEMPLATES,
-    WHEEL_ZOOM
-  }
-
-  enum Debug {
-    COMPONENT_AREA,
-    CONTINUITY_AREA
-  }
 
   /**
    * Returns size of the canvas that takes project dimensions into
@@ -119,11 +82,11 @@ public interface IPlugInPort
   Cursor getCursorAt(Point point);
 
   /**
-   * Returns an instance of currently loaded project.
+   * Get current project.
    *
-   * @return
+   * @return Currently loaded project.
    */
-  Project getCurrentProject();
+  Project currentProject();
 
   /**
    * Loads specified {@link Project}.
@@ -134,15 +97,15 @@ public interface IPlugInPort
    */
   void loadProject(Project project, boolean freshStart, String filename);
 
-  /** Creates a new project. */
-  void createNewProject();
-
   /**
    * Loads a project from the specified file.
    *
    * @param fileName
    */
-  void loadProjectFromFile(String fileName);
+  void loadProject(String fileName);
+
+  /** Creates a new project. */
+  void createNewProject();
 
   /**
    * Saves the current project into the specified file.
@@ -168,16 +131,6 @@ public interface IPlugInPort
    * @return true, if file actions (new, open, close) can be taken
    */
   boolean allowFileAction();
-
-  /**
-   * Returns all available {@link ComponentType}s classified by
-   * category. Result is a {@link Map} between category name to a
-   * {@link List} of all {@link ComponentType}s that share that
-   * category name.
-   *
-   * @return
-   */
-  Map<String, List<ComponentType>> getComponentTypes();
 
   /**
    * Draws project on the provided {@link Graphics2D}. If the provided
@@ -227,7 +180,7 @@ public interface IPlugInPort
   void selectAll(int layer);
 
   /** Duplicates selected components and places them nearby. */
-  void duplicateSelection();
+  // void duplicateSelection(); // now in Project
 
   /** Deletes all the selected components from the project. */
   void deleteSelectedComponents();
@@ -283,11 +236,11 @@ public interface IPlugInPort
   /**
    * Moves selection for the specified offset.
    *
-   * @param xOffset
-   * @param yOffset
+   * @param offsetX
+   * @param offsetY
    * @param includeStuckComponents
    */
-  void nudgeSelection(Size xOffset, Size yOffset, boolean includeStuckComponents);
+  void nudgeSelection(Size offsetX, Size offsetY, boolean includeStuckComponents);
 
   /**
    * Sets default value for the specified property name for currently
@@ -308,9 +261,10 @@ public interface IPlugInPort
   void setDefaultPropertyValue(Class<?> clazz, String propertyName, Object value);
 
   /**
-   * @return a list of properties that are mutual for all the selected components. Resulting list
-   *     may be empty if selected components do not have mutual properties or can be null if the
-   *     selection is empty.
+   * @return a list of properties that are mutual for all the selected
+   *     components. Resulting list may be empty if selected
+   *     components do not have mutual properties or can be null if
+   *     the selection is empty.
    */
   List<PropertyWrapper> getMutualSelectionProperties();
 
@@ -336,8 +290,8 @@ public interface IPlugInPort
   ComponentType getNewComponentTypeSlot();
 
   /**
-   * Sets the new component slot. Specified component type will be used to instantiate new
-   * component.
+   * Sets the new component slot. Specified component type will be
+   * used to instantiate new component.
    *
    * @param componentType
    * @param template
@@ -347,15 +301,16 @@ public interface IPlugInPort
       ComponentType componentType, Template template, boolean forceInstantiate);
 
   /**
-   * Changes default size notation, true for metric, false for imperial.
+   * Changes default size notation, true for metric, false for
+   * imperial.
    *
    * @param isMetric
    */
   void setMetric(boolean isMetric);
 
   /**
-   * Locks or unlocks the specified layer. All components within +- 0.5 range will be affected by
-   * the change as well.
+   * Locks or unlocks the specified layer. All components within
+   * +-0.5 range will be affected by the change as well.
    *
    * @param layerZOrder
    * @param locked
@@ -363,8 +318,8 @@ public interface IPlugInPort
   void setLayerLocked(int layerZOrder, boolean locked);
 
   /**
-   * Shows or hides the specified layer. All components within +- 0.5 range will be affected by the
-   * change as well.
+   * Shows or hides the specified layer. All components within +-0.5
+   * range will be affected by the change as well.
    *
    * @param layerZOrder
    * @param visible
@@ -372,6 +327,8 @@ public interface IPlugInPort
   void setLayerVisibility(int layerZOrder, boolean visible);
 
   /**
+     Get selection size as an array of extremum points.
+
      @return selection size expressed in both inches or centimeters, respectively
   */
   Point2D[] calculateSelectionDimension();
@@ -397,18 +354,21 @@ public interface IPlugInPort
   Theme getSelectedTheme();
 
   /**
-   * Changes the current theme.
+   * Change current theme.
    *
    * @param theme
    */
   void setSelectedTheme(Theme theme);
 
   /**
-   * Renumbers all the selected components.
+   * Renumber selected components.
    *
-   * @param xAxisFirst
+   * <p>The order in which the components are renumbered is either
+   * top-to-bottom (X axis first) or left-to-right (Y axis first).
+   *
+   * @param topToBottom Top-to-bottom if true, left-to-right (Y axis first) if false
    */
-  void renumberSelectedComponents(boolean xAxisFirst);
+  void renumberSelectedComponents(boolean topToBottom);
 
   /**
      @return size of extra space around the canvas
