@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui.editor;
 
 import java.awt.BorderLayout;
@@ -33,8 +34,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.swing.JComboBox;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.swingframework.DoubleArrayTextField;
@@ -51,7 +54,7 @@ public class MeasureArrayEditor extends Container {
 
   public MeasureArrayEditor(final PropertyWrapper property) {
     setLayout(new BorderLayout());
-    final AbstractMeasure<?>[] measure = ((AbstractMeasure<?>[]) property.getValue());
+    final AbstractMeasure<?>[] measure = (AbstractMeasure<?>[]) property.getValue();
     Double[] values = new Double[measure.length];
     for (int i = 0; i < measure.length; i++) {
       values[i] = measure[i] == null ? null : measure[i].getValue();
@@ -66,20 +69,18 @@ public class MeasureArrayEditor extends Container {
           public void propertyChange(PropertyChangeEvent evt) {
             try {
               Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
+              AbstractMeasure<?>[] newMeasure = null;
               Double[] newValues = (Double[]) evt.getNewValue();
-              AbstractMeasure<?>[] newMeasure;
-              if (newValues == null) newMeasure = null;
-              else {
-                newMeasure =
-                    (AbstractMeasure<?>[])
-                        Array.newInstance(property.getType().getComponentType(), newValues.length);
+              if (newValues != null) {
+                newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
+                    property.getType().getComponentType(),
+                    newValues.length);
                 for (int i = 0; i < newValues.length; i++) {
-                  newMeasure[i] =
-                      (AbstractMeasure<?>)
-                          ctor.newInstance(newValues[i], unitBox.getSelectedItem());
+                  newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
+                      newValues[i],
+                      unitBox.getSelectedItem());
                 }
               }
-
               property.setValue(newMeasure);
               property.setChanged(true);
               valueField.setBackground(oldBg);
@@ -93,52 +94,43 @@ public class MeasureArrayEditor extends Container {
     try {
       Type type =
           ((ParameterizedType) property.getType().getComponentType().getGenericSuperclass())
-              .getActualTypeArguments()[0];
+          .getActualTypeArguments()[0];
       Method method = ((Class<?>) type).getMethod("values");
       unitBox = new JComboBox((Object[]) method.invoke(null));
       unitBox.setSelectedItem(measure.length == 0 || measure[0] == null
                               ? null
                               : measure[0].getUnit());
-      unitBox.addActionListener(
-          new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-              try {
-                Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
-
-                AbstractMeasure<?>[] newMeasure;
-                Double[] newValues = valueField.getValue();
-                if (newValues == null) newMeasure = null;
-                else {
-                  newMeasure =
-                      (AbstractMeasure<?>[])
-                          Array.newInstance(
-                              property.getType().getComponentType(), newValues.length);
-                  for (int i = 0; i < newValues.length; i++) {
-                    newMeasure[i] =
-                        (AbstractMeasure<?>)
-                            ctor.newInstance(newValues[i], unitBox.getSelectedItem());
-                  }
-                }
-
-                property.setValue(newMeasure);
-                property.setChanged(true);
-                valueField.setBackground(oldBg);
-                unitBox.setBackground(oldBg);
-              } catch (Exception e) {
-                LOG.error("Error while updating property units", e);
+      unitBox.addActionListener((e) -> {
+          try {
+            Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
+            AbstractMeasure<?>[] newMeasure = null;
+            Double[] newValues = valueField.getValue();
+            if (newValues != null) {
+              newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
+                  property.getType().getComponentType(),
+                  newValues.length);
+              for (int i = 0; i < newValues.length; i++) {
+                newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
+                    newValues[i],
+                    unitBox.getSelectedItem());
               }
             }
-          });
+            property.setValue(newMeasure);
+            property.setChanged(true);
+            valueField.setBackground(oldBg);
+            unitBox.setBackground(oldBg);
+          } catch (Exception ex) {
+            LOG.error("Error while updating property units", ex);
+          }
+        });
       add(unitBox, BorderLayout.EAST);
 
       if (!property.isUnique()) {
         valueField.setBackground(Constants.MULTI_VALUE_COLOR);
         unitBox.setBackground(Constants.MULTI_VALUE_COLOR);
       }
-    } catch (Exception e) {
-      LOG.error("Error while creating the editor", e);
+    } catch (Exception ex) {
+      LOG.error("Error while creating the editor", ex);
     }
   }
 
