@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<themes>
+  <theme name="Blueprint">
+    <background-color r="3" g="122" b="198"/>
+    <grid-color r="29" g="140" b="193"/>
+    <outline-color ref="white"/>
+  </theme>
+  <theme name="Dark">
+    <background-color ref="black"/>
+    <grid-color grayscale="40"/>
+    <outline-color ref="white"/>
+  </theme>
+</themes>
