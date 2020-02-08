@@ -55,8 +55,9 @@ public class ByteEditor extends JPanel {
 
     try {
       PercentEditor percentEditor = property.getGetter().getAnnotation(PercentEditor.class);
-      if (percentEditor == null) _100PercentValue = default100Percent;
-      else _100PercentValue = percentEditor._100PercentValue();
+      _100PercentValue = percentEditor == null
+                         ? default100Percent
+                         : percentEditor._100PercentValue();
     } catch (Exception e) {
       _100PercentValue = default100Percent;
     }
@@ -69,46 +70,40 @@ public class ByteEditor extends JPanel {
     slider.setMinimum(0);
     slider.setMaximum(default100Percent * 100);
 
-    slider.addChangeListener(
-        new ChangeListener() {
+    slider.addChangeListener(new ChangeListener() {
 
-          @Override
-          public void stateChanged(ChangeEvent e) {
-            property.setChanged(true);
-            setBackground(oldBg);
-            slider.setBackground(oldBg);
-            property.setValue(new Integer(slider.getValue() / 100).byteValue());
-            valueField.setText(
-                Integer.toString(
-                    (int)
-                        Math.round(
-                            percentFactor * (double) slider.getValue() / default100Percent)));
-          }
-        });
+        @Override
+        public void stateChanged(ChangeEvent e) {
+          property.setChanged(true);
+          setBackground(oldBg);
+          slider.setBackground(oldBg);
+          property.setValue(new Integer(slider.getValue() / 100).byteValue());
+          valueField.setText(Integer.toString((int) Math.round(
+              percentFactor * (double) slider.getValue() / default100Percent)));
+        }
+      });
     slider.setValue((Byte) property.getValue() * 100);
 
-    valueField.setText(
-        Integer.toString(
-            (int) Math.round(percentFactor * (double) slider.getValue() / default100Percent)));
+    valueField.setText(Integer.toString((int) Math.round(
+        percentFactor * (double) slider.getValue() / default100Percent)));
     valueField.setColumns(3);
-    valueField.addKeyListener(
-        new KeyAdapter() {
+    valueField.addKeyListener(new KeyAdapter() {
 
-          @Override
-          public void keyReleased(KeyEvent e) {
-            try {
-              int newPosition =
-                  (int)
-                      (Double.parseDouble(valueField.getText())
-                          * default100Percent
-                          / percentFactor);
-              System.out.println("keyReleased, pos: " + newPosition);
-              slider.setValue(newPosition);
-            } catch (Exception ex) {
-              LOG.debug("keyReleased(" + e.toString() + ") failed", ex);
-            }
+        @Override
+        public void keyReleased(KeyEvent e) {
+          try {
+            int newPosition =
+                (int)
+                (Double.parseDouble(valueField.getText())
+                 * default100Percent
+                 / percentFactor);
+            System.out.println("keyReleased, pos: " + newPosition);
+            slider.setValue(newPosition);
+          } catch (Exception ex) {
+            LOG.debug("keyReleased(" + e.toString() + ") failed", ex);
           }
-        });
+        }
+      });
 
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
