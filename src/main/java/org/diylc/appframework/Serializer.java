@@ -23,6 +23,7 @@ package org.diylc.appframework;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import org.diylc.appframework.miscutils.IconImageConverter;
 
 public class Serializer {
@@ -57,52 +59,104 @@ public class Serializer {
     xsj.allowTypesByWildcard(allowTypes);
   }
 
+  /**
+     Fetch object from URL and deserialize.
+
+     @param url String specifying the URL
+     @return deserialized object
+  */
   public static Object fromURL(String url) throws IOException {
-    BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-    Object o = xsd.fromXML(in);
-    in.close();
-    return o;
-  }
-
-  public static Object fromResource(String r) throws IOException {
-    BufferedInputStream in = new BufferedInputStream(Serializer.class.getResourceAsStream(r));
-    Object o = xsd.fromXML(in);
-    in.close();
-    return o;
-  }
-
-  public static Object fromFile(String file) throws IOException {
-    BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-    Object o = xsd.fromXML(in);
-    in.close();
-    return o;
-  }
-
-  public static Object fromFile(File file) throws IOException {
-    BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-    Object o = xsd.fromXML(in);
-    in.close();
-    return o;
-  }
-
-  public static void toFile(String file, Object o) throws IOException {
-    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-    xsd.toXML(o, out);
-    out.close();
-  }
-
-  public static void toFile(File file, Object o) throws IOException {
-    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-    xsd.toXML(o, out);
-    out.close();
-  }
-
-  public static Object fromInputStream(InputStream stream) throws IOException {
-    if (stream == null) {
-      return null;
+    Object o = null;
+    try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
+      o = xsd.fromXML(in);
     }
-    // Deserialize the stream
-    xsj.setMode(XStream.NO_REFERENCES);
-    return xsj.fromXML(stream);
+    return o;
+  }
+
+  /**
+     Fetch object from resource and deserialize.
+
+     @param resource String specifying the resource
+     @return deserialized object
+  */
+  public static Object fromResource(String resource) throws IOException {
+    Object o = null;
+    try (BufferedInputStream in =
+         new BufferedInputStream(Serializer.class.getResourceAsStream(resource))) {
+      o = xsd.fromXML(in);
+    }
+    return o;
+  }
+
+  /**
+     Fetch object from file and deserialize.
+
+     Files should be used sparingly; use resources or remote URLs instead.
+
+     @param file Filename
+     @return deserialized object
+  */
+  public static Object fromFile(String file) throws IOException {
+    Object o = null;
+    try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+      o = xsd.fromXML(in);
+    }
+    return o;
+  }
+
+  /**
+     Fetch object from file and deserialize.
+
+     Files should be used sparingly; use resources or remote URLs instead.
+
+     @param file File to deserialize
+     @return deserialized object
+  */
+  public static Object fromFile(File file) throws IOException {
+    Object o = null;
+    try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+      o = xsd.fromXML(in);
+    }
+    return o;
+  }
+
+  /**
+     Serialize object to file.
+
+     @param file Filename
+     @param o Object to serialize
+  */
+  public static void toFile(String file, Object o) throws IOException {
+    try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+      xsd.toXML(o, out);
+    }
+  }
+
+  /**
+     Serialize object to file.
+
+     @param file File
+     @param o Object to serialize
+  */
+  public static void toFile(File file, Object o) throws IOException {
+    try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+      xsd.toXML(o, out);
+    }
+  }
+
+  /**
+     Deserialize object from input stream.
+
+     @param stream Input stream
+     @return deserialized object
+  */
+  public static Object fromInputStream(InputStream stream) throws IOException {
+    Object o = null;
+    if (stream != null) {
+      // Deserialize the stream
+      xsj.setMode(XStream.NO_REFERENCES);
+      o = xsj.fromXML(stream);
+    }
+    return o;
   }
 }
