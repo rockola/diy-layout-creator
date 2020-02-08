@@ -1,6 +1,27 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.appframework.miscutils;
 
 import com.google.common.reflect.ClassPath;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
@@ -11,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,6 +54,14 @@ public class Utils {
     "mozilla"
   };
   static final String errMsg = "Error attempting to launch web browser";
+  static final String userDataDirectoryBase = String.format(
+      "%s%s.%s%sv%d%s",
+      System.getProperty("user.home"),
+      File.separator,
+      App.getString("app.name"),
+      File.separator,
+      App.getVersionNumber().getMajor(),
+      File.separator);
 
   public static void openURL(URL url) throws Exception {
     openURL(url.toString());
@@ -52,8 +82,7 @@ public class Utils {
             .invoke(null, new Object[] {url});
       } else if (osName.startsWith("Windows")) {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-      }
-      else { // assume Unix or Linux
+      } else { // assume Unix or Linux
         String browser = null;
         for (String b : browsers) {
           if (browser == null
@@ -169,11 +198,29 @@ public class Utils {
     return builder.toString();
   }
 
+  public static String getUserDataDirectory(String subdirectory) {
+    String userDir =
+        subdirectory == null
+        ? userDataDirectoryBase
+        : String.format("%s%s%s", userDataDirectoryBase, subdirectory, File.separator);
+    try {
+      File dir = new File(userDir);
+      if (dir.isDirectory()) {
+        // directory already exists
+      } else {
+        boolean directoryCreated = dir.mkdirs();
+        if (!directoryCreated) {
+          throw new RuntimeException("Could not create user data directory " + userDir);
+        }
+      }
+    } catch (SecurityException e) {
+      LOG.error("Could not create user data directory {}", userDir);
+      throw e;
+    }
+    return userDir;
+  }
+
   public static String getUserDataDirectory() {
-    return String.format("%s%s.%s%s",
-                         System.getProperty("user.home"),
-                         File.separator,
-                         App.getString("app.name"),
-                         File.separator);
+    return getUserDataDirectory(null);
   }
 }
