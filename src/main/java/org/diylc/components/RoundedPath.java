@@ -33,7 +33,7 @@ import java.awt.geom.GeneralPath;
  *   <li>call {@link RoundedPath#getPath()} to get a rounded path
  * </ul>
  *
- * Note that the starting point shouldn't lie on a corner of the
+ * <p>Note that the starting point shouldn't lie on a corner of the
  * polygon if you want that corner to get rounded too. Instead, place
  * the starting/ending point on one of the polygon sides.
  *
@@ -62,16 +62,15 @@ public class RoundedPath {
   }
 
   public final void lineTo(double x, double y) {
+    double offsetX = x - this.x;
+    double offsetY = y - this.y;
+    double theta = Math.atan2(offsetY, offsetX);
     if (isFirst) {
-      double theta = Math.atan2(y - this.y, x - this.x);
-      double r = Math.sqrt(
-          (y - this.y) * (y - this.y)
-          + (x - this.x) * (x - this.x));
+      double r = Math.hypot(offsetY, offsetX);
       path.lineTo(
           this.x + Math.cos(theta) * (r - radius),
           this.y + Math.sin(theta) * (r - radius));
     } else {
-      double theta = Math.atan2(y - this.y, x - this.x);
       path.curveTo(
           this.x,
           this.y,
