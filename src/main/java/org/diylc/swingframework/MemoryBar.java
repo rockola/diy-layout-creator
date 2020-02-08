@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.Format;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,82 +49,62 @@ import org.diylc.common.Message;
 public class MemoryBar extends JComponent {
 
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LogManager.getLogger(MemoryBar.class);
-
+  /**
+     Milliseconds between memory bar updates.
+   */
   private static final int DELAY = 10000;
-  private static final boolean USE_LOG = false;
   private static final Format format = new DecimalFormat("0.00");
   private static final String logPattern = "%s MB of %s MB free, max %s MB is available";
-  private String tooltipPattern = null;
-
   private static final double THRESHOLD = 0.1d;
-
-  private Thread bgThread;
 
   private long totalMemory = 0;
   private long freeMemory = 0;
   private long maxMemory = 0;
   private double percentFree = 0;
 
-  private boolean autoGC;
+  private Thread thread;
 
-  public MemoryBar(boolean autoGC) {
+  public MemoryBar() {
     super();
-    this.autoGC = autoGC;
-
-    if (tooltipPattern == null) {
-      tooltipPattern = Message.getHTML("message.memorybar.tooltip", true, "<br>");
-    }
-
     setPreferredSize(new Dimension(16, 20));
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    bgThread = new Thread(new Runnable() {
+  }
 
+  public void start() {
+    final MemoryBar bar = this;
+
+    thread = new Thread("DIYLC Free Memory"){
         @Override
         public void run() {
           Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+          final String tooltipPattern =
+              Message.getHTML("message.memorybar.tooltip", true, "<br>");
           while (true) {
             totalMemory = Runtime.getRuntime().totalMemory();
             freeMemory = Runtime.getRuntime().freeMemory();
             maxMemory = Runtime.getRuntime().maxMemory();
             percentFree = (double) freeMemory / totalMemory;
-            // Run the garbage collector if needed.
-            if (MemoryBar.this.autoGC && percentFree < THRESHOLD) {
-              System.gc();
+            final String tooltipText = String.format(
+                tooltipPattern,
+                format.format(convertToMb(freeMemory)),
+                format.format(convertToMb(totalMemory)),
+                format.format(convertToMb(maxMemory)));
+            if (percentFree < THRESHOLD) {
+              LOG.debug("memory: {}", tooltipText);
             }
-            setToolTipText(
-                String.format(
-                    tooltipPattern,
-                    format.format(convertToMb(freeMemory)),
-                    format.format(convertToMb(totalMemory)),
-                    format.format(convertToMb(maxMemory))));
-            if (USE_LOG) {
-              LOG.debug(
-                  String.format(
-                      logPattern,
-                      format.format(convertToMb(freeMemory)),
-                      format.format(convertToMb(totalMemory)),
-                      format.format(convertToMb(maxMemory))));
-            }
-            repaint();
+            SwingUtilities.invokeLater(() -> {
+                bar.setToolTipText(tooltipText);
+                bar.repaint();
+              });
             try {
               Thread.sleep(DELAY);
             } catch (InterruptedException e) {
             }
           }
         }
-      });
-    bgThread.start();
-
-    addMouseListener(new MouseAdapter() {
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          LOG.info("Running GC");
-          System.gc();
-        }
-      });
+      };
+    thread.start();
   }
 
   @Override
@@ -134,11 +115,10 @@ public class MemoryBar extends JComponent {
     g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 
     int barHeight = (int) ((1 - percentFree) * getHeight());
-    if (percentFree < THRESHOLD) {
-      g2d.setColor(Color.red);
-    } else {
-      g2d.setColor(UIManager.getColor("List.selectionBackground"));
-    }
+    g2d.setColor(
+        percentFree < THRESHOLD
+        ? Color.red
+        : UIManager.getColor("List.selectionBackground"));
     g2d.fillRect(0, getHeight() - barHeight - 1, getWidth() - 1, barHeight);
 
     g2d.setColor(UIManager.getColor("Button.shadow"));
@@ -150,8 +130,8 @@ public class MemoryBar extends JComponent {
   }
 
   public void dispose() {
-    if (bgThread != null) {
-      bgThread.interrupt();
+    if (thread != null) {
+      thread.interrupt();
     }
   }
 }
