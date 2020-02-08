@@ -36,59 +36,48 @@ public class Splash {
 
   private Thread thread;
 
-  private ImageIcon resistor = null;
-  private ImageIcon film = null;
   private ImageIcon ceramic = null;
   private ImageIcon electrolytic = null;
+  private ImageIcon film = null;
+  private ImageIcon resistor = null;
   private ImageIcon splash = null;
-
   private Font font = null;
   private String appVersion = null;
 
-  public Splash(final SplashScreen splashScreen) {
-    if (splashScreen == null) {
-      return; // when/why would this happen?
-    }
+  public Splash() {
+    final SplashScreen splashScreen = SplashScreen.getSplashScreen();
     final Graphics2D g = splashScreen.createGraphics();
     if (g == null) {
       return; // when would this happen?
     }
 
-    resistor = Icon.SplashResistor.imageIcon();
-    film = Icon.SplashFilm.imageIcon();
     ceramic = Icon.SplashCeramic.imageIcon();
     electrolytic = Icon.SplashElectrolytic.imageIcon();
+    film = Icon.SplashFilm.imageIcon();
+    resistor = Icon.SplashResistor.imageIcon();
     splash = Icon.Splash.imageIcon();
+
     font = FontLoader.getFont("Jura", Font.BOLD, 24);
     appVersion = Config.getString("app.version");
 
-    thread = new Thread(new Runnable() {
-
-        @Override
-        public void run() {
-          for (int i = 90; i >= 0; i--) {
-            if (splashScreen.isVisible()) {
-              final int frame = i;
-              SwingUtilities.invokeLater(
-                  new Runnable() {
-
-                    @Override
-                    public void run() {
-                      renderSplashFrame(splashScreen, g, frame);
-                      if (splashScreen.isVisible()) {
-                        splashScreen.update();
-                      }
-                    }
-                  });
-              try {
-                Thread.sleep(10);
-              } catch (InterruptedException e) {
-                // do nothing
-              }
+    thread = new Thread(() -> {
+        for (int i = 90; i >= 0; i--) {
+          if (splashScreen.isVisible()) {
+            final int frame = i;
+            SwingUtilities.invokeLater(() -> {
+                renderSplashFrame(splashScreen, g, frame);
+                if (splashScreen.isVisible()) {
+                  splashScreen.update();
+                }
+              });
+            try {
+              Thread.sleep(10);
+            } catch (InterruptedException e) {
+              // do nothing
             }
           }
         }
-      });
+    });
   }
 
   public void start() {
@@ -101,7 +90,6 @@ public class Splash {
   private Point filmTarget = new Point(233, 113);
   private Point electrolyticTarget = new Point(261, 23);
   private Point ceramicTarget = new Point(352, 22);
-
   private Point textTarget = new Point(25, 82);
 
   private int pxPerFrame = 3;
@@ -109,6 +97,7 @@ public class Splash {
 
   public void renderSplashFrame(SplashScreen splashScreen, Graphics2D g2d, int frame) {
     Graphics2D g = (Graphics2D) g2d.create();
+    g.rotate(Math.toRadians(frame));
     g.setComposite(AlphaComposite.Clear);
     splash.paintIcon(null, g, 0, 0);
     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f - frame * 0.007f));
