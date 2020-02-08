@@ -6,7 +6,7 @@
 
   <groupId>org.diylc</groupId>
   <artifactId>diylc</artifactId>
-  <version>4.0.0-rockola</version>
+  <version>4.0.0</version>
   <packaging>jar</packaging>
 
   <name>DIY Layout Creator</name>
@@ -43,6 +43,12 @@
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.28</version>
+    </dependency>
+    <!-- AWT Color Factory -->
+    <dependency>
+      <groupId>org.beryx</groupId>
+      <artifactId>awt-color-factory</artifactId>
+      <version>1.0.1</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
     <dependency>
@@ -162,7 +168,7 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.11</version>
+      <version>0.9.12</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>
@@ -184,7 +190,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>28.1-jre</version>
+      <version>28.2-jre</version>
     </dependency>
     <dependency>
       <groupId>com.atlassian.commonmark</groupId>
@@ -222,12 +228,6 @@
 	  <forceJavacCompilerUse>true</forceJavacCompilerUse>
         </configuration>
       </plugin>
-      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-      <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-surefire-plugin</artifactId>
-	<version>3.0.0-M4</version>
-      </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.0.2</version>
@@ -240,7 +240,7 @@
 	      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 	    </manifest>
 	    <manifestEntries>
-	      <SplashScreen-Image>/org/diylc/images/splash.png</SplashScreen-Image>
+	      <SplashScreen-Image>/org/diylc/images/splash4.png</SplashScreen-Image>
 	    </manifestEntries>
 	  </archive>
 	</configuration>
@@ -253,16 +253,6 @@
         <artifactId>maven-deploy-plugin</artifactId>
         <version>2.8.2</version>
       </plugin>
-      <plugin>
-	<!-- site lifecycle, see
-	     https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.7.1</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.0.0</version>
-      </plugin>
       <!-- run -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -271,9 +261,9 @@
         <configuration>
 	  <executable>java</executable>
 	  <arguments>
-	    <argument>-splash:target/classes/org/diylc/images/splash.png</argument>
-	    <argument>-Xms512m</argument>
-	    <argument>-Xmx2048m</argument>
+	    <argument>-splash:target/classes/org/diylc/images/splash4.png</argument>
+	    <argument>-Xms512M</argument>
+	    <argument>-Xmx2048M</argument>
 	    <argument>-Dorg.diylc.scriptRun=true</argument>
 	    <argument>-Dfile.encoding=true</argument>
 	    <argument>-Dawt.useSystemAAFontSettings=on</argument>
@@ -358,6 +348,30 @@
 	  </dependency>
 	</dependencies>
       </plugin>
+      <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<version>3.0.0-M4</version>
+      </plugin>
+      <plugin>
+	<groupId>org.codehaus.mojo</groupId>
+	<artifactId>license-maven-plugin</artifactId>
+	<version>2.0.0</version>
+	<executions>
+          <execution>
+            <id>download-licenses</id>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
+	</executions>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-site-plugin</artifactId>
+	<version>3.8.2</version>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -376,6 +390,9 @@
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-pmd-plugin</artifactId>
 	<version>3.12.0</version>
+	<configuration>
+	  <skipEmptyReport>false</skipEmptyReport>
+	</configuration>
       </plugin>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
@@ -401,14 +418,24 @@
       </plugin>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-report-plugin</artifactId>
+	<version>3.0.0-M4</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+      <plugin>
+	<groupId>com.github.spotbugs</groupId>
+	<artifactId>spotbugs-maven-plugin</artifactId>
+	<version>3.1.12.2</version>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-javadoc-plugin</artifactId>
 	<version>3.1.1</version>
 	<configuration>
-	  <!-- NOTE: javadoc is in /usr/bin on Ubuntu, setting ${java.home} to /usr 
-	       would work here, but would it make sense?
-	       Anyway, do change this to ${java.home}/bin/javadoc if that
-	       works better for you.
-	  -->
+	  <!-- <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable> -->
 	  <javadocExecutable>/usr/bin/javadoc</javadocExecutable>
 	</configuration>
       </plugin>
