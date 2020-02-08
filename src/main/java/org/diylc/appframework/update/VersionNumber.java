@@ -22,6 +22,8 @@ package org.diylc.appframework.update;
 
 import java.io.Serializable;
 
+import org.diylc.parsing.XmlNode;
+
 public class VersionNumber implements Serializable, Comparable<VersionNumber> {
 
   private static final long serialVersionUID = 1L;
@@ -30,28 +32,30 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
   private int minor;
   private int build;
 
-  private void initComponents(int major, int minor, int build) {
+  public VersionNumber(int major, int minor, int build) {
+    super();
     this.major = major;
     this.minor = minor;
     this.build = build;
   }
 
-  private void initComponents(String versionString) {
-    String[] versionComponents = versionString.split("\\.", 0);
-    initComponents(
-        Integer.parseInt(versionComponents[0]),
-        Integer.parseInt(versionComponents[1]),
-        Integer.parseInt(versionComponents[2]));
-  }
-
-  public VersionNumber(int major, int minor, int build) {
-    super();
-    initComponents(major, minor, build);
-  }
-
   public VersionNumber(String versionString) {
     super();
-    initComponents(versionString);
+    String[] versionComponents = versionString.split("\\.", 0);
+    this.major = Integer.parseInt(versionComponents[0]);
+    this.minor = Integer.parseInt(versionComponents[1]);
+    this.build = Integer.parseInt(versionComponents[2]);
+  }
+
+  public VersionNumber(String major, String minor, String build) {
+    this(Integer.parseInt(major), Integer.parseInt(minor), Integer.parseInt(build));
+  }
+
+  public VersionNumber(XmlNode node) {
+    this(
+        node.getValue("major"),
+        node.getValue("minor"),
+        node.getValue("build"));
   }
 
   public int getMajor() {
@@ -90,13 +94,19 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null
+        || getClass() != obj.getClass()) {
+      return false;
+    }
     VersionNumber other = (VersionNumber) obj;
-    if (build != other.build) return false;
-    if (major != other.major) return false;
-    if (minor != other.minor) return false;
+    if (build != other.build
+        || major != other.major
+        || minor != other.minor) {
+      return false;
+    }
     return true;
   }
 
