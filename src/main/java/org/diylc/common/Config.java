@@ -28,8 +28,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.KeyStroke;
+
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.SystemConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -38,10 +40,12 @@ import org.apache.commons.configuration2.io.ClasspathLocationStrategy;
 import org.apache.commons.configuration2.io.CombinedLocationStrategy;
 import org.apache.commons.configuration2.io.FileLocationStrategy;
 import org.apache.commons.configuration2.io.FileSystemLocationStrategy;
+import org.apache.commons.text.CaseUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.swing.gui.Keymap;
 
 public final class Config {
@@ -57,18 +61,17 @@ public final class Config {
   // private static FileBasedConfigurationBuilder<XMLConfiguration> builder = null;
   private static Keymap keymap = null;
 
-  private static final List<String> configurationFiles =
-      Arrays.asList(
-          "org/diylc/defaults.xml",
-          "org/diylc/fonts.xml",
-          "org/diylc/icons.xml",
-          "org/diylc/strings-EN.xml");
+  private static final List<String> configurationFiles = Arrays.asList(
+      "org/diylc/defaults.xml",
+      "org/diylc/fonts.xml",
+      "icons-material.xml", // "org/diylc/icons.xml",
+      "org/diylc/strings-EN.xml");
 
   private static FileBasedConfigurationBuilder<XMLConfiguration> getBuilder(
       String configurationFile) {
-    final FileLocationStrategy strategy =
-        new CombinedLocationStrategy(
-            Arrays.asList(new ClasspathLocationStrategy(), new FileSystemLocationStrategy()));
+    final FileLocationStrategy strategy = new CombinedLocationStrategy(Arrays.asList(
+        new ClasspathLocationStrategy(),
+        new FileSystemLocationStrategy()));
     return new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
         .configure(
             new Parameters().xml().setLocationStrategy(strategy).setFileName(configurationFile));
@@ -88,6 +91,8 @@ public final class Config {
     } catch (ConfigurationException e) {
       LOG.error("Could not read " + f, e);
     }
+    config.addConfiguration(new SystemConfiguration());
+
     try {
       keymap = Keymap.readDefaultKeymap();
     } catch (Exception e) {
@@ -108,23 +113,36 @@ public final class Config {
     }
   }
 
+  /**
+     Find URI corresponding to given key from String resources.
+
+     @param key Resource key
+     @return URI if found, or null
+   */
   public static URI getURI(String key) {
     URI uri = null;
     String u = getString("url." + key);
     try {
       uri = new URI(u);
     } catch (URISyntaxException e) {
-      LogManager.getLogger(Config.class).error(key + "=" + u + " does not have URI syntax", e);
+      LOG.error(key + "=" + u + " does not have URI syntax", e);
     }
     return uri;
   }
 
+  /**
+     Find URL corresponding to given key from String resources.
+
+     @see getURI
+     @param key Resource key
+     @return URL if found, or null
+   */
   public static URL getURL(String key) {
     URL url = null;
     try {
       url = getURI(key).toURL();
     } catch (MalformedURLException e) {
-      LogManager.getLogger(Config.class).error(key + " does not have URL syntax", e);
+      LOG.error(key + " does not have URL syntax", e);
     }
     return url;
   }
@@ -134,11 +152,15 @@ public final class Config {
   }
 
   /**
-   * Fetch _key_ contents from defaults as String.
-   *
-   * <p>If contents is the empty string, return key in title case. This means that <key>Key</key>
-   * can be stored simply as <key/>. Hyphens in _key_ are changed to spaces. Only the last part
-   * after any dot ('.') is used.
+     Fetch _key_ contents from defaults as String.
+
+     <p>If contents is the empty string, return key in title
+     case. <code>&lt;Key&gt;&lt;/key&gt;</code> can be stored simply
+     as <code>&lt;key/&gt;</code>. Hyphens in _key_ are changed to
+     spaces. Only the last part after any dot ('.') is used.
+
+     @param key Resource key
+     @return String found in defaults, or null
    */
   public static String getString(String key) {
     String s = config.getString(key);
@@ -154,5 +176,41 @@ public final class Config {
 
   public static KeyStroke getKeyStroke(String action) {
     return keymap.stroke(action);
+  }
+
+  public enum Flag {
+    ABNORMAL_EXIT,
+    ANTI_ALIASING,
+    AUTO_EDIT,
+    AUTO_PADS,
+    BLOCKS,
+    CONTINUOUS_CREATION,
+    DEBUG_COMPONENT_AREA,
+    DEBUG_CONTINUITY_AREA,
+    DEFAULT_TEMPLATES,
+    EXPORT_GRID,
+    EXTRA_SPACE,
+    FAVORITES,
+    HARDWARE_ACCELERATION,
+    HEARTBEAT,
+    HIGHLIGHT_CONTINUITY_AREA,
+    HI_QUALITY_RENDER,
+    METRIC,
+    OUTLINE,
+    RECENT_COMPONENTS,
+    RECENT_FILES,
+    SHOW_GRID,
+    SHOW_RULERS,
+    SNAP_TO_GRID,
+    STICKY_POINTS,
+    TEMPLATES,
+    WHEEL_ZOOM;
+
+    private static final char[] camelCaseSeparators = new char[]{'_'};
+
+    @Override
+    public String toString() {
+      return CaseUtils.toCamelCase(super.toString(), false, camelCaseSeparators);
+    }
   }
 }
