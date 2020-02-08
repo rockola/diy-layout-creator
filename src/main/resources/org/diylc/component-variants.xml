@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<variants>
+  <electro-mechanical>
+  <chassis-panel id="125b">
+      <name>125B</name>
+      <radius unit="mm">5.0</radius>
+      <border>
+	<color grayscale="166"/>
+	<thickness unit="mm">0.2</thickness>
+      </border>
+      <color grayscale="238"/>
+      <points>
+	<point x="0" y="0"/>
+	<point x="963" y="528"/>
+      </points>
+    </chassis-panel>
+    <chassis-panel copyOf="125b">
+      <name>A</name>
+      <points>
+	<point x="0" y="0"/>
+	<point x="709" y="305"/>
+      </points>
+    </chassis-panel>
+    <chassis-panel copyOf="125b">
+      <name>B</name>
+      <points>
+	<point x="0" y="0"/>
+	<point x="882" y="472"/>
+      </points>
+    </chassis-panel>
+    <chassis-panel copyOf="125b">
+      <name>BB</name>
+      <points>
+	<point x="0" y="0"/>
+	<point x="939" y="738"/>
+      </points>
+    </chassis-panel>
+    <mini-toggle id="dpdt">
+      <name>DPDT</name>
+      <body>
+	<color r="50" g="153" b="204"/>
+      </body>
+      <orientation>vertical</orientation>
+      <border>
+	<color r="35" g="107" b="142"/>
+      </border>
+      <toggle-switch-type>DPDT</toggle-switch-type>
+      <spacing unit="in">0.2</spacing>
+      <points>
+	<point x="0" y="0"/>
+	<point x="0" y="40"/>
+	<point x="0" y="80"/>
+	<point x="40" y="0"/>
+	<point x="40" y="40"/>
+	<point x="40" y="80"/>
+      </points>
+    </mini-toggle>
+    <mini-toggle copyOf="dpdt">
+      <name>SPDT</name>
+      <points>
+	<point x="0" y="0"/>
+	<point x="0" y="40"/>
+	<point x="0" y="80"/>
+      </points>
+    </mini-toggle>
+  </electro-mechanical>
+  <guitar>
+    <humbucker id="paf">
+      <name>Covered PAF-Style</name>
+      <type>PAF</type>
+      <cover>true</cover>
+      <orientation>default</orientation>
+      <color grayscale="192"/>
+      <bobbins>
+	<bobbin type="screws">
+	  <color r="234" g="227" b="198"/>
+	  <pole>
+	    <color r="117" g="157" b="175"/>
+	  </pole>
+	</bobbin>
+	<bobbin type="rods">
+	  <color r="0" g="0" b="0"/>
+	  <pole>
+	    <color r="117" g="157" b="175"/>
+	  </pole>
+	</bobbin>
+      </bobbins>
+    </humbucker>
+    <humbucker copyOf="paf">
+      <name>Uncovered PAF-Style</name>
+      <cover>false</cover>
+    </humbucker>
+    <humbucker copyOf="paf">
+      <name>EMG-style</name>
+      <bobbins>
+	<bobbin type="none"/>
+	<bobbin type="none"/>      
+      </bobbins>
+      <color grayscale="51"/>
+    </humbucker>
+    <humbucker copyOf="paf">
+      <name>Filtertron-style</name>
+      <type>filtertron</type>
+      <cover>true</cover>
+      <legs>false</legs>
+      <color grayscale="192"/>
+      <bobbins>
+	<bobbin type="screws">
+	  <color grayscale="0"/>
+	</bobbin>
+	<bobbin type="screws">
+	  <color grayscale="0"/>
+	</bobbin>
+      </bobbins>
+    </humbucker>
+    <lever-switch>
+      <name>Standard Strat switch</name>
+      <type>DP3T</type>
+      <points>
+	<point x="0" y="0"/>
+	<point x="-20" y="20"/>	
+	<point x="0" y="40"/>
+	<point x="-20" y="60"/>	
+	<point x="0" y="80"/>
+	<point x="-20" y="100"/>
+	<point x="0" y="120"/>	
+	<point x="-20" y="140"/>
+      </points>
+    </lever-switch>
+    <lever-switch>
+      <name>Superswitch</name>
+      <type>4P5T</type>
+      <points>
+	<point x="0" y="0"/>
+	<point x="0" y="20"/>
+	<point x="0" y="40"/>
+	<point x="0" y="60"/>
+	<point x="0" y="80"/>
+	<point x="0" y="100"/>
+	<point x="0" y="140"/>
+	<point x="0" y="160"/>
+	<point x="0" y="180"/>
+	<point x="0" y="200"/>
+	<point x="0" y="220"/>
+	<point x="0" y="240"/>
+	<point x="60" y="0"/>
+	<point x="60" y="20"/>
+	<point x="60" y="40"/>
+	<point x="60" y="60"/>
+	<point x="60" y="80"/>
+	<point x="60" y="100"/>
+	<point x="60" y="140"/>
+	<point x="60" y="160"/>
+	<point x="60" y="180"/>
+	<point x="60" y="200"/>
+	<point x="60" y="220"/>
+	<point x="60" y="240"/>
+      </points>
+    </lever-switch>
+    <single-coil type="stratocaster">
+      <name>Strat single-coil</name>
+      <color ref="white"/>
+      <base>
+	<color grayscale="128"/>
+      </base>
+      <pole type="rods">
+	<color r="117" g="157" b="175"/>
+      </pole>
+    </single-coil>
+    <single-coil type="stratocaster">
+      <name>Strat Dual Rail Humbucker</name>
+      <pole type="rail-humbucker">
+
+</variants>
