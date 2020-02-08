@@ -23,6 +23,10 @@ package org.diylc.components;
 import java.awt.Point;
 import java.awt.geom.Path2D;
 
+/**
+   A rounded polygon.
+   TODO: proper documentation.
+ */
 public class RoundedPolygon extends Path2D.Double {
 
   private static final long serialVersionUID = 1L;
@@ -41,7 +45,7 @@ public class RoundedPolygon extends Path2D.Double {
           first,
           second,
           third,
-          radiuses.length <= i ? radiuses[radiuses.length - 1] : radiuses[i],
+          radiuses[radiuses.length <= i ? radiuses.length - 1 : i],
           p1,
           p2);
       lineTo(p1.x, p1.y);
@@ -52,8 +56,8 @@ public class RoundedPolygon extends Path2D.Double {
 
   private void locateTwoPoints(
       Point first, Point second, Point third, double radius, Point p1, Point p2) {
-    double d1 = distance(first, second);
-    double d2 = distance(second, third);
+    double d1 = first.distance(second);
+    double d2 = second.distance(third);
     double t1 = 1 - radius / d1;
     double t2 = radius / d2;
     interpolate(first, second, t1, p1);
@@ -62,10 +66,7 @@ public class RoundedPolygon extends Path2D.Double {
 
   private void interpolate(Point p1, Point p2, double t, Point p) {
     p.setLocation(
-        (int) Math.round(p1.x * (1 - t) + p2.x * t), (int) Math.round(p1.y * (1 - t) + p2.y * t));
-  }
-
-  private double distance(Point p1, Point p2) {
-    return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+        (int) Math.round(p1.x * (1 - t) + p2.x * t),
+        (int) Math.round(p1.y * (1 - t) + p2.y * t));
   }
 }
