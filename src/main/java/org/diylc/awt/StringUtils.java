@@ -110,11 +110,14 @@ public class StringUtils {
 
       width = fm.stringWidth(before);
       int pos;
-      if (width > maxWidth) {// Too long
+      if (width > maxWidth) {
+        // Too long
         pos = findBreakBefore(line, guess);
-      } else { // Too short or possibly just right
+      } else {
+        // Too short or possibly just right
         pos = findBreakAfter(line, guess);
-        if (pos != -1) { // Make sure this doesn't make us too long
+        if (pos != -1) {
+          // Make sure this doesn't make us too long
           before = line.substring(0, pos).trim();
           if (fm.stringWidth(before) > maxWidth) {
             pos = findBreakBefore(line, guess);
@@ -122,7 +125,8 @@ public class StringUtils {
         }
       }
       if (pos == -1) {
-        pos = guess; // Split in the middle of the word
+        // Split in the middle of the word
+        pos = guess;
       }
 
       list.add(line.substring(0, pos).trim());
@@ -214,6 +218,19 @@ public class StringUtils {
     return strings;
   }
 
+  public static void drawCenteredText(Graphics2D g2d, String text, Rectangle rect) {
+    drawCenteredText(g2d, text, rect, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+  }
+
+  public static void drawCenteredText(
+      Graphics2D g2d,
+      String text,
+      Rectangle rect,
+      HorizontalAlignment alignH,
+      VerticalAlignment alignV) {
+    drawCenteredText(g2d, text, rect.x + rect.width / 2, rect.y + rect.height / 2, alignH, alignV);
+  }
+
   public static void drawCenteredText(
       Graphics2D g2d,
       String text,
@@ -225,7 +242,7 @@ public class StringUtils {
     if (parts.length > 1) {
       FontMetrics fontMetrics = g2d.getFontMetrics();
       Rectangle stringBounds = fontMetrics.getStringBounds(parts[0], g2d).getBounds();
-      for (int i = 0; i < parts.length; i++)
+      for (int i = 0; i < parts.length; i++) {
         drawCenteredText(
             g2d,
             parts[i],
@@ -233,6 +250,7 @@ public class StringUtils {
             (int) (y - stringBounds.height * (parts.length - 1) / 2d + i * stringBounds.height),
             horizontalAlignment,
             verticalAlignment);
+      }
       return;
     }
 
@@ -244,16 +262,16 @@ public class StringUtils {
     GlyphVector glyphVector = font.createGlyphVector(renderContext, text);
     Rectangle visualBounds = glyphVector.getVisualBounds().getBounds();
 
-    int textX = 0;
+    int textX = x;
     switch (horizontalAlignment) {
       case CENTER:
         textX = x - stringBounds.width / 2;
         break;
-      case LEFT:
-        textX = x;
-        break;
       case RIGHT:
         textX = x - stringBounds.width;
+        break;
+      case LEFT:
+      default:
         break;
     }
 
@@ -262,11 +280,12 @@ public class StringUtils {
       case TOP:
         textY = y + stringBounds.height;
         break;
-      case CENTER:
-        textY = y - visualBounds.height / 2 - visualBounds.y;
-        break;
       case BOTTOM:
         textY = y - visualBounds.y;
+        break;
+      case CENTER:
+      default:
+        textY = y - visualBounds.height / 2 - visualBounds.y;
         break;
     }
 
