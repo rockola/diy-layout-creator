@@ -47,14 +47,14 @@ public final class ImageUtilities {
 
   private ImageUtilities() {}
 
-  public static final Icon image2Icon(Image image) {
+  public static Icon image2Icon(Image image) {
     if (image instanceof ToolTipImage) {
       return ((ToolTipImage) image).getIcon();
     }
     return new ImageIcon(image);
   }
 
-  public static final Image icon2Image(Icon icon) {
+  public static Image icon2Image(Icon icon) {
     if (icon instanceof ImageIcon) {
       return ((ImageIcon) icon).getImage();
     }
@@ -65,7 +65,7 @@ public final class ImageUtilities {
     return image;
   }
 
-  public static final String getImageToolTip(Image image) {
+  public static String getImageToolTip(Image image) {
     if (image instanceof ToolTipImage) {
       return ((ToolTipImage) image).toolTipText;
     }
@@ -82,7 +82,7 @@ public final class ImageUtilities {
     return LazyDisabledIcon.createDisabledImage(image);
   }
 
-  static final Image toBufferedImage(Image img) {
+  public static Image toBufferedImage(Image img) {
     new ImageIcon(img, "");
     if (img.getHeight(null) * img.getWidth(null) > 576) {
       return img;
@@ -96,7 +96,7 @@ public final class ImageUtilities {
     return rep;
   }
 
-  static final BufferedImage createBufferedImage(int width, int height) {
+  public static BufferedImage createBufferedImage(int width, int height) {
     if (Utils.isMac()) {
       return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
     }
