@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <icon>
+    <About>info</About>
+    <Add>add</Add>
+    <App>diylc-48x48</App>
+    <AppMedium>diylc-32x32</AppMedium>
+    <AppSmall>diylc-16x16</AppSmall>
+    <!-- <ApplicationEdit>application_edit</ApplicationEdit> -->
+    <Arrow>arrow</Arrow><!-- TODO copy from default set! -->
+    <BOM>table_chart</BOM>
+    <Back>flip_to_back</Back>
+    <!-- <BlackBoard>blackboard</BlackBoard> -->
+    <BranchAdd>source-branch</BranchAdd>
+    <BriefcaseAdd>briefcase-plus</BriefcaseAdd>
+    <BriefcaseInto>briefcase_into</BriefcaseInto><!-- TODO! -->
+    <Bug>bug</Bug>
+    <CSV>file-delimited</CSV>
+    <!-- <Chest>chest</Chest> -->
+    <Cloud>cloud</Cloud>
+    <CloudBg>cloud_bg</CloudBg><!-- TODO! -->
+    <!-- <CloudBig>cloud_big</CloudBig> -->
+    <CloudDelete>delete</CloudDelete>
+    <CloudDownload>cloud-download</CloudDownload>
+    <CloudEdit>square-edit-outline</CloudEdit>
+    <CloudGear>cogs</CloudGear>
+    <CloudUp>cloud-upload</CloudUp>
+    <CloudUpload>cloud-upload</CloudUpload>
+    <CloudWait>progress-clock</CloudWait>
+    <CoffeebeanEdit>car-battery</CoffeebeanEdit><!-- Component API -->
+    <Component>toy-brick</Component>
+    <ComponentAdd>toy-brick-plus</ComponentAdd>
+    <Copy>content-copy</Copy>
+    <Cut>content-cut</Cut>
+    <Dashboard>view-dashboard</Dashboard>
+    <DataFind>file-find</DataFind>
+    <Delete>delete</Delete>
+    <DiskBlue>content-save</DiskBlue>
+    <DocumentEdit>file-edit</DocumentEdit>
+    <DocumentPlain>file</DocumentPlain>
+    <!-- <DocumentPlainYellow>document_plain_yellow</DocumentPlainYellow> -->
+    <DocumentsGear>content-duplicate</DocumentsGear>
+    <Donate>coffee</Donate>
+    <Download>cloud-download</Download>
+    <EditComponent>square-edit-outline</EditComponent>
+    <ElementInto>import</ElementInto>
+    <ElementsSelection>select</ElementsSelection>
+    <!-- <Error>error</Error> -->
+    <Excel>file-excel</Excel>
+    <Exit>exit-run</Exit>
+    <Eye>eye</Eye>
+    <Faq>frequently-asked-questions</Faq>
+    <Find>file-find</Find>
+    <FitToSize>move-resize-variant</FitToSize>
+    <FlipHorizontal>flip-horizontal</FlipHorizontal>
+    <FlipVertical>flip-vertical</FlipVertical>
+    <FolderOut>folder-open</FolderOut>
+    <Form>briefcase</Form>
+    <FormAdd>briefcase-plus</FormAdd>
+    <Front>flip-to-front</Front>
+    <Garbage>delete</Garbage>
+    <!-- <Gears>gears</Gears> -->
+    <Group>group</Group>
+    <Guitar>guitar-electric</Guitar>
+    <HTML>file-code</HTML>
+    <Hammer>toolbox</Hammer>
+    <Help>help-circle</Help>
+    <History>history</History>
+    <!-- <IconLarge>icon_large</IconLarge>
+    <IconMedium>icon_medium</IconMedium>
+    <IconSmall>icon_small</IconSmall> -->
+    <IdCard>account</IdCard>
+    <IdCardAdd>account-plus</IdCardAdd>
+    <IdCardEdit>account-edit</IdCardEdit>
+    <Image>image</Image>
+    <JarBeanInto>format-list-checkbox</JarBeanInto>
+    <KeyEdit>account-cog</KeyEdit>
+    <LightBulbOff>lightbulb</LightBulbOff>
+    <LightBulbOn>lightbulb-on</LightBulbOn>
+    <MagicWand>transform</MagicWand>
+    <Manual>bookshelf</Manual>
+    <Megaphone>message-alert</Megaphone>
+    <Messages>message-text</Messages>
+    <MissingImage>image-broken</MissingImage>
+    <MoveSmall>chevron-double-down</MoveSmall>
+    <!-- <NavLeftBlue>nav_left_blue</NavLeftBlue>
+    <NavRightBlue>nav_right_blue</NavRightBlue> -->
+    <!-- <NavigateCheck>navigate_check</NavigateCheck> -->
+    <Node>briefcase</Node>
+    <!-- <NotebookAdd>notebook_add</NotebookAdd> -->
+    <PDF>file-pdf</PDF>
+    <Paste>content-paste</Paste>
+    <Pens>palette</Pens>
+    <!-- <PhotoScenery>photo_scenery</PhotoScenery> -->
+    <PinGreen>pin</PinGreen>
+    <PinGrey>pin-off</PinGrey>
+    <!-- <Plugin>plugin</Plugin> -->
+    <Print>printer</Print>
+    <Redo>redo</Redo>
+    <RotateCCW>rotate-right</RotateCCW>
+    <RotateCW>rotate-left</RotateCW>
+    <SaveAs>content-save-edit</SaveAs>
+    <Scientist>head-question</Scientist>
+    <Screwdriver>screwdriver</Screwdriver>
+    <ScrollInformation>message-text</ScrollInformation>
+    <SearchBox>search</SearchBox>
+    <Selection>select</Selection>
+    <Size>tape-measure</Size>
+    <Sort>sort-alphabetical</Sort>
+    <Splash>splash4</Splash>
+    <SplashCeramic>splash_ceramic</SplashCeramic>
+    <SplashElectrolytic>splash_electrolytic</SplashElectrolytic>
+    <SplashFilm>splash_film</SplashFilm>
+    <SplashResistor>splash_resistor</SplashResistor>
+    <StarBlue>star</StarBlue>
+    <StarGrey>star-outline</StarGrey>
+    <TraceMask>transit-connection-variant</TraceMask>
+    <Undo>undo</Undo>
+    <Ungroup>ungroup</Ungroup>
+    <!-- <Upload>upload</Upload> -->
+    <Warning>warning</Warning>
+    <Web>web</Web>
+    <!-- <WindowColors>window_colors</WindowColors>
+    <WindowGear>window_gear</WindowGear> 
+    <Wrench>wrench</Wrench> 
+    <ZoomSmall>zoom_small</ZoomSmall> -->
+  </icon>
+</configuration>
