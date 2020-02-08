@@ -29,12 +29,12 @@ public interface IMouseProcessor {
    *
    * <p>Note: point coordinates are display based, i.e. scaled for zoom factor.
    *
-   * @param point
-   * @param button
-   * @param ctrlDown
-   * @param shiftDown
-   * @param altDown
-   * @param clickCount
+   * @param point Cursor coordinates
+   * @param button Button(s) pressed
+   * @param ctrlDown true if Control was pressed
+   * @param shiftDown true if Shift was pressed
+   * @param altDown true if Alt was pressed
+   * @param clickCount 1 for single click, 2 for double etc.
    */
   void mouseClicked(
       Point point,
@@ -49,10 +49,10 @@ public interface IMouseProcessor {
    *
    * <p>Note: point coordinates are display based, i.e. scaled for zoom factor.
    *
-   * @param point
-   * @param ctrlDown
-   * @param shiftDown
-   * @param altDown
+   * @param point Cursor coordinates
+   * @param ctrlDown true if Control was pressed
+   * @param shiftDown true if Shift was pressed
+   * @param altDown true if Alt was pressed
    */
   void mouseMoved(Point point, boolean ctrlDown, boolean shiftDown, boolean altDown);
 
@@ -61,7 +61,7 @@ public interface IMouseProcessor {
    *
    * <p>Note: point coordinates are scaled for zoom factor.
    *
-   * @param point
+   * @param point Cursor coordinates
    * @param dragAction
    * @param forceSelectionRect
    */
@@ -72,7 +72,7 @@ public interface IMouseProcessor {
    *
    * <p>Note: point coordinates are scaled for zoom factor.
    *
-   * @param point
+   * @param point Cursor coordinates
    * @return
    */
   boolean dragOver(Point point);
