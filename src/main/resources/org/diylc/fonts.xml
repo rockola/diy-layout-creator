@@ -15,6 +15,17 @@
 	 http://joelcrawfordsmith.com/closest-font/font/eurostile
 	 referenced 2020-01-01 
     -->
-    <label>Jura</label>    
+    <label>Jura</label>
+    <!-- "Liberation Mono is a sans-serif font metrically equivalent
+         to Courier New, developed by Ascender Corp. and published by
+         Red Hat in 2007 under the GPL license with some
+         exceptions."
+
+	 Current versions licensed under SIL Open Font License.
+
+	 https://en.wikipedia.org/wiki/Courier_(typeface)#Alternatives_and_derivatives
+	 referenced 2020-02-05
+    -->
+    <monospace>Liberation Mono</monospace>
   </font>
 </configuration>
