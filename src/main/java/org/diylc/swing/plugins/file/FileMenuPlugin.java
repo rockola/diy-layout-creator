@@ -20,14 +20,21 @@
 
 package org.diylc.swing.plugins.file;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.AbstractAction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
+import org.diylc.appframework.miscutils.Utils;
+import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.common.IPlugIn;
@@ -103,7 +110,7 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
     addAction(ActionFactory.createBomAction(plugInPort), ANALYZE_TITLE);
     addAction(ActionFactory.createGenerateNetlistAction(plugInPort), ANALYZE_TITLE);
 
-    List<INetlistAnalyzer> summarizers = plugInPort.getNetlistAnalyzers();
+    List<INetlistAnalyzer> summarizers = getNetlistAnalyzers();
     if (summarizers != null) {
       for (INetlistAnalyzer summarizer : summarizers) {
         addAction(
@@ -147,12 +154,41 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
       LOG.info("Aborted opening recent file");
       return;
     }
-    this.plugInPort.loadProjectFromFile(name);
+    this.plugInPort.loadProject(name);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public List<String> getAvailableItems() {
-    return (List<String>) App.getObject(IPlugInPort.Key.RECENT_FILES);
+    return (List<String>) App.getObject(Config.Flag.RECENT_FILES);
+  }
+
+  public List<INetlistAnalyzer> getNetlistAnalyzers() {
+    Set<Class<?>> classes;
+    try {
+      classes = Utils.getClasses("org.diylc.netlist");
+      List<INetlistAnalyzer> result = new ArrayList<INetlistAnalyzer>();
+
+      for (Class<?> clazz : classes) {
+        if (!Modifier.isAbstract(clazz.getModifiers())
+            && INetlistAnalyzer.class.isAssignableFrom(clazz)) {
+          result.add((INetlistAnalyzer) clazz.getDeclaredConstructor().newInstance());
+        }
+      }
+
+      Collections.sort(
+          result,
+          new Comparator<INetlistAnalyzer>() {
+
+            @Override
+            public int compare(INetlistAnalyzer o1, INetlistAnalyzer o2) {
+              return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+          });
+
+      return result;
+    } catch (Exception e) {
+      LOG.error("Could not load INetlistSummarizer implementations", e);
+      return null;
+    }
   }
 }

@@ -38,11 +38,4 @@ public interface INetlistProcessor {
    * @return
    */
   List<Netlist> extractNetlists(boolean includeSwitches);
-
-  /**
-   * Finds all available {@link INetlistAnalyzer} implementations.
-   *
-   * @return
-   */
-  List<INetlistAnalyzer> getNetlistAnalyzers();
 }
