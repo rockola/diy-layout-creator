@@ -21,10 +21,18 @@
 package org.diylc.common;
 
 public enum Orientation {
-  DEFAULT,
-  _90,
-  _180,
-  _270;
+  DEFAULT(0, 0),
+  _90(90, Math.PI / 2),
+  _180(180, Math.PI),
+  _270(270, Math.PI * 3 / 2);
+
+  private int value;
+  private double theta;
+
+  Orientation(int v, double theta) {
+    value = v;
+    this.theta = theta;
+  }
 
   @Override
   public String toString() {
@@ -32,6 +40,66 @@ public enum Orientation {
       return "Default";
     } else {
       return name().replace("_", "") + " degrees clockwise";
+    }
+  }
+
+  public int toInt() {
+    return this.value;
+  }
+
+  public boolean isDefault() {
+    return this == DEFAULT;
+  }
+
+  public boolean is90() {
+    return this == _90;
+  }
+
+  public boolean is180() {
+    return this == _180;
+  }
+
+  public boolean is270() {
+    return this == _270;
+  }
+
+  /**
+     Get angle.
+  */
+  public double getTheta() {
+    return this.theta;
+  }
+
+  public Orientation mirrorHorizontal() {
+    switch (this) {
+      case _90:
+        return _270;
+      case _270:
+        return _90;
+      default:
+        return this;
+    }
+  }
+
+  public Orientation mirrorVertical() {
+    switch (this) {
+      case DEFAULT:
+        return _180;
+      case _180:
+        return DEFAULT;
+      default:
+        return this;
+    }
+  }
+
+  public Orientation mirror(int hv) {
+    switch (hv) {
+      case IComponentTransformer.HORIZONTAL:
+        return mirrorHorizontal();
+      case IComponentTransformer.VERTICAL:
+        return mirrorVertical();
+      default:
+        throw new RuntimeException("Unknown direction " + hv);
     }
   }
 }
