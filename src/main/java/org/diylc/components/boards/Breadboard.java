@@ -59,28 +59,23 @@ public class Breadboard extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color FILL_COLOR = Color.white;
-  public static Color BORDER_COLOR = Color.black;
-  public static Size BODY_ARC = new Size(3d, SizeUnit.mm);
-  public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color HOLE_COLOR = Color.decode("#EEEEEE");
-
-  public static Color PLUS_COLOR = Color.red;
-  public static Color MINUS_COLOR = Color.blue;
-
-  public static float COORDINATE_FONT_SIZE = 9f;
-  public static Color COORDINATE_COLOR = Color.gray.brighter();
-
-  public static Size HOLE_SIZE = new Size(1.5, SizeUnit.mm);
-  public static Size HOLE_ARC = new Size(1d, SizeUnit.mm);
+  public static final Color FILL_COLOR = Color.white;
+  public static final Color BORDER_COLOR = Color.black;
+  public static final Size BODY_ARC = new Size(3d, SizeUnit.mm);
+  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Color HOLE_COLOR = Color.decode("#EEEEEE");
+  public static final Color PLUS_COLOR = Color.red;
+  public static final Color MINUS_COLOR = Color.blue;
+  public static final float COORDINATE_FONT_SIZE = 9f;
+  public static final Color COORDINATE_COLOR = Color.gray.brighter();
+  public static final Size HOLE_SIZE = new Size(1.5, SizeUnit.mm);
+  public static final Size HOLE_ARC = new Size(1d, SizeUnit.mm);
 
   protected Point point = new Point(0, 0);
-
   protected BreadboardSize breadboardSize;
   protected PowerStripPosition powerStripPosition;
   protected Orientation orientation;
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public void draw(
       Graphics2D g2d,
@@ -93,24 +88,12 @@ public class Breadboard extends AbstractComponent<Void> {
     }
 
     // adjust the angle
-    double theta = 0;
-    switch (getOrientation()) {
-      case _90:
-        theta = Math.PI / 2;
-        break;
-      case _180:
-        theta = Math.PI;
-        break;
-      case _270:
-        theta = Math.PI * 3 / 2;
-        break;
-    }
+    double theta = getOrientation().getTheta();
     if (theta != 0) {
       g2d.rotate(theta, point.x, point.y);
     }
 
     int bodyArc = (int) BODY_ARC.convertToPixels();
-    double spacing = SPACING.convertToPixels();
     int holeCount = getBreadboardSize() == BreadboardSize.Full ? 63 : 30;
 
     // draw body
@@ -126,6 +109,7 @@ public class Breadboard extends AbstractComponent<Void> {
     drawingObserver.stopTracking();
 
     // draw lines
+    double spacing = SPACING.convertToPixels();
     g2d.setColor(PLUS_COLOR);
     g2d.drawLine(
         (int) (point.x + spacing),
@@ -208,8 +192,8 @@ public class Breadboard extends AbstractComponent<Void> {
 
     double powerOffset =
         getPowerStripPosition() == PowerStripPosition.Inline
-            ? (getBreadboardSize() == BreadboardSize.Full ? 2d : 1d)
-            : (getBreadboardSize() == BreadboardSize.Full ? 1.5d : 0.5d);
+        ? (getBreadboardSize() == BreadboardSize.Full ? 2d : 1d)
+        : (getBreadboardSize() == BreadboardSize.Full ? 1.5d : 0.5d);
 
     int psHoleCount = Math.round(holeCount / 10f) * 10;
 
@@ -235,7 +219,7 @@ public class Breadboard extends AbstractComponent<Void> {
 
     // draw transparent connections just to designate connections
     drawingObserver.startTrackingContinuityArea(true);
-    Composite oldComposite = g2d.getComposite();
+    final Composite oldComposite = g2d.getComposite();
     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
 
     for (int section = 0; section <= 1; section++) {
@@ -268,7 +252,7 @@ public class Breadboard extends AbstractComponent<Void> {
         }
         StringUtils.drawCenteredText(
             g2d,
-            Integer.valueOf(y + 1).toString(),
+            Integer.toString(y + 1),
             coordinateX,
             (int) (point.y + (y + 1) * spacing),
             (section == 0 ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT),
@@ -421,7 +405,6 @@ public class Breadboard extends AbstractComponent<Void> {
     return false;
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public Point getControlPoint(int index) {
     if (index == 0) {
@@ -430,20 +413,10 @@ public class Breadboard extends AbstractComponent<Void> {
     double spacing = SPACING.convertToPixels();
     int holeCount = (getBreadboardSize() == BreadboardSize.Full) ? 63 : 30;
     // adjust the angle
-    double theta = 0;
-    switch (getOrientation()) {
-      case _90:
-        theta = Math.PI / 2;
-        break;
-      case _180:
-        theta = Math.PI;
-        break;
-      case _270:
-        theta = Math.PI * 3 / 2;
-        break;
-    }
-    Point secondPoint =
-        new Point((int) (point.x + 23 * spacing), (int) (point.y + (holeCount + 1) * spacing));
+    Point secondPoint = new Point(
+        (int) (point.x + 23 * spacing),
+        (int) (point.y + (holeCount + 1) * spacing));
+    double theta = getOrientation().getTheta();
     if (theta != 0) {
       AffineTransform tx = AffineTransform.getRotateInstance(theta, point.x, point.y);
       tx.transform(secondPoint, secondPoint);
