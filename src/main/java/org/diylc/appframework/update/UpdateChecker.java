@@ -52,7 +52,6 @@ public class UpdateChecker {
     return App.getString("message.update." + key);
   }
 
-  @SuppressWarnings("unchecked")
   public List<Version> findNewVersions() throws Exception {
     LOG.info("Trying to download file {}", updateFileURL);
     List<Version> allVersions = (List<Version>) Serializer.fromURL(updateFileURL);
