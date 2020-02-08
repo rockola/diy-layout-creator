@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<variants>
+  <electro-mechanical>
+    <jack type="cliff">
+      <name>Mono 1/4\"</name>
+    </jack>
+    <jack type="cliff">
+      <name>Stereo 1/4\"</name>
+      <type>stereo</type>
+    </jack>
+    <jack type="closed">
+      <name>Mono 1/4\"</name>
+    </jack>
+    <jack type="closed">
+      <name>Stereo 1/4\"</name>
+      <type>stereo</type>
+    </jack>
+    <jack type="open">
+      <name>Mono 1/4\"</name>
+    </jack>
+    <jack type="open">
+      <name>Mono 1/4\" switched</name>
+      <switched>true</switched>
+    </jack>
+    <jack type="open">
+      <name>Stereo 1/4\"</name>
+      <type>stereo</type>
+    </jack>
+    <jack type="open">
+      <name>Stereo 1/4\" switched</name>
+      <type>stereo</type>
+      <switched>true</switched>
+    </jack>
+  </electro-mechanical>
+</variants>
