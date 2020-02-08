@@ -168,6 +168,7 @@ public class PropertyWrapper implements Cloneable {
   */
 
   public Object clone() throws CloneNotSupportedException {
+    super.clone();
     PropertyWrapper clone =
         new PropertyWrapper(
             this.name,
