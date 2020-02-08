@@ -20,11 +20,12 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -36,7 +37,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Eyelet Board",
@@ -53,13 +53,12 @@ public class EyeletBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BOARD_COLOR = Color.decode("#E3EAB4");
-  public static Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static Color EYELET_COLOR = Color.decode("#C3E4ED");
-
-  public static Size SPACING = new Size(0.5d, SizeUnit.in);
-  public static Size EYELET_SIZE = new Size(0.2d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
+  public static final Color BOARD_COLOR = Color.decode("#E3EAB4");
+  public static final Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Color EYELET_COLOR = Color.decode("#C3E4ED");
+  public static final Size SPACING = new Size(0.5d, SizeUnit.in);
+  public static final Size EYELET_SIZE = new Size(0.2d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
 
   // private Area copperArea;
   protected Size spacing = SPACING;
@@ -85,11 +84,8 @@ public class EyeletBoard extends AbstractBoard {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    if (componentState != ComponentState.DRAGGING) {
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       Point p = new Point(firstPoint);
       int diameter = getClosestOdd((int) EYELET_SIZE.convertToPixels());
       int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels());
@@ -104,13 +100,14 @@ public class EyeletBoard extends AbstractBoard {
           g2d.fillOval(p.x - diameter / 2, p.y - diameter / 2, diameter, diameter);
           g2d.setColor(eyeletColor.darker());
           g2d.drawOval(p.x - diameter / 2, p.y - diameter / 2, diameter, diameter);
-          g2d.setColor(Constants.CANVAS_COLOR);
+          g2d.setColor(CANVAS_COLOR);
           g2d.fillOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
           g2d.setColor(eyeletColor.darker());
           g2d.drawOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
         }
       }
       super.drawCoordinates(g2d, spacing, project);
+      g2d.setComposite(oldComposite);
     }
   }
 
@@ -148,7 +145,7 @@ public class EyeletBoard extends AbstractBoard {
     g2d.fillOval(width / 4, width / 4, width / 2, width / 2);
     g2d.setColor(EYELET_COLOR.darker());
     g2d.drawOval(width / 4, width / 4, width / 2, width / 2);
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         width / 2 - 2 / factor,
         width / 2 - 2 / factor,
