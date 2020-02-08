@@ -36,7 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.diylc.appframework.Serializer;
-import org.diylc.common.IPlugInPort;
+import org.diylc.common.Config;
 
 /**
  * Utility that reads and writes configuration to an XML file. Each
@@ -69,15 +69,9 @@ public class ConfigurationManager {
     initializeConfiguration();
   }
 
-  public static String keyString(IPlugInPort.Key key) {
-    return CaseUtils.toCamelCase(key.toString(), false, camelCaseSeparators);
-  }
-
   public void addConfigListener(String key, IConfigListener listener) {
-    List<IConfigListener> listenerList;
-    if (listeners.containsKey(key)) {
-      listenerList = listeners.get(key);
-    } else {
+    List<IConfigListener> listenerList = listeners.get(key);
+    if (listenerList == null) {
       listenerList = new ArrayList<IConfigListener>();
       listeners.put(key, listenerList);
     }
@@ -88,23 +82,22 @@ public class ConfigurationManager {
     getInstance().addConfigListener(key, listener);
   }
 
-  public static void addListener(IPlugInPort.Key key, IConfigListener listener) {
-    getInstance().addConfigListener(keyString(key), listener);
+  public static void addListener(Config.Flag flag, IConfigListener listener) {
+    getInstance().addConfigListener(flag.toString(), listener);
   }
 
   public static boolean isFileWithErrors() {
     return getInstance().fileWithErrors;
   }
 
-  @SuppressWarnings("unchecked")
   private void initializeConfiguration() {
     LOG.info("Initializing configuration");
-
     String configFileName = Utils.getUserDataDirectory() + fileName;
     File configFile = new File(configFileName);
-    // if there's no file in the preferred folder, look for it in the app folder
     if (!configFile.exists()) {
+      // if there's no file in the preferred folder, look for it in the app folder
       // configFile = new File(fileName); // created but not used? //ola 20200109
+      LOG.info("Empty configuration");
       configuration = new HashMap<String, Object>();
     } else {
       try {
@@ -116,7 +109,7 @@ public class ConfigurationManager {
         fileWithErrors = true;
         configuration = new HashMap<String, Object>();
         try {
-          File backupFile = new File(Utils.getUserDataDirectory() + fileName + "~");
+          File backupFile = new File(configFileName + "~");
           while (backupFile.exists()) {
             backupFile = new File(backupFile.getAbsolutePath() + "~");
           }
@@ -177,20 +170,17 @@ public class ConfigurationManager {
     return getBoolean(key, false);
   }
 
-  public static boolean getBoolean(IPlugInPort.Key key, boolean defaultValue) {
-    return getBoolean(keyString(key), defaultValue);
+  public static boolean getBoolean(Config.Flag flag, boolean defaultValue) {
+    return getBoolean(flag.toString(), defaultValue);
   }
 
-  public static boolean getBoolean(IPlugInPort.Key key) {
-    return getBoolean(keyString(key), false);
+  public static boolean getBoolean(Config.Flag flag) {
+    return getBoolean(flag, false);
   }
 
   public String readString(String key, String defaultValue) {
-    if (configuration.containsKey(key)) {
-      return (String) configuration.get(key);
-    } else {
-      return defaultValue;
-    }
+    String ret = (String) configuration.get(key);
+    return (ret == null ? defaultValue : ret);
   }
 
   public static String getString(String key, String defaultValue) {
@@ -203,11 +193,8 @@ public class ConfigurationManager {
   }
 
   public int readInt(String key, int defaultValue) {
-    if (configuration.containsKey(key)) {
-      return (Integer) configuration.get(key);
-    } else {
-      return defaultValue;
-    }
+    Integer ret = (Integer) configuration.get(key);
+    return (ret == null ? defaultValue : ret.intValue());
   }
 
   public static int getInt(String key, int defaultValue) {
@@ -215,11 +202,8 @@ public class ConfigurationManager {
   }
 
   public float readFloat(String key, float defaultValue) {
-    if (configuration.containsKey(key)) {
-      return (Float) configuration.get(key);
-    } else {
-      return defaultValue;
-    }
+    Float ret = (Float) configuration.get(key);
+    return (ret == null ? defaultValue : ret.floatValue());
   }
 
   public static float getFloat(String key, float defaultValue) {
@@ -227,11 +211,8 @@ public class ConfigurationManager {
   }
 
   public double readDouble(String key, double defaultValue) {
-    if (configuration.containsKey(key)) {
-      return (Double) configuration.get(key);
-    } else {
-      return defaultValue;
-    }
+    Double ret = (Double) configuration.get(key);
+    return (ret == null ? defaultValue : ret.doubleValue());
   }
 
   public static double getDouble(String key, double defaultValue) {
@@ -239,11 +220,8 @@ public class ConfigurationManager {
   }
 
   public Object readObject(String key, Object defaultValue) {
-    if (configuration.containsKey(key)) {
-      return configuration.get(key);
-    } else {
-      return defaultValue;
-    }
+    Object ret = configuration.get(key);
+    return (ret == null ? defaultValue : ret);
   }
 
   public static Object getObject(String key, Object defaultValue) {
@@ -254,12 +232,12 @@ public class ConfigurationManager {
     return getObject(key, null);
   }
 
-  public static Object getObject(IPlugInPort.Key key, Object defaultValue) {
-    return getObject(keyString(key), defaultValue);
+  public static Object getObject(Config.Flag flag, Object defaultValue) {
+    return getObject(flag.toString(), defaultValue);
   }
 
-  public static Object getObject(IPlugInPort.Key key) {
-    return getObject(keyString(key), null);
+  public static Object getObject(Config.Flag flag) {
+    return getObject(flag, null);
   }
 
   public void writeValue(String key, Object value) {
@@ -277,7 +255,7 @@ public class ConfigurationManager {
     getInstance().writeValue(key, value);
   }
 
-  public static void putValue(IPlugInPort.Key key, Object value) {
-    putValue(keyString(key), value);
+  public static void putValue(Config.Flag flag, Object value) {
+    putValue(flag.toString(), value);
   }
 }
