@@ -20,11 +20,11 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
@@ -42,12 +42,12 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BOARD_COLOR = Color.decode("#F8EBB3");
-  public static Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static Color COORDINATE_COLOR = Color.gray.brighter();
-  public static float COORDINATE_FONT_SIZE = 9f;
-  public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
+  public static final Color BOARD_COLOR = Color.decode("#F8EBB3");
+  public static final Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Color COORDINATE_COLOR = Color.gray.brighter();
+  public static final float COORDINATE_FONT_SIZE = 9f;
+  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
 
   protected String value = "";
   protected Point[] controlPoints =
@@ -76,24 +76,25 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
       IDrawingObserver drawingObserver) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
-    Composite oldComposite = g2d.getComposite();
     // render as transparent when dragging
-    int alpha = componentState == ComponentState.DRAGGING ? 0 : this.alpha;
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    final Composite oldComposite = setTransparency(g2d, 0);
     g2d.setColor(boardColor);
     g2d.fillRect(
-        firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
+        firstPoint.x,
+        firstPoint.y,
+        secondPoint.x - firstPoint.x,
+        secondPoint.y - firstPoint.y);
     g2d.setComposite(oldComposite);
 
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
-    // NOTE: original implementation ignored outline mode here, keeping it that way
-    g2d.setColor(tryBorderColor(false, borderColor));
+    g2d.setColor(tryBorderColor(outlineMode, borderColor));
     g2d.drawRect(
-        firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
+        firstPoint.x,
+        firstPoint.y,
+        secondPoint.x - firstPoint.x,
+        secondPoint.y - firstPoint.y);
   }
 
   protected void drawCoordinates(Graphics2D g2d, int spacing, Project project) {
@@ -321,12 +322,12 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     this.value = value;
   }
 
-  public static enum CoordinateType {
+  public enum CoordinateType {
     Letters,
     Numbers
   }
 
-  public static enum CoordinateDisplay {
+  public enum CoordinateDisplay {
     None,
     One_Side,
     Both_Sides;
@@ -337,7 +338,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     }
   }
 
-  public static enum CoordinateOrigin {
+  public enum CoordinateOrigin {
     Top_Left,
     Top_Right,
     Bottom_Right,
