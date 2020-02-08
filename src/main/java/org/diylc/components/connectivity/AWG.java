@@ -24,6 +24,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.diylc.utils.Constants;
+
 public enum AWG {
   _8(8),
   _10(10),
@@ -64,7 +66,7 @@ public enum AWG {
     return "#"
         + name().replace("_", "")
         + " ("
-        + String.format("%1$,.2f", diameterIn() * 25.4)
+        + String.format("%1$,.2f", diameterMm())
         + "mm / "
         + String.format("%1$,.5f", diameterIn())
         + "in)";
@@ -73,6 +75,10 @@ public enum AWG {
   public double diameterIn() {
     // TODO magic numbers
     return Math.pow(Math.E, -1.12436 - 0.11594 * getValue());
+  }
+
+  public double diameterMm() {
+    return diameterIn() * Constants.MM_PER_INCH;
   }
 
   public int getValue() {
