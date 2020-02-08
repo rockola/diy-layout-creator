@@ -20,9 +20,11 @@
 
 package org.diylc;
 
-import java.awt.SplashScreen;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -30,30 +32,42 @@ import javax.swing.UIManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.diylc.action.UndoManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
+import org.diylc.core.IDIYComponent;
+import org.diylc.core.Theme;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
 
 /**
- * Main class that runs DIYLC.
- *
- * @author Branislav Stojkovic
- * @see Presenter
- * @see MainFrame
+ * Main class that runs the application.
  */
 public class App {
 
-  private static TemplateDialog templateDialog;
-
   private static final Logger LOG = LogManager.getLogger(App.class);
   private static final String SCRIPT_RUN = "org.diylc.scriptRun";
+  private static TemplateDialog templateDialog;
+  private static UndoManager theUndoManager;
 
+  static {
+    // Show splash screen
+    new Splash().start();
+
+    theUndoManager = new UndoManager();
+  }
+
+  // ----------------------------------------------------------------
+  public static UndoManager undoManager() {
+    return theUndoManager;
+  }
+
+  // ----------------------------------------------------------------
   public static boolean getBoolean(String key, boolean defaultValue) {
     // First look in Config, then in ConfigurationManager
     Boolean b = Config.getBoolean(key);
@@ -64,12 +78,12 @@ public class App {
     return getBoolean(key, false);
   }
 
-  public static boolean getBoolean(IPlugInPort.Key key, boolean defaultValue) {
-    return ConfigurationManager.getBoolean(key, defaultValue);
+  public static boolean getBoolean(Config.Flag flag, boolean defaultValue) {
+    return ConfigurationManager.getBoolean(flag, defaultValue);
   }
 
-  public static boolean getBoolean(IPlugInPort.Key key) {
-    return ConfigurationManager.getBoolean(key, false);
+  public static boolean getBoolean(Config.Flag flag) {
+    return ConfigurationManager.getBoolean(flag, false);
   }
 
   public static int getInt(String key, int defaultValue) {
@@ -109,20 +123,22 @@ public class App {
     return getObject(key, null);
   }
 
-  public static Object getObject(IPlugInPort.Key key, Object defaultValue) {
-    return ConfigurationManager.getObject(key, defaultValue);
+  public static Object getObject(Config.Flag flag, Object defaultValue) {
+    return ConfigurationManager.getObject(flag, defaultValue);
   }
 
-  public static Object getObject(IPlugInPort.Key key) {
-    return getObject(key, null);
+  public static Object getObject(Config.Flag flag) {
+    return getObject(flag, null);
   }
 
   public static void putValue(String key, Object value) {
+    LOG.trace("putValue(String {}, {})", key, value);
     ConfigurationManager.putValue(key, value);
   }
 
-  public static void putValue(IPlugInPort.Key key, Object value) {
-    ConfigurationManager.putValue(key, value);
+  public static void putValue(Config.Flag flag, Object value) {
+    LOG.trace("putValue(Flag {}, {})", flag, value);
+    ConfigurationManager.putValue(flag, value);
   }
 
   public static String getHTML(String key) {
@@ -142,6 +158,15 @@ public class App {
   }
 
   // ****************************************************************
+
+  public static Theme getTheme() {
+    return (Theme) App.getObject(Theme.THEME_KEY, Theme.DEFAULT_THEME);
+  }
+
+  public static void setTheme(Theme theme) {
+    App.putValue(Theme.THEME_KEY, theme);
+  }
+
   public static String getFullVersionString() {
     return getString("app.version");
   }
@@ -149,7 +174,7 @@ public class App {
   public static String getVersionString() {
     String v = getFullVersionString();
     int hyphen = v.indexOf("-");
-    return (hyphen > -1 ? v.substring(0, hyphen) : v);
+    return hyphen > -1 ? v.substring(0, hyphen) : v;
   }
 
   public static VersionNumber getVersionNumber() {
@@ -158,67 +183,111 @@ public class App {
 
   // ****************************************************************
   public static boolean antiAliasing() {
-    return getBoolean(IPlugInPort.Key.ANTI_ALIASING, true);
+    return getBoolean(Config.Flag.ANTI_ALIASING, true);
   }
 
   public static boolean autoEdit() {
-    return getBoolean(IPlugInPort.Key.AUTO_EDIT);
+    return getBoolean(Config.Flag.AUTO_EDIT);
+  }
+
+  public static boolean autoPads() {
+    return getBoolean(Config.Flag.AUTO_PADS);
   }
 
   public static boolean continuousCreation() {
-    return getBoolean(IPlugInPort.Key.CONTINUOUS_CREATION);
+    return getBoolean(Config.Flag.CONTINUOUS_CREATION);
   }
 
   public static boolean exportGrid() {
-    return getBoolean(IPlugInPort.Key.EXPORT_GRID);
+    return getBoolean(Config.Flag.EXPORT_GRID);
   }
 
   public static boolean extraSpace() {
-    return getBoolean(IPlugInPort.Key.EXTRA_SPACE, true);
+    return getBoolean(Config.Flag.EXTRA_SPACE, true);
   }
 
   public static boolean hardwareAcceleration() {
-    return getBoolean(IPlugInPort.Key.HARDWARE_ACCELERATION);
+    return getBoolean(Config.Flag.HARDWARE_ACCELERATION);
   }
 
   public static boolean highQualityRendering() {
-    return getBoolean(IPlugInPort.Key.HI_QUALITY_RENDER);
+    return getBoolean(Config.Flag.HI_QUALITY_RENDER);
   }
 
   public static boolean highlightContinuityArea() {
-    return getBoolean(IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA);
+    return getBoolean(Config.Flag.HIGHLIGHT_CONTINUITY_AREA);
   }
 
-  public static boolean isDebug(IPlugInPort.Debug key) {
-    return getBoolean(key.toString());
+  public static boolean isDebug(Config.Flag flag) {
+    return flag.toString().startsWith("debug") && getBoolean(flag);
   }
 
   public static boolean metric() {
-    return getBoolean(Presenter.Key.METRIC, true);
+    return getBoolean(Config.Flag.METRIC, true);
+  }
+
+  /**
+     @return previous value of 'metric'
+   */
+  public static boolean setMetric(boolean isMetric) {
+    boolean previous = metric();
+    ConfigurationManager.putValue(Config.Flag.METRIC, isMetric);
+    return previous;
   }
 
   public static boolean outlineMode() {
-    return getBoolean(IPlugInPort.Key.OUTLINE, false);
+    boolean outline = getBoolean(Config.Flag.OUTLINE, false);
+    LOG.trace("outlineMode() is {}", outline);
+    return outline;
+  }
+
+  /**
+     @return previous value of 'outline mode'
+   */
+  public static boolean setOutlineMode(boolean isOutline) {
+    boolean previous = outlineMode();
+    LOG.trace("setOutlineMode({}) was {}", isOutline, previous);
+    ConfigurationManager.putValue(Config.Flag.OUTLINE, isOutline);
+    return previous;
   }
 
   public static boolean showGrid() {
-    return getBoolean(IPlugInPort.Key.SHOW_GRID, true);
+    return getBoolean(Config.Flag.SHOW_GRID, true);
   }
 
   public static boolean snapToGrid() {
-    return getBoolean(IPlugInPort.Key.SNAP_TO_GRID, true);
+    return getBoolean(Config.Flag.SNAP_TO_GRID, true);
   }
 
   public static boolean showRulers() {
-    return getBoolean(IPlugInPort.Key.SHOW_RULERS, true);
+    return getBoolean(Config.Flag.SHOW_RULERS, true);
   }
 
   public static boolean stickyPoints() {
-    return getBoolean(IPlugInPort.Key.STICKY_POINTS, true);
+    return getBoolean(Config.Flag.STICKY_POINTS, true);
   }
 
   public static boolean wheelZoom() {
-    return getBoolean(IPlugInPort.Key.WHEEL_ZOOM);
+    return getBoolean(Config.Flag.WHEEL_ZOOM);
+  }
+
+  public static Map<String, List<IDIYComponent<?>>> getBlocks() {
+    if (getObject(Config.Flag.BLOCKS) == null) {
+      setBlocks(new HashMap<String, List<IDIYComponent<?>>>());
+    }
+    return (Map<String, List<IDIYComponent<?>>>) getObject(Config.Flag.BLOCKS);
+  }
+
+  public static void setBlocks(Map<String, List<IDIYComponent<?>>> blocks) {
+    App.putValue(Config.Flag.BLOCKS, blocks);
+  }
+
+  public static void addBlock(String name, List<IDIYComponent<?>> components) {
+    getBlocks().put(name, components);
+  }
+
+  public static void removeBlock(String name) {
+    getBlocks().remove(name);
   }
 
   // ****************************************************************
@@ -258,71 +327,71 @@ public class App {
 
     LOG.info("{} is running", App.title());
 
+    // Handle command line arguments
+    final CommandLineArguments commandLine = new CommandLineArguments(args);
+    // TODO: do stuff according to options
+    //  e.g. choose language other than that specified by locale
+    //  for now only interested in filenames, see below
+
+    // Set look and feel
+    // TODO: choose look and feel other than system?
     String lookAndFeel = "(class name not found)";
     try {
+      // Set system look and feel
       lookAndFeel = UIManager.getSystemLookAndFeelClassName();
       LOG.debug("Setting Look and Feel to {}", lookAndFeel);
       UIManager.setLookAndFeel(lookAndFeel);
     } catch (Exception e) {
       LOG.error("Could not set Look and Feel to " + lookAndFeel, e);
+      // OK to continue, app will use a default look and feel
     }
 
-    ClassLoader loader = App.class.getClassLoader();
-    LOG.trace("App.class coming from {}", loader.getResource("org/diylc/App.class"));
-    LOG.trace("log4j2.xml coming from {}", loader.getResource("log4j2.xml"));
-    LOG.trace("java.class.path is {}", System.getProperty("java.class.path"));
-
-    // Initialize splash screen
-    final SplashScreen splash = SplashScreen.getSplashScreen();
-    new Splash(splash).start();
-
-    Package p = App.class.getPackage();
-    LOG.trace("App.class package: {}", p.getName());
-    LOG.debug(
-        "Implementation: version [{}] title [{}] vendor [{}]",
-        p.getImplementationVersion(),
-        p.getImplementationTitle(),
-        p.getImplementationVendor());
-    LOG.debug(
-        "Specification: version [{}] title [{}] vendor [{}]",
-        p.getSpecificationVersion(),
-        p.getSpecificationTitle(),
-        p.getSpecificationVendor());
-    //
+    LOG.trace(
+        "Logger configuration log4j2.xml coming from {}",
+        App.class.getClassLoader().getResource("log4j2.xml"));
     LOG.info(
         "OS: {} {}, Java version: {} by {}",
         System.getProperty("os.name"),
         System.getProperty("os.version"),
         System.getProperty("java.runtime.version"),
         System.getProperty("java.vm.vendor"));
-    LOG.info("Starting {} with working directory {}", App.title(), System.getProperty("user.dir"));
+    LOG.info(
+        "Starting {} with working directory {}",
+        App.title(),
+        System.getProperty("user.dir"));
 
-    String val = System.getProperty(SCRIPT_RUN);
-    if (!"true".equals(val)) {
-      int response =
-          JOptionPane.showConfirmDialog(
-              null,
-              Message.getHTML("startup-warning"),
-              Config.getString("app.title"),
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.WARNING_MESSAGE);
+    // TODO: make sure proper Java options are always taken into
+    // account so that SCRIPT_RUN property is not needed -
+    // is different handling per platform required?
+    String scriptRun = System.getProperty(SCRIPT_RUN);
+    if (!scriptRun.equals("true")) {
+      int response = JOptionPane.showConfirmDialog(
+          null,
+          Message.getHTML("startup-warning"),
+          Config.getString("app.title"),
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.WARNING_MESSAGE);
       if (response != JOptionPane.YES_OPTION) {
         System.exit(0);
       }
     }
 
     mainFrame = new MainFrame();
-    mainFrame.installPlugins();
-    mainFrame.setLocationRelativeTo(null);
-    mainFrame.setVisible(true);
-    if (args.length > 0) {
-      mainFrame.getPresenter().loadProjectFromFile(args[0]);
+    mainFrame.activate();
+    if (ConfigurationManager.isFileWithErrors()) {
+      mainFrame.warn(Message.getHTML("configuration-file-errors"));
+    }
+
+    if (!commandLine.filenames().isEmpty()) {
+      for (String filename : commandLine.filenames()) {
+        LOG.debug("Loading project {}", filename);
+        mainFrame.getPresenter().loadProject(filename);
+      }
     } else {
       // show template dialog at startup iff project not loaded
       // from command line and SHOW_TEMPLATES_KEY is true in
       // config, user can always bring it up from UI
-      boolean showTemplates = App.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY);
-      if (showTemplates) {
+      if (App.getBoolean(TemplateDialog.SHOW_TEMPLATES_KEY)) {
         templateDialog = new TemplateDialog(mainFrame);
         if (!templateDialog.getFiles().isEmpty()) {
           LOG.debug("Showing templates");
@@ -333,10 +402,6 @@ public class App {
       } else {
         LOG.debug("Not showing templates");
       }
-    }
-
-    if (ConfigurationManager.isFileWithErrors()) {
-      mainFrame.warn(Message.getHTML("configuration-file-errors"));
     }
   }
 }
