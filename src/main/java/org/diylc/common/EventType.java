@@ -20,7 +20,6 @@
 
 package org.diylc.common;
 
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import org.diylc.core.Project;
 
@@ -84,7 +83,7 @@ public enum EventType {
   /**
    * Called when control points under the cursor are changed.
    * A single parameter is passed, an instance of
-   * <code>Map<IDIYComponent<?>, Set<Integer>></code>
+   * <code>Map&lt;IDIYComponent&lt;?&gt;, Set&lt;Integer&gt;&gt;</code>
    * containing all the components and indices of
    * their control points that are under the cursor.
    */
