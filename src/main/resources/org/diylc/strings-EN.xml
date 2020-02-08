@@ -14,6 +14,15 @@
     default when creating new components of the same type</default-box-tooltip>
   </propertyEditor>
   <menu>
+    <edit>
+      <title>Edit</title>
+      <undo/>
+      <redo/>
+      <transform-selection/>
+      <renumber-selection/>
+      <expand-selection/>
+      <save-selection/>
+    </edit>
     <help>
       <title>Help</title>
       <user-manual>User Manual</user-manual>
@@ -27,7 +36,7 @@
     <config>
       <title>Config</title>
       <theme/>
-      <anti-aliasing/>
+      <anti-aliasing>Anti-aliasing</anti-aliasing>
       <auto-create-pads>Auto-Create Pads</auto-create-pads>
       <auto-edit-mode>Auto-Edit Mode</auto-edit-mode>
       <continuous-creation/>
@@ -87,6 +96,7 @@
       <save-as-variant/>
     </presenter>
     <infoDialog>
+      <highlight-continuity-tip>Highlight Continuity Area</highlight-continuity-tip>
       <highlight-continuity>Click on a component to highlight continuity area directly or indirectly connected to it. In this mode components cannot be moved or edited. In order to continue editing, this mode needs to be switched OFF.</highlight-continuity>
     </infoDialog>
     <templateDialog>
@@ -97,6 +107,8 @@
     <actionFactory>
       <success/>
       <exit/>
+      <undo/>
+      <redo/>
       <copy/>
       <cut/>      
       <paste/>
@@ -122,6 +134,8 @@
       <bring-to-front/>
       <raise/>
       <lower/>
+      <renumber-x-axis-first>Top-to-bottom</renumber-x-axis-first>
+      <renumber-y-axis-first>Left-to-right</renumber-y-axis-first>
       <variant-name>Variant name:</variant-name>
       <no-variants>No variants found to export.</no-variants>
       <no-variants-selected>No variants selected for export.</no-variants-selected>
@@ -140,6 +154,7 @@
       <empty-netlist>The generated netlist is empty, nothing to show.</empty-netlist>
       <empty-netlist-summary>The generated summary is empty, nothing to show.</empty-netlist-summary>
       <show-template-dialog>Templates</show-template-dialog>
+      <create-bom>Create Bill of Materials</create-bom>
     </actionFactory>
     <cloud>
       <title>Cloud</title>
@@ -196,8 +211,17 @@
     </update>
     <memorybar>
       <tooltip>%s MB of %s MB free
-Max %s MB is available
-Click to run the garbage collector</tooltip>
+      Max %s MB is available</tooltip>
     </memorybar>
+    <property-editor>
+      <input-error>Input error for \"%s\": %s</input-error>
+    </property-editor>
   </message>
+  <components>
+    <title>Components</title>
+    <favorites/>
+    <recently-used/>
+    <building-blocks/>
+    <double-click-to-edit>Double click to edit text</double-click-to-edit>
+  </components>
 </configuration>
