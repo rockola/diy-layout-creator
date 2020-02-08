@@ -1058,7 +1058,7 @@
     </list>
   </entry>
   <entry>
-    <string>org.diylc.components.electromechanical.CliffJack1_4</string>
+    <string>org.diylc.components.electromechanical.CliffJack</string>
     <list>
       <org.diylc.core.Template>
         <name>Mono</name>
@@ -1077,7 +1077,7 @@
           </entry>
           <entry>
             <string>Type</string>
-            <org.diylc.components.electromechanical.JackType>MONO</org.diylc.components.electromechanical.JackType>
+            <org.diylc.components.electromechanical.AbstractJack.JackType>MONO</org.diylc.components.electromechanical.AbstractJack.JackType>
           </entry>
         </values>
         <points>
@@ -1117,7 +1117,7 @@
           </entry>
           <entry>
             <string>Type</string>
-            <org.diylc.components.electromechanical.JackType>STEREO</org.diylc.components.electromechanical.JackType>
+            <org.diylc.components.electromechanical.AbstractJack.JackType>STEREO</org.diylc.components.electromechanical.AbstractJack.JackType>
           </entry>
         </values>
         <points>
@@ -1151,7 +1151,7 @@
     </list>
   </entry>
   <entry>
-    <string>org.diylc.components.electromechanical.OpenJack1_4</string>
+    <string>org.diylc.components.electromechanical.OpenJack</string>
     <list>
       <org.diylc.core.Template>
         <name>Mono</name>
@@ -1170,7 +1170,7 @@
           </entry>
           <entry>
             <string>Type</string>
-            <org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>MONO</org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>
+            <org.diylc.components.electromechanical.AbstractJack.JackType>MONO</org.diylc.components.electromechanical.AbstractJack.JackType>
           </entry>
         </values>
         <points>
@@ -1206,7 +1206,7 @@
           </entry>
           <entry>
             <string>Type</string>
-            <org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>STEREO</org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>
+            <org.diylc.components.electromechanical.AbstractJack.JackType>STEREO</org.diylc.components.electromechanical.AbstractJack.JackType>
           </entry>
         </values>
         <points>
@@ -1242,7 +1242,7 @@
           </entry>
           <entry>
             <string>Type</string>
-            <org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>SWITCHED</org.diylc.components.electromechanical.OpenJack1__4_-OpenJackType>
+            <org.diylc.components.electromechanical.AbstractJack.JackType>SWITCHED</org.diylc.components.electromechanical.AbstractJack.JackType>
           </entry>
         </values>
         <points>
@@ -3525,7 +3525,12 @@
           </entry>
           <entry>
             <string>Pins</string>
-            <org.diylc.components.semiconductors.DIL__IC_-PinCount>_8</org.diylc.components.semiconductors.DIL__IC_-PinCount>
+            <org.diylc.components.PinCount>
+	      <smallestPinNumber>4</smallestPinNumber>
+	      <largestPinNumber>50</largestPinNumber>
+	      <evenPinsOnly>true</evenPinsOnly>
+	      <value>8</value>
+	    </org.diylc.components.PinCount>
           </entry>
           <entry>
             <string>Alpha</string>
@@ -3629,7 +3634,12 @@
           </entry>
           <entry>
             <string>Pins</string>
-            <org.diylc.components.semiconductors.DIL__IC_-PinCount>_16</org.diylc.components.semiconductors.DIL__IC_-PinCount>
+            <org.diylc.components.PinCount>
+	      <smallestPinNumber>4</smallestPinNumber>
+	      <largestPinNumber>50</largestPinNumber>
+	      <evenPinsOnly>true</evenPinsOnly>
+	      <value>16</value>
+	    </org.diylc.components.PinCount>
           </entry>
           <entry>
             <string>Alpha</string>
