@@ -20,12 +20,14 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -37,7 +39,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Perf Board w/ Pads",
@@ -55,11 +56,10 @@ public class PerfBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COPPER_COLOR = Color.decode("#DA8A67");
-
-  public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size PAD_SIZE = new Size(0.08d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Color COPPER_COLOR = Color.decode("#DA8A67");
+  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size PAD_SIZE = new Size(0.08d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
 
   // private Area copperArea;
   protected Size spacing = SPACING;
@@ -80,11 +80,8 @@ public class PerfBoard extends AbstractBoard {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    if (componentState != ComponentState.DRAGGING) {
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       Point p = new Point(firstPoint);
       int diameter = getClosestOdd((int) PAD_SIZE.convertToPixels());
       int holeDiameter = getClosestOdd((int) HOLE_SIZE.convertToPixels());
@@ -96,18 +93,13 @@ public class PerfBoard extends AbstractBoard {
         while (p.x < secondPoint.x - spacing - diameter) {
           p.x += spacing;
           if (showPads) {
-            g2d.setColor(padColor);
-            g2d.fillOval(p.x - diameter / 2, p.y - diameter / 2, diameter, diameter);
-            g2d.setColor(padColor.darker());
-            g2d.drawOval(p.x - diameter / 2, p.y - diameter / 2, diameter, diameter);
+            Area.circle(p, diameter).fillDraw(g2d, padColor, padColor.darker());
           }
-          g2d.setColor(Constants.CANVAS_COLOR);
-          g2d.fillOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
-          g2d.setColor(padColor.darker());
-          g2d.drawOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
+          Area.circle(p, holeDiameter).fillDraw(g2d, CANVAS_COLOR, padColor.darker());
         }
       }
       super.drawCoordinates(g2d, spacing, project);
+      g2d.setComposite(oldComposite);
     }
   }
 
@@ -154,7 +146,7 @@ public class PerfBoard extends AbstractBoard {
     g2d.fillOval(width / 4, width / 4, width / 2, width / 2);
     g2d.setColor(COPPER_COLOR.darker());
     g2d.drawOval(width / 4, width / 4, width / 2, width / 2);
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         width / 2 - 2 / factor,
         width / 2 - 2 / factor,
