@@ -20,11 +20,12 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+
+import org.apache.commons.text.WordUtils;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
@@ -75,12 +76,8 @@ public class BlankBoard extends AbstractBoard {
     }
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       g2d.setColor(boardColor);
       if (getType() == Type.SQUARE) {
         g2d.fillRect(
@@ -148,13 +145,13 @@ public class BlankBoard extends AbstractBoard {
     return null;
   }
 
-  static enum Type {
+  public enum Type {
     ROUND,
     SQUARE;
 
     @Override
     public String toString() {
-      return name().substring(0, 1) + name().substring(1).toLowerCase();
+      return WordUtils.capitalize(name());
     }
   }
 }
