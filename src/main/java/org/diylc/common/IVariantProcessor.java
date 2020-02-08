@@ -44,9 +44,7 @@ public interface IVariantProcessor {
 
   String getDefaultVariant(ComponentType type);
 
-  public class VariantAlreadyExistsException extends Exception {
-
+  class VariantAlreadyExistsException extends Exception {
     private static final long serialVersionUID = 1L;
-
   }
 }
