@@ -146,13 +146,16 @@ public class AutoSavePlugin implements IPlugIn {
   }
 
   private String generateBackupFileName(String baseFileName) {
-    if (baseFileName == null) baseFileName = "Untitled";
+    if (baseFileName == null) {
+      baseFileName = "Untitled";
+    }
     File file = new File(baseFileName);
     String name = file.getName();
 
     // remove extension
-    if (name.toLowerCase().endsWith(Project.FILE_SUFFIX))
+    if (name.toLowerCase().endsWith(Project.FILE_SUFFIX)) {
       name = name.substring(0, name.length() - 4);
+    }
 
     // append date and time
     Date date = new Date();
@@ -197,7 +200,9 @@ public class AutoSavePlugin implements IPlugIn {
         });
     long totalSize = 0;
     long maxTotalSize = MAX_TOTAL_SIZE_MB * 1024 * 1024;
-    for (File f : files) totalSize += f.length();
+    for (File f : files) {
+      totalSize += f.length();
+    }
     int i = 0;
     while (i < files.length && totalSize > maxTotalSize) {
       totalSize -= files[i].length();
