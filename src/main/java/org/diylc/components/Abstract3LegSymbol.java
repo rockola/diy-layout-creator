@@ -29,11 +29,9 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
@@ -45,21 +43,19 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color COLOR = Color.black;
+  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
 
   protected String value = "";
   protected Point[] controlPoints =
       new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected Color color = COLOR;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
-  protected Display display = Display.NAME;
   protected transient Shape[] body;
   protected Orientation orientation = Orientation.DEFAULT;
   protected boolean moveLabel = false;
@@ -72,13 +68,12 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   public Point[] getControlPoints() {
     if (controlPoints.length == 3) {
-      controlPoints =
-          new Point[] {
-            controlPoints[0],
-            controlPoints[1],
-            controlPoints[2],
-            getDefaultLabelPosition(controlPoints)
-          };
+      controlPoints = new Point[] {
+        controlPoints[0],
+        controlPoints[1],
+        controlPoints[2],
+        getDefaultLabelPosition(controlPoints)
+      };
     }
     return controlPoints;
   }
@@ -137,36 +132,23 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     g2d.setFont(project.getFont());
     final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = display == Display.NAME ? getName() : (getValue() == null ? "" : getValue().toString());
-    if (display == Display.NONE) {
-      label = "";
-    }
-    if (display == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
-
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D textRect = fontMetrics.getStringBounds(label, g2d);
     Rectangle shapeRect = body[0].getBounds().union(body[1].getBounds()).union(body[2].getBounds());
-
-    if (getMoveLabel()) {
-      StringUtils.drawCenteredText(
-          g2d,
-          label,
-          controlPoints[3].x,
-          controlPoints[3].y,
-          flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT : HorizontalAlignment.CENTER,
-          VerticalAlignment.CENTER);
-    } else {
-      StringUtils.drawCenteredText(
-          g2d,
-          label,
-          getLabelX(shapeRect, textRect, fontMetrics, outlineMode),
-          getLabelY(shapeRect, textRect, fontMetrics, outlineMode),
-          flip == SymbolFlipping.X ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT,
-          VerticalAlignment.CENTER);
-    }
+    int labelX =
+        getMoveLabel()
+        ? controlPoints[3].x
+        : getLabelX(shapeRect, textRect, fontMetrics, outlineMode);
+    int labelY =
+        getMoveLabel()
+        ? controlPoints[3].y
+        : getLabelY(shapeRect, textRect, fontMetrics, outlineMode);
+    HorizontalAlignment alignment =
+        flip == SymbolFlipping.X
+        ? HorizontalAlignment.RIGHT
+        : (getMoveLabel() ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
+    StringUtils.drawCenteredText(g2d, label, labelX, labelY, alignment, VerticalAlignment.CENTER);
   }
 
   @Override
