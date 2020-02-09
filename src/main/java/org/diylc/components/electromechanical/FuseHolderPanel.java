@@ -20,7 +20,6 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -28,15 +27,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import org.diylc.appframework.miscutils.ConfigurationManager;
+
 import org.diylc.common.Display;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -61,22 +59,20 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   private static final long serialVersionUID = 1L;
 
   // common
-  private static Size SPACING = new Size(0.2d, SizeUnit.in);
-  private static Size LUG_WIDTH = new Size(4d, SizeUnit.mm);
-  private static Size LUG_THICKNESS = new Size(0.8d, SizeUnit.mm);
-  private static Size INNER_DIAMETER = new Size(0.5d, SizeUnit.in);
-  private static Size OUTER_DIAMETER = new Size(0.6d, SizeUnit.in);
-
-  private static Color BODY_COLOR = Color.decode("#555555");
-  private static Color BORDER_COLOR = BODY_COLOR.darker();
-  private static Color LABEL_COLOR = Color.white;
+  private static final Size SPACING = new Size(0.2d, SizeUnit.in);
+  private static final Size LUG_WIDTH = new Size(4d, SizeUnit.mm);
+  private static final Size LUG_THICKNESS = new Size(0.8d, SizeUnit.mm);
+  private static final Size INNER_DIAMETER = new Size(0.5d, SizeUnit.in);
+  private static final Size OUTER_DIAMETER = new Size(0.6d, SizeUnit.in);
+  private static final Color BODY_COLOR = Color.decode("#555555");
+  private static final Color BORDER_COLOR = BODY_COLOR.darker();
+  private static final Color LABEL_COLOR = Color.white;
 
   protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   protected transient Area[] body;
   protected String value = "";
   private OrientationHV orientation = OrientationHV.VERTICAL;
   private boolean hasFuse = false;
-  private Display display = Display.VALUE;
 
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
@@ -85,6 +81,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   public FuseHolderPanel() {
     super();
     updateControlPoints();
+    display = Display.VALUE;
   }
 
   private void updateControlPoints() {
@@ -180,18 +177,16 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
     Area[] body = getBody();
     // Draw body if available.
     if (body != null) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+      Composite oldComposite = setTransparency(g2d);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
-      for (Area a : body)
+      for (Area a : body) {
         if (a != null) {
           g2d.fill(a);
           break;
         }
+      }
       g2d.setComposite(oldComposite);
+
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
       final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
       g2d.setColor(finalBorderColor);
@@ -217,7 +212,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
     for (Point p : controlPoints) {
       if (outlineMode) {
-        g2d.setColor(theme.getOutlineColor());
+        g2d.setColor(theme().getOutlineColor());
         g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       } else {
         g2d.setColor(METAL_COLOR);
@@ -229,7 +224,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
     g2d.setFont(project.getFont());
     final Color finalLabelColor = tryLabelColor(outlineMode, labelColor);
     g2d.setColor(finalLabelColor);
-    FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     String label = "";
     label = display == Display.VALUE ? getValue() : getName();
     if (display == Display.NONE) {
@@ -238,6 +232,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
     if (display == Display.BOTH) {
       label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
     }
+    FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());
     int textWidth = (int) (rect.getWidth());
@@ -253,30 +248,23 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   @Override
   public Area[] getBody() {
     if (body == null) {
-      Point firstPoint = controlPoints[0];
-      int spacing = (int) SPACING.convertToPixels();
-      int outerDiameter = (int) OUTER_DIAMETER.convertToPixels();
-      int innerDiameter = (int) INNER_DIAMETER.convertToPixels();
-
-      int dx = 0;
-      int dy = 0;
-      if (orientation == OrientationHV.HORIZONTAL) dx = spacing / 2;
-      else dy = spacing / 2;
+      final Point firstPoint = controlPoints[0];
+      final int spacing = (int) SPACING.convertToPixels();
+      final int outerDiameter = (int) OUTER_DIAMETER.convertToPixels();
+      final int innerDiameter = (int) INNER_DIAMETER.convertToPixels();
+      final int dx = orientation.isHorizontal() ? spacing / 2 : 0;
+      final int dy = orientation.isVertical() ? spacing / 2 : 0;
       body = new Area[2];
-      body[0] =
-          new Area(
-              new Ellipse2D.Double(
-                  firstPoint.x + dx - outerDiameter / 2,
-                  firstPoint.y + dy - outerDiameter / 2,
-                  outerDiameter,
-                  outerDiameter));
-      body[1] =
-          new Area(
-              new Ellipse2D.Double(
-                  firstPoint.x + dx - innerDiameter / 2,
-                  firstPoint.y + dy - innerDiameter / 2,
-                  innerDiameter,
-                  innerDiameter));
+      body[0] = new Area(new Ellipse2D.Double(
+          firstPoint.x + dx - outerDiameter / 2,
+          firstPoint.y + dy - outerDiameter / 2,
+          outerDiameter,
+          outerDiameter));
+      body[1] = new Area(new Ellipse2D.Double(
+          firstPoint.x + dx - innerDiameter / 2,
+          firstPoint.y + dy - innerDiameter / 2,
+          innerDiameter,
+          innerDiameter));
     }
     return body;
   }
@@ -307,7 +295,9 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
-    if (bodyColor == null) bodyColor = BODY_COLOR;
+    if (bodyColor == null) {
+      bodyColor = BODY_COLOR;
+    }
     return bodyColor;
   }
 
@@ -317,7 +307,9 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
   @EditableProperty(name = "Border")
   public Color getBorderColor() {
-    if (borderColor == null) borderColor = BORDER_COLOR;
+    if (borderColor == null) {
+      borderColor = BORDER_COLOR;
+    }
     return borderColor;
   }
 
