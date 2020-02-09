@@ -20,20 +20,25 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
 import org.diylc.components.RoundedPolygon;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -50,13 +55,36 @@ import org.diylc.utils.Constants;
     name = "IEC Socket",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
-    description = "Panel mounted IEC power socket",
+    description = "Panel-mounted IEC 60320 C14 power inlet",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "IEC",
     autoEdit = false)
 public class IECSocket extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(IECSocket.class);
+
+  private static Map<String, IEC60320> subtypes = new HashMap<>();
+
+  static {
+    subtypes.put("C1", IEC60320.C1());
+    subtypes.put("C2", IEC60320.C2());
+    subtypes.put("C13", IEC60320.C14());
+  }
+
+  private static Size IEC_60320_C14_LUG_HORIZONTAL_SPACING = Size.mm(7);
+  private static Size IEC_60320_C14_LUG_VERTICAL_SPACING = Size.mm(4);
+  private static Size IEC_60320_C14_LUG_WIDTH = Size.mm(2);
+  private static Size IEC_60320_C14_LUG_HEIGHT = Size.mm(4);
+  private static Size IEC_60320_C14_OPENING_WIDTH = Size.mm(24);
+  private static Size IEC_60320_C14_OPENING_HEIGHT = Size.mm(16);
+  private static Size IEC_60320_C14_OUTLINE_WIDTH = Size.mm(30.5);
+  private static Size IEC_60320_C14_OUTLINE_HEIGHT = Size.mm(22.5);
+  // IEC 60320 C14 spec says R = 3 max.
+  private static Size IEC_60320_C14_OPENING_LOWER_CORNER_RADIUS = Size.mm(1.5);
+  // IEC 60320 C14 spec says R = 2 max.
+  private static Size IEC_60320_C14_OPENING_UPPER_CORNER_RADIUS = Size.mm(.75);
+  private static Size IEC_60320_C14_OPENING_UPPER_CORNER_VERTICAL_OFFSET = Size.mm(3);
 
   // common
   private static Size HORIZONTAL_SPACING = new Size(0.3d, SizeUnit.in);
@@ -80,42 +108,37 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  protected transient Area[] body;
+  protected Point[] controlPoints = new Point[] {
+    new Point(0, 0),
+    new Point(0, 0),
+    new Point(0, 0)
+  };
+
   protected String value;
   private Orientation orientation = Orientation.DEFAULT;
+
+  private IEC60320 iec;
 
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
 
   public IECSocket() {
     super();
+    iec = IEC60320.C14();
+    controlPoints = iec.getControlPoints();
     updateControlPoints();
   }
 
   private void updateControlPoints() {
-    Point firstPoint = controlPoints[0];
-    int hSpacing = (int) HORIZONTAL_SPACING.convertToPixels();
-    int vSpacing = (int) VERTICAL_SPACING.convertToPixels();
+    final Point firstPoint = controlPoints[0];
+    final int horizontalSpacing = (int) HORIZONTAL_SPACING.convertToPixels();
+    final int verticalSpacing = (int) VERTICAL_SPACING.convertToPixels();
 
-    controlPoints[1].setLocation(firstPoint.x - hSpacing, firstPoint.y + vSpacing);
-    controlPoints[2].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
+    controlPoints[1].setLocation(firstPoint.x - horizontalSpacing, firstPoint.y + verticalSpacing);
+    controlPoints[2].setLocation(firstPoint.x + horizontalSpacing, firstPoint.y + verticalSpacing);
 
     if (orientation != Orientation.DEFAULT) {
-      double theta = 0;
-      switch (orientation) {
-        case _90:
-          theta = Math.PI / 2;
-          break;
-        case _180:
-          theta = Math.PI;
-          break;
-        case _270:
-          theta = Math.PI * 3 / 2;
-          break;
-        default:
-          // do nothing
-      }
+      double theta = orientation.getTheta();
       AffineTransform rotation =
           AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
 
@@ -148,8 +171,6 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   @Override
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
-    // Reset body shape.
-    body = null;
   }
 
   @EditableProperty
@@ -184,8 +205,6 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   public void setOrientation(Orientation orientation) {
     this.orientation = orientation;
     updateControlPoints();
-    // Reset body shape.
-    body = null;
   }
 
   @Override
@@ -198,178 +217,37 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    Area[] body = getBody();
-    // Draw body if available.
-    if (body != null) {
-      final Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
-      for (Area a : body) {
-        if (a != null) {
-          g2d.fill(a);
-          break;
-        }
-      }
-      g2d.setComposite(oldComposite);
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-      Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
-      g2d.setColor(finalBorderColor);
-      for (Area a : body) {
-        if (a != null) {
-          g2d.draw(a);
-        }
+
+    final AffineTransform at = g2d.getTransform();
+    Point displaced = controlPoints[0];
+    g2d.translate(displaced.x, displaced.y);
+    if (orientation != Orientation.DEFAULT) {
+      g2d.rotate(orientation.getTheta());
+    }
+
+    // Draw body
+    final Color fillColor = (outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
+    final Color drawColor = tryBorderColor(outlineMode, getBorderColor());
+    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
+    int i = 0;
+    for (Area a : getBody()) {
+      if (a != null) {
+        a.fillDraw(g2d, fillColor, drawColor);
       }
     }
-    // Do not track these changes, the whole switch has been tracked.
     drawingObserver.stopTracking();
-
-    // Draw lugs.
-    int lugWidth = getClosestOdd((int) LUG_WIDTH.convertToPixels());
-    int lugHeight = getClosestOdd((int) LUG_THICKNESS.convertToPixels());
-
-    if (orientation == Orientation._90 || orientation == Orientation._270) {
-      int p = lugHeight;
-      lugHeight = lugWidth;
-      lugWidth = p;
-    }
-
-    g2d.setColor(tryColor(outlineMode, METAL_COLOR));
-    for (Point p : controlPoints) {
-      drawFillRect(g2d, outlineMode, p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
+    final Color pinFillColor = (outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR);
+    for (Pin pin : iec.getPins()) {
+      pin.getShape().fillDraw(g2d, pinFillColor, drawColor);
     }
 
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
+
+    g2d.setTransform(at);
   }
 
-  @SuppressWarnings("incomplete-switch")
   public Area[] getBody() {
-    if (body == null) {
-      body = new Area[3];
-
-      Point firstPoint = controlPoints[0];
-      double baseLength = SIMPLE_BASE_LENGTH.convertToPixels();
-      double baseWidth = SIMPLE_BASE_WIDTH.convertToPixels();
-      double length = SIMPLE_LENGTH.convertToPixels();
-      int vSpacing = (int) VERTICAL_SPACING.convertToPixels();
-      Point[] outerPoints =
-          new Point[] {
-            new Point(
-                (int) Math.round(firstPoint.x),
-                (int) Math.round(firstPoint.y + vSpacing / 2 - baseWidth / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x + baseLength / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2 - baseWidth / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x + length / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x + baseLength / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2 + baseWidth / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x - baseLength / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2 + baseWidth / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x - length / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2)),
-            new Point(
-                (int) Math.round(firstPoint.x - baseLength / 2),
-                (int) Math.round(firstPoint.y + vSpacing / 2 - baseWidth / 2)),
-          };
-      double baseRadius = SIMPLE_BASE_RADIUS.convertToPixels();
-      double outerRadius = SIMPLE_OUTER_RADIUS.convertToPixels();
-      double[] outerRadiuses =
-          new double[] {
-            baseRadius / 2,
-            outerRadius,
-            baseRadius / 2,
-            baseRadius / 2,
-            outerRadius,
-            baseRadius / 2
-          };
-
-      double holeDiameter = HOLE_DIAMETER.convertToPixels();
-      double holeSpacing = HOLE_SPACING.convertToPixels();
-      body[0] = new Area(new RoundedPolygon(outerPoints, outerRadiuses));
-      body[0].subtract(new Area(new Ellipse2D.Double(
-          firstPoint.x - holeSpacing / 2 - holeDiameter / 2,
-          firstPoint.y + vSpacing / 2 - holeDiameter / 2,
-          holeDiameter,
-          holeDiameter)));
-      body[0].subtract(new Area(new Ellipse2D.Double(
-          firstPoint.x + holeSpacing / 2 - holeDiameter / 2,
-          firstPoint.y + vSpacing / 2 - holeDiameter / 2,
-          holeDiameter,
-          holeDiameter)));
-      body[1] = new Area(new RoundRectangle2D.Double(
-          firstPoint.x - baseLength / 2,
-          firstPoint.y + vSpacing / 2 - baseWidth / 2,
-          baseLength,
-          baseWidth,
-          baseRadius,
-          baseRadius));
-
-      double cutoutLength = SIMPLE_CUTOUT_LENGTH.convertToPixels();
-      double cutoutRadius = SIMPLE_CUTOUT_RADIUS.convertToPixels();
-      double cutoutSlant = SIMPLE_CUTOUT_SLANT.convertToPixels();
-      double cutoutWidth = SIMPLE_CUTOUT_WIDTH.convertToPixels();
-      Point[] cutoutPoints =
-          new Point[] {
-            new Point(firstPoint.x, (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2)),
-            new Point(
-                (int) (firstPoint.x + cutoutLength / 2 - cutoutSlant),
-                (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2)),
-            new Point(
-                (int) (firstPoint.x + cutoutLength / 2),
-                (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2 + cutoutSlant)),
-            new Point(
-                (int) (firstPoint.x + cutoutLength / 2),
-                (int) (firstPoint.y + vSpacing / 2 + cutoutWidth / 2)),
-            new Point(
-                (int) (firstPoint.x - cutoutLength / 2),
-                (int) (firstPoint.y + vSpacing / 2 + cutoutWidth / 2)),
-            new Point(
-                (int) (firstPoint.x - cutoutLength / 2),
-                (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2 + cutoutSlant)),
-            new Point(
-                (int) (firstPoint.x - cutoutLength / 2 + cutoutSlant),
-                (int) (firstPoint.y + vSpacing / 2 - cutoutWidth / 2)),
-          };
-
-      double[] cutoutRadiuses =
-          new double[] {
-            cutoutRadius,
-          };
-
-      body[2] = new Area(new RoundedPolygon(cutoutPoints, cutoutRadiuses));
-
-      if (orientation != Orientation.DEFAULT) {
-        double theta = 0;
-        switch (orientation) {
-          case _90:
-            theta = Math.PI / 2;
-            break;
-          case _180:
-            theta = Math.PI;
-            break;
-          case _270:
-            theta = Math.PI * 3 / 2;
-            break;
-          default:
-            // do nothing
-        }
-        AffineTransform rotation =
-            AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
-        for (Area a : body) {
-          if (a != null) {
-            a.transform(rotation);
-          }
-        }
-      }
-    }
-    return body;
+    return iec.getBody();
   }
 
   @Override
