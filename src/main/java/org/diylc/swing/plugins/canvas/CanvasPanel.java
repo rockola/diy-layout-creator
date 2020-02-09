@@ -54,10 +54,12 @@ import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
 import org.diylc.common.ComponentType;
+import org.diylc.common.Config;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IBlockProcessor.InvalidBlockException;
 import org.diylc.common.IPlugInPort;
-import org.diylc.swing.plugins.tree.TreePanel;
+import org.diylc.presenter.Presenter;
+import org.diylc.swing.tree.ComponentTreePanel;
 
 /**
  * GUI class used to draw onto.
@@ -67,27 +69,16 @@ import org.diylc.swing.plugins.tree.TreePanel;
 public class CanvasPanel extends JComponent implements Autoscroll {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(CanvasPanel.class);
 
-  private static final Logger LOG = LogManager.getLogger(CanvasPlugin.class);
-
-  public static boolean RENDER_VISIBLE_RECT_ONLY = true;
+  public static final boolean RENDER_VISIBLE_RECT_ONLY = true;
 
   private IPlugInPort plugInPort;
-
   private Image bufferImage;
-  private GraphicsConfiguration screenGraphicsConfiguration;
-
-  public boolean useHardwareAcceleration = App.hardwareAcceleration();
-
-  // static final EnumSet<DrawOption> DRAW_OPTIONS =
-  // EnumSet.of(DrawOption.GRID,
-  // DrawOption.SELECTION, DrawOption.ZOOM, DrawOption.CONTROL_POINTS);
-  // static final EnumSet<DrawOption> DRAW_OPTIONS_ANTI_ALIASING =
-  // EnumSet.of(DrawOption.GRID,
-  // DrawOption.SELECTION, DrawOption.ZOOM, DrawOption.ANTIALIASING,
-  // DrawOption.CONTROL_POINTS);
-
   private HashMap<String, ComponentType> componentTypeCache;
+  private GraphicsConfiguration screenGraphicsConfiguration =
+      GraphicsEnvironment.getLocalGraphicsEnvironment()
+      .getDefaultScreenDevice().getDefaultConfiguration();
 
   public CanvasPanel(IPlugInPort plugInPort) {
     super();
@@ -95,10 +86,6 @@ public class CanvasPanel extends JComponent implements Autoscroll {
     setFocusable(true);
     initializeListeners();
     initializeDnD();
-    GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice[] devices = graphicsEnvironment.getScreenDevices();
-    screenGraphicsConfiguration = devices[0].getDefaultConfiguration();
-
     initializeActions();
   }
 
@@ -109,10 +96,10 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   public HashMap<String, ComponentType> getComponentTypeCache() {
     if (componentTypeCache == null) {
       componentTypeCache = new HashMap<String, ComponentType>();
-      for (Entry<String, List<ComponentType>> entry :
-          this.plugInPort.getComponentTypes().entrySet()) {
-        for (ComponentType type : entry.getValue())
+      for (Entry<String, List<ComponentType>> entry : ComponentType.getComponentTypes().entrySet()) {
+        for (ComponentType type : entry.getValue()) {
           componentTypeCache.put(type.getInstanceClass().getCanonicalName(), type);
+        }
       }
     }
     return componentTypeCache;
@@ -169,15 +156,13 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
           private static final long serialVersionUID = 1L;
 
-          @SuppressWarnings("unchecked")
           @Override
           public void actionPerformed(ActionEvent e) {
             List<String> recent =
-                (List<String>) App.getObject(IPlugInPort.Key.RECENT_COMPONENTS);
+                (List<String>) App.getObject(Config.Flag.RECENT_COMPONENTS);
             if (recent != null && !recent.isEmpty()) {
               String clazz = recent.get(0);
-              Map<String, List<ComponentType>> componentTypes =
-                  CanvasPanel.this.plugInPort.getComponentTypes();
+              Map<String, List<ComponentType>> componentTypes = ComponentType.getComponentTypes();
               for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet()) {
                 for (ComponentType type : entry.getValue()) {
                   if (type.getInstanceClass().getCanonicalName().equals(clazz)) {
@@ -194,10 +179,9 @@ public class CanvasPanel extends JComponent implements Autoscroll {
         });
   }
 
-  @SuppressWarnings("unchecked")
   protected void functionKeyPressed(int i) {
     HashMap<String, String> shortcutMap =
-        (HashMap<String, String>) App.getObject(TreePanel.COMPONENT_SHORTCUT_KEY);
+        (HashMap<String, String>) App.getObject(ComponentTreePanel.COMPONENT_SHORTCUT_KEY);
     if (shortcutMap == null) {
       return;
     }
@@ -212,14 +196,14 @@ public class CanvasPanel extends JComponent implements Autoscroll {
         plugInPort.loadBlock(blockName);
       } catch (InvalidBlockException e) {
         LOG.error(
-            "functionKeyPressed({}): Could not find block assigned to shortcut {}",
+            "functionKeyPressed({}) Could not find block assigned to shortcut {}",
             i,
             blockName);
       }
     } else {
       ComponentType type = getComponentTypeCache().get(typeName);
       if (type == null) {
-        LOG.error("functionKeyPressed({}): Could not find type {}", i, typeName);
+        LOG.error("functionKeyPressed({}) Could not find type {}", i, typeName);
         return;
       }
       this.plugInPort.setNewComponentTypeSlot(type, null, false);
@@ -231,20 +215,20 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
   protected void createBufferImage() {
     Rectangle visibleRect = getVisibleRect();
-    int imageWidth = RENDER_VISIBLE_RECT_ONLY ? visibleRect.width : getWidth();
-    int imageHeight = RENDER_VISIBLE_RECT_ONLY ? visibleRect.height : getHeight();
+    int width = RENDER_VISIBLE_RECT_ONLY ? visibleRect.width : getWidth();
+    int height = RENDER_VISIBLE_RECT_ONLY ? visibleRect.height : getHeight();
 
-    if (useHardwareAcceleration) {
-      bufferImage =
-          screenGraphicsConfiguration.createCompatibleVolatileImage(imageWidth, imageHeight);
+    if (App.hardwareAcceleration()) {
+      bufferImage = screenGraphicsConfiguration.createCompatibleVolatileImage(width, height);
       ((VolatileImage) bufferImage).validate(screenGraphicsConfiguration);
     } else {
-      bufferImage = createImage(imageWidth, imageHeight);
+      bufferImage = createImage(width, height);
     }
   }
 
   @Override
   public void paint(Graphics g) {
+    LOG.trace("paint([Graphics])");
     if (plugInPort == null) {
       return;
     }
@@ -283,7 +267,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
     plugInPort.draw(g2d, drawOptions, null, null);
 
-    if (useHardwareAcceleration) {
+    if (App.hardwareAcceleration()) {
       VolatileImage volatileImage = (VolatileImage) bufferImage;
       do {
         try {
@@ -307,15 +291,14 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   }
 
   private void initializeListeners() {
-    addComponentListener(
-        new ComponentAdapter() {
+    addComponentListener(new ComponentAdapter() {
 
-          @Override
-          public void componentResized(ComponentEvent e) {
-            invalidateCache();
-            invalidate();
-          }
-        });
+        @Override
+        public void componentResized(ComponentEvent e) {
+          invalidateCache();
+          invalidate();
+        }
+      });
   }
 
   @Override
@@ -328,10 +311,5 @@ public class CanvasPanel extends JComponent implements Autoscroll {
     Rectangle rect = getVisibleRect();
     return new Insets(
         rect.y - 15, rect.x - 15, rect.y + rect.height + 15, rect.x + rect.width + 15);
-  }
-
-  public void setUseHardwareAcceleration(boolean useHardwareAcceleration) {
-    this.useHardwareAcceleration = useHardwareAcceleration;
-    bufferImage = null;
   }
 }
