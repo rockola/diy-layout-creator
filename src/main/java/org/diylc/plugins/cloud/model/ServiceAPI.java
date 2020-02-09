@@ -21,10 +21,11 @@ public class ServiceAPI implements IServiceAPI {
     return (Object) proxy.invokeAndDeserialize(apiUrl, requestName, params);
   }
 
-  public ServiceAPI(com.diyfever.httpproxy.IFlatProxy proxy) { this.proxy = proxy; }
+  public ServiceAPI(com.diyfever.httpproxy.IFlatProxy proxy) {
+    this.proxy = proxy;
+  }
 
   // API
-
   public String createUser(
       String username,
       String password,

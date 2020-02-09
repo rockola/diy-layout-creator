@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.plugins.cloud.model;
 
 import java.io.Serializable;
@@ -90,22 +89,44 @@ public class UserEntity implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     UserEntity other = (UserEntity) obj;
     if (bio == null) {
-      if (other.bio != null) return false;
-    } else if (!bio.equals(other.bio)) return false;
+      if (other.bio != null) {
+        return false;
+      }
+    } else if (!bio.equals(other.bio)) {
+      return false;
+    }
     if (email == null) {
-      if (other.email != null) return false;
-    } else if (!email.equals(other.email)) return false;
+      if (other.email != null) {
+        return false;
+      }
+    } else if (!email.equals(other.email)) {
+      return false;
+    }
     if (username == null) {
-      if (other.username != null) return false;
-    } else if (!username.equals(other.username)) return false;
+      if (other.username != null) {
+        return false;
+      }
+    } else if (!username.equals(other.username)) {
+      return false;
+    }
     if (website == null) {
-      if (other.website != null) return false;
-    } else if (!website.equals(other.website)) return false;
+      if (other.website != null) {
+        return false;
+      }
+    } else if (!website.equals(other.website)) {
+      return false;
+    }
     return true;
   }
 

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface IServiceAPI {
 
-  public static final String URL_KEY = "serviceUrl";
+  String URL_KEY = "serviceUrl";
 
   /**
    * Creates a user with the specified details.
@@ -210,10 +210,14 @@ public interface IServiceAPI {
       @ParamName("projectId") Integer projectId,
       @ParamName("comment") String comment);
 
-  /** @return a {@link List} of available categories. */
+  /**
+     @return a {@link List} of available categories.
+  */
   List<String> getCategories();
 
-  /** @return a {@link List} of available sortings. */
+  /**
+     @return a {@link List} of available sortings.
+  */
   List<String> getSortings();
 
   /**

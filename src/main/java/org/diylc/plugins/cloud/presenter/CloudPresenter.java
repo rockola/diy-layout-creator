@@ -16,7 +16,6 @@
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 package org.diylc.plugins.cloud.presenter;
@@ -30,12 +29,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -123,7 +123,7 @@ public class CloudPresenter {
     return getService().loginWithToken(currentUsername(), currentToken(), getMachineId());
   }
 
-  public boolean tryLogInWithToken() throws CloudException {
+  public boolean tryLoginWithToken() throws CloudException {
     if (currentUsername() != null && currentToken() != null) {
       LOG.info("Trying to login to cloud (with token) as {}", currentUsername());
       String res;
@@ -140,7 +140,8 @@ public class CloudPresenter {
         this.loggedIn = true;
         return true;
       }
-    } else return false;
+    }
+    return false;
   }
 
   public void logOut() {
@@ -159,11 +160,11 @@ public class CloudPresenter {
       LOG.info("Fetching categories");
       try {
         res = getService().getCategories();
-        if (res != null && res.equals(ERROR))
+        if (res != null && res.equals(ERROR)) {
           throw new CloudException("Could not fetch categories from the server.");
+        }
         if (res instanceof List<?>) {
-          @SuppressWarnings("unchecked")
-            List<String> cats = (List<String>) res;
+          List<String> cats = (List<String>) res;
           cats.add(0, "");
           categories = cats.toArray(new String[0]);
         } else {
@@ -230,7 +231,9 @@ public class CloudPresenter {
           null,
           null,
           project.getId());
-      if (!res.equals(SUCCESS)) throw new CloudException(res);
+      if (!res.equals(SUCCESS)) {
+        throw new CloudException(res);
+      }
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -243,7 +246,9 @@ public class CloudPresenter {
     try {
       String res = getService().deleteProject(currentUsername(), currentToken(), getMachineId(),
                                               projectId);
-      if (!res.equals(SUCCESS)) throw new CloudException(res);
+      if (!res.equals(SUCCESS)) {
+        throw new CloudException(res);
+      }
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -257,7 +262,9 @@ public class CloudPresenter {
     try {
       String res = getService().postComment(currentUsername(), currentToken(), getMachineId(),
                                             projectId, comment);
-      if (!res.equals(SUCCESS)) throw new CloudException(res);
+      if (!res.equals(SUCCESS)) {
+        throw new CloudException(res);
+      }
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -269,8 +276,12 @@ public class CloudPresenter {
     LOG.info("Creating a new user: " + username);
     try {
       String res = getService().createUser(username, password, email, website, bio);
-      if (res == null) throw new CloudException("Could not create user account.");
-      if (!SUCCESS.equals(res)) throw new CloudException(res);
+      if (res == null) {
+        throw new CloudException("Could not create user account.");
+      }
+      if (!res.equals(SUCCESS)) {
+        throw new CloudException(res);
+      }
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -324,16 +335,13 @@ public class CloudPresenter {
   public List<ProjectEntity> search(
       String criteria, String category, String sortOrder, int pageNumber, int itemsPerPage)
       throws CloudException {
-    LOG.info(
-        String.format(
-            "search(%1$s,%2$s,%3$s,%4$d,%5$d)",
-            criteria, category, sortOrder, pageNumber, itemsPerPage));
+    LOG.info(String.format(
+        "search(%1$s,%2$s,%3$s,%4$d,%5$d)",
+        criteria, category, sortOrder, pageNumber, itemsPerPage));
     try {
-      Object res = getService().search(criteria, category, pageNumber, itemsPerPage,
-                                       sortOrder, null, null);
+      Object res = getService().search(
+          criteria, category, pageNumber, itemsPerPage, sortOrder, null, null);
       return processResults(res);
-    } catch (CloudException ce) {
-      throw ce;
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -343,11 +351,9 @@ public class CloudPresenter {
     UserEntity user = getUserDetails();
     LOG.info("Fetching all user uploads for {}", user.getUsername());
     try {
-      Object res = getService().search("", "", 1, Integer.MAX_VALUE, getSortings()[0],
-                                       user.getUsername(), projectId);
+      Object res = getService().search(
+          "", "", 1, Integer.MAX_VALUE, getSortings()[0], user.getUsername(), projectId);
       return processResults(res);
-    } catch (CloudException ce) {
-      throw ce;
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -357,17 +363,14 @@ public class CloudPresenter {
     if (res == null) {
       throw new CloudException("Failed to retrieve search results.");
     }
-
     if (res instanceof String) {
       throw new CloudException(res.toString());
     }
-
     if (res instanceof List<?>) {
-      @SuppressWarnings("unchecked")
-        List<ProjectEntity> projects = (List<ProjectEntity>) res;
+      List<ProjectEntity> projects = (List<ProjectEntity>) res;
       LOG.info("Received {} results. Downloading thumbnails...", projects.size());
-      // Download thumbnails and replace urls with local paths
-      // to speed up loading in the main thread
+      // Download thumbnails and replace urls with local paths to
+      // speed up loading in the main thread
       for (ProjectEntity project : projects) {
         String url = project.getThumbnailUrl();
         URL website = new URL(url);
@@ -399,11 +402,14 @@ public class CloudPresenter {
     LOG.info("Fetching comments for project {}", projectId);
     try {
       Object res = getService().getComments(projectId);
-      if (res == null) throw new CloudException(getMsg("could-not-search"));
-      if (res instanceof String) throw new CloudException(res.toString());
+      if (res == null) {
+        throw new CloudException(getMsg("could-not-search"));
+      }
+      if (res instanceof String) {
+        throw new CloudException(res.toString());
+      }
       if (res instanceof List<?>) {
-        @SuppressWarnings("unchecked")
-          List<CommentEntity> comments = (List<CommentEntity>) res;
+        List<CommentEntity> comments = (List<CommentEntity>) res;
         return comments;
       }
       throw new CloudException("Unexpected server response received for comments: "
@@ -438,14 +444,11 @@ public class CloudPresenter {
           LOG.debug("Did not find network interface using IP {}", ip);
         } else {
           byte[] mac = network.getHardwareAddress();
-
-          StringBuilder sb = new StringBuilder(18);
+          StringJoiner sj = new StringJoiner(":");
           for (byte b : mac) {
-            if (sb.length() > 0) sb.append(':');
-            sb.append(String.format("%02x", b));
+            sj.add(String.format("%02x", b));
           }
-
-          machineId = sb.toString();
+          machineId = sj.toString();
           LOG.debug("Found machine ID, it is {}", machineId);
         }
       } catch (UnknownHostException | SocketException e) {
