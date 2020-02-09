@@ -20,7 +20,6 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -29,18 +28,18 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.awt.TwoCircleTangent;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
+import org.diylc.components.TwoCircleTangent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -50,7 +49,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -65,20 +63,19 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.lightGray;
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.black;
-
-  public static Size LARGE_DIAMETER = new Size(26.2d, SizeUnit.mm);
-  public static Size INNER_DIAMETER = new Size(21.3d, SizeUnit.mm);
-  public static Size SMALL_DIAMETER = new Size(8d, SizeUnit.mm);
-  public static Size HOLE_DISTANCE = new Size(30.1d, SizeUnit.mm);
-  public static Size HOLE_SIZE = new Size(4.1d, SizeUnit.mm);
-  public static Size PIN_SPACING = new Size(10.9d, SizeUnit.mm);
-  public static Size PIN_OFFSET = new Size(1.85d, SizeUnit.mm);
-  public static Size PIN_DIAMETER = new Size(1d, SizeUnit.mm);
+  public static final Color BODY_COLOR = Color.lightGray;
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.black;
+  public static final Size LARGE_DIAMETER = Size.mm(26.2);
+  public static final Size INNER_DIAMETER = Size.mm(21.3);
+  public static final Size SMALL_DIAMETER = Size.mm(8);
+  public static final Size HOLE_DISTANCE = Size.mm(30.1);
+  public static final Size HOLE_SIZE = Size.mm(4.1);
+  public static final Size PIN_SPACING = Size.mm(10.9);
+  public static final Size PIN_OFFSET = Size.mm(1.85);
+  public static final Size PIN_DIAMETER = Size.mm(1);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
@@ -87,12 +84,11 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
-  protected Display display = Display.NAME;
 
   public TransistorTO3() {
     super();
     updateControlPoints();
-    alpha = (byte) 100;
+    display = Display.NAME;
   }
 
   @EditableProperty
@@ -210,36 +206,18 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
       body[0] = left;
       body[0].add(right);
-
-      body[0].subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x - holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
-      body[0].subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x + holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
-
-      switch (orientation) {
-        case DEFAULT:
-          break;
-        case _90:
-          body[0].transform(AffineTransform.getRotateInstance(Math.PI / 2, x, y));
-          break;
-        case _180:
-          body[0].transform(AffineTransform.getRotateInstance(Math.PI, x, y));
-          break;
-        case _270:
-          body[0].transform(AffineTransform.getRotateInstance(Math.PI * 3 / 2, x, y));
-          break;
-        default:
-          throw new RuntimeException("Unexpected orientation: " + orientation);
+      body[0].subtract(new Area(new Ellipse2D.Double(
+          x - holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
+      body[0].subtract(new Area(new Ellipse2D.Double(
+          x + holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
+      if (!orientation.isDefault()) {
+        body[0].transform(AffineTransform.getRotateInstance(
+            orientation.getTheta(),
+            x,
+            y));
       }
-
-      body[1] =
-          new Area(
-              new Ellipse2D.Double(
-                  x - innerDiameter / 2, y - innerDiameter / 2, innerDiameter, innerDiameter));
+      body[1] = new Area(new Ellipse2D.Double(
+          x - innerDiameter / 2, y - innerDiameter / 2, innerDiameter, innerDiameter));
     }
     return body;
   }
@@ -268,13 +246,12 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
     Area mainArea = getBody()[0];
     Area innerArea = getBody()[1];
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
+
     Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -285,14 +262,7 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());

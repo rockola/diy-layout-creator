@@ -20,7 +20,6 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -28,13 +27,14 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TO220Transformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -44,7 +44,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -60,23 +59,23 @@ public class TransistorTO220 extends AbstractTransistorPackage {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.gray;
-  public static Color BORDER_COLOR = Color.gray.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color TAB_COLOR = Color.lightGray;
-  public static Color TAB_BORDER_COLOR = TAB_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size BODY_WIDTH = new Size(0.4d, SizeUnit.in);
-  public static Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm);
-  public static Size BODY_HEIGHT = new Size(9d, SizeUnit.mm);
-  public static Size TAB_THICKNESS = new Size(1d, SizeUnit.mm);
-  public static Size TAB_HEIGHT = new Size(6.2d, SizeUnit.mm);
-  public static Size TAB_HOLE_DIAMETER = new Size(3.6d, SizeUnit.mm);
-  public static Size LEAD_LENGTH = new Size(3.5d, SizeUnit.mm);
-  public static Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm);
+  public static final Color BODY_COLOR = Color.gray;
+  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color TAB_COLOR = Color.lightGray;
+  public static final Color TAB_BORDER_COLOR = TAB_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Size PIN_SIZE = Size.in(0.03);
+  public static final Size PIN_SPACING = Size.in(0.1);
+  public static final Size BODY_WIDTH = Size.in(0.4);
+  public static final Size BODY_THICKNESS = Size.mm(4.5);
+  public static final Size BODY_HEIGHT = Size.mm(9);
+  public static final Size TAB_THICKNESS = Size.mm(1);
+  public static final Size TAB_HEIGHT = Size.mm(6.2);
+  public static final Size TAB_HOLE_DIAMETER = Size.mm(3.6);
+  public static final Size LEAD_LENGTH = Size.mm(3.5);
+  public static final Size LEAD_THICKNESS = Size.mm(0.8);
 
   private Color tabColor = TAB_COLOR;
   private Color tabBorderColor = TAB_BORDER_COLOR;
@@ -86,7 +85,6 @@ public class TransistorTO220 extends AbstractTransistorPackage {
   public TransistorTO220() {
     super();
     updateControlPoints();
-    alpha = (byte) 100;
     bodyColor = BODY_COLOR;
     borderColor = BORDER_COLOR;
   }
@@ -309,54 +307,46 @@ public class TransistorTO220 extends AbstractTransistorPackage {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
-
-    // Draw pins.
     if (folded) {
+      // Draw pins.
       int leadThickness = getClosestOdd(LEAD_THICKNESS.convertToPixels());
-      int leadLength = (int) getLeadLength().convertToPixels();
+      int leadLengthAdjuster = (int) getLeadLength().convertToPixels() - leadThickness / 2;
       Color finalPinColor = outlineMode ? new Color(0, 0, 0, 0) : METAL_COLOR;
       Color finalPinBorderColor = tryBorderColor(outlineMode, METAL_COLOR.darker());
       for (Point point : controlPoints) {
+        int endX;
+        int endY;
         switch (orientation) {
-          case DEFAULT:
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-            g2d.setColor(finalPinBorderColor);
-            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
-            g2d.setColor(finalPinColor);
-            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
-            break;
           case _90:
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-            g2d.setColor(finalPinBorderColor);
-            g2d.drawLine(point.x, point.y, point.x, point.y + leadLength - leadThickness / 2);
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
-            g2d.setColor(finalPinColor);
-            g2d.drawLine(point.x, point.y, point.x, point.y + leadLength - leadThickness / 2);
+            endX = point.x;
+            endY = point.y + leadLengthAdjuster;
             break;
           case _180:
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-            g2d.setColor(finalPinBorderColor);
-            g2d.drawLine(point.x, point.y, point.x - leadLength - leadThickness / 2, point.y);
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
-            g2d.setColor(finalPinColor);
-            g2d.drawLine(point.x, point.y, point.x - leadLength - leadThickness / 2, point.y);
+            endX = point.x - leadLengthAdjuster;
+            endY = point.y;
             break;
           case _270:
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-            g2d.setColor(finalPinBorderColor);
-            g2d.drawLine(point.x, point.y, point.x, point.y - leadLength);
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
-            g2d.setColor(finalPinColor);
-            g2d.drawLine(point.x, point.y, point.x, point.y - leadLength);
+            endX = point.x;
+            endY = point.y;
+            break;
+          case DEFAULT:
+          default:
+            endX = point.x + leadLengthAdjuster;
+            endY = point.y;
             break;
         }
+        g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
+        g2d.setColor(finalPinBorderColor);
+        g2d.drawLine(point.x, point.y, endX, endY);
+
+        g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
+        g2d.setColor(finalPinColor);
+        g2d.drawLine(point.x, point.y, endX, endY);
       }
     } else {
       if (!outlineMode) {
+        int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
         for (Point point : controlPoints) {
-
           g2d.setColor(PIN_COLOR);
           g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
           g2d.setColor(PIN_BORDER_COLOR);
@@ -367,16 +357,15 @@ public class TransistorTO220 extends AbstractTransistorPackage {
 
     Shape mainArea = getBody()[0];
     Shape tabArea = getBody()[1];
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
     Color finalTabColor = tryColor(outlineMode, tabColor);
     g2d.setColor(finalTabColor);
     g2d.fill(tabArea);
     g2d.setComposite(oldComposite);
+
     if (!outlineMode) {
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
       g2d.setColor(tabBorderColor);
@@ -393,14 +382,7 @@ public class TransistorTO220 extends AbstractTransistorPackage {
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());

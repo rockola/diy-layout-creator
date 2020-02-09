@@ -20,14 +20,12 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -36,6 +34,7 @@ import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TO1Transformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -45,7 +44,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -61,16 +59,16 @@ public class TransistorTO1 extends AbstractTransistorPackage {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.lightGray;
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.black;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
-  public static Size BODY_DIAMETER = new Size(0.24d, SizeUnit.in);
-  public static Size BODY_LENGTH = new Size(0.4d, SizeUnit.in);
-  public static Size EDGE_RADIUS = new Size(2d, SizeUnit.mm);
+  public static final Color BODY_COLOR = Color.lightGray;
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.black;
+  public static final Size PIN_SIZE = Size.in(0.03);
+  public static final Size PIN_SPACING = Size.in(0.05);
+  public static final Size BODY_DIAMETER = Size.in(0.24);
+  public static final Size BODY_LENGTH = Size.in(0.4);
+  public static final Size EDGE_RADIUS = Size.mm(2);
 
   private boolean folded = false;
   private Size pinSpacing = PIN_SPACING;
@@ -78,7 +76,6 @@ public class TransistorTO1 extends AbstractTransistorPackage {
   public TransistorTO1() {
     super();
     updateControlPoints();
-    alpha = (byte) 100;
     bodyColor = BODY_COLOR;
     borderColor = BORDER_COLOR;
   }
@@ -124,61 +121,50 @@ public class TransistorTO1 extends AbstractTransistorPackage {
       if (folded) {
         switch (orientation) {
           case DEFAULT:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyLength,
-                        y - bodyDiameter / 2,
-                        bodyLength,
-                        bodyDiameter,
-                        edgeRadius,
-                        edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+            newBody = new Area(new RoundRectangle2D.Double(
+                x - bodyLength,
+                y - bodyDiameter / 2,
+                bodyLength,
+                bodyDiameter,
+                edgeRadius,
+                edgeRadius));
+            newBody.add(new Area(new Rectangle2D.Double(
+                x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
             break;
           case _90:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyDiameter / 2,
-                        y - bodyLength,
-                        bodyDiameter,
-                        bodyLength,
-                        edgeRadius,
-                        edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2)));
+            newBody = new Area(new RoundRectangle2D.Double(
+                x - bodyDiameter / 2,
+                y - bodyLength,
+                bodyDiameter,
+                bodyLength,
+                edgeRadius,
+                edgeRadius));
+            newBody.add(new Area(new Rectangle2D.Double(
+                x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2)));
             break;
           case _180:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x, y - bodyDiameter / 2, bodyLength, bodyDiameter, edgeRadius, edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+            newBody = new Area(new RoundRectangle2D.Double(
+                x,
+                y - bodyDiameter / 2,
+                bodyLength,
+                bodyDiameter,
+                edgeRadius,
+                edgeRadius));
+            newBody.add(new Area(new Rectangle2D.Double(
+                x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
             break;
           case _270:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius, edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)));
+            newBody = new Area(new RoundRectangle2D.Double(
+                x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius, edgeRadius));
+            newBody.add(new Area(new Rectangle2D.Double(
+                x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
         }
       } else {
-        newBody =
-            new Area(
-                new Ellipse2D.Double(
-                    x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+        newBody = new Area(new Ellipse2D.Double(
+            x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
       }
 
       body = new Area[] {newBody};
@@ -209,10 +195,7 @@ public class TransistorTO1 extends AbstractTransistorPackage {
     }
 
     Area mainArea = getBody()[0];
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
@@ -225,14 +208,7 @@ public class TransistorTO1 extends AbstractTransistorPackage {
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());

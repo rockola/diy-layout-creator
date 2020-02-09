@@ -30,7 +30,6 @@ import org.diylc.components.Area;
 import org.diylc.components.PinCount;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class InlinePackage extends AbstractTransparentComponent<String> {
 
@@ -43,7 +42,7 @@ public abstract class InlinePackage extends AbstractTransparentComponent<String>
   public static final Color INDENT_COLOR = Color.gray.darker();
   public static final Color LABEL_COLOR = Color.white;
   public static final int EDGE_RADIUS = 6;
-  public static final Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size INDENT_SIZE = Size.in(0.07);
 
   protected PinCount pinCount;
   protected Point[] controlPoints = new Point[] {new Point(0, 0)};
@@ -53,7 +52,7 @@ public abstract class InlinePackage extends AbstractTransparentComponent<String>
   protected Color borderColor = BORDER_COLOR;
   protected Color labelColor = LABEL_COLOR;
   protected Color indentColor = INDENT_COLOR;
-  protected Size pinSpacing = new Size(0.1d, SizeUnit.in);
+  protected Size pinSpacing = Size.in(0.1);
   protected String value = "";
   protected Orientation orientation = Orientation.DEFAULT;
 

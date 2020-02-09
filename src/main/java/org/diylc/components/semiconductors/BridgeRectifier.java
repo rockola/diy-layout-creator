@@ -17,9 +17,9 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -42,8 +41,9 @@ import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractLeadedComponent.LabelOrientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.components.RoundedPolygon;
-import org.diylc.components.transform.DIL_ICTransformer;
+import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -54,7 +54,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Current;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.core.measures.Voltage;
 import org.diylc.utils.Constants;
 
@@ -66,49 +65,43 @@ import org.diylc.utils.Constants;
     description = "Few variations of bridge rectifier chips",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
-    transformer = DIL_ICTransformer.class)
+    transformer = InlinePackageTransformer.class)
 public class BridgeRectifier extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
+  private static final Size MINI_LENGTH = Size.mm(6.7);
+  private static final Size MINI_WIDTH = Size.mm(8.3);
+  private static final Size MINI_HORIZONTAL_SPACING = Size.in(0.3);
+  private static final Size MINI_VERTICAL_SPACING = Size.in(0.2);
+  private static final int[] MINI1_LABEL_SPACING_X = new int[] {1, -1, -1, 1};
+  private static final int[] MINI2_LABEL_SPACING_X = new int[] {1, -1, 1, -1};
+  private static final Size MINI_ROUND_DIAMETER = Size.mm(9.1);
+  private static final Size MINI_ROUND_SPACING = Size.in(0.2);
+  private static final int[] MINI_ROUND_LABEL_SPACING_Y = new int[] {1, 1, -1, -1};
+  private static final Size INLINE_LENGTH = Size.mm(23.2);
+  private static final Size INLINE_WIDTH = Size.mm(2.7);
+  private static final Size INLINE_SPACING = Size.in(0.2);
+  private static final int[] INLINE_LABEL_SPACING_Y = new int[] {-1, -1, 1, 1};
+  private static final Size BR3_LENGTH = Size.in(0.6);
+  private static final Size BR3_SPACING = Size.in(0.425);
+  private static final Size BR3_HOLE_SIZE = Size.mm(3);
+  private static final int[] BR3_LABEL_SPACING_Y = new int[] {1, 1, -1, -1};
 
-  private static Size MINI_LENGTH = new Size(6.7d, SizeUnit.mm);
-  private static Size MINI_WIDTH = new Size(8.3d, SizeUnit.mm);
-  private static Size MINI_HORIZONTAL_SPACING = new Size(0.3d, SizeUnit.in);
-  private static Size MINI_VERTICAL_SPACING = new Size(0.2d, SizeUnit.in);
-
-  private static int[] MINI1_LABEL_SPACING_X = new int[] {1, -1, -1, 1};
-  private static int[] MINI2_LABEL_SPACING_X = new int[] {1, -1, 1, -1};
-
-  private static Size MINI_ROUND_DIAMETER = new Size(9.1d, SizeUnit.mm);
-  private static Size MINI_ROUND_SPACING = new Size(0.2d, SizeUnit.in);
-  private static int[] MINI_ROUND_LABEL_SPACING_Y = new int[] {1, 1, -1, -1};
-
-  private static Size INLINE_LENGTH = new Size(23.2d, SizeUnit.mm);
-  private static Size INLINE_WIDTH = new Size(2.7d, SizeUnit.mm);
-  private static Size INLINE_SPACING = new Size(0.2d, SizeUnit.in);
-  private static int[] INLINE_LABEL_SPACING_Y = new int[] {-1, -1, 1, 1};
-
-  private static Size BR3_LENGTH = new Size(0.6d, SizeUnit.in);
-  private static Size BR3_SPACING = new Size(0.425d, SizeUnit.in);
-  private static Size BR3_HOLE_SIZE = new Size(3d, SizeUnit.mm);
-  private static int[] BR3_LABEL_SPACING_Y = new int[] {1, 1, -1, -1};
-
-  public static Color BODY_COLOR = Color.gray;
-  public static Color BORDER_COLOR = Color.gray.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static int EDGE_RADIUS = 6;
-  public static Size SQUARE_PIN_SIZE = new Size(0.04d, SizeUnit.in);
-  public static Size ROUND_PIN_SIZE = new Size(0.032d, SizeUnit.in);
-  public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.gray;
+  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final int EDGE_RADIUS = 6;
+  public static final Size SQUARE_PIN_SIZE = Size.in(0.04);
+  public static final Size ROUND_PIN_SIZE = Size.in(0.032);
+  public static final Size INDENT_SIZE = Size.in(0.07);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints =
       new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private String[] pointLabels = new String[] {"+", "~", "~", "-"};
-  protected Display display = Display.BOTH;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
@@ -122,6 +115,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     super();
     updateControlPoints();
     alpha = 100;
+    display = Display.BOTH;
   }
 
   @EditableProperty
@@ -183,77 +177,65 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     body = null;
   }
 
-  @SuppressWarnings("incomplete-switch")
   private void updateControlPoints() {
     Point firstPoint = controlPoints[0];
 
-    int hSpacing;
-    int vSpacing;
+    int spacingH;
+    int spacingV;
 
     switch (rectifierType) {
       case MiniDIP1:
-        hSpacing = (int) MINI_HORIZONTAL_SPACING.convertToPixels();
-        vSpacing = (int) MINI_VERTICAL_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x + hSpacing, firstPoint.y);
-        controlPoints[2].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
-        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + vSpacing);
+        spacingH = (int) MINI_HORIZONTAL_SPACING.convertToPixels();
+        spacingV = (int) MINI_VERTICAL_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x + spacingH, firstPoint.y);
+        controlPoints[2].setLocation(firstPoint.x + spacingH, firstPoint.y + spacingV);
+        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + spacingV);
         break;
       case MiniDIP2:
-        hSpacing = (int) MINI_HORIZONTAL_SPACING.convertToPixels();
-        vSpacing = (int) MINI_VERTICAL_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x + hSpacing, firstPoint.y);
-        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + vSpacing);
-        controlPoints[3].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
+        spacingH = (int) MINI_HORIZONTAL_SPACING.convertToPixels();
+        spacingV = (int) MINI_VERTICAL_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x + spacingH, firstPoint.y);
+        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + spacingV);
+        controlPoints[3].setLocation(firstPoint.x + spacingH, firstPoint.y + spacingV);
         break;
       case MiniRound1:
-        hSpacing = vSpacing = (int) MINI_ROUND_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x + hSpacing, firstPoint.y);
-        controlPoints[2].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
-        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + vSpacing);
+        spacingH = spacingV = (int) MINI_ROUND_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x + spacingH, firstPoint.y);
+        controlPoints[2].setLocation(firstPoint.x + spacingH, firstPoint.y + spacingV);
+        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + spacingV);
         break;
       case MiniRound2:
-        hSpacing = vSpacing = (int) MINI_ROUND_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x + hSpacing, firstPoint.y);
-        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + vSpacing);
-        controlPoints[3].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
+        spacingH = spacingV = (int) MINI_ROUND_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x + spacingH, firstPoint.y);
+        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + spacingV);
+        controlPoints[3].setLocation(firstPoint.x + spacingH, firstPoint.y + spacingV);
         break;
       case InLine:
-        vSpacing = (int) INLINE_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x, firstPoint.y + vSpacing);
-        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + 2 * vSpacing);
-        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + 3 * vSpacing);
+        spacingV = (int) INLINE_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x, firstPoint.y + spacingV);
+        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + 2 * spacingV);
+        controlPoints[3].setLocation(firstPoint.x, firstPoint.y + 3 * spacingV);
         break;
       case SquareBR3:
-        hSpacing = vSpacing = (int) BR3_SPACING.convertToPixels();
-        controlPoints[1].setLocation(firstPoint.x + hSpacing, firstPoint.y);
-        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + vSpacing);
-        controlPoints[3].setLocation(firstPoint.x + hSpacing, firstPoint.y + vSpacing);
+        spacingH = spacingV = (int) BR3_SPACING.convertToPixels();
+        controlPoints[1].setLocation(firstPoint.x + spacingH, firstPoint.y);
+        controlPoints[2].setLocation(firstPoint.x, firstPoint.y + spacingV);
+        controlPoints[3].setLocation(firstPoint.x + spacingH, firstPoint.y + spacingV);
         break;
+      default:
+        throw new RuntimeException("unknown rectifier type " + rectifierType);
     }
 
     if (orientation != Orientation.DEFAULT) {
-      double theta = 0;
-      switch (orientation) {
-        case _90:
-          theta = Math.PI / 2;
-          break;
-        case _180:
-          theta = Math.PI;
-          break;
-        case _270:
-          theta = Math.PI * 3 / 2;
-          break;
-      }
+      double theta = orientation.getTheta();
       AffineTransform rotation =
           AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
-
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }
     }
   }
 
-  @SuppressWarnings("incomplete-switch")
   public Area[] getBody() {
     if (body == null) {
       body = new Area[2];
@@ -283,6 +265,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         case SquareBR3:
           length = width = (int) BR3_LENGTH.convertToPixels();
           break;
+        default:
+          throw new RuntimeException("unknown rectifier type " + rectifierType);
       }
 
       if (orientation == Orientation._90 || orientation == Orientation._270) {
@@ -295,21 +279,18 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         case MiniDIP1:
         case MiniDIP2:
         case InLine:
-          body[0] =
-              new Area(
-                  new RoundRectangle2D.Double(
-                      centerX - length / 2,
-                      centerY - width / 2,
-                      length,
-                      width,
-                      EDGE_RADIUS,
-                      EDGE_RADIUS));
+          body[0] = new Area(new RoundRectangle2D.Double(
+              centerX - length / 2,
+              centerY - width / 2,
+              length,
+              width,
+              EDGE_RADIUS,
+              EDGE_RADIUS));
           break;
         case MiniRound1:
         case MiniRound2:
-          body[0] =
-              new Area(
-                  new Ellipse2D.Double(centerX - length / 2, centerY - width / 2, length, width));
+          body[0] = new Area(new Ellipse2D.Double(
+              centerX - length / 2, centerY - width / 2, length, width));
           break;
         case SquareBR3:
           double margin = (BR3_LENGTH.convertToPixels() - BR3_SPACING.convertToPixels()) / 2;
@@ -323,41 +304,26 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
           //          path.lineTo(centerX - width / 2, centerY - width / 2 + margin);
           //          path.closePath();
 
-          RoundedPolygon poly =
-              new RoundedPolygon(
-                  new Point[] {
-                    new Point(centerX, centerY - width / 2),
-                    new Point(centerX + width / 2, centerY - width / 2),
-                    new Point(centerX + width / 2, centerY + width / 2),
-                    new Point(centerX - width / 2, centerY + width / 2),
-                    new Point(centerX - width / 2, (int) (centerY - width / 2 + margin)),
-                    new Point((int) (centerX - width / 2 + margin), centerY - width / 2),
-                  },
-                  new double[] {
-                    EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS / 2, EDGE_RADIUS / 2
-                  });
+          RoundedPolygon poly = new RoundedPolygon(
+              new Point[] {
+                new Point(centerX, centerY - width / 2),
+                new Point(centerX + width / 2, centerY - width / 2),
+                new Point(centerX + width / 2, centerY + width / 2),
+                new Point(centerX - width / 2, centerY + width / 2),
+                new Point(centerX - width / 2, (int) (centerY - width / 2 + margin)),
+                new Point((int) (centerX - width / 2 + margin), centerY - width / 2),
+              },
+              new double[] {
+                EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS / 2, EDGE_RADIUS / 2
+              });
 
           body[0] = new Area(poly);
-          body[0].subtract(
-              new Area(
-                  new Ellipse2D.Double(
-                      centerX - holeSize / 2, centerY - holeSize / 2, holeSize, holeSize)));
+          body[0].subtract(new Area(new Ellipse2D.Double(
+              centerX - holeSize / 2, centerY - holeSize / 2, holeSize, holeSize)));
 
           if (orientation != Orientation.DEFAULT) {
-            double theta = 0;
-            switch (orientation) {
-              case _90:
-                theta = Math.PI / 2;
-                break;
-              case _180:
-                theta = Math.PI;
-                break;
-              case _270:
-                theta = Math.PI * 3 / 2;
-                break;
-            }
+            double theta = orientation.getTheta();
             AffineTransform rotation = AffineTransform.getRotateInstance(theta, centerX, centerY);
-
             body[0].transform(rotation);
           }
 
@@ -367,7 +333,6 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     return body;
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public void draw(
       Graphics2D g2d,
@@ -378,35 +343,27 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    Area mainArea = getBody()[0];
 
     PinShape pinShape = rectifierType.getPinShape();
     int pinSize =
-        (int)
-                (pinShape == PinShape.Round
-                    ? ROUND_PIN_SIZE.convertToPixels()
-                    : SQUARE_PIN_SIZE.convertToPixels())
-            / 2
-            * 2;
+        (int) (pinShape == PinShape.Round
+               ? ROUND_PIN_SIZE.convertToPixels()
+               : SQUARE_PIN_SIZE.convertToPixels())
+        / 2
+        * 2;
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
     if (!outlineMode) {
       for (Point point : controlPoints) {
-        g2d.setColor(PIN_COLOR);
-        if (pinShape == PinShape.Round)
-          g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        else g2d.fillRect(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);
-        if (pinShape == PinShape.Round)
-          g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        else g2d.drawRect(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        Area pin = (pinShape == PinShape.Round
+                    ? Area.circle(point, pinSize)
+                    : Area.centeredSquare(point, pinSize));
+        pin.fillDraw(g2d, PIN_COLOR, PIN_BORDER_COLOR);
       }
     }
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Area mainArea = getBody()[0];
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
@@ -429,20 +386,10 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
-    String[] label = null;
-
-    if (getDisplay() == Display.NAME) {
-      label = new String[] {getName()};
-    } else if (getDisplay() == Display.VALUE) {
-      label = new String[] {getValue().toString()};
-    } else if (getDisplay() == Display.BOTH) {
-      String value = getValue().toString();
-      label = value.isEmpty() ? new String[] {getName()} : new String[] {getName(), value};
-    }
-
-    if (label != null) {
-      for (int i = 0; i < label.length; i++) {
-        String l = label[i];
+    List<String> label = getLabelListForDisplay();
+    if (!label.isEmpty()) {
+      int i = 0;
+      for (String l : label) {
         Rectangle2D rect = fontMetrics.getStringBounds(l, g2d);
         int textHeight = (int) (rect.getHeight());
         int textWidth = (int) (rect.getWidth());
@@ -451,25 +398,29 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         int x = bounds.x + (bounds.width - textWidth) / 2;
         int y = bounds.y + (bounds.height - textHeight) / 2 + fontMetrics.getAscent();
 
-        AffineTransform oldTransform = g2d.getTransform();
+        final AffineTransform oldTransform = g2d.getTransform();
 
         if (getLabelOrientation() == LabelOrientation.Directional
             && (getOrientation() == Orientation.DEFAULT || getOrientation() == Orientation._180)) {
           int centerX = bounds.x + bounds.width / 2;
           int centerY = bounds.y + bounds.height / 2;
-          g2d.rotate(-Math.PI / 2, centerX, centerY);
+          g2d.rotate(-HALF_PI, centerX, centerY);
         }
 
         if (label.length == 2) {
-          if (i == 0) g2d.translate(0, -textHeight / 2);
-          else if (i == 1) g2d.translate(0, textHeight / 2);
+          if (i == 0) {
+            g2d.translate(0, -textHeight / 2);
+          } else if (i == 1) {
+            g2d.translate(0, textHeight / 2);
+          }
         }
 
-        if (rectifierType == RectifierType.SquareBR3) y -= BR3_HOLE_SIZE.convertToPixels();
-
+        if (rectifierType == RectifierType.SquareBR3) {
+          y -= BR3_HOLE_SIZE.convertToPixels();
+        }
         g2d.drawString(l, x, y);
-
         g2d.setTransform(oldTransform);
+        i++;
       }
     }
 
@@ -500,6 +451,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         case SquareBR3:
           dy = pinSize * BR3_LABEL_SPACING_Y[i];
           break;
+        default:
+          throw new RuntimeException("unknown rectifier type " + rectifierType);
       }
 
       dx = (int) (1.5 * dx);
@@ -579,12 +532,9 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = (int) (2f * width / 32);
-    Area area =
-        new Area(new Ellipse2D.Double(margin / 2, margin, width - 2 * margin, width - 2 * margin));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(area);
-    g2d.setColor(BORDER_COLOR);
-    g2d.draw(area);
+    Area area = new Area(new Ellipse2D.Double(
+        margin / 2, margin, width - 2 * margin, width - 2 * margin));
+    area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     g2d.setColor(PIN_COLOR);
     int pinSize = 2 * width / 32;
     g2d.fillOval(width * 2 / 8, height * 2 / 8, pinSize, pinSize);
@@ -593,32 +543,35 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     g2d.fillOval(width * 2 / 8, height * 6 / 8 - pinSize, pinSize, pinSize);
     g2d.setColor(LABEL_COLOR);
     g2d.setFont(LABEL_FONT.deriveFont(8f * width / 32));
+    final int x1 = width * 2 / 8 + 1;
+    final int y2 = height * 6 / 8 - 5 * width / 32;
+    final int x2 = width * 6 / 8 - 2 * width / 32;
     StringUtils.drawCenteredText(
         g2d,
         "+",
-        width * 2 / 8 + 1,
+        x1,
         height * 2 / 8 + 4 * width / 32,
         HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
     StringUtils.drawCenteredText(
         g2d,
         "-",
-        width * 2 / 8 + 1,
-        height * 6 / 8 - 5 * width / 32,
+        x1,
+        y2,
         HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
     StringUtils.drawCenteredText(
         g2d,
         "~",
-        width * 6 / 8 - 2 * width / 32,
+        x2,
         height * 2 / 8 + 5 * width / 32,
         HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
     StringUtils.drawCenteredText(
         g2d,
         "~",
-        width * 6 / 8 - 2 * width / 32,
-        height * 6 / 8 - 5 * width / 32,
+        x2,
+        y2,
         HorizontalAlignment.CENTER,
         VerticalAlignment.CENTER);
   }
@@ -690,7 +643,9 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
 
   @EditableProperty(name = "Label Orientation")
   public LabelOrientation getLabelOrientation() {
-    if (labelOrientation == null) labelOrientation = LabelOrientation.Directional;
+    if (labelOrientation == null) {
+      labelOrientation = LabelOrientation.Directional;
+    }
     return labelOrientation;
   }
 
@@ -703,7 +658,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     return false;
   }
 
-  public static enum RectifierType {
+  public enum RectifierType {
     MiniDIP1("DFM A", PinShape.Square),
     MiniDIP2("DFM B", PinShape.Square),
     MiniRound1("Round WOG A", PinShape.Round),
@@ -714,7 +669,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     private String label;
     private PinShape pinShape;
 
-    private RectifierType(String label, PinShape pinShape) {
+    RectifierType(String label, PinShape pinShape) {
       this.label = label;
       this.pinShape = pinShape;
     }
@@ -729,7 +684,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     }
   }
 
-  private static enum PinShape {
+  private enum PinShape {
     Square,
     Round
   }

@@ -20,17 +20,18 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
@@ -38,7 +39,9 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.transform.SIL_ICTransformer;
+import org.diylc.components.Area;
+import org.diylc.components.PinCount;
+import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -49,7 +52,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -60,38 +62,21 @@ import org.diylc.utils.Constants;
     description = "Single-in-line package IC",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
-    transformer = SIL_ICTransformer.class)
-public class SIL_IC extends AbstractTransparentComponent<String> {
+    transformer = InlinePackageTransformer.class)
+public class SIL_IC extends InlinePackage {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.gray;
-  public static Color BORDER_COLOR = Color.gray.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color INDENT_COLOR = Color.gray.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static int EDGE_RADIUS = 6;
-  public static Size PIN_SIZE = new Size(0.8d, SizeUnit.mm);
-  public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
-  public static Size THICKNESS = new Size(0.13d, SizeUnit.in);
-
-  private String value = "";
-  private Orientation orientation = Orientation.DEFAULT;
-  private PinCount pinCount = PinCount._8;
-  private Size pinSpacing = new Size(0.1d, SizeUnit.in);
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  protected Display display = Display.NAME;
-  private Color bodyColor = BODY_COLOR;
-  private Color borderColor = BORDER_COLOR;
-  private Color labelColor = LABEL_COLOR;
-  private Color indentColor = INDENT_COLOR;
-  private transient Area[] body;
+  public static final Size PIN_SIZE = Size.mm(0.8);
+  public static final Size THICKNESS = Size.in(0.13);
 
   public SIL_IC() {
-    super();
-    updateControlPoints();
+    super(defaultPinCount().setPins(8), Display.NAME);
     alpha = 100;
+  }
+
+  public static PinCount defaultPinCount() {
+    return new PinCount(2, 20);
   }
 
   @EditableProperty
@@ -121,7 +106,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
   }
 
   public void setPinCount(PinCount pinCount) {
-    this.pinCount = pinCount;
+    this.pinCount.setPins(pinCount);
     updateControlPoints();
     // Reset body shape;
     body = null;
@@ -156,41 +141,15 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
     this.display = display;
   }
 
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public boolean isControlPointSticky(int index) {
-    return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
-  }
-
-  private void updateControlPoints() {
+  protected void updateControlPoints() {
     Point firstPoint = controlPoints[0];
-    controlPoints = new Point[pinCount.getValue()];
+    controlPoints = new Point[pinCount.pins()];
     controlPoints[0] = firstPoint;
     double pinSpacing = this.pinSpacing.convertToPixels();
     // Update control points.
     double dx1;
     double dy1;
-    for (int i = 0; i < pinCount.getValue(); i++) {
+    for (int i = 0; i < pinCount.pins(); i++) {
       switch (orientation) {
         case DEFAULT:
           dx1 = 0;
@@ -229,7 +188,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
       switch (orientation) {
         case DEFAULT:
           width = thickness;
-          height = pinCount.getValue() * pinSpacing;
+          height = pinCount.pins() * pinSpacing;
           x -= thickness / 2;
           y -= pinSpacing / 2;
           indentation =
@@ -241,7 +200,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
                       indentationSize));
           break;
         case _90:
-          width = pinCount.getValue() * pinSpacing;
+          width = pinCount.pins() * pinSpacing;
           height = thickness;
           x -= (pinSpacing / 2) + width - pinSpacing;
           y -= thickness / 2;
@@ -255,7 +214,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
           break;
         case _180:
           width = thickness;
-          height = pinCount.getValue() * pinSpacing;
+          height = pinCount.pins() * pinSpacing;
           x -= thickness / 2;
           y -= (pinSpacing / 2) + height - pinSpacing;
           indentation =
@@ -267,7 +226,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
                       indentationSize));
           break;
         case _270:
-          width = pinCount.getValue() * pinSpacing;
+          width = pinCount.pins() * pinSpacing;
           height = thickness;
           x -= pinSpacing / 2;
           y -= thickness / 2;
@@ -315,10 +274,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
       }
     }
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
@@ -342,14 +298,7 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());
     int textWidth = (int) (rect.getWidth());
@@ -422,36 +371,5 @@ public class SIL_IC extends AbstractTransparentComponent<String> {
 
   public void setIndentColor(Color indentColor) {
     this.indentColor = indentColor;
-  }
-
-  public static enum PinCount {
-    _2,
-    _3,
-    _4,
-    _5,
-    _6,
-    _7,
-    _8,
-    _9,
-    _10,
-    _11,
-    _12,
-    _13,
-    _14,
-    _15,
-    _16,
-    _17,
-    _18,
-    _19,
-    _20;
-
-    @Override
-    public String toString() {
-      return name().replace("_", "");
-    }
-
-    public int getValue() {
-      return Integer.parseInt(toString());
-    }
   }
 }

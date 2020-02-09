@@ -34,7 +34,6 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -50,14 +49,14 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_WIDTH = new Size(0.2, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(0.09, SizeUnit.in);
-  public static Size MARKER_WIDTH = new Size(1d, SizeUnit.mm);
-  public static Color INSIDE_COLOR = Color.decode("#E66E31");
-  public static Color BODY_COLOR = Color.decode("#E1F0FF");
-  public static Color MARKER_COLOR = Color.gray;
-  public static Color LABEL_COLOR = Color.white;
-  public static Color BORDER_COLOR = Color.gray;
+  public static final Size DEFAULT_WIDTH = Size.in(0.2);
+  public static final Size DEFAULT_HEIGHT = Size.in(0.09);
+  public static final Size MARKER_WIDTH = Size.mm(1);
+  public static final Color INSIDE_COLOR = Color.decode("#E66E31");
+  public static final Color BODY_COLOR = Color.decode("#E1F0FF");
+  public static final Color MARKER_COLOR = Color.gray;
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Color BORDER_COLOR = Color.gray;
 
   private String value = "";
   private Color markerColor = MARKER_COLOR;
@@ -159,7 +158,9 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
 
   @EditableProperty(name = "Inside color")
   public Color getInsideColor() {
-    if (insideColor == null) insideColor = INSIDE_COLOR;
+    if (insideColor == null) {
+      insideColor = INSIDE_COLOR;
+    }
     return insideColor;
   }
 

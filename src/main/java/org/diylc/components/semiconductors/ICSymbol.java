@@ -20,14 +20,12 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 
@@ -39,6 +37,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -48,7 +47,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -64,9 +62,9 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color BODY_COLOR = Color.white;
-  public static Color BORDER_COLOR = Color.black;
+  public static final Size PIN_SPACING = Size.in(0.1);
+  public static final Color BODY_COLOR = Color.white;
+  public static final Color BORDER_COLOR = Color.black;
 
   protected ICPointCount icPointCount = ICPointCount._5;
   protected String value = "";
@@ -76,13 +74,14 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
       };
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
-  protected Display display = Display.NAME;
-  private transient Shape[] body;
+
   private Boolean flip;
+  private transient Shape[] body;
 
   public ICSymbol() {
     super();
     updateControlPoints();
+    display = Display.NAME;
   }
 
   @Override
@@ -96,16 +95,13 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
       return;
     }
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-
     Shape[] body = getBody();
 
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(body[0]);
     g2d.setComposite(oldComposite);
+
     Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
     g2d.setColor(finalBorderColor);
     // Draw contacts
@@ -119,14 +115,7 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     int x = (controlPoints[0].x + controlPoints[2].x) / 2;
-    String label = "";
-    label = display == Display.VALUE ? getValue() : getName();
-    if (display == Display.NONE) {
-      label = "";
-    }
-    if (display == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     StringUtils.drawCenteredText(
         g2d,
         label,
@@ -299,7 +288,9 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
 
   @EditableProperty
   public Boolean getFlip() {
-    if (flip == null) flip = false;
+    if (flip == null) {
+      flip = false;
+    }
     return flip;
   }
 

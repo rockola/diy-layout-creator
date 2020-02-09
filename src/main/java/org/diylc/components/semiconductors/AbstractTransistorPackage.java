@@ -1,37 +1,38 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.semiconductors;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.geom.Area;
+
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.netlist.ISpiceMapper;
 
-public abstract class AbstractTransistorPackage extends AbstractTransparentComponent<String>
+public abstract class AbstractTransistorPackage
+    extends AbstractTransparentComponent<String>
     implements ISpiceMapper {
 
   private static final long serialVersionUID = 1L;
@@ -39,30 +40,37 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
   protected String value = "";
   protected TransistorPinout pinout;
   protected Orientation orientation = Orientation.DEFAULT;
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints =
+      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected transient Area[] body;
 
   protected Color bodyColor;
   protected Color borderColor;
   protected Color labelColor = LABEL_COLOR;
-  protected Display display = Display.NAME;
 
-  public AbstractTransistorPackage() {}
+  public AbstractTransistorPackage() {
+    super();
+    display = Display.NAME;
+    alpha = 100;
+  }
 
   protected abstract void updateControlPoints();
 
   @Override
   public int mapToSpiceNode(int index) {
-    if (getPinout() == null) return index;
+    if (getPinout() == null) {
+      return index;
+    }
 
     switch (getPinout()) {
       case BJT_CBE:
-        return index;
-      case BJT_EBC:
-        return 2 - index;
       case JFET_DGS:
       case MOSFET_DGS:
         return index;
+      case BJT_EBC:
+      case JFET_SGD:
+      case MOSFET_SGD:
+        return 2 - index;
       case JFET_DSG:
       case MOSFET_DSG:
         switch (index) {
@@ -72,6 +80,8 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
             return 2;
           case 2:
             return 1;
+          default:
+            throw new RuntimeException("unknown index " + index + " for pinout " + getPinout());
         }
       case JFET_GSD:
       case MOSFET_GSD:
@@ -82,26 +92,24 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
             return 2;
           case 2:
             return 0;
+          default:
+            throw new RuntimeException("unknown index " + index + " for pinout " + getPinout());
         }
-      case JFET_SGD:
-      case MOSFET_SGD:
-        return 2 - index;
+      default:
+        throw new RuntimeException("unknown pinout " + getPinout());
     }
-
-    return index;
   }
 
   @Override
   public String getComment() {
     return getPinout() == null
         ? "Pinout not configured, validate this line"
-        : (getPinout().toString() + " pinout");
+        : getPinout().toString() + " pinout";
   }
 
   @Override
   public String getPrefix() {
-    if (getPinout() == null) return null;
-    return getPinout().name().substring(0, 1);
+    return getPinout() == null ? null : getPinout().name().substring(0, 1);
   }
 
   @EditableProperty
@@ -209,7 +217,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   @Override
   public String getControlPointNodeName(int index) {
-    if (index >= 3) return null;
-    return Integer.toString(index + 1);
+    return (index >= 3) ? null : Integer.toString(index + 1);
   }
 }

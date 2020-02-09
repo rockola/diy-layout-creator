@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
@@ -30,7 +29,6 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Schottky Siode",
@@ -47,7 +45,7 @@ public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size BAND_SIZE = new Size(0.01, SizeUnit.in);
+  public static final Size BAND_SIZE = Size.in(0.01);
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int size = width * 3 / 8;
@@ -55,44 +53,44 @@ public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
     g2d.rotate(-Math.PI / 4, width / 2, height / 2);
     g2d.setColor(LEAD_COLOR);
     g2d.drawLine(0, height / 2, (width - size) / 2, height / 2);
-    g2d.drawLine((int) (width + size / Math.sqrt(2) + bandSize) / 2, height / 2, width, height / 2);
+    g2d.drawLine((int) (width + size / SQRT_TWO + bandSize) / 2, height / 2, width, height / 2);
     g2d.setColor(COLOR);
     g2d.fill(
         new Polygon(
             new int[] {
               (width - size) / 2,
               (width - size) / 2,
-              (int) ((width - size) / 2 + size / Math.sqrt(2))
+              (int) ((width - size) / 2 + size / SQRT_TWO)
             },
             new int[] {(height - size) / 2, (height + size) / 2, height / 2},
             3));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
     g2d.drawLine(
-        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (int) ((width - size) / 2 + size / SQRT_TWO),
         (height - size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (int) ((width - size) / 2 + size / SQRT_TWO),
         (height + size) / 2);
     int finSize = 2 * width / 32;
     g2d.drawLine(
-        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (int) ((width - size) / 2 + size / SQRT_TWO),
         (height - size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2) + finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO + finSize),
         (height - size) / 2);
     g2d.drawLine(
-        (int) ((width - size) / 2 + size / Math.sqrt(2) + finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO + finSize),
         (height - size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2) + finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO + finSize),
         (height - size) / 2 + finSize);
 
     g2d.drawLine(
-        (int) ((width - size) / 2 + size / Math.sqrt(2)),
+        (int) ((width - size) / 2 + size / SQRT_TWO),
         (height + size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2) - finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO - finSize),
         (height + size) / 2);
     g2d.drawLine(
-        (int) ((width - size) / 2 + size / Math.sqrt(2) - finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO - finSize),
         (height + size) / 2,
-        (int) ((width - size) / 2 + size / Math.sqrt(2) - finSize),
+        (int) ((width - size) / 2 + size / SQRT_TWO - finSize),
         (height + size) / 2 - finSize);
   }
 
@@ -103,16 +101,23 @@ public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
     int bandSize = (int) BAND_SIZE.convertToPixels();
     g2d.setColor(getBodyColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
+    int base = (int) (width / SQRT_TWO + bandSize);
     g2d.drawPolyline(
         new int[] {
-          (int) (width / Math.sqrt(2) + bandSize) + finSize + 1,
-          (int) (width / Math.sqrt(2) + bandSize) + finSize + 1,
-          (int) (width / Math.sqrt(2) + bandSize),
-          (int) (width / Math.sqrt(2) + bandSize),
-          (int) (width / Math.sqrt(2) + bandSize) - finSize - 1,
-          (int) (width / Math.sqrt(2) + bandSize) - finSize - 1
+          base + finSize + 1,
+          base + finSize + 1,
+          base,
+          base,
+          base - finSize - 1,
+          base - finSize - 1
         },
-        new int[] {(int) finSize, 0, 0, (int) width, (int) width, (int) (width - finSize)},
+        new int[] {
+          (int) finSize,
+          0,
+          0,
+          (int) width,
+          (int) width,
+          (int) (width - finSize)},
         6);
   }
 }

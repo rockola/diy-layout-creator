@@ -33,7 +33,6 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -49,13 +48,13 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_WIDTH = new Size(1d / 4, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
-  public static Size MARKER_WIDTH = new Size(1d, SizeUnit.mm);
-  public static Color BODY_COLOR = Color.darkGray;
-  public static Color MARKER_COLOR = Color.decode("#DDDDDD");
-  public static Color LABEL_COLOR = Color.white;
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Size DEFAULT_WIDTH = Size.in(0.25);
+  public static final Size DEFAULT_HEIGHT = Size.in(0.125);
+  public static final Size MARKER_WIDTH = Size.mm(1);
+  public static final Color BODY_COLOR = Color.darkGray;
+  public static final Color MARKER_COLOR = Color.decode("#DDDDDD");
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
   private String value = "";
   private Color markerColor = MARKER_COLOR;

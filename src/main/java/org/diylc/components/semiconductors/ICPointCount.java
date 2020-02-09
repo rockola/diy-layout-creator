@@ -28,7 +28,7 @@ public enum ICPointCount {
   private String title;
   private int value;
 
-  private ICPointCount(String title, int value) {
+  ICPointCount(String title, int value) {
     this.title = title;
     this.value = value;
   }

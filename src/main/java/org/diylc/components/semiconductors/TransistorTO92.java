@@ -20,7 +20,6 @@
 
 package org.diylc.components.semiconductors;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -28,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
@@ -36,6 +34,7 @@ import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TO92Transformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -45,7 +44,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -61,14 +59,14 @@ public class TransistorTO92 extends AbstractTransistorPackage {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.gray;
-  public static Color BORDER_COLOR = Color.gray.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
-  public static Size BODY_DIAMETER = new Size(0.2d, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.gray;
+  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Size PIN_SIZE = Size.in(0.03);
+  public static final Size PIN_SPACING = Size.in(0.05);
+  public static final Size BODY_DIAMETER = Size.in(0.2);
 
   private boolean folded = false;
   private Size pinSpacing = PIN_SPACING;
@@ -76,7 +74,6 @@ public class TransistorTO92 extends AbstractTransistorPackage {
   public TransistorTO92() {
     super();
     updateControlPoints();
-    alpha = (byte) 100;
     bodyColor = BODY_COLOR;
     borderColor = BORDER_COLOR;
   }
@@ -95,7 +92,8 @@ public class TransistorTO92 extends AbstractTransistorPackage {
   @EditableProperty(name = "Pin spacing")
   public Size getPinSpacing() {
     if (pinSpacing == null) {
-      pinSpacing = new Size(0.1, SizeUnit.in);
+      // TODO why not PIN_SPACING? //ola 20200209
+      pinSpacing = Size.in(0.1);
     }
     return pinSpacing;
   }
@@ -257,13 +255,12 @@ public class TransistorTO92 extends AbstractTransistorPackage {
     }
 
     Area mainArea = getBody()[0];
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
+
     Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -273,14 +270,7 @@ public class TransistorTO92 extends AbstractTransistorPackage {
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (display == Display.NONE) {
-      label = "";
-    }
-    if (display == Display.BOTH) {
-      label = getName() + "  " + getValue();
-    }
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());
