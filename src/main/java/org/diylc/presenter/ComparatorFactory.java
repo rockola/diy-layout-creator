@@ -102,7 +102,9 @@ public class ComparatorFactory {
             @Override
             public int compare(PropertyWrapper o1, PropertyWrapper o2) {
               int comp = Integer.compare(o1.getSortOrder(), o2.getSortOrder());
-              if (comp != 0) return comp;
+              if (comp != 0) {
+                return comp;
+              }
               return o1.getName().compareToIgnoreCase(o2.getName());
             }
           };
@@ -112,21 +114,17 @@ public class ComparatorFactory {
 
   public Comparator<IDIYComponent<?>> getComponentZOrderComparator() {
     if (componentZOrderComparator == null) {
-      componentZOrderComparator =
-          new Comparator<IDIYComponent<?>>() {
+      componentZOrderComparator = new Comparator<IDIYComponent<?>>() {
 
-            @SuppressWarnings("unchecked")
-            @Override
-            public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-              ComponentType type1 =
-                  ComponentProcessor
-                      .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) o1.getClass());
-              ComponentType type2 =
-                  ComponentProcessor
-                      .extractComponentTypeFrom((Class<? extends IDIYComponent<?>>) o2.getClass());
-              return Double.compare(type1.getZOrder(), type2.getZOrder());
-            }
-          };
+          @Override
+          public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+            ComponentType type1 = ComponentType.extractFrom(
+                (Class<? extends IDIYComponent<?>>) o1.getClass());
+            ComponentType type2 = ComponentType.extractFrom(
+                (Class<? extends IDIYComponent<?>>) o2.getClass());
+            return Double.compare(type1.getZOrder(), type2.getZOrder());
+          }
+        };
     }
     return componentZOrderComparator;
   }
