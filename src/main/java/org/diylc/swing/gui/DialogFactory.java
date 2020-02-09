@@ -199,7 +199,9 @@ public class DialogFactory {
       fileChooser.setCurrentDirectory(lastDirectory);
     }
     fileChooser.setSelectedFile(initialFile);
-    if (allowMultiSelect) fileChooser.setMultiSelectionEnabled(true);
+    if (allowMultiSelect) {
+      fileChooser.setMultiSelectionEnabled(true);
+    }
   }
 
   private File processFileChooserResult(
