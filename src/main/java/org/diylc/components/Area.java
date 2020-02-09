@@ -35,7 +35,6 @@ import java.util.Map;
 
 import org.diylc.components.RoundedPolygon;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public class Area extends java.awt.geom.Area {
 
@@ -97,6 +96,22 @@ public class Area extends java.awt.geom.Area {
 
   public static Area roundedPolygon(Point[] points, double[] radii) {
     return new Area(new RoundedPolygon(points, radii));
+  }
+
+  /**
+     Create an oval area (ellipse).
+
+     @param center Circle center.
+     @param diameterH Horizontal diameter.
+     @param diameterV Vertical diameter.
+     @return new Area
+  */
+  public static Area oval(Point center, double diameterH, double diameterV) {
+    return new Area(new Ellipse2D.Double(
+        center.x - diameterH / 2,
+        center.y - diameterV / 2,
+        diameterH,
+        diameterV));
   }
 
   /**
@@ -277,6 +292,28 @@ public class Area extends java.awt.geom.Area {
     Area rect = centeredRect(x, y, width, height);
     rect.subtract(Area.circle(x, y, holeDiameter));
     return rect;
+  }
+
+  /**
+   * Fill this area.
+   *
+   * @param g2d Graphics context.
+   * @param fillColor Color for filling.
+   */
+  public void fill(Graphics2D g2d, Color fillColor) {
+    g2d.setColor(this.fillColor != null ? this.fillColor : fillColor);
+    g2d.fill(this);
+  }
+
+  /**
+   * Draw the border of this area.
+   *
+   * @param g2d Graphics context.
+   * @param borderColor Color for drawing.
+   */
+  public void draw(Graphics2D g2d, Color borderColor) {
+    g2d.setColor(this.drawColor != null ? this.drawColor : borderColor);
+    g2d.draw(this);
   }
 
   /**
