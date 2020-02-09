@@ -93,7 +93,7 @@ public class Turret extends AbstractComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = getClosestOdd(width / 2);
-    int center = new Point(width / 2d, height / 2d);
+    Point center = new Point(width / 2, height / 2);
     Area.circle(center, diameter).fillDraw(g2d, COLOR, COLOR.darker());
     int holeDiameter = 5;
     Area.circle(center, holeDiameter).fillDraw(g2d, CANVAS_COLOR, COLOR.darker());
