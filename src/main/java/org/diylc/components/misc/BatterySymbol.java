@@ -1,29 +1,29 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.misc;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
+
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
@@ -45,15 +45,19 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
 
   private static final long serialVersionUID = 1L;
 
-  private String value = "Battery";
+  /**
+   * Plate spacing.
+   */
+  public static final Size DEFAULT_LENGTH = Size.in(0.05);
+  /**
+   * Plate size.
+   */
+  public static final Size DEFAULT_WIDTH = Size.in(0.15);
 
-  public static Size DEFAULT_LENGTH = new Size(0.05, SizeUnit.in); // plate spacing
-  public static Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in); // plate size
+  private String value = "Battery";
 
   private org.diylc.core.measures.Voltage voltageNew =
       new org.diylc.core.measures.Voltage(9d, VoltageUnit.V);
-
-  // sets battery voltage to 9V
 
   @Override
   public String getValueForDisplay() {
