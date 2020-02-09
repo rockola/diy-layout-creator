@@ -23,9 +23,11 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.VeroBoard;
 import org.diylc.core.ComponentState;
