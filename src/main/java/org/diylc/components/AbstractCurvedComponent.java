@@ -37,7 +37,6 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComponent<T> {
@@ -45,7 +44,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
   private static final long serialVersionUID = 1L;
 
   public static final Color GUIDELINE_COLOR = Color.blue;
-  public static final Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
+  public static final Size DEFAULT_SIZE = Size.in(1);
 
   // for backward compatibility
   protected Point[] controlPoints = null;

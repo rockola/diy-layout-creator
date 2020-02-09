@@ -51,7 +51,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 /**
@@ -68,8 +67,8 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   public static final Color LEAD_COLOR = Color.decode("#CCCCCC");
   public static final Color LEAD_COLOR_ICON = LEAD_COLOR.darker().darker();
-  public static final Size LEAD_THICKNESS = new Size(0.6d, SizeUnit.mm);
-  public static final Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
+  public static final Size LEAD_THICKNESS = Size.mm(0.6);
+  public static final Size DEFAULT_SIZE = Size.in(1);
 
   protected Size length;
   protected Size width;

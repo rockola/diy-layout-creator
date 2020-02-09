@@ -42,13 +42,12 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
 
   protected String value = "";

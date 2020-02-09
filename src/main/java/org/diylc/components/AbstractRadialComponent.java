@@ -21,9 +21,9 @@
 package org.diylc.components;
 
 import java.awt.Rectangle;
+
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 /**
  * Base class for radial components. The same as
@@ -36,7 +36,8 @@ public abstract class AbstractRadialComponent<T> extends AbstractLeadedComponent
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size PIN_SPACING = Size.in(0.1);
+
   private Size pinSpacing = PIN_SPACING;
 
   @Override
