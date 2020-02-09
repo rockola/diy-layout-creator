@@ -42,14 +42,13 @@ import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
 
   protected String value = "";
@@ -97,18 +96,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     g2d.setColor(finalLabelColor);
 
     Rectangle rect = body[2] != null ? body[2].getBounds() : body[1].getBounds();
-
-    String label = "";
-    label = display == Display.VALUE ? getValue() : getName();
-    if (display == Display.NONE) {
-      label = "";
-    }
-    if (display == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
     StringUtils.drawCenteredText(
         g2d,
-        label,
+        getLabelForDisplay(),
         rect.x + rect.width,
         rect.y + rect.height,
         HorizontalAlignment.RIGHT,

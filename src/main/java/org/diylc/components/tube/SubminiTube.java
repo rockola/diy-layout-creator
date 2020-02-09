@@ -44,7 +44,6 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 // @ComponentDescriptor(name = "Sub-Mini Tube", author = "Branislav Stojkovic", category = "Tubes",
@@ -60,19 +59,23 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   public static final Color PIN_COLOR = Color.decode("#00B2EE");
   public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
   public static final Color LABEL_COLOR = Color.white;
-  public static final Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static final Size BODY_WIDTH = new Size(0.4d, SizeUnit.in);
-  public static final Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm);
-  public static final Size BODY_HEIGHT = new Size(9d, SizeUnit.mm);
-  public static final Size DIAMETER = new Size(0.4d, SizeUnit.in);
-  public static final Size LENGTH = new Size(1.375d, SizeUnit.in);
-  public static final Size LEAD_LENGTH = new Size(0.2d, SizeUnit.in);
-  public static final Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm);
+  public static final Size PIN_SIZE = Size.in(0.03);
+  public static final Size PIN_SPACING = Size.in(0.1);
+  public static final Size BODY_WIDTH = Size.in(0.4);
+  public static final Size BODY_THICKNESS = Size.mm(4.5);
+  public static final Size BODY_HEIGHT = Size.mm(9);
+  public static final Size DIAMETER = Size.in(0.4);
+  public static final Size LENGTH = Size.in(1.375);
+  public static final Size LEAD_LENGTH = Size.in(0.2);
+  public static final Size LEAD_THICKNESS = Size.mm(0.8);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  private Point[] controlPoints = new Point[] {
+    new Point(0, 0),
+    new Point(0, 0),
+    new Point(0, 0)
+  };
   private transient Shape[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;

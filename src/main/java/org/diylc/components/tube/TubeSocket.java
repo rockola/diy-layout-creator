@@ -47,7 +47,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -61,25 +60,25 @@ import org.diylc.utils.Constants;
 public class TubeSocket extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
-  private static final Size B9A_PIN_SPACING_CHASSIS = new Size(12.5d, SizeUnit.mm);
-  private static final Size B9A_PIN_SPACING_PCB = new Size(21d, SizeUnit.mm);
-  private static final Size OCTAL_PIN_SPACING = new Size(17.5d, SizeUnit.mm);
-  private static final Size B7G_PIN_SPACING = new Size(12d, SizeUnit.mm);
-  private static final Size B7G_CUTOUT_DIAMETER = new Size(4d, SizeUnit.mm);
-  private static final Size B9A_CUTOUT_DIAMETER = new Size(5.5d, SizeUnit.mm);
-  private static final Size OCTAL_DIAMETER = new Size(25d, SizeUnit.mm);
-  private static final Size B9A_DIAMETER = new Size(3 / 4d, SizeUnit.in);
-  private static final Size B7G_DIAMETER = new Size(17d, SizeUnit.mm);
+  private static final Size B9A_PIN_SPACING_CHASSIS = Size.mm(12.5);
+  private static final Size B9A_PIN_SPACING_PCB = Size.mm(21);
+  private static final Size OCTAL_PIN_SPACING = Size.mm(17.5);
+  private static final Size B7G_PIN_SPACING = Size.mm(12);
+  private static final Size B7G_CUTOUT_DIAMETER = Size.mm(4);
+  private static final Size B9A_CUTOUT_DIAMETER = Size.mm(5.5);
+  private static final Size OCTAL_DIAMETER = Size.mm(25);
+  private static final Size B9A_DIAMETER = Size.in(0.75);
+  private static final Size B7G_DIAMETER = Size.mm(17);
   private static final Color BODY_COLOR = Color.decode("#F7F7EF");
   private static final Color LABEL_COLOR = BODY_COLOR.darker();
-  private static final Size PIN_WIDTH = new Size(0.08d, SizeUnit.in);
-  private static final Size PIN_THICKNESS = new Size(0.02d, SizeUnit.in);
+  private static final Size PIN_WIDTH = Size.in(0.08);
+  private static final Size PIN_THICKNESS = Size.in(0.02);
 
   public static final Color PIN_COLOR = Color.decode("#00B2EE");
   public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static final Size PIN_DIAMETER = new Size(1d, SizeUnit.mm);
-  public static final Size HOLE_SIZE = new Size(5d, SizeUnit.mm);
-  public static final Size OCTAL_TICK_SIZE = new Size(2d, SizeUnit.mm);
+  public static final Size PIN_DIAMETER = Size.mm(1);
+  public static final Size HOLE_SIZE = Size.mm(5);
+  public static final Size OCTAL_TICK_SIZE = Size.mm(2);
 
   private Base base = Base.B9A;
   private String type = "";
