@@ -1,40 +1,42 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui.editor;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JLabel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.PinCount;
 import org.diylc.core.annotations.DynamicList;
 import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.measures.AbstractMeasure;
 
 /**
- * Based on {@link PropertyWrapper#getType()}, creates an appropriate {@link Component} that can
- * edit that type.
+ * Based on {@link PropertyWrapper#getType()}, creates an appropriate
+ * {@link Component} that can edit that type.
  *
  * @author Branislav Stojkovic
  */
@@ -104,7 +106,15 @@ public class FieldEditorFactory {
       IntEditor editor = new IntEditor(property);
       return editor;
     }
-    LOG.error("Unrecognized parameter type: " + property.getType().getName());
+    // ----------------
+    if (PinCount.class.isAssignableFrom(property.getType())) {
+      PinCountEditor editor = new PinCountEditor(property);
+      return editor;
+    }
+
+    LOG.error("Unrecognized parameter type {} for {}",
+              property.getType().getName(),
+              property.getName());
     return new JLabel("Unrecognized");
   }
 }

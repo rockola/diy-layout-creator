@@ -75,42 +75,40 @@ public class ColorEditor extends JPanel {
 
   public JLabel getColorLabel() {
     if (colorLabel == null) {
-      colorLabel =
-          new JLabel(property.isUnique() ? title : ("(multi value) " + title)) {
+      colorLabel = new JLabel(property.isUnique() ? title : "(multi value) " + title) {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void setBackground(Color bg) {
-              if (bg.getRed() < 127 || bg.getBlue() < 127 || bg.getGreen() < 127) {
-                setForeground(Color.white);
-              } else {
-                setForeground(Color.black);
-              }
-              super.setBackground(bg);
+          @Override
+          public void setBackground(Color bg) {
+            if (bg.getRed() < 127 || bg.getBlue() < 127 || bg.getGreen() < 127) {
+              setForeground(Color.white);
+            } else {
+              setForeground(Color.black);
             }
-          };
+            super.setBackground(bg);
+          }
+        };
       colorLabel.setOpaque(true);
       colorLabel.setHorizontalAlignment(SwingConstants.CENTER);
       colorLabel.setBorder(BorderFactory.createEtchedBorder());
       colorLabel.setBackground((Color) property.getValue());
       colorLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      colorLabel.addMouseListener(
-          new MouseAdapter() {
+      colorLabel.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-              Color newColor =
-                  JColorChooser.showDialog(ColorEditor.this, "Choose Color", getBackground());
-              if (newColor != null) {
-                property.setChanged(true);
-                property.setValue(newColor);
-                getColorLabel().setBackground(newColor);
-                getColorField()
-                    .setText(Integer.toHexString(newColor.getRGB()).substring(2).toUpperCase());
-              }
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            Color newColor =
+                JColorChooser.showDialog(ColorEditor.this, "Choose Color", getBackground());
+            if (newColor != null) {
+              property.setChanged(true);
+              property.setValue(newColor);
+              getColorLabel().setBackground(newColor);
+              getColorField()
+                  .setText(Integer.toHexString(newColor.getRGB()).substring(2).toUpperCase());
             }
-          });
+          }
+        });
     }
     return colorLabel;
   }
@@ -118,32 +116,28 @@ public class ColorEditor extends JPanel {
   public JTextField getColorField() {
     if (colorField == null) {
       Color color = (Color) property.getValue();
-      colorField =
-          new JTextField(
-              property.isUnique()
-                  ? Integer.toHexString(color.getRGB()).substring(2).toUpperCase()
-                  : "");
+      colorField = new JTextField(
+          property.isUnique()
+          ? Integer.toHexString(color.getRGB()).substring(2).toUpperCase()
+          : "");
       colorField.setColumns(6);
-      colorField
-          .getDocument()
-          .addDocumentListener(
-              new DocumentListener() {
+      colorField.getDocument().addDocumentListener(new DocumentListener() {
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                  updateColor();
-                }
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            updateColor();
+          }
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                  updateColor();
-                }
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            updateColor();
+          }
 
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                  updateColor();
-                }
-              });
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            updateColor();
+          }
+        });
     }
     return colorField;
   }

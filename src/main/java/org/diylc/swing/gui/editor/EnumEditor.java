@@ -42,8 +42,7 @@ public class EnumEditor extends JComboBox {
     Object[] values = property.getType().getEnumConstants();
     setModel(new DefaultComboBoxModel(values));
     setSelectedItem(property.getValue());
-    addItemListener(
-        new ItemListener() {
+    addItemListener(new ItemListener() {
 
           @Override
           public void itemStateChanged(ItemEvent e) {

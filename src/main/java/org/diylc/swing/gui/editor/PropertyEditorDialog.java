@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.diylc.App;
 import org.diylc.common.Message;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.ValidationException;
@@ -67,7 +68,7 @@ public class PropertyEditorDialog extends ButtonDialog {
     super(owner, title, new String[] {ButtonDialog.OK, ButtonDialog.CANCEL});
     this.saveDefaults = saveDefaults;
 
-    LOG.debug("Creating property editor for: " + properties);
+    LOG.debug("Creating property editor '{}' for {}", title, properties);
 
     this.properties = properties;
     this.defaultedProperties = new HashSet<PropertyWrapper>();
@@ -85,11 +86,10 @@ public class PropertyEditorDialog extends ButtonDialog {
         try {
           property.getValidator().validate(property.getValue());
         } catch (ValidationException ve) {
-          JOptionPane.showMessageDialog(
-              PropertyEditorDialog.this,
-              "Input error for \"" + property.getName() + "\": " + ve.getMessage(),
-              "Error",
-              JOptionPane.ERROR_MESSAGE);
+          App.ui().error(String.format(
+              App.getString("message.property-editor.input-error"),
+              property.getName(),
+              ve.getMessage()));
           return false;
         }
       }
@@ -102,9 +102,7 @@ public class PropertyEditorDialog extends ButtonDialog {
     editorPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
     GridBagConstraints gbc = new GridBagConstraints();
-
     gbc.gridy = 0;
-
     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
     for (PropertyWrapper property : properties) {
@@ -122,16 +120,15 @@ public class PropertyEditorDialog extends ButtonDialog {
 
       Component editor = FieldEditorFactory.createFieldEditor(property);
 
-      editor.addKeyListener(
-          new KeyAdapter() {
+      editor.addKeyListener(new KeyAdapter() {
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                getButton(OK).doClick();
-              }
+          @Override
+          public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+              getButton(OK).doClick();
             }
-          });
+          }
+        });
 
       editorPanel.add(editor, gbc);
 
@@ -168,18 +165,13 @@ public class PropertyEditorDialog extends ButtonDialog {
   private JCheckBox createDefaultCheckBox(final PropertyWrapper property) {
     final JCheckBox checkBox = new JCheckBox();
     checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);
-    checkBox.addActionListener(
-        new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (checkBox.isSelected()) {
-              defaultedProperties.add(property);
-            } else {
-              defaultedProperties.remove(property);
-            }
-          }
-        });
+    checkBox.addActionListener((e) -> {
+        if (checkBox.isSelected()) {
+          defaultedProperties.add(property);
+        } else {
+          defaultedProperties.remove(property);
+        }
+      });
     return checkBox;
   }
 
