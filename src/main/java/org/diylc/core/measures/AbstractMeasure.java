@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
 
 import java.io.Serializable;
@@ -79,16 +80,30 @@ public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializ
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     AbstractMeasure<?> other = (AbstractMeasure<?>) obj;
     if (unit == null) {
-      if (other.unit != null) return false;
-    } else if (!unit.equals(other.unit)) return false;
+      if (other.unit != null) {
+        return false;
+      }
+    } else if (!unit.equals(other.unit)) {
+      return false;
+    }
     if (value == null) {
-      if (other.value != null) return false;
-    } else if (!value.equals(other.value)) return false;
+      if (other.value != null) {
+        return false;
+      }
+    } else if (!value.equals(other.value)) {
+      return false;
+    }
     return true;
   }
 
