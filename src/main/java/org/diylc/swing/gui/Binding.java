@@ -22,6 +22,7 @@ package org.diylc.swing.gui;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
+import java.util.StringJoiner;
 import javax.swing.KeyStroke;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -52,38 +53,43 @@ public class Binding implements Serializable {
     this.action = action;
   }
 
-  public static String modifierToString(Integer m) {
-    if (m == null) return "";
+  private static boolean hasMenu(int i) {
+    // Java >8: (i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0
+    return (i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0;
+  }
 
+  private static boolean hasAlt(int i) {
+    return (i & KeyEvent.ALT_DOWN_MASK) != 0;
+  }
+
+  private static boolean hasShift(int i) {
+    return (i & KeyEvent.SHIFT_DOWN_MASK) != 0;
+  }
+
+  public static String modifierToString(Integer m) {
+    if (m == null) {
+      return "";
+    }
     int i = m.intValue();
-    StringBuilder b = new StringBuilder();
-    boolean empty = true;
-    // if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) != 0) {
-    if ((i & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
-      b.append("Menu");
-      empty = false;
+    StringJoiner sj = new StringJoiner(" ");
+    if (hasMenu(i)) {
+      sj.add("Menu");
     }
-    if ((i & KeyEvent.ALT_DOWN_MASK) != 0) {
-      if (!empty) {
-        b.append(" ");
-      }
-      b.append("Alt");
-      empty = false;
+    if (hasAlt(i)) {
+      sj.add("Alt");
     }
-    if ((i & KeyEvent.SHIFT_DOWN_MASK) != 0) {
-      if (!empty) {
-        b.append(" ");
-      }
-      b.append("Shift");
-      empty = false;
+    if (hasShift(i)) {
+      sj.add("Shift");
     }
-    return b.toString();
+    return sj.toString();
   }
 
   public String toString() {
     return String.format(
         "<Binding keycode %d modifier %s action %s />",
-        this.getKeyCode(), modifierToString(this.getModifier()), this.getAction());
+        this.getKeyCode(),
+        modifierToString(this.getModifier()),
+        this.getAction());
   }
 
   public void setKeyCode(Integer keycode) {
@@ -91,8 +97,9 @@ public class Binding implements Serializable {
   }
 
   public int getKeyCode() {
-    if (this.keycode == null) return -1; // ONLY WHILE DEBUGGING
-
+    if (this.keycode == null) {
+      throw new RuntimeException("keycode is null " + this.toString());
+    }
     return this.keycode.intValue();
   }
 
@@ -109,14 +116,15 @@ public class Binding implements Serializable {
   }
 
   public int getModifier() {
-    if (this.modifier == null) return -1; // ONLY WHILE DEBUGGING
-
+    if (this.modifier == null) {
+      throw new RuntimeException("modifier is null " + this.toString());
+    }
     return this.modifier.intValue();
   }
 
   /**
-   * Compare modifier to this modifier. Should not be compared with == in case new modifier flags
-   * are added.
+   * Compare modifier to this modifier. Should not be compared with ==
+   * in case new modifier flags are added.
    *
    * @param m Other modifier
    */
