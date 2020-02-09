@@ -17,11 +17,13 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
+import javax.swing.Icon;
 
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -49,28 +51,34 @@ import org.diylc.presenter.ComponentArea;
  */
 public interface IDIYComponent<T> extends Serializable {
 
-  public static final int CHASSIS = 1;
-  public static final int BOARD = 2;
-  public static final int TRACE = 3;
-  public static final int COMPONENT = 4;
-  public static final int TEXT = 5;
+  int CHASSIS = 1;
+  int BOARD = 2;
+  int TRACE = 3;
+  int COMPONENT = 4;
+  int TEXT = 5;
 
   /**
      @return identifier for component for e.g. debugging.
   */
-  public String getIdentifier();
+  String getIdentifier();
 
-  public ComponentArea getArea();
+  ComponentArea getArea();
 
-  public void setArea(ComponentArea area);
+  void setArea(ComponentArea area);
 
-  public void resetArea();
+  void resetArea();
 
-  public ComponentState getState();
+  ComponentState getState();
 
-  public void setState(ComponentState state);
+  void setState(ComponentState state);
 
-  public void resetState();
+  void resetState();
+
+  boolean getOutlineMode();
+
+  void setOutlineMode(boolean outlineMode);
+
+  void resetOutlineMode();
 
   /**
      @return component instance name.
@@ -213,6 +221,8 @@ public interface IDIYComponent<T> extends Serializable {
    */
   void drawIcon(Graphics2D g2d, int width, int height);
 
+  Icon getImageIcon();
+
   /**
    * Clones the component.
    *
@@ -229,5 +239,5 @@ public interface IDIYComponent<T> extends Serializable {
    * @param other
    * @return
    */
-  boolean equalsTo(IDIYComponent<?> other);
+  boolean isEqualTo(IDIYComponent<?> other);
 }
