@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import java.awt.BasicStroke;
@@ -39,7 +40,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
@@ -61,6 +61,7 @@ import org.apache.logging.log4j.Logger;
 
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ZoomableStroke;
+import org.diylc.components.Area;
 import org.diylc.core.IDrawingObserver;
 
 /**
@@ -186,22 +187,24 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
    * @param s
    */
   private void appendShape(Shape s) {
-    if (!drawingComponent || (!trackingAllowed && !trackingContinuityAllowed)) {
-      return;
-    }
-    Rectangle2D bounds = s.getBounds2D();
-    // Only cache the shape if it's not 1D.
-    if (bounds.getWidth() > 1 && bounds.getHeight() > 1) {
-      Area area = new Area(s);
-      area.transform(currentTx);
-
-      if (trackingAllowed) currentArea.add(area);
-
-      if (trackingContinuityAllowed) {
-        if (trackingContinuityPositive) continuityPositiveAreas.add(area);
-        else continuityNegativeAreas.add(area);
+    if (drawingComponent && (trackingAllowed || trackingContinuityAllowed)) {
+      Rectangle2D bounds = s.getBounds2D();
+      // Only cache the shape if it's not 1D.
+      if (bounds.getWidth() > 1 && bounds.getHeight() > 1) {
+        Area area = new Area(s);
+        area.transform(currentTx);
+        if (trackingAllowed) {
+          currentArea.add(area);
+        }
+        if (trackingContinuityAllowed) {
+          if (trackingContinuityPositive) {
+            continuityPositiveAreas.add(area);
+          } else {
+            continuityNegativeAreas.add(area);
+          }
+        }
+        lastShape = s;
       }
-      lastShape = s;
     }
   }
 
@@ -212,19 +215,13 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
    */
   private void appendShapeOutline(Shape s) {
     // Do not add shape outline if the same shape has been filled recently.
-    if (!drawingComponent || !trackingAllowed || s.equals(lastShape)) {
-      return;
-    }
-    Stroke stroke = getStroke();
-    if (stroke instanceof BasicStroke) {
-      BasicStroke bstroke = (BasicStroke) stroke;
-      if (bstroke.getLineWidth() < 3) {
+    if (drawingComponent && trackingAllowed && !s.equals(lastShape)) {
+      Stroke stroke = getStroke();
+      if (stroke instanceof BasicStroke && ((BasicStroke) stroke).getLineWidth() < 3) {
         appendShape(ObjectCache.getInstance().fetchBasicStroke(3).createStrokedShape(s));
       } else {
         appendShape(getStroke().createStrokedShape(s));
       }
-    } else {
-      appendShape(getStroke().createStrokedShape(s));
     }
   }
 
@@ -258,9 +255,94 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
+  public void drawImage(
+      BufferedImage img,
+      BufferedImageOp op,
+      int x,
+      int y) {
     canvasGraphics.drawImage(img, op, x, y);
     // FIXME: process map
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int x,
+      int y,
+      ImageObserver observer) {
+    boolean result = canvasGraphics.drawImage(img, x, y, observer);
+    appendShape(new Rectangle2D.Double(x, y, img.getWidth(observer), img.getHeight(observer)));
+    return result;
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int x,
+      int y,
+      Color bgcolor,
+      ImageObserver observer) {
+    // FIXME: map
+    return canvasGraphics.drawImage(img, x, y, bgcolor, observer);
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int x,
+      int y,
+      int width,
+      int height,
+      ImageObserver observer) {
+    // FIXME: map
+    return canvasGraphics.drawImage(img, x, y, width, height, observer);
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int x,
+      int y,
+      int width,
+      int height,
+      Color bgcolor,
+      ImageObserver observer) {
+    // FIXME: map
+    return canvasGraphics.drawImage(img, x, y, width, height, bgcolor, observer);
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int dx1,
+      int dy1,
+      int dx2,
+      int dy2,
+      int sx1,
+      int sy1,
+      int sx2,
+      int sy2,
+      ImageObserver observer) {
+    // FIXME: map
+    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
+  }
+
+  @Override
+  public boolean drawImage(
+      Image img,
+      int dx1,
+      int dy1,
+      int dx2,
+      int dy2,
+      int sx1,
+      int sy1,
+      int sx2,
+      int sy2,
+      Color bgcolor,
+      ImageObserver observer) {
+    // FIXME: map
+    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor,
+                                    observer);
   }
 
   @Override
@@ -426,14 +508,13 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     if (this.zoom > 1 && s instanceof BasicStroke) {
       BasicStroke bs = (BasicStroke) s;
       // make thin lines even thinner to compensate for zoom factor
-      if (bs.getLineWidth() <= 2 && !(s instanceof ZoomableStroke))
-        s =
-            ObjectCache.getInstance()
-                .fetchStroke(
-                    (float) (bs.getLineWidth() / zoom),
-                    bs.getDashArray(),
-                    bs.getDashPhase(),
-                    bs.getEndCap());
+      if (bs.getLineWidth() <= 2 && !(s instanceof ZoomableStroke)) {
+        s = ObjectCache.getInstance().fetchStroke(
+            (float) (bs.getLineWidth() / zoom),
+            bs.getDashArray(),
+            bs.getDashPhase(),
+            bs.getEndCap());
+      }
     }
     canvasGraphics.setStroke(s);
   }
@@ -453,6 +534,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       currentTx.getMatrix(matrix);
       currentTx.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], p.getX(), p.getY());
     } catch (NoninvertibleTransformException e) {
+      LOG.debug("setTransform(): noninvertible transform", e);
     }
   }
 
@@ -508,65 +590,6 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   @Override
   public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
     canvasGraphics.drawArc(x, y, width, height, startAngle, arcAngle);
-  }
-
-  @Override
-  public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
-    boolean result = canvasGraphics.drawImage(img, x, y, observer);
-    appendShape(new Rectangle2D.Double(x, y, img.getWidth(observer), img.getHeight(observer)));
-    return result;
-  }
-
-  @Override
-  public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
-    // FIXME: map
-    return canvasGraphics.drawImage(img, x, y, bgcolor, observer);
-  }
-
-  @Override
-  public boolean drawImage(Image img, int x, int y, int width, int height,
-                           ImageObserver observer) {
-    // FIXME: map
-    return canvasGraphics.drawImage(img, x, y, width, height, observer);
-  }
-
-  @Override
-  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor,
-                           ImageObserver observer) {
-    // FIXME: map
-    return canvasGraphics.drawImage(img, x, y, width, height, bgcolor, observer);
-  }
-
-  @Override
-  public boolean drawImage(Image img,
-                           int dx1,
-                           int dy1,
-                           int dx2,
-                           int dy2,
-                           int sx1,
-                           int sy1,
-                           int sx2,
-                           int sy2,
-                           ImageObserver observer) {
-    // FIXME: map
-    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
-  }
-
-  @Override
-  public boolean drawImage(Image img,
-                           int dx1,
-                           int dy1,
-                           int dx2,
-                           int dy2,
-                           int sx1,
-                           int sy1,
-                           int sx2,
-                           int sy2,
-                           Color bgcolor,
-                           ImageObserver observer) {
-    // FIXME: map
-    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor,
-                                    observer);
   }
 
   @Override
