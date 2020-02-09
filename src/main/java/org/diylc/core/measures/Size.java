@@ -17,13 +17,19 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
 
+import org.diylc.parsing.XmlNode;
 import org.diylc.utils.Constants;
 
 public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> {
 
   private static final long serialVersionUID = 1L;
+
+  // portrait
+  public static final Size A4_HEIGHT = Size.mm(297);
+  public static final Size A4_WIDTH = Size.mm(210);
 
   public Size(Double value, SizeUnit unit) {
     super(value, unit);
@@ -33,26 +39,54 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     super(s.value, s.unit);
   }
 
+  public Size(XmlNode node) {
+    super(
+        Double.parseDouble(node.attributes.get("value")),
+        SizeUnit.valueOf(node.attributes.get("unit")));
+  }
+
   /**
      Convert to pixels.
      Return value can be fractional. Use this when the return value is used in calculations.
-     Integer (int) values are returned directly by asPixels().
+     Integer (int) values are returned directly by intPixels().
   */
+  public double asPixels() {
+    return getUnit().asPixels(getValue());
+  }
+
   public double convertToPixels() {
-    // double factor = getUnit().getFactor() / SizeUnit.in.getFactor();
-    // int grids = (int) (factor * getValue() * Constants.GRIDS_PER_INCH);
-    // double remainder = (factor * getValue() * Constants.GRIDS_PER_INCH) - grids;
-    // return (int) Math.round(Constants.PIXELS_PER_INCH / Constants.GRIDS_PER_INCH
-    // * (grids + remainder));
-    return getValue() * getUnit().getFactor()
-        / SizeUnit.in.getFactor() * Constants.PIXELS_PER_INCH;
+    return asPixels();
   }
 
   /**
     Convert to an integer number of pixels.
   */
-  public int asPixels() {
+  public int intPixels() {
     return (int) convertToPixels();
+  }
+
+  public Size multiply(double multiplier) {
+    return new Size(multiplier * getValue(), getUnit());
+  }
+
+  public Size eighth() {
+    return multiply(0.125);
+  }
+
+  public Size quarter() {
+    return multiply(0.25);
+  }
+
+  public Size half() {
+    return multiply(0.5);
+  }
+
+  public Size twice() {
+    return multiply(2d);
+  }
+
+  public Size negative() {
+    return multiply(-1d);
   }
 
   public static Size parseSize(String value) {
@@ -71,5 +105,29 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     return Double.compare(
         value * unit.getFactor(),
         o.getValue() * o.getUnit().getFactor());
+  }
+
+  public static Size mm(double value) {
+    return new Size(value, SizeUnit.mm);
+  }
+
+  public static Size mm(int value) {
+    return mm((double) value);
+  }
+
+  public static Size in(double value) {
+    return new Size(value, SizeUnit.in);
+  }
+
+  public static Size in(int value) {
+    return in((double) value);
+  }
+
+  public static Size px(double value) {
+    return new Size(value, SizeUnit.px);
+  }
+
+  public static Size px(int value) {
+    return px((double) value);
   }
 }
