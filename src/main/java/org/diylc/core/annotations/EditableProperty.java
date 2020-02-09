@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.annotations;
 
 import java.lang.annotation.Retention;
@@ -34,8 +35,7 @@ import org.diylc.core.IPropertyValidator;
  *
  * <pre>
  * <code>
- * &#64;EditableProperty(additionalOptions = EditableProperty.DYNAMIC_LIST
- *   + "getCategories")
+ * &#64;EditableProperty(additionalOptions = EditableProperty.DYNAMIC_LIST + "getCategories")
  * public String getCategory() {
  *   return category;
  * }

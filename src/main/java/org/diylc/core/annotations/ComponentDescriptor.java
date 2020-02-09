@@ -20,12 +20,17 @@
 
 package org.diylc.core.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.diylc.common.DefaultTransformer;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
+import org.diylc.parsing.XmlNode;
 
 /**
  * Annotation that needs to be used for each {@link IDIYComponent}
@@ -35,6 +40,8 @@ import org.diylc.core.IDIYComponent;
  * @author Branislav Stojkovic
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Documented
 public @interface ComponentDescriptor {
 
   /**
@@ -72,6 +79,16 @@ public @interface ComponentDescriptor {
   String instanceNamePrefix();
 
   /**
+     String specifyng XML tag from which this component can be
+     unmarshalled. Syntax is either "tag" or "tag:type", corresponding
+     to tag name or tag name and value of 'type' attribute
+     respectively.
+
+     @return tag string
+   */
+  String xmlTag() default XmlNode.NO_TAG;
+
+  /**
      @return Z-order of the component.
   */
   double zOrder();
@@ -83,18 +100,20 @@ public @interface ComponentDescriptor {
   boolean flexibleZOrder() default false;
 
   /**
-     @return controls what should be shown the BOM
-  */
+   * @return controls what should be shown the BOM
+   */
   BomPolicy bomPolicy() default BomPolicy.SHOW_ALL_NAMES;
 
   /**
-     @return when true, component editor dialog should be shown in Auto-Edit mode.
-  */
+   * @return true if component editor dialog should be shown in
+   * Auto-Edit mode, false otherwise
+   */
   boolean autoEdit() default true;
 
   /**
-   * @return if the component can be rotated and/or mirrored, returns
-   *     a class of the transformer that can do it
+   * @return the transformer class that can rotate and/or mirror
+   * objects of this class, if one exists
+   *
    */
   Class<? extends IComponentTransformer> transformer() default DefaultTransformer.class;
 
