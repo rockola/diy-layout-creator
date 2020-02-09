@@ -115,14 +115,10 @@ public abstract class ButtonDialog extends JDialog {
         final String command = caption;
         JButton button = new JButton(caption);
         button.addActionListener(
-            new ActionListener() {
-
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                if (validateInput(command)) {
-                  selectedButtonCaption = command;
-                  ButtonDialog.this.setVisible(false);
-                }
+            (e) -> {
+              if (validateInput(command)) {
+                selectedButtonCaption = command;
+                ButtonDialog.this.setVisible(false);
               }
             });
         buttonPanel.add(button);
