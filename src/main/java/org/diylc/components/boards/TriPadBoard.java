@@ -20,7 +20,6 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -38,7 +37,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "TriPad Board",
@@ -54,14 +52,15 @@ public class TriPadBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
 
-  public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
-
-  protected int stripSpan = 3; // determines how many holes are covered by a
-  // strip
+  /**
+   * Determines how many holes are covered by a strip.
+   */
+  protected int stripSpan = 3;
   protected Size spacing = SPACING;
   protected Color stripColor = COPPER_COLOR;
   protected OrientationHV orientation = OrientationHV.HORIZONTAL;
@@ -80,12 +79,8 @@ public class TriPadBoard extends AbstractBoard {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       Point p = new Point(firstPoint);
       int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels());
       int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels());
@@ -129,7 +124,7 @@ public class TriPadBoard extends AbstractBoard {
 
           while (p.x < secondPoint.x - spacing - holeSize) {
             p.x += spacing;
-            g2d.setColor(Constants.CANVAS_COLOR);
+            g2d.setColor(CANVAS_COLOR);
             g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
             g2d.setColor(stripColor.darker());
             g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
@@ -172,7 +167,7 @@ public class TriPadBoard extends AbstractBoard {
 
           while (p.y < secondPoint.y - spacing - holeSize) {
             p.y += spacing;
-            g2d.setColor(Constants.CANVAS_COLOR);
+            g2d.setColor(CANVAS_COLOR);
             g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
             g2d.setColor(stripColor.darker());
             g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
@@ -250,7 +245,7 @@ public class TriPadBoard extends AbstractBoard {
       int y = (verticalSpacing * row) + verticalIndent;
       for (int col = 0; col < 5; col++) {
         int x = (horizontalSpacing * col) + horizontalIndent;
-        g2d.setColor(Constants.CANVAS_COLOR);
+        g2d.setColor(CANVAS_COLOR);
         g2d.fillOval(x, y, 2, 2);
         g2d.setColor(COPPER_COLOR.darker());
         g2d.drawOval(x, y, 2, 2);

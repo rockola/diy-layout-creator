@@ -20,20 +20,17 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TerminalStripTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IContinuity;
@@ -62,13 +59,13 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BOARD_COLOR = Color.decode("#CD8500");
-  public static Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static Color TERMINAL_COLOR = Color.lightGray;
-  public static Color TERMINAL_BORDER_COLOR = TERMINAL_COLOR.darker();
-  public static int EDGE_RADIUS = 2;
-  public static Size HOLE_SIZE = new Size(0.06d, SizeUnit.in);
-  public static Size MOUNTING_HOLE_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Color BOARD_COLOR = Color.decode("#CD8500");
+  public static final Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Color TERMINAL_COLOR = Color.lightGray;
+  public static final Color TERMINAL_BORDER_COLOR = TERMINAL_COLOR.darker();
+  public static final int EDGE_RADIUS = 2;
+  public static final Size HOLE_SIZE = new Size(0.06d, SizeUnit.in);
+  public static final Size MOUNTING_HOLE_SIZE = new Size(0.07d, SizeUnit.in);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
@@ -248,116 +245,86 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
       }
       controlPoints[i] = new Point(firstPoint.x + dx1, firstPoint.y + dy1);
       controlPoints[i + getTerminalCount()] = new Point(firstPoint.x + dx2, firstPoint.y + dy2);
-      if (centerHole)
+      if (centerHole) {
         controlPoints[i + 2 * getTerminalCount()] = new Point(firstPoint.x + cx, firstPoint.y + cy);
+      }
     }
   }
 
   public Area[] getBody() {
     if (body == null) {
       body = new Area[2];
+      final int holeSize = (int) HOLE_SIZE.convertToPixels();
+      final int terminalSpacing = (int) getTerminalSpacing().convertToPixels();
+      final int holeSpacing = (int) getHoleSpacing().convertToPixels();
+      final int boardWidth = (int) getBoardWidth().convertToPixels();
+      final int boardLength = (getTerminalCount() - 1) * terminalSpacing + 2 * boardWidth;
+      final int mountingHoleSize = getClosestOdd(MOUNTING_HOLE_SIZE.convertToPixels());
+      final int halfHoleAdjuster = boardWidth / 2 - mountingHoleSize / 2;
+      final int holeAdjuster = boardWidth / 2 - mountingHoleSize;
+      final int heightAdjuster = boardLength - boardWidth / 2;
+      final int spacingAdd = holeSpacing / 2 - boardWidth / 2;
+      final int spacingSubtract = holeSpacing / 2 + boardWidth / 2;
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      int width;
-      int height;
-      int holeSize = (int) HOLE_SIZE.convertToPixels();
-      int terminalSpacing = (int) getTerminalSpacing().convertToPixels();
-      int holeSpacing = (int) getHoleSpacing().convertToPixels();
-      int boardWidth = (int) getBoardWidth().convertToPixels();
-      int boardLength = (getTerminalCount() - 1) * terminalSpacing + 2 * boardWidth;
-      Area indentation = null;
-      Area terminals = null;
-      int mountingHoleSize = getClosestOdd(MOUNTING_HOLE_SIZE.convertToPixels());
+      int width = boardWidth;
+      int height = boardLength;
+      int ix1;
+      final int iy1 = y + halfHoleAdjuster;
+      int ix2;
+      int iy2;
       switch (orientation) {
         case DEFAULT:
-          width = boardWidth;
-          height = boardLength;
-          x += holeSpacing / 2 - boardWidth / 2;
+          x += spacingAdd;
           y -= boardWidth;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize / 2,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize));
-          indentation.add(
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize / 2,
-                      y + boardLength - boardWidth / 2,
-                      mountingHoleSize,
-                      mountingHoleSize)));
+          ix1 = x + halfHoleAdjuster;
+          ix2 = ix1;
+          iy2 = y + heightAdjuster;
           break;
         case _90:
           width = boardLength;
           height = boardWidth;
           x += boardWidth - boardLength;
-          y += holeSpacing / 2 - boardWidth / 2;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize));
-          indentation.add(
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardLength - boardWidth / 2,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize)));
+          y += spacingAdd;
+          ix1 = x + holeAdjuster;
+          ix2 = x + heightAdjuster;
+          iy2 = iy1;
           break;
         case _180:
-          width = boardWidth;
-          height = boardLength;
-          x -= holeSpacing / 2 + boardWidth / 2;
+          x -= spacingSubtract;
           y += boardWidth - boardLength;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize / 2,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize));
-          indentation.add(
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize / 2,
-                      y + boardLength - boardWidth / 2,
-                      mountingHoleSize,
-                      mountingHoleSize)));
+          ix1 = x + halfHoleAdjuster;
+          ix2 = ix1;
+          iy2 = y + heightAdjuster;
           break;
         case _270:
           width = boardLength;
           height = boardWidth;
           x -= boardWidth;
-          y -= holeSpacing / 2 + boardWidth / 2;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardWidth / 2 - mountingHoleSize,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize));
-          indentation.add(
-              new Area(
-                  new Ellipse2D.Double(
-                      x + boardLength - boardWidth / 2,
-                      y + boardWidth / 2 - mountingHoleSize / 2,
-                      mountingHoleSize,
-                      mountingHoleSize)));
+          y -= spacingSubtract;
+          ix1 = x + holeAdjuster;
+          ix2 = x + heightAdjuster;
+          iy2 = iy1;
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      Area bodyArea =
-          new Area(new RoundRectangle2D.Double(x, y, width, height, EDGE_RADIUS, EDGE_RADIUS));
+      Area indentation = new Area(new Ellipse2D.Double(
+          ix1,
+          iy1,
+          mountingHoleSize,
+          mountingHoleSize));
+      indentation.add(new Area(new Ellipse2D.Double(
+          ix2,
+          iy2,
+          mountingHoleSize,
+          mountingHoleSize)));
+
+      Area bodyArea = Area.roundRect(x, y, width, height, EDGE_RADIUS);
       bodyArea.subtract(indentation);
       body[0] = bodyArea;
 
-      terminals = new Area();
+      Area terminals = new Area();
       for (int i = 0; i < getTerminalCount(); i++) {
         Point p1 = getControlPoint(i);
         Point p2 = getControlPoint(i + getTerminalCount());
@@ -367,30 +334,18 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
           p2 = p;
         }
 
-        Area terminal =
-            new Area(
-                new RoundRectangle2D.Double(
-                    p1.x - holeSize,
-                    p1.y - holeSize,
-                    p2.x - p1.x + holeSize * 2,
-                    p2.y - p1.y + holeSize * 2,
-                    holeSize,
-                    holeSize));
+        Area terminal = Area.roundRect(
+            p1.x - holeSize,
+            p1.y - holeSize,
+            p2.x - p1.x + holeSize * 2,
+            p2.y - p1.y + holeSize * 2,
+            holeSize);
 
-        terminal.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    p1.x - holeSize / 2, p1.y - holeSize / 2, holeSize, holeSize)));
-        terminal.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    p2.x - holeSize / 2, p2.y - holeSize / 2, holeSize, holeSize)));
+        terminal.subtract(Area.circle(p1, holeSize));
+        terminal.subtract(Area.circle(p2, holeSize));
         if (centerHole) {
           Point p3 = getControlPoint(i + 2 * getTerminalCount());
-          Area centerHole =
-              new Area(
-                  new Ellipse2D.Double(
-                      p3.x - holeSize / 2, p3.y - holeSize / 2, holeSize, holeSize));
+          Area centerHole = Area.circle(p3, holeSize);
           terminal.subtract(centerHole);
           bodyArea.subtract(centerHole);
         }
@@ -413,12 +368,8 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
       return;
     }
     Area mainArea = getBody()[0];
-    Area terminalArea = getBody()[1];
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBoardColor());
     g2d.fill(mainArea);
 
@@ -426,6 +377,8 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.setColor(finalBorderColor);
     g2d.draw(mainArea);
+
+    Area terminalArea = getBody()[1];
 
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : TERMINAL_COLOR);
     drawingObserver.startTrackingContinuityArea(true);
@@ -441,15 +394,15 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int radius = 6 * width / 32;
-    int holeSize = 3 * width / 32;
     g2d.setColor(BOARD_COLOR);
     g2d.fillRect(width / 4, 1, width / 2, height - 4);
     g2d.setColor(BORDER_COLOR);
     g2d.drawRect(width / 4, 1, width / 2, height - 4);
+    int radius = 6 * width / 32;
+    int holeSize = 3 * width / 32;
     int terminalSize = getClosestOdd(height / 5);
-    Area terminal = new Area(new RoundRectangle2D.Double(
-        2 * width / 32, height / 5, width - 4 * width / 32, terminalSize, radius, radius));
+    Area terminal = Area.roundRect(
+        2 * width / 32, height / 5, width - 4 * width / 32, terminalSize, radius);
     terminal.subtract(new Area(new Ellipse2D.Double(
         2 * width / 32 + holeSize, height * 3 / 10 - holeSize / 2, holeSize, holeSize)));
     terminal.subtract(new Area(new Ellipse2D.Double(
