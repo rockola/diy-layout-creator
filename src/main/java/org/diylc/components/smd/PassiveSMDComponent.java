@@ -42,7 +42,6 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponent<T> {
@@ -53,7 +52,7 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
   public static final Color LABEL_COLOR = Color.white;
   public static final int EDGE_RADIUS = 4;
-  public static final Size PIN_SIZE = new Size(0.8d, SizeUnit.mm);
+  public static final Size PIN_SIZE = Size.mm(0.8);
 
   protected T value;
   protected Color bodyColor;
@@ -361,11 +360,11 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   }
 
   public enum SMDSize {
-    _0805(new Size(0.05d, SizeUnit.in), new Size(0.08d, SizeUnit.in)),
-    _1206(new Size(1.6d, SizeUnit.mm), new Size(3.2d, SizeUnit.mm)),
-    _1210(new Size(2.5d, SizeUnit.mm), new Size(3.2d, SizeUnit.mm)),
-    _1806(new Size(1.6d, SizeUnit.mm), new Size(4.5d, SizeUnit.mm)),
-    _1812(new Size(3.2d, SizeUnit.mm), new Size(4.5d, SizeUnit.mm));
+    _0805(Size.in(0.05), Size.in(0.08)),
+    _1206(Size.mm(1.6), Size.mm(3.2)),
+    _1210(Size.mm(2.5), Size.mm(3.2)),
+    _1806(Size.mm(1.6), Size.mm(4.5)),
+    _1812(Size.mm(3.2), Size.mm(4.5));
 
     private Size width;
     private Size length;
