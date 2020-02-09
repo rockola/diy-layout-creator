@@ -55,7 +55,7 @@ public class BOM extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_SIZE = Size.cm(10);
+  public static final Size DEFAULT_SIZE = Size.mm(100);
   public static final Size SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
   public static final String DEFAULT_TEXT = "No components to show in the Bill of Materials";
