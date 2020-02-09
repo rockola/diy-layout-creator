@@ -27,16 +27,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.awt.TwoCircleTangent;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractMultiPartComponent;
+import org.diylc.components.Area;
+import org.diylc.components.TwoCircleTangent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -89,42 +90,35 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
       IDrawingObserver drawingObserver) {
     Shape[] body = getBody();
 
+    Composite oldComposite = setTransparency(g2d);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    //    if (componentState != ComponentState.DRAGGING) {
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
     g2d.fill(body[0]);
-
     g2d.setComposite(oldComposite);
-    //    }
 
     Color finalBorderColor = tryBorderColor(outlineMode, WAFER_COLOR.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
 
-    oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
-
+    oldComposite = setTransparency(g2d);
     drawingObserver.startTrackingContinuityArea(true);
+    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
     g2d.fill(body[1]);
     g2d.fill(body[2]);
     drawingObserver.stopTrackingContinuityArea();
 
-    if (body[3] != null) g2d.fill(body[3]);
-
+    if (body[3] != null) {
+      g2d.fill(body[3]);
+    }
     g2d.setComposite(oldComposite);
 
     finalBorderColor = tryBorderColor(outlineMode, BASE_COLOR.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[1]);
     g2d.draw(body[2]);
-    if (body[3] != null) g2d.draw(body[3]);
+    if (body[3] != null) {
+      g2d.draw(body[3]);
+    }
 
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
@@ -137,45 +131,32 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
       int y0 = controlPoints[0].y;
       int x1 = controlPoints[1].x;
       int y1 = controlPoints[1].y;
-      int bodyDiameter = getClosestOdd(BODY_DIAMETER.convertToPixels());
-      int waferDiameter = getClosestOdd(WAFER_DIAMETER.convertToPixels());
-      int springWidth = (int) SPRING_WIDTH.convertToPixels();
-      int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
-      double hexDiameter = HEX_DIAMETER.convertToPixels();
+      final int bodyDiameter = getClosestOdd(BODY_DIAMETER.convertToPixels());
+      final int waferDiameter = getClosestOdd(WAFER_DIAMETER.convertToPixels());
+      final int springWidth = (int) SPRING_WIDTH.convertToPixels();
+      final int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
+      final double hexDiameter = HEX_DIAMETER.convertToPixels();
 
-      Area wafer =
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
-      wafer.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area wafer = new Area(new Ellipse2D.Double(
+          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
+      wafer.subtract(new Area(new Ellipse2D.Double(
+          x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
 
       body[0] = wafer;
 
-      Area tip =
-          new TwoCircleTangent(
-              controlPoints[0], controlPoints[1], bodyDiameter / 2, springWidth / 2);
-      tip.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x1 - holeDiameter / 2, y1 - holeDiameter / 2, holeDiameter, holeDiameter)));
-      tip.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
+      Area tip = new TwoCircleTangent(
+          controlPoints[0], controlPoints[1], bodyDiameter / 2, springWidth / 2);
+      tip.subtract(new Area(new Ellipse2D.Double(
+          x1 - holeDiameter / 2, y1 - holeDiameter / 2, holeDiameter, holeDiameter)));
+      tip.subtract(new Area(new Ellipse2D.Double(
+          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
 
       body[1] = tip;
 
-      Area sleeve =
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - springWidth / 2, y0 - springWidth / 2, springWidth, springWidth));
-      sleeve.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area sleeve = new Area(new Ellipse2D.Double(
+          x0 - springWidth / 2, y0 - springWidth / 2, springWidth, springWidth));
+      sleeve.subtract(new Area(new Ellipse2D.Double(
+          x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
 
       body[2] = sleeve;
 
@@ -183,48 +164,34 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
       for (int i = 0; i < 6; i++) {
         double x = x0 + Math.cos(Math.PI / 3 * i) * hexDiameter / 2;
         double y = y0 + Math.sin(Math.PI / 3 * i) * hexDiameter / 2;
-        if (i == 0) hex.moveTo(x, y);
-        else hex.lineTo(x, y);
+        if (i == 0) {
+          hex.moveTo(x, y);
+        } else {
+          hex.lineTo(x, y);
+        }
       }
       hex.closePath();
       Area hexArea = new Area(hex);
-      hexArea.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
+      hexArea.subtract(new Area(new Ellipse2D.Double(
+          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
       body[3] = hexArea;
     }
 
     return body;
   }
 
-  @SuppressWarnings("incomplete-switch")
   private void updateControlPoints() {
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
-
     int springLength = (int) SPRING_LENGTH.convertToPixels();
     int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
-
     int centerY = y + springLength - holeToEdge;
 
     controlPoints[1].setLocation(x, centerY);
 
     // Rotate if needed
     if (orientation != Orientation.DEFAULT) {
-      double theta = 0;
-      switch (orientation) {
-        case _90:
-          theta = Math.PI / 2;
-          break;
-        case _180:
-          theta = Math.PI;
-          break;
-        case _270:
-          theta = Math.PI * 3 / 2;
-          break;
-      }
-
+      double theta = orientation.getTheta();
       AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
       rotation.transform(controlPoints[1], controlPoints[1]);
     }
@@ -236,12 +203,11 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
     double y0 = height * 0.65;
     double x1 = width * 0.75;
     double y1 = height * 0.25;
-    TwoCircleTangent main =
-        new TwoCircleTangent(
-            new Point2D.Double(width * 0.35, height * 0.65),
-            new Point2D.Double(x1, y1),
-            width * 0.3,
-            width * 0.1);
+    TwoCircleTangent main = new TwoCircleTangent(
+        new Point2D.Double(width * 0.35, height * 0.65),
+        new Point2D.Double(x1, y1),
+        width * 0.3,
+        width * 0.1);
     main.subtract(new Area(new Ellipse2D.Double(x0 - 1, y0 - 1, 3, 3)));
     main.subtract(new Area(new Ellipse2D.Double(x1 - 1, y1 - 1, 2, 2)));
 
@@ -257,18 +223,19 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
     for (int i = 0; i < 6; i++) {
       double x = x0 + Math.cos(Math.PI / 3 * i) * hexDiameter / 2;
       double y = y0 + Math.sin(Math.PI / 3 * i) * hexDiameter / 2;
-      if (i == 0) hex.moveTo(x, y);
-      else hex.lineTo(x, y);
+      if (i == 0) {
+        hex.moveTo(x, y);
+      } else {
+        hex.lineTo(x, y);
+      }
     }
     hex.closePath();
     g2d.draw(hex);
 
     double waferDiameter = width * 0.22;
-    //    g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2f));
     g2d.setColor(WAFER_COLOR);
-    g2d.draw(
-        new Ellipse2D.Double(
-            x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
+    g2d.draw(new Ellipse2D.Double(
+        x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
   }
 
   @Override
