@@ -95,7 +95,7 @@ public class ActionBarPlugin implements IPlugIn {
     if (eventType != EventType.SELECTION_CHANGED) {
       return;
     }
-    boolean enabled = !plugInPort.getCurrentProject().emptySelection();
+    boolean enabled = !plugInPort.currentProject().emptySelection();
     getMiniToolbar().setEnabled(enabled);
   }
 }
