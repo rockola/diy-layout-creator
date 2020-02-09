@@ -53,12 +53,11 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.green;
-  public static Color STRIPE_COLOR = Color.yellow;
-  public static double INSULATION_THICKNESS_PCT = 0.3;
+  public static final Color COLOR = Color.green;
+  public static final Color STRIPE_COLOR = Color.yellow;
+  public static final double INSULATION_THICKNESS_PCT = 0.3;
 
   protected AWG gauge = AWG._22;
-
   protected boolean striped = false;
   protected Color stripeColor = STRIPE_COLOR;
 
@@ -96,6 +95,8 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
             0,
             BasicStroke.CAP_ROUND);
         break;
+      default:
+        throw new RuntimeException("unhandled line style " + getStyle().toString());
     }
 
     if (stroke != null) {

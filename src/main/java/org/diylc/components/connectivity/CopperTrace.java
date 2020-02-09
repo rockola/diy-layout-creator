@@ -56,8 +56,8 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size THICKNESS = new Size(1d, SizeUnit.mm);
-  public static Color COLOR = Color.black;
+  public static final Size THICKNESS = new Size(1d, SizeUnit.mm);
+  public static final Color COLOR = Color.black;
 
   private Size thickness = THICKNESS;
   private PCBLayer layer = PCBLayer._1;
@@ -126,7 +126,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   }
 
   @Override
-  public Byte getAlpha() {
+  public int getAlpha() {
     return super.getAlpha();
   }
 

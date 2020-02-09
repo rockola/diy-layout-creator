@@ -38,7 +38,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Trace Cut",
@@ -54,11 +53,11 @@ public class TraceCut extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size SIZE = new Size(0.08d, SizeUnit.in);
-  public static Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm);
-  public static Color FILL_COLOR = Color.white;
-  public static Color BORDER_COLOR = Color.red;
-  public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Color BORDER_COLOR = Color.red;
+  public static final Color FILL_COLOR = Color.white;
+  public static final Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm);
+  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Size SIZE = new Size(0.08d, SizeUnit.in);
 
   private Size size = SIZE;
   private Color fillColor = FILL_COLOR;
@@ -94,7 +93,7 @@ public class TraceCut extends AbstractComponent<Void> {
       g2d.fillRoundRect(point.x - size / 2, point.y - size / 2, size, size, size, size);
       drawingObserver.stopTrackingContinuityArea();
 
-      g2d.setColor(Constants.CANVAS_COLOR);
+      g2d.setColor(CANVAS_COLOR);
       int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels());
       g2d.fillOval(point.x - holeSize / 2, point.y - holeSize / 2, holeSize, holeSize);
       g2d.setColor(boardColor.darker());
@@ -130,7 +129,7 @@ public class TraceCut extends AbstractComponent<Void> {
     g2d.drawRect(1 / factor, 2 / factor, width - 2 / factor, 4 / factor);
     g2d.drawRect(1 / factor, height - 6 / factor, width - 2 / factor, 4 / factor);
 
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         width / 6 - 1, width / 2 - 1, getClosestOdd(3.0 / factor), getClosestOdd(3.0 / factor));
     g2d.fillOval(

@@ -23,9 +23,11 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -37,7 +39,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Turret Lug",
@@ -54,9 +55,9 @@ public class Turret extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size SIZE = new Size(0.16d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.0625d, SizeUnit.in);
-  public static Color COLOR = Color.decode("#E0C04C");
+  public static final Size SIZE = new Size(0.16d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.0625d, SizeUnit.in);
+  public static final Color COLOR = Color.decode("#E0C04C");
 
   private Size size = SIZE;
   private Size holeSize = HOLE_SIZE;
@@ -71,27 +72,23 @@ public class Turret extends AbstractComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    if (checkPointsClipped(g2d.getClip())) {
-      return;
+    if (!checkPointsClipped(g2d.getClip())) {
+      g2d.setColor(color);
+      g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
+      drawingObserver.startTrackingContinuityArea(true);
+
+      int diameter = getClosestOdd((int) size.convertToPixels());
+      g2d.fill(Area.circle(point, diameter));
+      drawingObserver.stopTrackingContinuityArea();
+      g2d.setColor(tryColor(false, color.darker()));
+      g2d.draw(Area.circle(point, diameter));
+
+      g2d.setColor(CANVAS_COLOR);
+      int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
+      g2d.fill(Area.circle(point, holeDiameter));
+      g2d.setColor(tryColor(false, color.darker()));
+      g2d.draw(Area.circle(point, holeDiameter));
     }
-
-    g2d.setColor(color);
-    g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
-    drawingObserver.startTrackingContinuityArea(true);
-
-    int diameter = getClosestOdd((int) size.convertToPixels());
-    g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
-    drawingObserver.stopTrackingContinuityArea();
-    g2d.setColor(tryColor(false, color.darker()));
-    g2d.drawOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
-
-    g2d.setColor(Constants.CANVAS_COLOR);
-    int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
-    g2d.fillOval(
-        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
-    g2d.setColor(tryColor(false, color.darker()));
-    g2d.drawOval(
-        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
   }
 
   @Override
@@ -102,10 +99,9 @@ public class Turret extends AbstractComponent<String> {
     g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
     g2d.setColor(COLOR.darker());
     g2d.drawOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
-    g2d.setColor(COLOR.darker());
     g2d.drawOval(
         (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
   }

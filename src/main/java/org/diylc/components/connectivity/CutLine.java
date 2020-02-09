@@ -55,9 +55,9 @@ public class CutLine extends AbstractTransparentComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size WIDTH = new Size(0.125d, SizeUnit.in);
-  public static Size LENGTH = new Size(3.125d, SizeUnit.in);
-  public static Color COLOR = Color.black;
+  public static final Size WIDTH = new Size(0.125d, SizeUnit.in);
+  public static final Size LENGTH = new Size(3.125d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
 
   private Size width = WIDTH;
   private Size length = LENGTH;
@@ -77,17 +77,13 @@ public class CutLine extends AbstractTransparentComponent<Void> {
     g2d.setColor(tryColor(false, color));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(w));
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-
-    if (getOrientation() == OrientationHV.HORIZONTAL) {
-      g2d.drawLine(point.x, point.y, point.x + l, point.y);
-    } else {
-      g2d.drawLine(point.x, point.y, point.x, point.y + l);
-    }
-
+    boolean isHorizontal = getOrientation() == OrientationHV.HORIZONTAL;
+    Composite oldComposite = setTransparency(g2d);
+    g2d.drawLine(
+        point.x,
+        point.y,
+        isHorizontal ? point.x + l : point.x,
+        isHorizontal ? point.y : point.y + l);
     g2d.setComposite(oldComposite);
   }
 

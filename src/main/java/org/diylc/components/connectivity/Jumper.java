@@ -53,7 +53,7 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.blue;
+  public static final Color COLOR = Color.blue;
 
   @Deprecated private Color color;
   protected LineStyle style = LineStyle.SOLID;
@@ -104,7 +104,7 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
   }
 
   @Override
-  public Byte getAlpha() {
+  public int getAlpha() {
     return super.getAlpha();
   }
 

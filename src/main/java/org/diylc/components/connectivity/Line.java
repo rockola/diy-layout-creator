@@ -59,7 +59,7 @@ public class Line extends AbstractLeadedComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.black;
+  public static final Color COLOR = Color.black;
 
   private Color color = COLOR;
   protected LineStyle style = LineStyle.SOLID;
@@ -91,35 +91,35 @@ public class Line extends AbstractLeadedComponent<Void> {
         stroke = ObjectCache.getInstance().fetchZoomableStroke(thickness);
         break;
       case DASHED:
-        stroke =
-            ObjectCache.getInstance()
-                .fetchStroke(
-                    thickness,
-                    new float[] {thickness * 2, thickness * 4},
-                    thickness * 4,
-                    BasicStroke.CAP_SQUARE);
+        stroke = ObjectCache.getInstance().fetchStroke(
+            thickness,
+            new float[] {thickness * 2, thickness * 4},
+            thickness * 4,
+            BasicStroke.CAP_SQUARE);
         break;
       case DOTTED:
-        stroke =
-            ObjectCache.getInstance()
-                .fetchStroke(
-                    thickness, new float[] {thickness, thickness * 5}, 0, BasicStroke.CAP_ROUND);
+        stroke = ObjectCache.getInstance().fetchStroke(
+            thickness,
+            new float[] {thickness, thickness * 5},
+            0,
+            BasicStroke.CAP_ROUND);
         break;
+      default:
+        throw new RuntimeException("Unknown line style " + getStyle());
     }
     g2d.setStroke(stroke);
-    g2d.setColor(componentState == ComponentState.SELECTED ? SELECTION_COLOR : color);
+    g2d.setColor(tryColor(outlineMode, color));
 
     Point startPoint = new Point(getControlPoint(0));
     Point endPoint = new Point(getControlPoint(1));
 
     if (arrowStart) {
       arrowTx.setToIdentity();
-      double angle =
-          Math.atan2(
-              getControlPoint(1).y - getControlPoint(0).y,
-              getControlPoint(1).x - getControlPoint(0).x);
+      double angle = Math.atan2(
+          getControlPoint(1).y - getControlPoint(0).y,
+          getControlPoint(1).x - getControlPoint(0).x);
       arrowTx.translate(getControlPoint(0).x, getControlPoint(0).y);
-      arrowTx.rotate((angle + Math.PI / 2d));
+      arrowTx.rotate(angle + HALF_PI);
       AffineTransform oldTx = g2d.getTransform();
       g2d.transform(arrowTx);
       g2d.fill(getArrow());
@@ -132,12 +132,11 @@ public class Line extends AbstractLeadedComponent<Void> {
     }
     if (arrowEnd) {
       arrowTx.setToIdentity();
-      double angle =
-          Math.atan2(
-              getControlPoint(1).y - getControlPoint(0).y,
-              getControlPoint(1).x - getControlPoint(0).x);
+      double angle = Math.atan2(
+          getControlPoint(1).y - getControlPoint(0).y,
+          getControlPoint(1).x - getControlPoint(0).x);
       arrowTx.translate(getControlPoint(1).x, getControlPoint(1).y);
-      arrowTx.rotate((angle - Math.PI / 2d));
+      arrowTx.rotate(angle - HALF_PI);
       AffineTransform oldTx = g2d.getTransform();
       g2d.transform(arrowTx);
       g2d.fill(getArrow());
@@ -155,10 +154,6 @@ public class Line extends AbstractLeadedComponent<Void> {
   private void interpolate(Point p1, Point p2, double t, Point p) {
     p.setLocation(
         (int) Math.round(p1.x * (1 - t) + p2.x * t), (int) Math.round(p1.y * (1 - t) + p2.y * t));
-  }
-
-  private double distance(Point p1, Point p2) {
-    return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
   }
 
   public Polygon getArrow() {
@@ -251,7 +246,7 @@ public class Line extends AbstractLeadedComponent<Void> {
   }
 
   @Override
-  public Byte getAlpha() {
+  public int getAlpha() {
     return super.getAlpha();
   }
 
@@ -313,7 +308,7 @@ public class Line extends AbstractLeadedComponent<Void> {
 
   @Deprecated
   @Override
-  public org.diylc.components.AbstractLeadedComponent.LabelOrientation getLabelOrientation() {
+  public LabelOrientation getLabelOrientation() {
     return super.getLabelOrientation();
   }
 }

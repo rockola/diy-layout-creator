@@ -54,8 +54,8 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.black;
-  public static Size SIZE = new Size(1d, SizeUnit.mm);
+  public static final Color COLOR = Color.black;
+  public static final Size SIZE = new Size(1d, SizeUnit.mm);
 
   protected Size size = SIZE;
   private PCBLayer layer = PCBLayer._1;
@@ -110,13 +110,8 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
   public void setValue(Void value) {}
 
   @Override
-  public Byte getAlpha() {
+  public int getAlpha() {
     return super.getAlpha();
-  }
-
-  @Override
-  public void setAlpha(Byte alpha) {
-    super.setAlpha(alpha);
   }
 
   @Override

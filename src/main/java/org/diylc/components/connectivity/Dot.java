@@ -51,8 +51,8 @@ public class Dot extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size SIZE = new Size(1d, SizeUnit.mm);
-  public static Color COLOR = Color.black;
+  public static final Size SIZE = new Size(1d, SizeUnit.mm);
+  public static final Color COLOR = Color.black;
 
   private Size size = SIZE;
   private Color color = COLOR;

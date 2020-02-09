@@ -40,7 +40,6 @@ import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Eyelet",
@@ -57,9 +56,9 @@ public class Eyelet extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size SIZE = new Size(0.2d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
-  public static Color COLOR = Color.decode("#C3E4ED");
+  public static final Size SIZE = new Size(0.2d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
+  public static final Color COLOR = Color.decode("#C3E4ED");
 
   private Size size = SIZE;
   private Size holeSize = HOLE_SIZE;
@@ -87,7 +86,7 @@ public class Eyelet extends AbstractComponent<String> {
     g2d.setColor(tryColor(false, color.darker()));
     g2d.drawOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
 
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
     g2d.fillOval(
         point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
@@ -104,7 +103,7 @@ public class Eyelet extends AbstractComponent<String> {
     g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
     g2d.setColor(COLOR.darker());
     g2d.drawOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
     g2d.setColor(COLOR.darker());

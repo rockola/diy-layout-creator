@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.geom.Area;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -39,6 +38,7 @@ import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractCurvedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IContinuity;
 import org.diylc.core.IDIYComponent;
@@ -63,13 +63,11 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.green;
-  public static Color COLOR2 = Color.blue;
-  public static Color STRIPE_COLOR = Color.yellow;
-  public static Color STRIPE_COLOR2 = Color.decode("#FF00FF");
-  public static double INSULATION_THICKNESS_PCT = 0.3;
-
-  protected AWG gauge = AWG._22;
+  public final static Color COLOR = Color.green;
+  public final static Color COLOR2 = Color.blue;
+  public final static Color STRIPE_COLOR = Color.yellow;
+  public final static Color STRIPE_COLOR2 = Color.decode("#FF00FF");
+  public final static double INSULATION_THICKNESS_PCT = 0.3;
 
   private Color color2 = COLOR2;
   private Color stripeColor = STRIPE_COLOR;
@@ -80,9 +78,10 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
   // cached areas
   private transient Area firstLeadArea = null;
   private transient Area secondLeadArea = null;
-
   private transient Area firstLeadStripeArea = null;
   private transient Area secondLeadStripeArea = null;
+
+  protected AWG gauge = AWG._22;
 
   @Override
   protected Color getDefaultColor() {
@@ -369,11 +368,9 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
       double centerX = (line.getX1() + line.getX2()) / 2;
       double centerY = (line.getY1() + line.getY2()) / 2;
       double theta = Math.atan2(line.getY2() - line.getY1(), line.getX2() - line.getX1());
-
       double sign = i % 2 == 0 ? 1 : -1;
-
-      double theta1 = theta - sign * Math.PI / 2;
-      double theta2 = theta + sign * Math.PI / 2;
+      double theta1 = theta - sign * HALF_PI;
+      double theta2 = theta + sign * HALF_PI;
 
       current1.quadTo(
           centerX + offset * Math.cos(theta1),
@@ -391,7 +388,7 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
         current1 = new Path2D.Double();
         current1.moveTo(line.getX2(), line.getY2());
       }
-      if (i % 2 == 1 || i == polygon.size() - 1) {
+      if (i % 2 != 0 || i == polygon.size() - 1) {
         secondCurves.add(current2);
         current2 = new Path2D.Double();
         current2.moveTo(line.getX2(), line.getY2());

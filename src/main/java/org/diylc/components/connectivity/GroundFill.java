@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.common.PCBLayer;
 import org.diylc.common.SimpleComponentTransformer;
@@ -53,9 +54,9 @@ public class GroundFill extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.black;
-  public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
+  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
 
   protected Point[] controlPoints =
       new Point[] {
@@ -79,14 +80,14 @@ public class GroundFill extends AbstractComponent<Void> {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Color fillColor = tryColor(false, color);
     g2d.setColor(fillColor);
-    int[] xPoints = new int[controlPoints.length];
-    int[] yPoints = new int[controlPoints.length];
+    int[] pointsX = new int[controlPoints.length];
+    int[] pointsY = new int[controlPoints.length];
     for (int i = 0; i < controlPoints.length; i++) {
-      xPoints[i] = controlPoints[i].x;
-      yPoints[i] = controlPoints[i].y;
+      pointsX[i] = controlPoints[i].x;
+      pointsY[i] = controlPoints[i].y;
     }
     drawingObserver.startTrackingContinuityArea(true);
-    g2d.fillPolygon(xPoints, yPoints, controlPoints.length);
+    g2d.fillPolygon(pointsX, pointsY, controlPoints.length);
     drawingObserver.stopTrackingContinuityArea();
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
