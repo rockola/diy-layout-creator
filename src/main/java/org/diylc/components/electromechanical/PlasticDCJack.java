@@ -45,7 +45,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -60,16 +59,20 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  private static Size LUG_WIDTH = new Size(0.08d, SizeUnit.in);
-  private static Size LUG_THICKNESS = new Size(0.02d, SizeUnit.in);
-  private static Size SPACING = new Size(0.1d, SizeUnit.in);
-  private static Size DIAMETER = new Size(0.5d, SizeUnit.in);
+  private static Size LUG_WIDTH = Size.in(0.08);
+  private static Size LUG_THICKNESS = Size.in(0.02);
+  private static Size SPACING = Size.in(0.1);
+  private static Size DIAMETER = Size.in(0.5);
   private static Color BODY_COLOR = Color.decode("#666666");
   private static Color PHENOLIC_COLOR = Color.decode("#CD8500");
   private static Color BORDER_COLOR = Color.black;
   private static Color MARKING_COLOR = Color.lightGray;
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  private Point[] controlPoints = new Point[] {
+    new Point(0, 0),
+    new Point(0, 0),
+    new Point(0, 0)
+  };
   private String value = "";
   private DCPolarity polarity = DCPolarity.CENTER_NEGATIVE;
   private transient Area[] body;

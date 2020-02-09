@@ -48,7 +48,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -87,23 +86,23 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   private static Size IEC_60320_C14_OPENING_UPPER_CORNER_VERTICAL_OFFSET = Size.mm(3);
 
   // common
-  private static Size HORIZONTAL_SPACING = new Size(0.3d, SizeUnit.in);
-  private static Size VERTICAL_SPACING = new Size(0.2d, SizeUnit.in);
-  private static Size LUG_WIDTH = new Size(4d, SizeUnit.mm);
-  private static Size LUG_THICKNESS = new Size(0.8d, SizeUnit.mm);
+  private static Size HORIZONTAL_SPACING = Size.in(0.3);
+  private static Size VERTICAL_SPACING = Size.in(0.2);
+  private static Size LUG_WIDTH = Size.mm(4);
+  private static Size LUG_THICKNESS = Size.mm(0.8);
 
   // simple
-  private static Size SIMPLE_CUTOUT_LENGTH = new Size(27.5d, SizeUnit.mm);
-  private static Size SIMPLE_CUTOUT_WIDTH = new Size(19.5d, SizeUnit.mm);
-  private static Size SIMPLE_BASE_LENGTH = new Size(30.8d, SizeUnit.mm);
-  private static Size SIMPLE_BASE_WIDTH = new Size(22.6d, SizeUnit.mm);
-  private static Size SIMPLE_BASE_RADIUS = new Size(3d, SizeUnit.mm);
-  private static Size SIMPLE_CUTOUT_SLANT = new Size(5d, SizeUnit.mm);
-  private static Size SIMPLE_CUTOUT_RADIUS = new Size(1d, SizeUnit.mm);
-  private static Size SIMPLE_LENGTH = new Size(50d, SizeUnit.mm);
-  private static Size SIMPLE_OUTER_RADIUS = new Size(6d, SizeUnit.mm);
-  private static Size HOLE_SPACING = new Size(40d, SizeUnit.mm);
-  private static Size HOLE_DIAMETER = new Size(3d, SizeUnit.mm);
+  private static Size SIMPLE_CUTOUT_LENGTH = Size.mm(27.5);
+  private static Size SIMPLE_CUTOUT_WIDTH = Size.mm(19.5);
+  private static Size SIMPLE_BASE_LENGTH = Size.mm(30.8);
+  private static Size SIMPLE_BASE_WIDTH = Size.mm(22.6);
+  private static Size SIMPLE_BASE_RADIUS = Size.mm(3);
+  private static Size SIMPLE_CUTOUT_SLANT = Size.mm(5);
+  private static Size SIMPLE_CUTOUT_RADIUS = Size.mm(1);
+  private static Size SIMPLE_LENGTH = Size.mm(50);
+  private static Size SIMPLE_OUTER_RADIUS = Size.mm(6);
+  private static Size HOLE_SPACING = Size.mm(40);
+  private static Size HOLE_DIAMETER = Size.mm(3);
 
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();

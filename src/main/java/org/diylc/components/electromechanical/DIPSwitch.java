@@ -47,7 +47,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -70,15 +69,15 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
   public static final Color TICK_COLOR = Color.white;
   public static final Color LABEL_COLOR = Color.white;
   public static final int EDGE_RADIUS = 2;
-  public static final Size PIN_SIZE = new Size(0.04d, SizeUnit.in);
-  public static final Size DEFAULT_WIDTH = new Size(0.4d, SizeUnit.in);
-  public static final Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size PIN_SIZE = Size.in(0.04);
+  public static final Size DEFAULT_WIDTH = Size.in(0.4);
+  public static final Size INDENT_SIZE = Size.in(0.07);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private SwitchCount switchCount = SwitchCount._8;
-  private Size pinSpacing = new Size(0.1d, SizeUnit.in);
-  private Size rowSpacing = new Size(0.3d, SizeUnit.in);
+  private Size pinSpacing = Size.in(0.1);
+  private Size rowSpacing = Size.in(0.3);
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;

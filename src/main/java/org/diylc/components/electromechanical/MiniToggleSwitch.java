@@ -47,7 +47,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -63,11 +62,11 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
 
   private static final long serialVersionUID = 1L;
 
-  private static Size SPACING = new Size(0.2d, SizeUnit.in);
-  private static Size MARGIN = new Size(0.08d, SizeUnit.in);
-  private static Size CIRCLE_SIZE = new Size(0.09d, SizeUnit.in);
-  private static Size LUG_WIDTH = new Size(0.060d, SizeUnit.in);
-  private static Size LUG_THICKNESS = new Size(0.02d, SizeUnit.in);
+  private static Size SPACING = Size.in(0.2);
+  private static Size MARGIN = Size.in(0.08);
+  private static Size CIRCLE_SIZE = Size.in(0.09);
+  private static Size LUG_WIDTH = Size.in(0.06);
+  private static Size LUG_THICKNESS = Size.in(0.02);
 
   private static Color BODY_COLOR = Color.decode("#3299CC");
   private static Color BORDER_COLOR = BODY_COLOR.darker();

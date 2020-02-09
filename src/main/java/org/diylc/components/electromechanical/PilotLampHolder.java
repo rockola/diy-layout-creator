@@ -46,7 +46,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -65,17 +64,17 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
 
   private static final double SLEEVE_THETA = Math.PI * 0.29444444444;
 
-  private static Size THREAD_OUTER_DIAMETER = new Size(11 / 16d, SizeUnit.in);
-  private static Size NUT_DIAMETER = new Size(14 / 16d, SizeUnit.in);
-  private static Size THREAD_THICKNESS = new Size(0.05d, SizeUnit.in);
-  private static Size WAFER_DIAMETER = new Size(0.2d, SizeUnit.in);
-  private static Size INNER_DIAMETER = new Size(0.05d, SizeUnit.in);
-  private static Size RING_DIAMETER = new Size(0.15d, SizeUnit.in);
-  private static Size SPRING_LENGTH = new Size(0.463d, SizeUnit.in);
-  private static Size SPRING_WIDTH = new Size(0.12d, SizeUnit.in);
-  private static Size HOLE_DIAMETER = new Size(0.05d, SizeUnit.in);
-  private static Size HOLE_TO_EDGE = new Size(0.063d, SizeUnit.in);
-  private static Size HOLE_SPACING = new Size(0.1d, SizeUnit.in);
+  private static Size THREAD_OUTER_DIAMETER = Size.in(0.6875);
+  private static Size NUT_DIAMETER = Size.in(0.875);
+  private static Size THREAD_THICKNESS = Size.in(0.05);
+  private static Size WAFER_DIAMETER = Size.in(0.2);
+  private static Size INNER_DIAMETER = Size.in(0.05);
+  private static Size RING_DIAMETER = Size.in(0.15);
+  private static Size SPRING_LENGTH = Size.in(0.463);
+  private static Size SPRING_WIDTH = Size.in(0.12);
+  private static Size HOLE_DIAMETER = Size.in(0.05);
+  private static Size HOLE_TO_EDGE = Size.in(0.063);
+  private static Size HOLE_SPACING = Size.in(0.1);
 
   private String value = "";
   private Point[] controlPoints =

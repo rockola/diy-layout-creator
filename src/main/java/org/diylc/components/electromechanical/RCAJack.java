@@ -46,7 +46,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -62,14 +61,13 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
 
   private static Color BASE_COLOR = Color.lightGray;
   private static Color WAFER_COLOR = Color.black;
-
-  private static Size BODY_DIAMETER = new Size(0.52d, SizeUnit.in);
-  private static Size WAFER_DIAMETER = new Size(0.2d, SizeUnit.in);
-  private static Size HEX_DIAMETER = new Size(0.44d, SizeUnit.in);
-  private static Size SPRING_LENGTH = new Size(0.563d, SizeUnit.in);
-  private static Size SPRING_WIDTH = new Size(0.12d, SizeUnit.in);
-  private static Size HOLE_DIAMETER = new Size(0.05d, SizeUnit.in);
-  private static Size HOLE_TO_EDGE = new Size(0.063d, SizeUnit.in);
+  private static Size BODY_DIAMETER = Size.in(0.52);
+  private static Size WAFER_DIAMETER = Size.in(0.2);
+  private static Size HEX_DIAMETER = Size.in(0.44);
+  private static Size SPRING_LENGTH = Size.in(0.563);
+  private static Size SPRING_WIDTH = Size.in(0.12);
+  private static Size HOLE_DIAMETER = Size.in(0.05);
+  private static Size HOLE_TO_EDGE = Size.in(0.063);
 
   private String value = "";
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};

@@ -44,7 +44,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -61,11 +60,11 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
   private static final long serialVersionUID = 1L;
 
   private static Color BODY_COLOR = Color.darkGray;
-  private static Size WIDTH = new Size(0.5d, SizeUnit.in);
-  private static Size LENGTH = new Size(0.75d, SizeUnit.in);
-  private static Size TERMINAL_DIAMETER = new Size(0.3d, SizeUnit.in);
-  private static Size TERMINAL_SPACING = new Size(0.5d, SizeUnit.in);
-  private static Size TERMINAL_BORDER = new Size(0.7d, SizeUnit.mm);
+  private static Size WIDTH = Size.in(0.5);
+  private static Size LENGTH = Size.in(0.75);
+  private static Size TERMINAL_DIAMETER = Size.in(0.3);
+  private static Size TERMINAL_SPACING = Size.in(0.5);
+  private static Size TERMINAL_BORDER = Size.mm(0.7);
 
   private String value = "";
   private Point controlPoint = new Point(0, 0);

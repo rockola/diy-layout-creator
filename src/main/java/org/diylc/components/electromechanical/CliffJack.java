@@ -45,7 +45,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -62,16 +61,16 @@ public class CliffJack extends AbstractJack {
 
   private static final long serialVersionUID = 1L;
 
-  private static Size SPACING = new Size(0.3d, SizeUnit.in);
-  private static Size PIN_WIDTH = new Size(0.1d, SizeUnit.in);
-  private static Size PIN_THICKNESS = new Size(0.02d, SizeUnit.in);
+  private static Size SPACING = Size.in(0.3);
+  private static Size PIN_WIDTH = Size.in(0.1);
+  private static Size PIN_THICKNESS = Size.in(0.02);
   private static Color BODY_COLOR = Color.decode("#666666");
   private static Color NUT_COLOR = Color.decode("#999999");
   private static Color BORDER_COLOR = Color.black;
   private static Color LABEL_COLOR = Color.white;
-  private static Size BODY_WIDTH = new Size(3 / 4d, SizeUnit.in);
-  private static Size BODY_LENGTH = new Size(0.9d, SizeUnit.in);
-  private static Size TAIL_LENGTH = new Size(0.1d, SizeUnit.in);
+  private static Size BODY_WIDTH = Size.in(0.75);
+  private static Size BODY_LENGTH = Size.in(0.9);
+  private static Size TAIL_LENGTH = Size.in(0.1);
 
   {
     controlPoints = new Point[] {new Point(0, 0)};

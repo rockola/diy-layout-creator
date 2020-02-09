@@ -46,7 +46,6 @@ import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -70,13 +69,13 @@ public class OpenJack extends AbstractJack {
   private static Color BASE_COLOR = Color.lightGray;
   private static Color WAFER_COLOR = Color.decode("#CD8500");
 
-  private static Size OUTER_DIAMETER = new Size(0.75d, SizeUnit.in);
-  private static Size INNER_DIAMETER = new Size(0.25d, SizeUnit.in);
-  private static Size RING_DIAMETER = new Size(0.33d, SizeUnit.in);
-  private static Size SPRING_LENGTH = new Size(0.563d, SizeUnit.in);
-  private static Size SPRING_WIDTH = new Size(0.12d, SizeUnit.in);
-  private static Size HOLE_DIAMETER = new Size(0.05d, SizeUnit.in);
-  private static Size HOLE_TO_EDGE = new Size(0.063d, SizeUnit.in);
+  private static Size OUTER_DIAMETER = Size.in(0.75);
+  private static Size INNER_DIAMETER = Size.in(0.25);
+  private static Size RING_DIAMETER = Size.in(0.33);
+  private static Size SPRING_LENGTH = Size.in(0.563);
+  private static Size SPRING_WIDTH = Size.in(0.12);
+  private static Size HOLE_DIAMETER = Size.in(0.05);
+  private static Size HOLE_TO_EDGE = Size.in(0.063);
 
   {
     controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};

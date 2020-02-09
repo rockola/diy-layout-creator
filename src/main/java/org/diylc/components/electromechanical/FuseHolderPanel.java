@@ -43,7 +43,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -59,16 +58,19 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   private static final long serialVersionUID = 1L;
 
   // common
-  private static final Size SPACING = new Size(0.2d, SizeUnit.in);
-  private static final Size LUG_WIDTH = new Size(4d, SizeUnit.mm);
-  private static final Size LUG_THICKNESS = new Size(0.8d, SizeUnit.mm);
-  private static final Size INNER_DIAMETER = new Size(0.5d, SizeUnit.in);
-  private static final Size OUTER_DIAMETER = new Size(0.6d, SizeUnit.in);
+  private static final Size SPACING = Size.in(0.2);
+  private static final Size LUG_WIDTH = Size.mm(4);
+  private static final Size LUG_THICKNESS = Size.mm(0.8);
+  private static final Size INNER_DIAMETER = Size.in(0.5);
+  private static final Size OUTER_DIAMETER = Size.in(0.6);
   private static final Color BODY_COLOR = Color.decode("#555555");
   private static final Color BORDER_COLOR = BODY_COLOR.darker();
   private static final Color LABEL_COLOR = Color.white;
 
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = new Point[] {
+    new Point(0, 0),
+    new Point(0, 0)
+  };
   protected transient Area[] body;
   protected String value = "";
   private OrientationHV orientation = OrientationHV.VERTICAL;

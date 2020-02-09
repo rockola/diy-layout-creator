@@ -39,7 +39,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.Unmarshaller;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.parsing.XmlNode;
 import org.diylc.utils.Constants;
 

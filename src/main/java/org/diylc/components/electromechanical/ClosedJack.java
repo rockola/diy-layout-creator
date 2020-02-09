@@ -45,7 +45,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -62,18 +61,18 @@ public class ClosedJack extends AbstractJack {
 
   private static final long serialVersionUID = 1L;
 
-  private static Size SPACING = new Size(0.1d, SizeUnit.in);
-  private static Size LUG_WIDTH = new Size(0.1d, SizeUnit.in);
-  private static Size LUG_LENGTH = new Size(0.12d, SizeUnit.in);
-  private static Size LUG_HOLE_SIZE = new Size(1d, SizeUnit.mm);
+  private static Size SPACING = Size.in(0.1);
+  private static Size LUG_WIDTH = Size.in(0.1);
+  private static Size LUG_LENGTH = Size.in(0.12);
+  private static Size LUG_HOLE_SIZE = Size.mm(1);
   private static Color BODY_COLOR = Color.decode("#666666");
   private static Color SHAFT_COLOR = Color.decode("#AAAAAA");
-  private static Size SHAFT_LENGTH = new Size(0.25d, SizeUnit.in);
-  private static Size SHAFT_WIDTH = new Size(3d / 8, SizeUnit.in);
+  private static Size SHAFT_LENGTH = Size.in(0.25);
+  private static Size SHAFT_WIDTH = Size.in(0.375);
   private static Color BORDER_COLOR = Color.black;
   private static Color LABEL_COLOR = Color.white;
-  private static Size BODY_WIDTH = new Size(0.65d, SizeUnit.in);
-  private static Size BODY_LENGTH = new Size(0.8d, SizeUnit.in);
+  private static Size BODY_WIDTH = Size.in(0.65);
+  private static Size BODY_LENGTH = Size.in(0.8);
   private static JackSize JACK_SIZE = JackSize.QUARTER_INCH;
 
   {
