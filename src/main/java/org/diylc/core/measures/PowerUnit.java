@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
 
 public enum PowerUnit implements Unit {
@@ -27,7 +28,7 @@ public enum PowerUnit implements Unit {
   double factor;
   String display;
 
-  private PowerUnit(double factor, String display) {
+  PowerUnit(double factor, String display) {
     this.factor = factor;
     this.display = display;
   }

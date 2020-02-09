@@ -25,10 +25,10 @@ public enum VoltageUnit implements Unit {
   V(1, "V"),
   KV(1e3, "kV");
 
-  double factor;
-  String display;
+  private double factor;
+  private String display;
 
-  private VoltageUnit(double factor, String display) {
+  VoltageUnit(double factor, String display) {
     this.factor = factor;
     this.display = display;
   }

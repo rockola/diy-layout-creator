@@ -25,10 +25,10 @@ public enum ResistanceUnit implements Unit {
   K(1e3, "K"),
   M(1e6, "M");
 
-  double factor;
-  String display;
+  private double factor;
+  private String display;
 
-  private ResistanceUnit(double factor, String display) {
+  ResistanceUnit(double factor, String display) {
     this.factor = factor;
     this.display = display;
   }
