@@ -43,11 +43,12 @@ public class ColorConverter extends com.thoughtworks.xstream.converters.extended
 
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-    if (reader.getAttribute("hex") != null) return Color.decode("#" + reader.getAttribute("hex"));
+    if (reader.getAttribute("hex") != null) {
+      return Color.decode("#" + reader.getAttribute("hex"));
+    }
     return super.unmarshal(reader, context);
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
   public boolean canConvert(Class clazz) {
     return Color.class.isAssignableFrom(clazz);
