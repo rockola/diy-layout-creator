@@ -19,9 +19,9 @@
 */
 package org.diylc.core.measures;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.Format;
+//import java.io.Serializable;
+//import java.text.DecimalFormat;
+//import java.text.Format;
 
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +38,7 @@ public enum SIUnit {
 
   public final String symbol;
 
-  private SIUnit(String symbol) {
+  SIUnit(String symbol) {
     this.symbol = symbol;
   }
 
@@ -67,15 +67,9 @@ public enum SIUnit {
       case 3: return useSymbol ? "k" : "kilo";
       case 6: return useSymbol ? "M" : "mega";
       case 9: return useSymbol ? "G" : "giga";
-        /*
-          // conceivably the biggest exponent needed in this application
-          // would be giga for a gigaohm resistance
-          //
-          // If you need exponents < -12 or > 9, please submit a bug report
       case 12: return useSymbol ? "T" : "tera";
       case 15: return useSymbol ? "P" : "peta";
       case 18: return useSymbol ? "E" : "exa";
-        */
       default:
         LOG.error("Don't know what the prefix would be for {}", exponent);
         return "";
