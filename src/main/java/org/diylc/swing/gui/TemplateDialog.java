@@ -141,13 +141,9 @@ public class TemplateDialog extends JDialog {
   public JButton getLoadButton() {
     if (loadButton == null) {
       loadButton = new JButton("Load Template");
-      loadButton.addActionListener(new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            App.ui().getPresenter().loadProject(templateProject, true, null);
-            dispose();
-          }
+      loadButton.addActionListener((e) -> {
+          App.ui().getPresenter().loadProject(templateProject, true, null);
+          dispose();
         });
     }
     return loadButton;
@@ -229,13 +225,7 @@ public class TemplateDialog extends JDialog {
       showTemplatesBox = new JCheckBox("Show this dialog at startup");
       showTemplatesBox.setSelected(true);
       showTemplatesBox.addActionListener(
-          new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              App.putValue(SHOW_TEMPLATES_KEY, showTemplatesBox.isSelected());
-            }
-          });
+          (e) -> App.putValue(SHOW_TEMPLATES_KEY, showTemplatesBox.isSelected()));
     }
     return showTemplatesBox;
   }
