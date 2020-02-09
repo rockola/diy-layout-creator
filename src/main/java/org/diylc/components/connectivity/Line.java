@@ -169,7 +169,7 @@ public class Line extends AbstractLeadedComponent<Void> {
   @EditableProperty
   public Size getThickness() {
     if (thickness == null) {
-      thickness = new Size(1d, SizeUnit.px);
+      thickness = Size.px(1);
     }
     return thickness;
   }
@@ -181,7 +181,7 @@ public class Line extends AbstractLeadedComponent<Void> {
   @EditableProperty
   public Size getArrowSize() {
     if (arrowSize == null) {
-      arrowSize = thickness = new Size(1d, SizeUnit.px);
+      arrowSize = thickness = Size.px(1);
     }
     return arrowSize;
   }
