@@ -20,16 +20,15 @@
 
 package org.diylc.components.passive;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.StringJoiner;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
@@ -40,6 +39,7 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -66,16 +66,16 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.decode("#6B6DCE");
-  public static Color BASE_COLOR = Color.decode("#333333");
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = METAL_COLOR; // Color.decode("#00B2EE");
-  //  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static Size PIN_SIZE = new Size(0.08d, SizeUnit.in);
-  //  public static Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
-  public static Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
-  private static double[] RELATIVE_DIAMETERS = new double[] {0.4d, 0.6d};
+  public static final Color BODY_COLOR = Color.decode("#6B6DCE");
+  public static final Color BASE_COLOR = Color.decode("#333333");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color PIN_COLOR = METAL_COLOR; // Color.decode("#00B2EE");
+  //  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Size PIN_SIZE = new Size(0.08d, SizeUnit.in);
+  //  public static final Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
+  public static final Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
+  private static final double[] RELATIVE_DIAMETERS = new double[] {0.4d, 0.6d};
   private static final Format format = new DecimalFormat("0.#####");
 
   private Capacitance[] value = new Capacitance[3];
@@ -89,13 +89,13 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
   private Color pinColor = PIN_COLOR;
-  protected Display display = Display.NAME;
   //  private Size pinSpacing = PIN_SPACING;
   private Size diameter = BODY_DIAMETER;
 
   public MultiSectionCapacitor() {
     super();
     updateControlPoints();
+    display = Display.NAME;
   }
 
   @EditableProperty
@@ -105,8 +105,9 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
 
   public void setValue(Capacitance[] value) {
     boolean needsUpdate = false;
-    if ((this.value == null ? 0 : this.value.length) != (value == null ? 0 : value.length))
+    if ((this.value == null ? 0 : this.value.length) != (value == null ? 0 : value.length)) {
       needsUpdate = true;
+    }
 
     this.value = value;
 
@@ -120,20 +121,13 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     if (value == null || value.length == 0) {
       return "";
     }
-    StringBuilder sb = new StringBuilder();
-    boolean isFirst = true;
+    StringJoiner sb = new StringJoiner("/");
     for (Capacitance c : value) {
-      if (isFirst) {
-        isFirst = false;
-      } else {
-        sb.append("/");
-      }
-      sb.append(c == null || c.getValue() == null ? "" : format.format(c.getValue()));
+      sb.add(c == null || c.getValue() == null ? "" : format.format(c.getValue()));
     }
-    if (value[0] != null) {
-      sb.append(" ").append(value[0].getUnit() == null ? "" : value[0].getUnit());
-    }
-    return sb.toString();
+    return value[0] != null
+        ? sb.toString()
+        : sb.toString() + " " + (value[0].getUnit() == null ? "" : value[0].getUnit());
   }
 
   @EditableProperty
@@ -196,10 +190,8 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   }
 
   private void updateControlPoints() {
-    int pinSpacing =
-        (int)
-            (getDiameter().convertToPixels()
-                * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+    int pinSpacing = (int) (getDiameter().convertToPixels()
+                            * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
 
     int newCount = value.length + 1;
     if (newCount != controlPoints.length) {
@@ -264,7 +256,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         case DEFAULT:
           centerX = x;
           centerY = y + pinSpacing / 2;
-          theta0 = -Math.PI / 2;
+          theta0 = -HALF_PI;
           break;
         case _90:
           centerX = x - pinSpacing / 2;
@@ -274,7 +266,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         case _180:
           centerX = x;
           centerY = y - pinSpacing / 2;
-          theta0 = Math.PI / 2;
+          theta0 = HALF_PI;
           break;
         case _270:
           centerX = x + pinSpacing / 2;
@@ -380,19 +372,17 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     Area[] area = getBody();
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(area[0]);
     drawingObserver.startTracking();
     g2d.setComposite(oldComposite);
+
     Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
     g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(area[0]);
-
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : baseColor);
     g2d.fill(area[1]);
     if (outlineMode) {
@@ -443,24 +433,25 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       int x = controlPoints[i].x;
       int y = controlPoints[i].y;
       g2d.drawLine((int) (x - markerSize / 2), y, (int) (x + markerSize / 2), y);
-      if (i > 0) g2d.drawLine(x, (int) (y - markerSize / 2), x, (int) (y + markerSize / 2));
+      if (i > 0) {
+        g2d.drawLine(x, (int) (y - markerSize / 2), x, (int) (y + markerSize / 2));
+      }
     }
   }
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = 2 * width / 32;
-    Area area =
-        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
+    Area area = new Area(new Ellipse2D.Double(
+        margin, margin, width - 2 * margin, width - 2 * margin));
     g2d.setColor(BODY_COLOR);
     g2d.fill(area);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(area);
     g2d.setColor(BASE_COLOR);
     margin = 6 * width / 32;
-    area =
-        new Area(
-            new Ellipse2D.Double(margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
+    area = new Area(new Ellipse2D.Double(
+        margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
     g2d.fill(area);
     g2d.setColor(PIN_COLOR);
     int pinSize = 2 * width / 32;
