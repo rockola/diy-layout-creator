@@ -27,13 +27,16 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -87,102 +90,17 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   private void updateControlPoints() {
     Point firstPoint = controlPoints[0];
     int spacing = (int) getSpacing().convertToPixels();
-    switch (switchType) {
-      case SPST:
-        controlPoints = new Point[] {firstPoint, new Point(firstPoint.x, firstPoint.y + spacing)};
-        break;
-      case SPDT:
-      case SPDT_off:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing)
-            };
-        break;
-      case DPDT:
-      case DPDT_off:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y),
-              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing)
-            };
-        break;
-      case _DP3T_mustang:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x, firstPoint.y + 3 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y),
-              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 3 * spacing)
-            };
-        break;
-      case _3PDT:
-      case _3PDT_off:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y),
-              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing)
-            };
-        break;
-      case _4PDT:
-      case _4PDT_off:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y),
-              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing)
-            };
-        break;
-      case _5PDT:
-      case _5PDT_off:
-        controlPoints =
-            new Point[] {
-              firstPoint,
-              new Point(firstPoint.x, firstPoint.y + spacing),
-              new Point(firstPoint.x, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y),
-              new Point(firstPoint.x + spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 2 * spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 3 * spacing, firstPoint.y + 2 * spacing),
-              new Point(firstPoint.x + 4 * spacing, firstPoint.y),
-              new Point(firstPoint.x + 4 * spacing, firstPoint.y + spacing),
-              new Point(firstPoint.x + 4 * spacing, firstPoint.y + 2 * spacing)
-            };
-        break;
+    List<Point> points = new ArrayList<Point>();
+    for (int j = 0; j <= switchType.getPoles(); j++) {
+      for (int i = 0; i <= switchType.getThrows(); i++) {
+        points.add(new Point(firstPoint.x + j * spacing, firstPoint.y + i * spacing));
+      }
     }
+    controlPoints = points.toArray(new Point[0]);
+
     AffineTransform xform =
-        AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
-    if (getOrientation() == OrientationHV.HORIZONTAL) {
+        AffineTransform.getRotateInstance(-HALF_PI, firstPoint.x, firstPoint.y);
+    if (getOrientation().isHorizontal()) {
       for (int i = 1; i < controlPoints.length; i++) {
         xform.transform(controlPoints[i], controlPoints[i]);
       }
@@ -284,14 +202,11 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     Shape body = getBody();
     // Draw body if available.
     if (body != null) {
-      final Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+      final Composite oldComposite = setTransparency(g2d);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
       g2d.fill(body);
       g2d.setComposite(oldComposite);
+
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
       final Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
       g2d.setColor(finalBorderColor);
@@ -306,7 +221,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     int lugHeight = getClosestOdd((int) LUG_THICKNESS.convertToPixels());
     for (Point p : controlPoints) {
       if (outlineMode) {
-        g2d.setColor(theme.getOutlineColor());
+        g2d.setColor(theme().getOutlineColor());
         g2d.drawRect(p.x - lugWidth / 2, p.y - lugHeight / 2, lugWidth, lugHeight);
       } else {
         g2d.setColor(CIRCLE_COLOR);
@@ -399,10 +314,12 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
                   margin,
                   margin);
           break;
+        default:
+          throw new RuntimeException("unknown type " + switchType);
       }
-      if (getOrientation() == OrientationHV.HORIZONTAL) {
+      if (getOrientation().isHorizontal()) {
         AffineTransform xform =
-            AffineTransform.getRotateInstance(-Math.PI / 2, firstPoint.x, firstPoint.y);
+            AffineTransform.getRotateInstance(-HALF_PI, firstPoint.x, firstPoint.y);
         body = new Area(body);
         ((Area) body).transform(xform);
       }
@@ -431,7 +348,9 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
 
   @EditableProperty(name = "Body")
   public Color getBodyColor() {
-    if (bodyColor == null) bodyColor = BODY_COLOR;
+    if (bodyColor == null) {
+      bodyColor = BODY_COLOR;
+    }
     return bodyColor;
   }
 
