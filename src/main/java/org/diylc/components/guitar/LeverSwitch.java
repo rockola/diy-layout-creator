@@ -142,34 +142,30 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       final int terminalLength = getClosestOdd(TERMINAL_LENGTH.convertToPixels());
       final int terminalWidth = getClosestOdd(TERMINAL_WIDTH.convertToPixels());
 
-      int yOffset;
+      int offsetY = 12;
       if (type == LeverSwitchType.DP3T
           || type == LeverSwitchType.DP4T
           || type == LeverSwitchType.DP3T_5pos) {
         x += terminalLength;
-        yOffset = 7;
-      } else {
-        yOffset = 12;
+        offsetY = 7;
       }
 
       int baseX = x - terminalLength / 2 - waferSpacing;
-      int baseY = y - (baseLength - terminalSpacing * yOffset) / 2;
+      int baseY = y - (baseLength - terminalSpacing * offsetY) / 2;
       Area baseArea = new Area(new Rectangle2D.Double(baseX, baseY, baseWidth, baseLength));
-      baseArea.subtract(new Area(new Ellipse2D.Double(
-          baseX + baseWidth / 2 - holeSize / 2,
-          baseY + (baseLength - holeSpacing) / 2 - holeSize / 2,
-          holeSize,
+      baseArea.subtract(Area.circle(
+          baseX + baseWidth / 2,
+          baseY + (baseLength - holeSpacing) / 2,
           holeSize)));
-      baseArea.subtract(new Area(new Ellipse2D.Double(
-          baseX + baseWidth / 2 - holeSize / 2,
-          baseY + (baseLength - holeSpacing) / 2 - holeSize / 2 + holeSpacing,
-          holeSize,
+      baseArea.subtract(Area.circle(
+          baseX + baseWidth / 2,
+          baseY + (baseLength - holeSpacing) / 2 + holeSpacing,
           holeSize)));
       body[0] = baseArea;
 
       Area waferArea = new Area(new Rectangle2D.Double(
           x - terminalLength / 2 - waferThickness / 2,
-          y - (waferLength - terminalSpacing * yOffset) / 2,
+          y - (waferLength - terminalSpacing * offsetY) / 2,
           waferThickness,
           waferLength));
 
@@ -273,6 +269,9 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
               new Point(x + waferSpacing, y + i * terminalSpacing + (i >= 6 ? terminalSpacing : 0));
         }
         break;
+      default:
+        LOG.error("Unknown type {}", type);
+        throw new RuntimeException("Unknown switch type " + type.toString());
     }
 
     // Rotate if needed
@@ -288,35 +287,22 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setClip(width / 32, width / 32, width, height);
-    g2d.setColor(BASE_COLOR);
-    g2d.fillRect(0, 0, width * 2 / 3, height);
-    g2d.setColor(BASE_COLOR.darker());
-    g2d.drawRect(0, 0, width * 2 / 3, height);
-    g2d.setColor(WAFER_COLOR);
-    g2d.fillRect(width / 8 * 3, 0, width / 8, height);
-    g2d.setColor(WAFER_COLOR.darker());
-    g2d.drawRect(width / 8 * 3, 0, width / 8, height);
+    Area.rect(0, 0, width * 2 / 3, height).fillDraw(g2d, BASE_COLOR, BASE_COLOR.darker());
+    Area.rect(width / 8 * 3, 0, width / 8, height).fillDraw(g2d, WAFER_COLOR, WAFER_COLOR.darker());
     Area terminals = new Area();
     int terminalLength = getClosestOdd(11 * width / 32);
     int terminalWidth = getClosestOdd(7 * width / 32);
-    Area terminal =
-        new Area(
-            new RoundRectangle2D.Double(
-                width / 16 * 7,
-                4 * width / 32,
-                terminalLength,
-                terminalWidth,
-                terminalWidth / 2,
-                terminalWidth / 2));
-    terminal.subtract(
-        new Area(
-            new RoundRectangle2D.Double(
-                width / 16 * 7 + terminalLength / 4 + 1,
-                4 * width / 32 + terminalWidth / 4 + 1,
-                terminalLength / 2,
-                terminalWidth / 2,
-                terminalWidth / 4,
-                terminalWidth / 4)));
+    Area terminal = Area.roundRect(
+        width / 16 * 7,
+        4 * width / 32,
+        terminalLength,
+        terminalWidth,
+        terminalWidth / 2).subtract(Area.roundRect(
+            width / 16 * 7 + terminalLength / 4 + 1,
+            4 * width / 32 + terminalWidth / 4 + 1,
+            terminalLength / 2,
+            terminalWidth / 2,
+            terminalWidth / 4));
     terminals.add(terminal);
     terminal = new Area(terminal);
     terminal.transform(
@@ -326,10 +312,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     terminal.transform(
         AffineTransform.getTranslateInstance(terminalLength, terminalWidth + 2 * width / 32));
     terminals.add(terminal);
-    g2d.setColor(METAL_COLOR);
-    g2d.fill(terminals);
-    g2d.setColor(METAL_COLOR.darker());
-    g2d.draw(terminals);
+    terminals.fillDraw(g2d, METAL_COLOR, METAL_COLOR.darker());
   }
 
   @Override

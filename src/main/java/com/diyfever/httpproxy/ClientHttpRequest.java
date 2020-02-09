@@ -235,16 +235,9 @@ public class ClientHttpRequest {
    *
    * @param name parameter name
    * @param file the file to upload
-   * @throws IOException
    */
   public void setParameter(String name, File file) throws IOException {
     setFileParameter(name, file);
-  }
-
-  private void setFileParameter(String name, File file) throws IOException {
-    try (FileInputStream is = new FileInputStream(file)) {
-      setParameter(name, file.getPath(), is);
-    }
   }
 
   /**
@@ -261,6 +254,12 @@ public class ClientHttpRequest {
       setFileParameter(name, (File) object);
     } else {
       setParameter(name, object.toString());
+    }
+  }
+
+  private void setFileParameter(String name, File file) throws IOException {
+    try (FileInputStream is = new FileInputStream(file)) {
+      setParameter(name, file.getPath(), is);
     }
   }
 

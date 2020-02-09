@@ -45,10 +45,6 @@ public abstract class AbstractSingleOrHumbuckerPickup extends AbstractGuitarPick
     int dy = 0;
     final boolean horizontal = getControlPointDirection().isHorizontal();
     switch (orientation) {
-      case DEFAULT:
-        dx = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
-        dy = horizontal ? -TERMINAL_FONT_SIZE : 0;
-        break;
       case _90:
         dx = horizontal ? TERMINAL_FONT_SIZE : 0;
         dy = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
@@ -60,6 +56,11 @@ public abstract class AbstractSingleOrHumbuckerPickup extends AbstractGuitarPick
       case _270:
         dx = horizontal ? -TERMINAL_FONT_SIZE : 0;
         dy = horizontal ? 0 : -(int) (TERMINAL_FONT_SIZE * 0.8);
+        break;
+      case DEFAULT:
+      default:
+        dx = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
+        dy = horizontal ? -TERMINAL_FONT_SIZE : 0;
         break;
     }
 

@@ -172,9 +172,9 @@ public class AboutDialog extends JDialog {
     if (buttonPanel == null) {
       buttonPanel = new JPanel();
       buttonPanel.setLayout(new FlowLayout(FlowLayout.TRAILING));
-
+      final AboutDialog thisDialog = this;
       JButton closeButton = new JButton("Close");
-      closeButton.addActionListener((e) -> AboutDialog.this.setVisible(false));
+      closeButton.addActionListener((e) -> thisDialog.setVisible(false));
       buttonPanel.add(closeButton);
     }
     return buttonPanel;

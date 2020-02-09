@@ -238,9 +238,9 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
     }
   }
 
-  /****************************************************************
-   * Unmarshal jacks
-   ****************************************************************/
+  // ----------------------------------------------------------------
+  // Unmarshal jacks
+  // ----------------------------------------------------------------
   protected ListMultimap<String, XmlNode> fillFields(ListMultimap<String, XmlNode> contents) {
     LOG.trace("fillFields(...)");
     contents = super.fillFields(contents);

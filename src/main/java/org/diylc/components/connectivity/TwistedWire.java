@@ -63,11 +63,11 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
 
   private static final long serialVersionUID = 1L;
 
-  public final static Color COLOR = Color.green;
-  public final static Color COLOR2 = Color.blue;
-  public final static Color STRIPE_COLOR = Color.yellow;
-  public final static Color STRIPE_COLOR2 = Color.decode("#FF00FF");
-  public final static double INSULATION_THICKNESS_PCT = 0.3;
+  public static final Color COLOR = Color.green;
+  public static final Color COLOR2 = Color.blue;
+  public static final Color STRIPE_COLOR = Color.yellow;
+  public static final Color STRIPE_COLOR2 = Color.decode("#FF00FF");
+  public static final double INSULATION_THICKNESS_PCT = 0.3;
 
   private Color color2 = COLOR2;
   private Color stripeColor = STRIPE_COLOR;
@@ -327,6 +327,8 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
                   coords[5]));
           current.setLocation(coords[4], coords[5]);
           break;
+        default:
+          LOG.error("Unknown segment type {}", type);
       }
       iterator.next();
     }

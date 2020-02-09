@@ -28,8 +28,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -71,39 +71,8 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     subtypes.put("C13", IEC60320.C14());
   }
 
-  private static Size IEC_60320_C14_LUG_HORIZONTAL_SPACING = Size.mm(7);
-  private static Size IEC_60320_C14_LUG_VERTICAL_SPACING = Size.mm(4);
-  private static Size IEC_60320_C14_LUG_WIDTH = Size.mm(2);
-  private static Size IEC_60320_C14_LUG_HEIGHT = Size.mm(4);
-  private static Size IEC_60320_C14_OPENING_WIDTH = Size.mm(24);
-  private static Size IEC_60320_C14_OPENING_HEIGHT = Size.mm(16);
-  private static Size IEC_60320_C14_OUTLINE_WIDTH = Size.mm(30.5);
-  private static Size IEC_60320_C14_OUTLINE_HEIGHT = Size.mm(22.5);
-  // IEC 60320 C14 spec says R = 3 max.
-  private static Size IEC_60320_C14_OPENING_LOWER_CORNER_RADIUS = Size.mm(1.5);
-  // IEC 60320 C14 spec says R = 2 max.
-  private static Size IEC_60320_C14_OPENING_UPPER_CORNER_RADIUS = Size.mm(.75);
-  private static Size IEC_60320_C14_OPENING_UPPER_CORNER_VERTICAL_OFFSET = Size.mm(3);
-
-  // common
   private static Size HORIZONTAL_SPACING = Size.in(0.3);
   private static Size VERTICAL_SPACING = Size.in(0.2);
-  private static Size LUG_WIDTH = Size.mm(4);
-  private static Size LUG_THICKNESS = Size.mm(0.8);
-
-  // simple
-  private static Size SIMPLE_CUTOUT_LENGTH = Size.mm(27.5);
-  private static Size SIMPLE_CUTOUT_WIDTH = Size.mm(19.5);
-  private static Size SIMPLE_BASE_LENGTH = Size.mm(30.8);
-  private static Size SIMPLE_BASE_WIDTH = Size.mm(22.6);
-  private static Size SIMPLE_BASE_RADIUS = Size.mm(3);
-  private static Size SIMPLE_CUTOUT_SLANT = Size.mm(5);
-  private static Size SIMPLE_CUTOUT_RADIUS = Size.mm(1);
-  private static Size SIMPLE_LENGTH = Size.mm(50);
-  private static Size SIMPLE_OUTER_RADIUS = Size.mm(6);
-  private static Size HOLE_SPACING = Size.mm(40);
-  private static Size HOLE_DIAMETER = Size.mm(3);
-
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
@@ -112,12 +81,10 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     new Point(0, 0),
     new Point(0, 0)
   };
-
   protected String value;
+
   private Orientation orientation = Orientation.DEFAULT;
-
   private IEC60320 iec;
-
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
 

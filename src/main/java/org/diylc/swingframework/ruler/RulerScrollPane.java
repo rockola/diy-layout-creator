@@ -172,27 +172,26 @@ public class RulerScrollPane extends JScrollPane {
     unitButton.setMargin(new Insets(0, 0, 0, 0));
     unitButton.setFont(unitButton.getFont().deriveFont(9f));
     unitButton.setFocusable(false);
-    unitButton.addActionListener(
-        (e) -> {
-          boolean flip = !horizontalRuler.isMetric();
-          horizontalRuler.setMetric(flip);
-          verticalRuler.setMetric(flip);
-          unitButton.setText(flip ? "in" : "cm");
-          for (IRulerListener listener : listeners) {
-            listener.unitsChanged(horizontalRuler.isMetric());
-          }
-        });
+    unitButton.addActionListener((e) -> {
+        boolean flip = !horizontalRuler.isMetric();
+        horizontalRuler.setMetric(flip);
+        verticalRuler.setMetric(flip);
+        unitButton.setText(flip ? "in" : "cm");
+        for (IRulerListener listener : listeners) {
+          listener.unitsChanged(horizontalRuler.isMetric());
+        }
+      });
 
     navigateButton = new JButton(Icon.MoveSmall.icon());
     navigateButton.setToolTipText("Auto-scroll");
     navigateButton.setFocusable(false);
     navigateButton.setMargin(new Insets(0, 0, 0, 0));
-    navigateButton.addActionListener(
-        (e) -> {
-          NavigateDialog navigateDialog = new NavigateDialog(RulerScrollPane.this, provider);
-          navigateDialog.setVisible(true);
-          navigateDialog.setLocationRelativeTo(navigateButton);
-        });
+    final RulerScrollPane thisPane = this;
+    navigateButton.addActionListener((e) -> {
+        NavigateDialog navigateDialog = new NavigateDialog(thisPane, provider);
+        navigateDialog.setVisible(true);
+        navigateDialog.setLocationRelativeTo(navigateButton);
+      });
 
     topRightCorner = new Corner(Ruler.HORIZONTAL);
     bottomLeftCorner = new Corner(Ruler.VERTICAL);
@@ -202,40 +201,37 @@ public class RulerScrollPane extends JScrollPane {
     setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, bottomLeftCorner);
     setCorner(ScrollPaneConstants.LOWER_RIGHT_CORNER, navigateButton);
 
-    view.addPropertyChangeListener(
-        (evt) -> {
-          if (evt.getPropertyName().equals("dragPoint")) {
-            horizontalRuler.setIndicatorValue(((Long) evt.getOldValue()).intValue());
-            horizontalRuler.repaint();
-            verticalRuler.setIndicatorValue(((Long) evt.getNewValue()).intValue());
-            verticalRuler.repaint();
-          }
-        });
+    view.addPropertyChangeListener((evt) -> {
+        if (evt.getPropertyName().equals("dragPoint")) {
+          horizontalRuler.setIndicatorValue(((Long) evt.getOldValue()).intValue());
+          horizontalRuler.repaint();
+          verticalRuler.setIndicatorValue(((Long) evt.getNewValue()).intValue());
+          verticalRuler.repaint();
+        }
+      });
 
     view.addMouseMotionListener(new MouseAdapter() {
 
+        private execute(int horizontalValue, int verticalValue) {
+          horizontalRuler.setIndicatorValue(horizontalValue);
+          horizontalRuler.repaint();
+          verticalRuler.setIndicatorValue(verticalValue);
+          verticalRuler.repaint();
+        }
+
         @Override
         public void mouseMoved(MouseEvent e) {
-          horizontalRuler.setIndicatorValue(e.getX());
-          horizontalRuler.repaint();
-          verticalRuler.setIndicatorValue(e.getY());
-          verticalRuler.repaint();
+          execute(e.getX(), e.getY());
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-          horizontalRuler.setIndicatorValue(e.getX());
-          horizontalRuler.repaint();
-          verticalRuler.setIndicatorValue(e.getY());
-          verticalRuler.repaint();
+          execute(e.getX(), e.getY());
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-          horizontalRuler.setIndicatorValue(-1);
-          horizontalRuler.repaint();
-          verticalRuler.setIndicatorValue(-1);
-          verticalRuler.repaint();
+          execute(-1, -1);
         }
       });
 

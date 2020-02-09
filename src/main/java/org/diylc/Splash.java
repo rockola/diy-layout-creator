@@ -61,25 +61,28 @@ public class Splash {
     appVersion = Config.getString("app.version");
 
     thread = new Thread(() -> {
-        for (int i = 90; i >= 0; i--) {
-          if (splashScreen.isVisible()) {
-            final int frame = i;
-            SwingUtilities.invokeLater(() -> {
-                renderSplashFrame(splashScreen, g, frame);
-                if (splashScreen.isVisible()) {
-                  splashScreen.update();
-                }
-              });
-            try {
-              Thread.sleep(10);
-            } catch (InterruptedException e) {
-              // do nothing
+      for (int i = 90; i >= 0; i--) {
+        if (splashScreen.isVisible()) {
+          final int frame = i;
+          SwingUtilities.invokeLater(() -> {
+            renderSplashFrame(splashScreen, g, frame);
+            if (splashScreen.isVisible()) {
+              splashScreen.update();
             }
+          });
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            // do nothing
           }
         }
+      }
     });
   }
 
+  /**
+     Start the splash animation.
+   */
   public void start() {
     if (thread != null) {
       thread.start();
@@ -95,6 +98,13 @@ public class Splash {
   private int pxPerFrame = 3;
   private int textPxPerFrame = 2;
 
+  /**
+     Render one frame of the splash animation.
+
+     @param splashScreen The splash screen.
+     @param g2d Graphics context.
+     @param frame Ordinal of animation frame.
+   */
   public void renderSplashFrame(SplashScreen splashScreen, Graphics2D g2d, int frame) {
     Graphics2D g = (Graphics2D) g2d.create();
     g.rotate(Math.toRadians(frame));

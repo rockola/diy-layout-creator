@@ -52,9 +52,9 @@ public class TextDialog extends JDialog {
   private JPanel createButtonPanel() {
     JPanel buttonPanel = new JPanel(new GridBagLayout());
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
-
     JButton cancelButton = new JButton("Close");
-    cancelButton.addActionListener((e) -> TextDialog.this.setVisible(false));
+    final TextDialog thisDialog = this;
+    cancelButton.addActionListener((e) -> thisDialog.setVisible(false));
     buttonPanel.add(cancelButton);
 
     return buttonPanel;

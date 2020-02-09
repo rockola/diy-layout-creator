@@ -33,9 +33,13 @@ public interface IComponentTransformer {
 
   boolean canRotate(IDIYComponent<?> component);
 
-  default boolean canMirror(IDIYComponent<?> component) { return canRotate(component); }
+  default boolean canMirror(IDIYComponent<?> component) {
+    return canRotate(component);
+  }
 
-  default boolean mirroringChangesCircuit() { return false; }
+  default boolean mirroringChangesCircuit() {
+    return false;
+  }
 
   default boolean mirroringChangesCircuit(IDIYComponent<?> component) {
     return mirroringChangesCircuit();

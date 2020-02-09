@@ -99,15 +99,16 @@ public class FilteredTreeModel extends DefaultTreeModel {
   @Override
   public int getIndexOfChild(final Object parent, final Object childToFind) {
     int childCount = super.getChildCount(parent);
+    int index = -1;
     for (int i = 0; i < childCount; i++) {
       Object child = super.getChild(parent, i);
-      if (recursiveMatch(child, filter)) {
-        if (childToFind.equals(child)) {
-          return i;
-        }
+      if (recursiveMatch(child, filter)
+          && childToFind.equals(child)) {
+        index = i;
+        break;
       }
     }
-    return -1;
+    return index;
   }
 
   public void addNode(ComponentNode parent, ComponentNode node) {

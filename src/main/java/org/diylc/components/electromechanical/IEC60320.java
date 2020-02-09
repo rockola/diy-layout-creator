@@ -22,9 +22,9 @@ package org.diylc.components.electromechanical;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -116,7 +116,7 @@ public class IEC60320 {
   /**
    * IEC60320 C1
    *
-   * 0.2A 250V connector for class II equipment and cold conditions.
+   * <p>0.2A 250V connector for class II equipment and cold conditions.
    *
    * @return Instance of IEC60320 as per IEC60320-C1.
    */
@@ -149,7 +149,7 @@ public class IEC60320 {
   /**
    * IEC60320 C2
    *
-   * 0.2A 250V inlet for class II equipment and cold conditions.
+   * <p>0.2A 250V inlet for class II equipment and cold conditions.
    *
    * @return Instance of IEC60320 as per IEC60320-C2.
    */
@@ -182,7 +182,7 @@ public class IEC60320 {
   /**
    * IEC60320 C14
    *
-   * 10 A 250 V appliance coupler for class I equipment and cold
+   * <p>10 A 250 V appliance coupler for class I equipment and cold
    * conditions, inlet.
    *
    * @return Instance of IEC60320 as per IEC60320-C14.

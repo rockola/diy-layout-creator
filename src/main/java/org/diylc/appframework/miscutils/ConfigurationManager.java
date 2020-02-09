@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.text.CaseUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,8 +56,6 @@ public class ConfigurationManager {
   private Map<String, List<IConfigListener>> listeners;
 
   private boolean fileWithErrors = false;
-
-  private static final char[] camelCaseSeparators = new char[]{'_'};
 
   public static ConfigurationManager getInstance() {
     return instance;
@@ -180,7 +177,7 @@ public class ConfigurationManager {
 
   public String readString(String key, String defaultValue) {
     String ret = (String) configuration.get(key);
-    return (ret == null ? defaultValue : ret);
+    return ret == null ? defaultValue : ret;
   }
 
   public static String getString(String key, String defaultValue) {
@@ -194,7 +191,7 @@ public class ConfigurationManager {
 
   public int readInt(String key, int defaultValue) {
     Integer ret = (Integer) configuration.get(key);
-    return (ret == null ? defaultValue : ret.intValue());
+    return ret == null ? defaultValue : ret.intValue();
   }
 
   public static int getInt(String key, int defaultValue) {
@@ -203,7 +200,7 @@ public class ConfigurationManager {
 
   public float readFloat(String key, float defaultValue) {
     Float ret = (Float) configuration.get(key);
-    return (ret == null ? defaultValue : ret.floatValue());
+    return ret == null ? defaultValue : ret.floatValue();
   }
 
   public static float getFloat(String key, float defaultValue) {
@@ -212,7 +209,7 @@ public class ConfigurationManager {
 
   public double readDouble(String key, double defaultValue) {
     Double ret = (Double) configuration.get(key);
-    return (ret == null ? defaultValue : ret.doubleValue());
+    return ret == null ? defaultValue : ret.doubleValue();
   }
 
   public static double getDouble(String key, double defaultValue) {
@@ -221,7 +218,7 @@ public class ConfigurationManager {
 
   public Object readObject(String key, Object defaultValue) {
     Object ret = configuration.get(key);
-    return (ret == null ? defaultValue : ret);
+    return ret == null ? defaultValue : ret;
   }
 
   public static Object getObject(String key, Object defaultValue) {

@@ -55,7 +55,6 @@ public class MemoryBar extends JComponent {
    */
   private static final int DELAY = 10000;
   private static final Format format = new DecimalFormat("0.00");
-  private static final String logPattern = "%s MB of %s MB free, max %s MB is available";
   private static final double THRESHOLD = 0.1d;
 
   private long totalMemory = 0;

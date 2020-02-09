@@ -211,11 +211,11 @@ public class JazzBassPickup extends AbstractBassPickup {
         (width - bodyWidth) / 2, (height - bodyLength) / 2, bodyWidth, bodyLength, 3, 3);
 
     g2d.setColor(METAL_COLOR);
-    final int NUMBER_OF_STRINGS = 4;
+    final int numberOfStrings = 4;
     int poleSize = 2;
-    int poleSpacing = bodyLength / (NUMBER_OF_STRINGS + 1);
-    int poleY = y - poleSpacing * (NUMBER_OF_STRINGS - 1) / 2;
-    for (int i = 0; i < NUMBER_OF_STRINGS; i++) {
+    int poleSpacing = bodyLength / (numberOfStrings + 1);
+    int poleY = y - poleSpacing * (numberOfStrings - 1) / 2;
+    for (int i = 0; i < numberOfStrings; i++) {
       g2d.fill(Area.circle(x, poleY + i * poleSpacing + (poleSize / 2), poleSize));
       g2d.fill(Area.circle(x, poleY + i * poleSpacing - (poleSize / 2), poleSize));
     }

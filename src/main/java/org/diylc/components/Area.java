@@ -33,7 +33,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Map;
 
-import org.diylc.components.RoundedPolygon;
 import org.diylc.core.measures.Size;
 
 public class Area extends java.awt.geom.Area {

@@ -135,16 +135,16 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
 
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      int threadOuterDiameter = getClosestOdd(THREAD_OUTER_DIAMETER.convertToPixels());
-      int threadThickness = getClosestOdd(THREAD_THICKNESS.convertToPixels());
-      int nutDiameter = getClosestOdd(NUT_DIAMETER.convertToPixels());
-      int waferDiameter = getClosestOdd(WAFER_DIAMETER.convertToPixels());
-      int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
-      int ringDiameter = getClosestOdd(RING_DIAMETER.convertToPixels());
-      int springLength = (int) SPRING_LENGTH.convertToPixels();
-      int springWidth = (int) SPRING_WIDTH.convertToPixels();
-      int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
-      int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
+      final int threadOuterDiameter = getClosestOdd(THREAD_OUTER_DIAMETER.convertToPixels());
+      final int threadThickness = getClosestOdd(THREAD_THICKNESS.convertToPixels());
+      final int nutDiameter = getClosestOdd(NUT_DIAMETER.convertToPixels());
+      final int waferDiameter = getClosestOdd(WAFER_DIAMETER.convertToPixels());
+      final int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
+      final int ringDiameter = getClosestOdd(RING_DIAMETER.convertToPixels());
+      final int springLength = (int) SPRING_LENGTH.convertToPixels();
+      final int springWidth = (int) SPRING_WIDTH.convertToPixels();
+      final int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
+      final int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
       int centerY = y + springLength - holeToEdge;
 
       Area wafer = Area.ring(x, centerY, waferDiameter, ringDiameter);

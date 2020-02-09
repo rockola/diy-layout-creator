@@ -62,8 +62,6 @@ import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.core.Template;
 import org.diylc.images.Icon;
-import org.diylc.swing.tree.FilteredTreeModel;
-import org.diylc.swing.tree.ComponentNode;
 
 public class ComponentTreePanel extends JPanel {
 

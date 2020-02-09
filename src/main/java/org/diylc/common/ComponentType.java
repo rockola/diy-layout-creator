@@ -37,8 +37,6 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
-import org.diylc.common.IComponentTransformer;
-import org.diylc.common.IPlugInPort;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;

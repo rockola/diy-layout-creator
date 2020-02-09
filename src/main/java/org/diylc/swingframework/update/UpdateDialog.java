@@ -81,14 +81,14 @@ public class UpdateDialog extends JDialog {
 
     if (latestVersionUrl != null) {
       JButton downloadButton = new JButton("Download");
-      downloadButton.addActionListener(
-          (e) -> {
+      final UpdateDialog thisDialog = this;
+      downloadButton.addActionListener((e) -> {
             try {
               App.openURL(new URL(latestVersionUrl));
-              UpdateDialog.this.setVisible(false);
+              thisDialog.setVisible(false);
             } catch (Exception e1) {
               JOptionPane.showMessageDialog(
-                  UpdateDialog.this,
+                  thisDialog,
                   "Could not launch default browser. To download the latest version visit "
                   + latestVersionUrl);
               LOG.error("Could not launch default browser", e1);

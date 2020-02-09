@@ -111,16 +111,16 @@ public abstract class ButtonDialog extends JDialog {
   public JPanel getButtonPanel() {
     if (buttonPanel == null) {
       buttonPanel = new JPanel();
+      final ButtonDialog thisDialog = this;
       for (String caption : buttonCaptions) {
         final String command = caption;
         JButton button = new JButton(caption);
-        button.addActionListener(
-            (e) -> {
-              if (validateInput(command)) {
-                selectedButtonCaption = command;
-                ButtonDialog.this.setVisible(false);
-              }
-            });
+        button.addActionListener((e) -> {
+            if (validateInput(command)) {
+              selectedButtonCaption = command;
+              thisDialog.setVisible(false);
+            }
+          });
         buttonPanel.add(button);
         buttonMap.put(command, button);
       }

@@ -2,18 +2,19 @@ package com.diyfever.httpproxy;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/*
 import okhttp3.FormBody;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+*/
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +41,7 @@ public class PhpFlatProxy implements IFlatProxy {
   public InputStream invoke(String url, String methodName, Map<String, Object> params) {
     InputStream serverInput = null;
     try {
-      URL phpUrl = new java.net.URL(createPhpFileName(url, methodName));
+      URL phpUrl = new URL(createPhpFileName(url, methodName));
       // Call the server.
       /*
       MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);

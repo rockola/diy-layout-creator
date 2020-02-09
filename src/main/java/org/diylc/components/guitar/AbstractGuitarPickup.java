@@ -64,15 +64,10 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
   }
 
   protected void drawTerminalLabels(Graphics2D g2d, Color color, Project project) {
-    Point[] points = getControlPoints();
     int dx = 0;
     int dy = 0;
     boolean horizontal = getControlPointDirection().isHorizontal();
     switch (orientation) {
-      case DEFAULT:
-        dx = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
-        dy = horizontal ? -TERMINAL_FONT_SIZE : 0;
-        break;
       case _90:
         dx = horizontal ? TERMINAL_FONT_SIZE : 0;
         dy = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
@@ -85,10 +80,15 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
         dx = horizontal ? -TERMINAL_FONT_SIZE : 0;
         dy = horizontal ? 0 : -(int) (TERMINAL_FONT_SIZE * 0.8);
         break;
+      case DEFAULT:
+      default:
+        dx = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
+        dy = horizontal ? -TERMINAL_FONT_SIZE : 0;
     }
 
     g2d.setColor(color);
     g2d.setFont(project.getFont().deriveFont(TERMINAL_FONT_SIZE * 1f));
+    Point[] points = getControlPoints();
     StringUtils.drawCenteredText(
         g2d,
         "N",

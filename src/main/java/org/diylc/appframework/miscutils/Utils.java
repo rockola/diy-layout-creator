@@ -127,7 +127,7 @@ public class Utils {
   private static boolean checkOsName(String target) {
     String os = System.getProperty("os.name").toLowerCase();
     // windows
-    return (os.indexOf(target) >= 0);
+    return os.indexOf(target) >= 0;
   }
 
   public static boolean isWindows() {
@@ -140,7 +140,7 @@ public class Utils {
 
   public static boolean isUnix() {
     // linux or unix
-    return (checkOsName("nix") || checkOsName("nux"));
+    return checkOsName("nix") || checkOsName("nux");
   }
 
   public static Set<Class<?>> getClasses(String packageName) throws Exception {
@@ -205,9 +205,8 @@ public class Utils {
         : String.format("%s%s%s", userDataDirectoryBase, subdirectory, File.separator);
     try {
       File dir = new File(userDir);
-      if (dir.isDirectory()) {
-        // directory already exists
-      } else {
+      if (!dir.isDirectory()) {
+        // directory does not already exist
         boolean directoryCreated = dir.mkdirs();
         if (!directoryCreated) {
           throw new RuntimeException("Could not create user data directory " + userDir);

@@ -29,7 +29,7 @@ public enum CurrentUnit implements Unit {
   double factor;
   String display;
 
-  private CurrentUnit(double factor, String display) {
+  CurrentUnit(double factor, String display) {
     this.factor = factor;
     this.display = display;
   }

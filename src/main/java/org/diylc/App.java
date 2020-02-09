@@ -37,11 +37,9 @@ import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Theme;
-import org.diylc.presenter.Presenter;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
 
