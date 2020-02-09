@@ -22,12 +22,13 @@ package org.diylc.core;
 
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,15 +41,26 @@ import javax.swing.undo.UndoManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.diylc.App;
+import org.diylc.action.ComponentEdit;
+import org.diylc.action.ProjectEdit;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
+import org.diylc.components.Area;
+import org.diylc.components.ComponentFactory;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
+import org.diylc.netlist.Group;
+import org.diylc.netlist.Netlist;
+import org.diylc.netlist.Position;
+import org.diylc.netlist.SwitchSetup;
+import org.diylc.parsing.XmlNode;
+import org.diylc.parsing.XmlReader;
 
 import org.diylc.presenter.ComponentArea; // needed for findComponentsAt
 import org.diylc.presenter.ComponentProcessor; // needed by createUniqueName
@@ -56,6 +68,10 @@ import org.diylc.presenter.Connection; // needed by continuity area methods
 import org.diylc.presenter.DrawingManager; // needed for CONTROL_POINT_SIZE only
 import org.diylc.presenter.InstantiationManager; // needed by createUniqueName
 import org.diylc.presenter.Presenter; // needed for dispatchMessage
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Project entity class. Contains project properties and a collection
@@ -70,17 +86,18 @@ public class Project implements Serializable, Cloneable {
   private static final Logger LOG = LogManager.getLogger(Project.class);
   private static final int CONTROL_POINT_SIZE = DrawingManager.CONTROL_POINT_SIZE;
 
-  public static final String FILE_SUFFIX = ".diy";
+  private static int projectSequenceNumber = 0;
 
-  public static String DEFAULT_TITLE = Config.getString("project.new-title");
-  public static Size DEFAULT_WIDTH = new Size(29d, SizeUnit.cm);
-  public static Size DEFAULT_HEIGHT = new Size(21d, SizeUnit.cm);
-  public static Size DEFAULT_GRID_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Font DEFAULT_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
+  public static final String FILE_SUFFIX = ".diy";
+  public static final String DEFAULT_TITLE = Config.getString("project.new-title");
+  public static final Size DEFAULT_WIDTH = Size.A4_HEIGHT;
+  public static final Size DEFAULT_HEIGHT = Size.A4_WIDTH;
+  public static final Size DEFAULT_GRID_SPACING = Size.in(0.1);
+  public static final Font DEFAULT_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
 
   private VersionNumber fileVersion;
   private String title = DEFAULT_TITLE;
-  private String author = System.getProperty("user.name");
+  private String author = App.getString("user.name");
   private String description;
   private Size width = DEFAULT_WIDTH;
   private Size height = DEFAULT_HEIGHT;
@@ -96,9 +113,50 @@ public class Project implements Serializable, Cloneable {
   private transient Date created = new Date(); // should really be called "instantiated"
   private transient int sequenceNumber = nextSequenceNumber();
 
-  private static int projectSequenceNumber = 0;
-
   public Project() {}
+
+  public Project(XmlNode projectTree) {
+    projectTree.children.entries().stream().forEach((e) -> {
+        XmlNode node = e.getValue();
+        switch (node.tagName) {
+          case "fileVersion":
+            fileVersion = new VersionNumber(node);
+            break;
+          case "title":
+            title = node.value;
+            break;
+          case "author":
+            author = node.value;
+            break;
+          case "description":
+            description = node.value;
+            break;
+          case "width":
+            width = new Size(node);
+            break;
+          case "height":
+            height = new Size(node);
+            break;
+          case "gridSpacing":
+            gridSpacing = new Size(node);
+            break;
+          case "components":
+            components.addAll(ComponentFactory.makeComponents(node.children.asMap()));
+            break;
+          case "groups":
+            break;
+          case "lockedLayers":
+            break;
+          case "hiddenLayers":
+            break;
+          case "font":
+            // TODO!
+            break;
+          default:
+            LOG.error("Unknown Project toplevel child {}", node.tagName);
+        }
+      });
+  }
 
   /**
      xStream does not call default constructor, so any transients must
@@ -159,9 +217,7 @@ public class Project implements Serializable, Cloneable {
   }
 
   public Area findContinuityAreaAtPoint(Point p) {
-    List<Area> areas = getContinuityAreas();
-
-    for (Area a : areas) {
+    for (Area a : getContinuityAreas()) {
       if (a.contains(p)) {
         this.continuityArea = a;
         return a;
@@ -181,20 +237,26 @@ public class Project implements Serializable, Cloneable {
       ComponentArea a = c.getArea();
 
       if (c instanceof IContinuity) {
-        for (int i = 0; i < c.getControlPointCount() - 1; i++)
-          for (int j = i + 1; j < c.getControlPointCount(); j++)
-            if (((IContinuity) c).arePointsConnected(i, j))
+        for (int i = 0; i < c.getControlPointCount() - 1; i++) {
+          for (int j = i + 1; j < c.getControlPointCount(); j++) {
+            if (((IContinuity) c).arePointsConnected(i, j)) {
               connections.add(new Connection(c.getControlPoint(i), c.getControlPoint(j)));
+            }
+          }
+        }
       }
 
-      if (a == null || a.getOutlineArea() == null) continue;
-      if (a.getContinuityPositiveAreas() != null)
+      if (a == null || a.getOutlineArea() == null) {
+        continue;
+      }
+      if (a.getContinuityPositiveAreas() != null) {
         for (Area a1 : a.getContinuityPositiveAreas()) {
           preliminaryAreas.add(a1);
           checkBreakout.add(false);
         }
+      }
       if (a.getContinuityNegativeAreas() != null) {
-        for (Area na : a.getContinuityNegativeAreas())
+        for (Area na : a.getContinuityNegativeAreas()) {
           for (int i = 0; i < preliminaryAreas.size(); i++) {
             Area a1 = preliminaryAreas.get(i);
             if (a1.intersects(na.getBounds2D())) {
@@ -202,6 +264,7 @@ public class Project implements Serializable, Cloneable {
               checkBreakout.set(i, true);
             }
           }
+        }
       }
     }
 
@@ -264,7 +327,9 @@ public class Project implements Serializable, Cloneable {
     }
     for (int i = 0; i < areas.size(); i++) {
       for (int j = i + 1; j < areas.size(); j++) {
-        if (consumed.get(j)) continue;
+        if (consumed.get(j)) {
+          continue;
+        }
         Area a1 = areas.get(i);
         Area a2 = areas.get(j);
         Area intersection = null;
@@ -283,12 +348,13 @@ public class Project implements Serializable, Cloneable {
             // use getBounds to optimize the computation,
             // don't get into complex math if not needed
             if ((a1.getBounds().contains(p.getP1())
-                    && a2.getBounds().contains(p.getP2())
-                    && a1.contains(p.getP1())
-                    && a2.contains(p.getP2()))
-                || (a1.getBounds().contains(p.getP2()) && a2.getBounds().contains(p.getP1()))
+                 && a2.getBounds().contains(p.getP2())
+                 && a1.contains(p.getP1())
+                 && a2.contains(p.getP2()))
+                || (a1.getBounds().contains(p.getP2())
+                    && a2.getBounds().contains(p.getP1())
                     && a1.contains(p.getP2())
-                    && a2.contains(p.getP1())) {
+                    && a2.contains(p.getP1()))) {
 
               a1.add(a2);
               consumed.set(j, true);
@@ -298,10 +364,13 @@ public class Project implements Serializable, Cloneable {
         }
       }
     }
-    for (int i = 0; i < areas.size(); i++)
-      if (!consumed.get(i)) newAreas.add(areas.get(i));
-      else isChanged = true;
-
+    for (int i = 0; i < areas.size(); i++) {
+      if (!consumed.get(i)) {
+        newAreas.add(areas.get(i));
+      } else {
+        isChanged = true;
+      }
+    }
     if (isChanged) {
       areas.clear();
       areas.addAll(newAreas);
@@ -336,6 +405,12 @@ public class Project implements Serializable, Cloneable {
         case PathIterator.SEG_QUADTO:
           p.quadTo(coord[0], coord[1], coord[2], coord[3]);
           break;
+        default:
+          /* PathIterator.SEG_CLOSE will bring us here */
+          LOG.error(
+              "Unhandled segment type {}",
+              type == PathIterator.SEG_CLOSE ? "SEG_CLOSE" : type);
+          // TODO: maybe throw new RuntimeException("Unhandled segment type");
       }
       pathIterator.next();
     }
@@ -348,7 +423,18 @@ public class Project implements Serializable, Cloneable {
   }
 
   /**
-     Remove certain components from this project.
+   * Add components to project.
+   *
+   * @param newComponents Components to be added.
+   */
+  public void addComponents(Collection<IDIYComponent<?>> newComponents) {
+    getComponents().addAll(newComponents);
+  }
+
+  /**
+   * Remove components from project.
+   *
+   * @param componentsToRemove Components to be removed.
    */
   public void removeComponents(Collection<IDIYComponent<?>> componentsToRemove) {
     Iterator<IDIYComponent<?>> i = componentsToRemove.iterator();
@@ -360,7 +446,7 @@ public class Project implements Serializable, Cloneable {
   }
 
   /**
-     Remove components in selection from this project.
+     Remove components in selection from project.
   */
   public void removeSelection() {
     // need a copy of selection to avoid race condition
@@ -389,10 +475,9 @@ public class Project implements Serializable, Cloneable {
     /* TODO simplify unique name creation
        TODO make it possible to do this for a number of components
        so that existing components need to be traversed only once */
-    ComponentType componentType =
-        ComponentProcessor.extractComponentTypeFrom(
-            (Class<? extends IDIYComponent<?>>) theCopy.getClass());
-    theCopy.setName(InstantiationManager.getInstance().createUniqueName(
+    ComponentType componentType = ComponentType.extractFrom(
+        (Class<? extends IDIYComponent<?>>) theCopy.getClass());
+    theCopy.setName(InstantiationManager.createUniqueName(
         componentType,
         getComponents()));
     return theCopy;
@@ -402,7 +487,7 @@ public class Project implements Serializable, Cloneable {
      Duplicate selection.
   */
   public void duplicateSelection() {
-    int offset = getGridSpacing().asPixels();
+    int offset = getGridSpacing().intPixels();
     Set<IDIYComponent<?>> newSelection = new HashSet<>();
     /*
       copy all selected components, move the copies by offset in both
@@ -412,7 +497,6 @@ public class Project implements Serializable, Cloneable {
     try {
       for (IDIYComponent<?> component : getSelection()) {
         IDIYComponent<?> duplicateComponent = copyWithUniqueName(component);
-        // TODO make sure duplicateComponent name is unique
         duplicateComponent.nudge(offset, offset);
         newSelection.add(duplicateComponent);
       }
@@ -420,11 +504,14 @@ public class Project implements Serializable, Cloneable {
       LOG.fatal("duplicateSelection() could not clone component", e);
       throw new RuntimeException(e);
     }
-    getComponents().addAll(newSelection);
+    // TODO this is the only action here that needs to be undoable
+    App.undoManager().addComponents(this, newSelection);
+    //addAll(newSelection);
+    //
     clearContinuityArea();
     setSelection(newSelection);
-    // TODO clear continuity area
     // TODO notify project change (this is now unsaved & also in need of autosave)
+    Presenter.dispatchMessage(EventType.PROJECT_MODIFIED, this);
     redraw();
   }
 
@@ -467,6 +554,20 @@ public class Project implements Serializable, Cloneable {
       LOG.trace("{} is selected", c.getIdentifier());
     }
   }
+
+  /*
+  private ProjectEdit addAll(Collection<IDIYComponent<?>> newComponents) {
+    ProjectEdit action = new ProjectEdit(
+        this,
+        new HashSet<IDIYComponent<?>>(getComponents()),
+        newComponents);
+    for (IDIYComponent<?> component : newComponents) {
+      action.addEdit(new ComponentEdit(component));
+    }
+    action.end();
+    return action;
+  }
+  */
 
   // ****************************************************************
   // properties
@@ -556,6 +657,30 @@ public class Project implements Serializable, Cloneable {
       hiddenLayers = new HashSet<Integer>();
     }
     return hiddenLayers;
+  }
+
+  public boolean isLocked(IDIYComponent<?> component) {
+    ComponentType componentType = ComponentType.extractFrom(component);
+    return getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
+  }
+
+  public Set<IDIYComponent<?>> getLockedComponents() {
+    Set<IDIYComponent<?>> locked = new HashSet<IDIYComponent<?>>();
+    for (IDIYComponent<?> component : getComponents()) {
+      if (isLocked(component)) {
+        locked.add(component);
+      }
+    }
+    return locked;
+  }
+
+  public boolean isVisible(IDIYComponent<?> component) {
+    ComponentType componentType = ComponentType.extractFrom(component);
+    return !getHiddenLayers().contains((int) Math.round(componentType.getZOrder()));
+  }
+
+  public boolean isActive(IDIYComponent<?> component) {
+    return !isLocked(component) && isVisible(component);
   }
 
   public VersionNumber getFileVersion() {
@@ -676,7 +801,7 @@ public class Project implements Serializable, Cloneable {
       while (i1.hasNext()) {
         IDIYComponent<?> c1 = i1.next();
         IDIYComponent<?> c2 = i2.next();
-        if (!c1.equalsTo(c2)) {
+        if (!c1.isEqualTo(c2)) {
           return false;
         }
       }
@@ -745,6 +870,10 @@ public class Project implements Serializable, Cloneable {
       return false;
     }
     return true;
+  }
+
+  public int getSequenceNumber() {
+    return sequenceNumber;
   }
 
   @Override
@@ -838,5 +967,311 @@ public class Project implements Serializable, Cloneable {
       project.groups.add(cloneGroup);
     }
     return project;
+  }
+
+  /* ----------------------------------------------------------------
+     XML Parser
+     ----------------------------------------------------------------
+  */
+
+  private static Map<String, Class> elements = new HashMap<>();
+
+  static {
+    // TODO add String-to-class mappings for component classes to elements hash
+  }
+
+  /**
+     Create a Project from XML data.
+
+     @return Newly created Project.
+   */
+  public static Project unmarshal(Element root) {
+    Project project = new Project();
+
+    NodeList children = root.getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      Node child = children.item(i);
+      if (child.getNodeType() == Node.ELEMENT_NODE) {
+        // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      }
+    }
+
+    return project;
+  }
+
+  public static Project unmarshal(String fileName) {
+    try {
+      Project project = new Project(XmlReader.readFile(fileName));
+      return project;
+    } catch (Exception e) {
+      LOG.error("Could not unmarshal " + fileName, e);
+      throw new RuntimeException(e);
+      // TODO show UI error dialog...
+      // ...and carry on
+    }
+  }
+
+  /* ****************************************************************
+     Netlist
+     ****************************************************************
+     */
+  public List<Netlist> extractNetlists(boolean includeSwitches) {
+    Map<Netlist, Netlist> result = new HashMap<Netlist, Netlist>();
+    List<org.diylc.netlist.Node> nodes = new ArrayList<org.diylc.netlist.Node>();
+
+    List<ISwitch> switches = new ArrayList<ISwitch>();
+
+    for (IDIYComponent<?> c : getComponents()) {
+      ComponentType type = ComponentType.extractFrom(
+          (Class<? extends IDIYComponent<?>>) c.getClass());
+
+      // extract nodes
+      if (!(c instanceof IContinuity)) {
+        for (int i = 0; i < c.getControlPointCount(); i++) {
+          String nodeName = c.getControlPointNodeName(i);
+          if (nodeName != null
+              && (!includeSwitches || !ISwitch.class.isAssignableFrom(type.getInstanceClass()))) {
+            nodes.add(new org.diylc.netlist.Node(c, i));
+          }
+        }
+      }
+
+      // extract switches
+      if (includeSwitches && ISwitch.class.isAssignableFrom(type.getInstanceClass()))
+        switches.add((ISwitch) c);
+    }
+
+    // save us the trouble
+    if (nodes.isEmpty()) {
+      return null;
+    }
+
+    // if there are no switches, make one with 1 position so we get 1 result back
+    if (switches.isEmpty()) {
+      switches.add(new ISwitch() {
+
+          @Override
+          public String getPositionName(int position) {
+            return "Default";
+          }
+
+          @Override
+          public int getPositionCount() {
+            return 1;
+          }
+
+          @Override
+          public boolean arePointsConnected(int index1, int index2, int position) {
+            return false;
+          }
+        });
+    }
+
+    // construct all possible combinations
+    int[] positions = new int[switches.size()];
+    for (int i = 0; i < switches.size(); i++) {
+      positions[i] = 0;
+    }
+
+    // grab continuity areas
+    List<Area> continuity = getContinuityAreas();
+
+    int i = switches.size() - 1;
+    while (i >= 0) {
+      // process the current combination
+      Map<ISwitch, Integer> switchPositions = new HashMap<ISwitch, Integer>();
+      List<Position> posList = new ArrayList<Position>();
+      for (int j = 0; j < positions.length; j++) {
+        switchPositions.put(switches.get(j), positions[j]);
+        posList.add(new Position(switches.get(j), positions[j]));
+      }
+      List<Connection> connections = getConnections(switchPositions);
+      Netlist graph = constructNetlist(nodes, connections, continuity);
+
+      // merge graphs that are effectively the same
+      if (result.containsKey(graph)) {
+        result.get(graph).getSwitchSetup().add(new SwitchSetup(posList));
+      } else {
+        graph.getSwitchSetup().add(new SwitchSetup(posList));
+        result.put(graph, graph);
+      }
+
+      // find the next combination if possible
+      if (positions[i] < switches.get(i).getPositionCount() - 1) {
+        positions[i]++;
+      } else {
+        while (i >= 0 && positions[i] == switches.get(i).getPositionCount() - 1) {
+          i--;
+        }
+        if (i >= 0) {
+          positions[i]++;
+          for (int j = i + 1; j < positions.length; j++) {
+            positions[j] = 0;
+          }
+          i = switches.size() - 1;
+        }
+      }
+    }
+
+    // sort everything alphabetically
+    List<Netlist> netlists = new ArrayList<Netlist>(result.keySet());
+    Collections.sort(netlists);
+
+    return netlists;
+  }
+
+  private List<Connection> getConnections(Map<ISwitch, Integer> switchPositions) {
+    Set<Connection> connections = new HashSet<Connection>();
+    for (IDIYComponent<?> c : getComponents()) {
+      ComponentType type = ComponentType.extractFrom(
+          (Class<? extends IDIYComponent<?>>) c.getClass());
+      // handle direct connections
+      if (c instanceof IContinuity) {
+        for (int i = 0; i < c.getControlPointCount() - 1; i++) {
+          for (int j = i + 1; j < c.getControlPointCount(); j++) {
+            if (((IContinuity) c).arePointsConnected(i, j)) {
+              connections.add(new Connection(c.getControlPoint(i), c.getControlPoint(j)));
+            }
+          }
+        }
+      }
+      // handle switches
+      if (ISwitch.class.isAssignableFrom(type.getInstanceClass())
+          && switchPositions.containsKey(c)) {
+        int position = switchPositions.get(c);
+        ISwitch s = (ISwitch) c;
+        for (int i = 0; i < c.getControlPointCount() - 1; i++) {
+          for (int j = i + 1; j < c.getControlPointCount(); j++) {
+            if (s.arePointsConnected(i, j, position)) {
+              connections.add(new Connection(c.getControlPoint(i), c.getControlPoint(j)));
+            }
+          }
+        }
+      }
+    }
+    expandConnections(connections);
+
+    return new ArrayList<Connection>(connections);
+  }
+
+  private Netlist constructNetlist(
+      List<org.diylc.netlist.Node> nodes,
+      List<Connection> connections,
+      List<Area> continuityAreas) {
+    Netlist netlist = new Netlist();
+    for (int i = 0; i < nodes.size() - 1; i++) {
+      for (int j = i + 1; j < nodes.size(); j++) {
+        org.diylc.netlist.Node node1 = nodes.get(i);
+        org.diylc.netlist.Node node2 = nodes.get(j);
+        Point2D point1 = node1.getComponent().getControlPoint(node1.getPointIndex());
+        Point2D point2 = node2.getComponent().getControlPoint(node2.getPointIndex());
+        String commonPoint1 = node1.getComponent().getCommonPointName(node1.getPointIndex());
+        String commonPoint2 = node2.getComponent().getCommonPointName(node2.getPointIndex());
+
+        // try both directions
+        if (point1.distance(point2) < DrawingManager.CONTROL_POINT_SIZE
+            || checkGraphConnectionBothWays(
+                point1,
+                point2,
+                connections,
+                continuityAreas,
+                new boolean[connections.size()])
+            || (commonPoint1 != null && commonPoint1.equalsIgnoreCase(commonPoint2))) {
+          boolean added = false;
+          // add to an existing vertex if possible
+          for (Group g : netlist.getGroups()) {
+            if (g.getNodes().contains(node1)) {
+              g.getNodes().add(node2);
+              added = true;
+            } else if (g.getNodes().contains(node2)) {
+              g.getNodes().add(node1);
+              added = true;
+            }
+          }
+          if (!added) {
+            netlist.getGroups().add(new Group(node1, node2));
+          }
+        }
+      }
+    }
+
+    // merge overlapping groups if needed
+    boolean reduce = true;
+    while (reduce) {
+      reduce = false;
+      List<Group> groups = netlist.getSortedGroups();
+      Iterator<Group> i = groups.iterator();
+      while (i.hasNext()) {
+        Group g1 = i.next();
+        for (Group g2 : groups) {
+          if (g1 != g2 && !Collections.disjoint(g1.getNodes(), g2.getNodes())) {
+            i.remove();
+            g2.getNodes().addAll(g1.getNodes());
+            reduce = true;
+            break;
+          }
+        }
+      }
+      if (reduce) {
+        netlist.getGroups().clear();
+        netlist.getGroups().addAll(groups);
+      }
+    }
+
+    Collections.sort(netlist.getSwitchSetup());
+
+    return netlist;
+  }
+
+  private boolean checkGraphConnection(
+      Point2D point1,
+      Point2D point2,
+      List<Connection> connections,
+      List<Area> continuityAreas,
+      boolean[] visited) {
+
+    final double epsilon = DrawingManager.CONTROL_POINT_SIZE;
+
+    if (point1.distance(point2) < epsilon) {
+      return true;
+    }
+
+    for (Area a : continuityAreas) {
+      if (a.contains(point1) && a.contains(point2)) {
+        return true;
+      }
+    }
+
+    for (int i = 0; i < connections.size(); i++) {
+      if (visited[i]) {
+        continue;
+      }
+
+      Connection c = connections.get(i);
+      if (point1.distance(c.getP1()) < epsilon) {
+        visited[i] = true;
+        if (checkGraphConnection(c.getP2(), point2, connections, continuityAreas, visited)) {
+          return true;
+        }
+      }
+      if (point1.distance(c.getP2()) < epsilon) {
+        visited[i] = true;
+        if (checkGraphConnection(c.getP1(), point2, connections, continuityAreas, visited)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private boolean checkGraphConnectionBothWays(
+      Point2D point1,
+      Point2D point2,
+      List<Connection> connections,
+      List<Area> continuityAreas,
+      boolean[] visited) {
+    return checkGraphConnection(point1, point2, connections, continuityAreas, visited)
+        || checkGraphConnection(point2, point1, connections, continuityAreas, visited);
   }
 }
