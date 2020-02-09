@@ -42,19 +42,19 @@ public class CustomGlassPane extends JPanel implements MouseListener, KeyListene
   }
 
   @Override
-  public void mouseClicked(final MouseEvent pArg0) {}
+  public void mouseClicked(final MouseEvent e) {}
 
   @Override
-  public void mouseEntered(final MouseEvent pArg0) {}
+  public void mouseEntered(final MouseEvent e) {}
 
   @Override
-  public void mouseExited(final MouseEvent pArg0) {}
+  public void mouseExited(final MouseEvent e) {}
 
   @Override
-  public void mousePressed(final MouseEvent pArg0) {}
+  public void mousePressed(final MouseEvent e) {}
 
   @Override
-  public void mouseReleased(final MouseEvent pArg0) {}
+  public void mouseReleased(final MouseEvent e) {}
 
   @Override
   public void keyPressed(KeyEvent e) {}
