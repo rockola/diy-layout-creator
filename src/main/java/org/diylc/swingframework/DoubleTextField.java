@@ -1,3 +1,23 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.swingframework;
 
 import java.awt.BorderLayout;
@@ -8,29 +28,20 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import org.diylc.images.Icon;
 
 /**
- * {@link JTextField} adapted to display {@link Double}. Use {@link #getValue()} and {@link
- * #setValue(Double)} to read and write.
+ * {@link JTextField} adapted to display {@link Double}.
+ * Use {@link #getValue()} and {@link #setValue(Double)} to read and write.
  *
  * @author Branislav Stojkovic
  */
-public class DoubleTextField extends JTextField {
+public class DoubleTextField extends TextField {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Format format = new DecimalFormat("0.#####");
-  public static final String VALUE_PROPERTY = "DoubleValue";
-
   private Double value;
-  private JLabel errorLabel;
-
-  // private static ScriptEngineManager factory = new ScriptEngineManager();
-  // private static ScriptEngine engine =
-  // factory.getEngineByName("JavaScript");
-
-  private boolean ignoreChanges = false;
 
   public DoubleTextField(Double value) {
     this();
@@ -39,29 +50,6 @@ public class DoubleTextField extends JTextField {
 
   public DoubleTextField() {
     super();
-    setLayout(new BorderLayout());
-    errorLabel = new JLabel(Icon.Warning.icon());
-    errorLabel.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
-    add(errorLabel, BorderLayout.EAST);
-    getDocument()
-        .addDocumentListener(
-            new DocumentListener() {
-
-              @Override
-              public void changedUpdate(DocumentEvent e) {
-                textChanged();
-              }
-
-              @Override
-              public void insertUpdate(DocumentEvent e) {
-                textChanged();
-              }
-
-              @Override
-              public void removeUpdate(DocumentEvent e) {
-                textChanged();
-              }
-            });
   }
 
   public Double getValue() {
@@ -80,14 +68,11 @@ public class DoubleTextField extends JTextField {
     }
   }
 
-  private void textChanged() {
+  public void textChanged() {
     if (!ignoreChanges) {
       try {
-
-        Double newValue;
-        if (getText().trim().isEmpty()) {
-          newValue = null;
-        } else {
+        Double newValue = null;
+        if (!getText().trim().isEmpty()) {
           Object parsed = format.parseObject(getText());
           if (parsed instanceof Long) {
             newValue = ((Long) parsed).doubleValue();
