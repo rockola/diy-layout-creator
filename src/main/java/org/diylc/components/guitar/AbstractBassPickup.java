@@ -24,20 +24,19 @@ import java.awt.Color;
 
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class AbstractBassPickup extends AbstractSingleOrHumbuckerPickup {
 
   private static final long serialVersionUID = 1L;
 
   protected static final Color BODY_COLOR = Color.decode("#333333");
-  protected static final Size POINT_MARGIN = new Size(1.5d, SizeUnit.mm);
-  protected static final Size POINT_SIZE = new Size(2d, SizeUnit.mm);
-  protected static final Size POLE_SIZE = new Size(4d, SizeUnit.mm);
-  protected static final Size EDGE_RADIUS = new Size(0.08d, SizeUnit.in);
-  protected static final Size LIP_RADIUS = new Size(0.45d, SizeUnit.in);
-  protected static final Size LIP_HOLE_SIZE = new Size(0.1d, SizeUnit.in);
-  protected static final Size LIP_HOLE_SPACING = new Size(0.1d, SizeUnit.in);
+  protected static final Size POINT_MARGIN = Size.mm(1.5);
+  protected static final Size POINT_SIZE = Size.mm(2);
+  protected static final Size POLE_SIZE = Size.mm(4);
+  protected static final Size EDGE_RADIUS = Size.in(0.08);
+  protected static final Size LIP_RADIUS = Size.in(0.45);
+  protected static final Size LIP_HOLE_SIZE = Size.in(0.1);
+  protected static final Size LIP_HOLE_SPACING = Size.in(0.1);
 
   protected Color color = BODY_COLOR;
   protected Color poleColor = METAL_COLOR;

@@ -29,7 +29,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -38,6 +37,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -46,7 +46,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -55,7 +54,7 @@ import org.diylc.utils.Constants;
     author = "Branislav Stojkovic",
     description = "Single coil P-90 guitar pickup, both \"dog ear\" and \"soap bar\"",
     zOrder = IDIYComponent.COMPONENT,
-    instanceNamePrefix = "PKP",
+    instanceNamePrefix = AbstractGuitarPickup.INSTANCE_NAME_PREFIX,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Guitar Wiring Diagram")
@@ -63,27 +62,27 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
   private static final long serialVersionUID = 1L;
 
-  private static Color BODY_COLOR = Color.decode("#D8C989");;
+  private static Color BODY_COLOR = Color.decode("#D8C989");
   //  private static Color POINT_COLOR = Color.darkGray;
 
   // dog ear
-  private static Size DOG_EAR_WIDTH = new Size(41d, SizeUnit.mm);
-  private static Size DOG_EAR_LENGTH = new Size(86.9d, SizeUnit.mm);
-  private static Size TOTAL_LENGTH = new Size(118.7d, SizeUnit.mm);
-  private static Size DOG_EAR_EDGE_RADIUS = new Size(4d, SizeUnit.mm);
+  private static Size DOG_EAR_WIDTH = Size.mm(41);
+  private static Size DOG_EAR_LENGTH = Size.mm(86.9);
+  private static Size TOTAL_LENGTH = Size.mm(118.7);
+  private static Size DOG_EAR_EDGE_RADIUS = Size.mm(4);
 
   // soap bar
-  private static Size SOAP_BAR_WIDTH = new Size(35.3d, SizeUnit.mm);
-  private static Size SOAP_BAR_LENGTH = new Size(85.6d, SizeUnit.mm);
-  private static Size SOAP_BAR_EDGE_RADIUS = new Size(8d, SizeUnit.mm);
+  private static Size SOAP_BAR_WIDTH = Size.mm(35.3);
+  private static Size SOAP_BAR_LENGTH = Size.mm(85.6);
+  private static Size SOAP_BAR_EDGE_RADIUS = Size.mm(8);
 
-  private static Size LIP_RADIUS = new Size(10d, SizeUnit.mm);
-  private static Size POINT_MARGIN = new Size(3.5d, SizeUnit.mm);
-  private static Size POINT_SIZE = new Size(2d, SizeUnit.mm);
-  private static Size LIP_HOLE_SIZE = new Size(2.5d, SizeUnit.mm);
-  private static Size LIP_HOLE_SPACING = new Size(97d, SizeUnit.mm);
-  private static Size POLE_SIZE = new Size(4d, SizeUnit.mm);
-  private static Size POLE_SPACING = new Size(11.68d, SizeUnit.mm);
+  private static Size LIP_RADIUS = Size.mm(10);
+  private static Size POINT_MARGIN = Size.mm(3.5);
+  private static Size POINT_SIZE = Size.mm(2);
+  private static Size LIP_HOLE_SIZE = Size.mm(2.5);
+  private static Size LIP_HOLE_SPACING = Size.mm(97);
+  private static Size POLE_SIZE = Size.mm(4);
+  private static Size POLE_SPACING = Size.mm(11.68);
 
   private Color color = BODY_COLOR;
   private P90Type type = P90Type.DOG_EAR;
@@ -105,21 +104,20 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
     g2d.fill(body[0]);
-    if (body[1] != null) g2d.fill(body[1]);
-    //    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : POINT_COLOR);
-    //    g2d.fill(body[2]);
+    if (body[1] != null) {
+      g2d.fill(body[1]);
+    }
     g2d.setComposite(oldComposite);
 
     Color finalBorderColor = tryBorderColor(outlineMode, color.darker());
     g2d.setColor(finalBorderColor);
     g2d.draw(body[0]);
-    if (body[1] != null) g2d.draw(body[1]);
+    if (body[1] != null) {
+      g2d.draw(body[1]);
+    }
 
     if (!outlineMode) {
       g2d.setColor(getPoleColor());
@@ -132,7 +130,6 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
     drawTerminalLabels(g2d, finalBorderColor, project);
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public Shape[] getBody() {
     if (body == null) {
@@ -151,21 +148,18 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
       int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());
       int lipHoleSpacing = getClosestOdd(LIP_HOLE_SPACING.convertToPixels());
 
-      body[0] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  x /*+ pointMargin*/ - length,
-                  y - pointMargin,
-                  length,
-                  width,
-                  edgeRadius,
-                  edgeRadius));
+      body[0] = new Area(new RoundRectangle2D.Double(
+          x - length,
+          y - pointMargin,
+          length,
+          width,
+          edgeRadius,
+          edgeRadius));
 
       if (getType() == P90Type.DOG_EAR) {
-        double rectWidth = (totalLength - length) / Math.sqrt(2);
-        RoundRectangle2D roundRect =
-            new RoundRectangle2D.Double(
-                -rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
+        double rectWidth = (totalLength - length) / SQRT_TWO;
+        RoundRectangle2D roundRect = new RoundRectangle2D.Double(
+            -rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
         Area leftEar = new Area(roundRect);
         leftEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         leftEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
@@ -177,65 +171,50 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
         rightEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         rightEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
         rightEar.transform(
-            AffineTransform.getTranslateInstance(x /*+ pointMargin*/, y - pointMargin + width / 2));
+            AffineTransform.getTranslateInstance(x, y - pointMargin + width / 2));
         rightEar.subtract((Area) body[0]);
         Area lipArea = leftEar;
         lipArea.add(rightEar);
-        lipArea.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x /*+ pointMargin*/ - length / 2 - lipHoleSpacing / 2 - lipHoleSize / 2,
-                    y - pointMargin + width / 2 - lipHoleSize / 2,
-                    lipHoleSize,
-                    lipHoleSize)));
-        lipArea.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x /*+ pointMargin*/ - length / 2 + lipHoleSpacing / 2 - lipHoleSize / 2,
-                    y - pointMargin + width / 2 - lipHoleSize / 2,
-                    lipHoleSize,
-                    lipHoleSize)));
+        lipArea.subtract(new Area(new Ellipse2D.Double(
+            x - length / 2 - lipHoleSpacing / 2 - lipHoleSize / 2,
+            y - pointMargin + width / 2 - lipHoleSize / 2,
+            lipHoleSize,
+            lipHoleSize)));
+        lipArea.subtract(new Area(new Ellipse2D.Double(
+            x - length / 2 + lipHoleSpacing / 2 - lipHoleSize / 2,
+            y - pointMargin + width / 2 - lipHoleSize / 2,
+            lipHoleSize,
+            lipHoleSize)));
 
         body[1] = lipArea;
       }
 
-      body[2] =
-          new Area(
-              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] = new Area(new Ellipse2D.Double(
+          x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       int poleSize = (int) POLE_SIZE.convertToPixels();
       int poleSpacing = (int) POLE_SPACING.convertToPixels();
       int poleMargin = (length - poleSpacing * 5) / 2;
       Area poleArea = new Area();
       for (int i = 0; i < 6; i++) {
-        Ellipse2D pole =
-            new Ellipse2D.Double(
-                x /*+ pointMargin*/ - length + poleMargin + i * poleSpacing - poleSize / 2,
-                y - pointMargin - poleSize / 2 + width / 2,
-                poleSize,
-                poleSize);
+        Ellipse2D pole = new Ellipse2D.Double(
+            x - length + poleMargin + i * poleSpacing - poleSize / 2,
+            y - pointMargin - poleSize / 2 + width / 2,
+            poleSize,
+            poleSize);
         poleArea.add(new Area(pole));
       }
       body[3] = poleArea;
 
       // Rotate if needed
       if (orientation != Orientation.DEFAULT) {
-        double theta = 0;
-        switch (orientation) {
-          case _90:
-            theta = Math.PI / 2;
-            break;
-          case _180:
-            theta = Math.PI;
-            break;
-          case _270:
-            theta = Math.PI * 3 / 2;
-            break;
-        }
+        double theta = orientation.getTheta();
         AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
-          if (shape != null) area.transform(rotation);
+          if (shape != null) {
+            area.transform(rotation);
+          }
         }
       }
     }
@@ -249,54 +228,51 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    g2d.rotate(Math.PI / 4, width / 2, height / 2);
+    final int x = width / 2;
+    final int y = height / 2;
+    g2d.rotate(Math.PI / 4, x, y);
 
     int baseWidth = 13 * width / 32;
     int baseLength = 27 * width / 32;
-    int radius = 6 * width / 32;
+    final int radius = 6 * width / 32;
 
     g2d.setColor(BODY_COLOR);
-    Polygon base =
-        new Polygon(
-            new int[] {
-              width / 2,
-              (width + baseWidth) / 2,
-              (width + baseWidth) / 2,
-              width / 2,
-              (width - baseWidth) / 2,
-              (width - baseWidth) / 2
-            },
-            new int[] {
-              -2,
-              (height - baseLength) / 2,
-              (height + baseLength) / 2,
-              height + 1,
-              (height + baseLength) / 2,
-              (height - baseLength) / 2
-            },
-            6);
+    Polygon base = new Polygon(
+        new int[] {
+          x,
+          x + baseWidth / 2,
+          x + baseWidth / 2,
+          x,
+          x - baseWidth / 2,
+          x - baseWidth / 2
+        },
+        new int[] {
+          -2,
+          y - baseLength / 2,
+          y + baseLength / 2,
+          height + 1,
+          y + baseLength / 2,
+          y - baseLength / 2
+        },
+        6);
     Area baseArea = new Area(base);
     baseArea.intersect(new Area(new Rectangle(0, -1, width, height + 1)));
     g2d.fill(baseArea);
     g2d.setColor(BODY_COLOR.darker());
     g2d.draw(baseArea);
 
+    Area p90body = Area.centeredRoundRect(x, y, baseWidth, baseLength, radius);
     g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect(
-        (width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
+    g2d.fill(p90body);
     g2d.setColor(BODY_COLOR.darker());
-    g2d.drawRoundRect(
-        (width - baseWidth) / 2, (height - baseLength) / 2, baseWidth, baseLength, radius, radius);
+    g2d.draw(p90body);
 
     g2d.setColor(METAL_COLOR);
     int poleSize = 2;
-    int poleSpacing = 17 * width / 32;
-    for (int i = 0; i < 6; i++) {
-      g2d.fillOval(
-          (width - poleSize) / 2,
-          (height - poleSpacing) / 2 + (i * poleSpacing / 5),
-          poleSize,
-          poleSize);
+    int poleSpacing = baseLength / (DEFAULT_NUMBER_OF_STRINGS + 1);
+    int poleY = y - poleSpacing * (DEFAULT_NUMBER_OF_STRINGS - 1) / 2;
+    for (int i = 0; i < DEFAULT_NUMBER_OF_STRINGS; i++) {
+      g2d.fill(Area.circle(x, poleY + i * poleSpacing, poleSize));
     }
   }
 
@@ -322,7 +298,9 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
   @EditableProperty(name = "Pole Color")
   public Color getPoleColor() {
-    if (poleColor == null) poleColor = METAL_COLOR;
+    if (poleColor == null) {
+      poleColor = METAL_COLOR;
+    }
     return poleColor;
   }
 
@@ -339,7 +317,7 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
     private Size width;
     private Size edgeRadius;
 
-    private P90Type(String label, Size length, Size width, Size edgeRadius) {
+    P90Type(String label, Size length, Size width, Size edgeRadius) {
       this.label = label;
       this.length = length;
       this.width = width;

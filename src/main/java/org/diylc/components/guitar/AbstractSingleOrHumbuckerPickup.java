@@ -23,6 +23,7 @@ package org.diylc.components.guitar;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.OrientationHV;
@@ -38,38 +39,27 @@ public abstract class AbstractSingleOrHumbuckerPickup extends AbstractGuitarPick
   protected void drawTerminalLabels(Graphics2D g2d, Color color, Project project) {
     Point[] points = getControlPoints();
     g2d.setColor(color);
-
     g2d.setFont(project.getFont().deriveFont(TERMINAL_FONT_SIZE * 1f));
+
     int dx = 0;
     int dy = 0;
+    final boolean horizontal = getControlPointDirection().isHorizontal();
     switch (orientation) {
       case DEFAULT:
-        dx =
-            getControlPointDirection() == OrientationHV.HORIZONTAL
-                ? 0
-                : (int) (TERMINAL_FONT_SIZE * 0.8);
-        dy = getControlPointDirection() == OrientationHV.HORIZONTAL ? -TERMINAL_FONT_SIZE : 0;
+        dx = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
+        dy = horizontal ? -TERMINAL_FONT_SIZE : 0;
         break;
       case _90:
-        dx = getControlPointDirection() == OrientationHV.HORIZONTAL ? TERMINAL_FONT_SIZE : 0;
-        dy =
-            getControlPointDirection() == OrientationHV.HORIZONTAL
-                ? 0
-                : (int) (TERMINAL_FONT_SIZE * 0.8);
+        dx = horizontal ? TERMINAL_FONT_SIZE : 0;
+        dy = horizontal ? 0 : (int) (TERMINAL_FONT_SIZE * 0.8);
         break;
       case _180:
-        dx =
-            getControlPointDirection() == OrientationHV.HORIZONTAL
-                ? 0
-                : -(int) (TERMINAL_FONT_SIZE * 0.8);
-        dy = getControlPointDirection() == OrientationHV.HORIZONTAL ? TERMINAL_FONT_SIZE : 0;
+        dx = horizontal ? 0 : -(int) (TERMINAL_FONT_SIZE * 0.8);
+        dy = horizontal ? TERMINAL_FONT_SIZE : 0;
         break;
       case _270:
-        dx = getControlPointDirection() == OrientationHV.HORIZONTAL ? -TERMINAL_FONT_SIZE : 0;
-        dy =
-            getControlPointDirection() == OrientationHV.HORIZONTAL
-                ? 0
-                : -(int) (TERMINAL_FONT_SIZE * 0.8);
+        dx = horizontal ? -TERMINAL_FONT_SIZE : 0;
+        dy = horizontal ? 0 : -(int) (TERMINAL_FONT_SIZE * 0.8);
         break;
     }
 
@@ -101,14 +91,17 @@ public abstract class AbstractSingleOrHumbuckerPickup extends AbstractGuitarPick
 
   @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    if (getPolarity() != Polarity.Humbucking && (index == 0 || index == 3))
+    if (getPolarity() != Polarity.Humbucking && (index == 0 || index == 3)) {
       return VisibilityPolicy.NEVER;
+    }
     return VisibilityPolicy.ALWAYS;
   }
 
   @Override
   public boolean isControlPointSticky(int index) {
-    if (getPolarity() != Polarity.Humbucking && (index == 0 || index == 3)) return false;
+    if (getPolarity() != Polarity.Humbucking && (index == 0 || index == 3)) {
+      return false;
+    }
     return true;
   }
 
@@ -116,42 +109,50 @@ public abstract class AbstractSingleOrHumbuckerPickup extends AbstractGuitarPick
   public String getControlPointNodeName(int index) {
     switch (index) {
       case 0:
-        if (getPolarity() != Polarity.Humbucking) return null;
-        return "North Start";
+        return isHumbucking() ? "North Start" : null;
       case 1:
-        if (getPolarity() == Polarity.South) return "South Start";
-        if (getPolarity() == Polarity.North) return "North Start";
-        return "North Finish";
+        return isSouthPolarity()
+            ? "South Start"
+            : (isNorthPolarity() ? "North Start" : "North Finish");
       case 2:
-        if (getPolarity() == Polarity.South) return "South Finish";
-        if (getPolarity() == Polarity.North) return "North Finish";
-        return "South Start";
+        return isSouthPolarity()
+            ? "South Finish"
+            : (isNorthPolarity() ? "North Finish" : "South Start");
       case 3:
-        if (getPolarity() != Polarity.Humbucking) return null;
-        return "South Finish";
+        return isHumbucking() ? "South Finish" : null;
+      default:
+        throw new RuntimeException("unknown control point name for node " + index);
     }
-    return null;
   }
 
   @Override
   public String getInternalLinkName(int index1, int index2) {
     switch (getPolarity()) {
       case Humbucking:
-        if (index1 == 0 && index2 == 1) return Polarity.North.toString() + "->";
-        else if (index1 == 1 && index2 == 0) return Polarity.North.toString() + "<-";
-        else if (index1 == 2 && index2 == 3) return Polarity.South.toString() + "->";
-        else if (index1 == 3 && index2 == 2) return Polarity.South.toString() + "<-";
+        if (index1 == 0 && index2 == 1) {
+          return Polarity.North.toString() + "->";
+        } else if (index1 == 1 && index2 == 0) {
+          return Polarity.North.toString() + "<-";
+        } else if (index1 == 2 && index2 == 3) {
+          return Polarity.South.toString() + "->";
+        } else if (index1 == 3 && index2 == 2) {
+          return Polarity.South.toString() + "<-";
+        }
         break;
       case North:
       case South:
-        if (index1 == 1 && index2 == 2) return getPolarity().toString() + "->";
-        else if (index1 == 2 && index2 == 1) return getPolarity().toString() + "<-";
+        if (index1 == 1 && index2 == 2) {
+          return getPolarity().toString() + "->";
+        } else if (index1 == 2 && index2 == 1) {
+          return getPolarity().toString() + "<-";
+        }
+        break;
+      default:
     }
-
     return null;
   }
 
   public boolean isHumbucker() {
-    return getPolarity() == Polarity.Humbucking;
+    return isHumbucking();
   }
 }

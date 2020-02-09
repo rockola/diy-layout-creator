@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -37,6 +36,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -47,7 +47,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -68,16 +67,16 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
   private static Color LUG_COLOR = METAL_COLOR;
   private static Color COMMON_LUG_COLOR = Color.decode("#FF9999");
 
-  private static Size BASE_WIDTH = new Size(10d, SizeUnit.mm);
-  private static Size BASE_LENGTH = new Size(47.5d, SizeUnit.mm);
-  private static Size WAFER_LENGTH = new Size(40d, SizeUnit.mm);
-  private static Size WAFER_SPACING = new Size(7.62d, SizeUnit.mm);
-  private static Size WAFER_THICKNESS = new Size(1.27d, SizeUnit.mm);
-  private static Size HOLE_SIZE = new Size(2d, SizeUnit.mm);
-  private static Size HOLE_SPACING = new Size(41.2d, SizeUnit.mm);
-  private static Size TERMINAL_WIDTH = new Size(2d, SizeUnit.mm);
-  private static Size TERMINAL_LENGTH = new Size(0.1d, SizeUnit.in);
-  private static Size TERMINAL_SPACING = new Size(0.1d, SizeUnit.in);
+  private static Size BASE_WIDTH = Size.mm(10);
+  private static Size BASE_LENGTH = Size.mm(47.5);
+  private static Size WAFER_LENGTH = Size.mm(40);
+  private static Size WAFER_SPACING = Size.mm(7.62);
+  private static Size WAFER_THICKNESS = Size.mm(1.27);
+  private static Size HOLE_SIZE = Size.mm(2);
+  private static Size HOLE_SPACING = Size.mm(41.2);
+  private static Size TERMINAL_WIDTH = Size.mm(2);
+  private static Size TERMINAL_LENGTH = Size.in(0.1);
+  private static Size TERMINAL_SPACING = Size.in(0.1);
 
   private String value = "";
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
@@ -101,12 +100,8 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     Shape[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
       g2d.fill(body[0]);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
@@ -130,7 +125,6 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     g2d.draw(body[3]);
   }
 
-  @SuppressWarnings("incomplete-switch")
   public Shape[] getBody() {
     if (body == null) {
       body = new Shape[4];
@@ -139,14 +133,14 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       int y = controlPoints[0].y;
       int baseWidth = (int) BASE_WIDTH.convertToPixels();
       int baseLength = (int) BASE_LENGTH.convertToPixels();
-      int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
-      int holeSpacing = (int) HOLE_SPACING.convertToPixels();
-      int waferLength = (int) WAFER_LENGTH.convertToPixels();
-      int waferSpacing = (int) WAFER_SPACING.convertToPixels();
-      int waferThickness = (int) WAFER_THICKNESS.convertToPixels();
-      int terminalSpacing = (int) TERMINAL_SPACING.convertToPixels();
-      int terminalLength = getClosestOdd(TERMINAL_LENGTH.convertToPixels());
-      int terminalWidth = getClosestOdd(TERMINAL_WIDTH.convertToPixels());
+      final int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
+      final int holeSpacing = (int) HOLE_SPACING.convertToPixels();
+      final int waferLength = (int) WAFER_LENGTH.convertToPixels();
+      final int waferSpacing = (int) WAFER_SPACING.convertToPixels();
+      final int waferThickness = (int) WAFER_THICKNESS.convertToPixels();
+      final int terminalSpacing = (int) TERMINAL_SPACING.convertToPixels();
+      final int terminalLength = getClosestOdd(TERMINAL_LENGTH.convertToPixels());
+      final int terminalWidth = getClosestOdd(TERMINAL_WIDTH.convertToPixels());
 
       int yOffset;
       if (type == LeverSwitchType.DP3T
@@ -161,79 +155,52 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       int baseX = x - terminalLength / 2 - waferSpacing;
       int baseY = y - (baseLength - terminalSpacing * yOffset) / 2;
       Area baseArea = new Area(new Rectangle2D.Double(baseX, baseY, baseWidth, baseLength));
-      baseArea.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  baseX + baseWidth / 2 - holeSize / 2,
-                  baseY + (baseLength - holeSpacing) / 2 - holeSize / 2,
-                  holeSize,
-                  holeSize)));
-      baseArea.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  baseX + baseWidth / 2 - holeSize / 2,
-                  baseY + (baseLength - holeSpacing) / 2 - holeSize / 2 + holeSpacing,
-                  holeSize,
-                  holeSize)));
+      baseArea.subtract(new Area(new Ellipse2D.Double(
+          baseX + baseWidth / 2 - holeSize / 2,
+          baseY + (baseLength - holeSpacing) / 2 - holeSize / 2,
+          holeSize,
+          holeSize)));
+      baseArea.subtract(new Area(new Ellipse2D.Double(
+          baseX + baseWidth / 2 - holeSize / 2,
+          baseY + (baseLength - holeSpacing) / 2 - holeSize / 2 + holeSpacing,
+          holeSize,
+          holeSize)));
       body[0] = baseArea;
 
-      Area waferArea =
-          new Area(
-              new Rectangle2D.Double(
-                  x - terminalLength / 2 - waferThickness / 2,
-                  y - (waferLength - terminalSpacing * yOffset) / 2,
-                  waferThickness,
-                  waferLength));
+      Area waferArea = new Area(new Rectangle2D.Double(
+          x - terminalLength / 2 - waferThickness / 2,
+          y - (waferLength - terminalSpacing * yOffset) / 2,
+          waferThickness,
+          waferLength));
 
       if (type == LeverSwitchType._4P5T) {
-        waferArea.add(
-            new Area(
-                new Rectangle2D.Double(
-                    x - terminalLength / 2 - waferThickness / 2 + waferSpacing,
-                    y - (waferLength - terminalSpacing * 12) / 2,
-                    waferThickness,
-                    waferLength)));
+        waferArea.add(new Area(new Rectangle2D.Double(
+            x - terminalLength / 2 - waferThickness / 2 + waferSpacing,
+            y - (waferLength - terminalSpacing * 12) / 2,
+            waferThickness,
+            waferLength)));
       }
       body[1] = waferArea;
 
-      double theta = 0;
-      // Rotate if needed
-      if (orientation != Orientation.DEFAULT) {
-        switch (orientation) {
-          case _90:
-            theta = Math.PI / 2;
-            break;
-          case _180:
-            theta = Math.PI;
-            break;
-          case _270:
-            theta = Math.PI * 3 / 2;
-            break;
-        }
-      }
-
+      double theta = orientation.getTheta();
       Area terminalArea = new Area();
       Area commonTerminalArea = new Area();
       for (int i = 0; i < controlPoints.length; i++) {
         Point point = controlPoints[i];
-        Area terminal =
-            new Area(
-                new RoundRectangle2D.Double(
-                    point.x - terminalLength / 2,
-                    point.y - terminalWidth / 2,
-                    terminalLength,
-                    terminalWidth,
-                    terminalWidth / 2,
-                    terminalWidth / 2));
-        terminal.subtract(
-            new Area(
-                new RoundRectangle2D.Double(
-                    point.x - terminalLength / 4,
-                    point.y - terminalWidth / 4,
-                    terminalLength / 2,
-                    terminalWidth / 2,
-                    terminalWidth / 2,
-                    terminalWidth / 2)));
+        Area terminal = new Area(new RoundRectangle2D.Double(
+            point.x - terminalLength / 2,
+            point.y - terminalWidth / 2,
+            terminalLength,
+            terminalWidth,
+            terminalWidth / 2,
+            terminalWidth / 2));
+        terminal.subtract(new Area(new RoundRectangle2D.Double(
+            point.x - terminalLength / 4,
+            point.y - terminalWidth / 4,
+            terminalLength / 2,
+            terminalWidth / 2,
+            terminalWidth / 2,
+            terminalWidth / 2)));
         // Rotate the terminal if needed
         if (theta != 0) {
           AffineTransform rotation = AffineTransform.getRotateInstance(theta, point.x, point.y);
@@ -245,9 +212,11 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
                     && (i == 1 || i == 6))
                 || (type == LeverSwitchType.DP4T && (i == 1 || i == 8))
                 || ((type == LeverSwitchType._4P5T || type == LeverSwitchType.DP5T)
-                    && (i == 0 || i == 11 || i == 12 || i == 23))))
+                    && (i == 0 || i == 11 || i == 12 || i == 23)))) {
           commonTerminalArea.add(terminal);
-        else terminalArea.add(terminal);
+        } else {
+          terminalArea.add(terminal);
+        }
       }
       body[2] = terminalArea;
       body[3] = commonTerminalArea;
@@ -267,7 +236,6 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     return body;
   }
 
-  @SuppressWarnings("incomplete-switch")
   private void updateControlPoints() {
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
@@ -309,18 +277,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
     // Rotate if needed
     if (orientation != Orientation.DEFAULT) {
-      double theta = 0;
-      switch (orientation) {
-        case _90:
-          theta = Math.PI / 2;
-          break;
-        case _180:
-          theta = Math.PI;
-          break;
-        case _270:
-          theta = Math.PI * 3 / 2;
-          break;
-      }
+      double theta = orientation.getTheta();
       AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
       for (Point point : controlPoints) {
         rotation.transform(point, point);
@@ -438,7 +395,9 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
   @EditableProperty(name = "Mark Common Lugs")
   public Boolean getHighlightCommon() {
-    if (highlightCommon == null) highlightCommon = true;
+    if (highlightCommon == null) {
+      highlightCommon = true;
+    }
     return highlightCommon;
   }
 
@@ -457,7 +416,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
     private String title;
 
-    private LeverSwitchType(String title) {
+    LeverSwitchType(String title) {
       this.title = title;
     }
 
@@ -486,6 +445,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       case DP5T:
       case _4P5T:
         return 5;
+      default:
     }
     return 0;
   }
@@ -505,10 +465,10 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
         return (index1 == 1 && index2 == index1 + 2 * (position + 1))
             || (index2 == 8 && index2 == index1 + 2 * (4 - position));
       case DP3T_5pos:
-        if (position % 2 == 0)
+        if (position % 2 == 0) {
           return (index1 == 1 && index2 == index1 + position + 2)
               || (index2 == 6 && index2 == index1 + 6 - position);
-        else
+        } else {
           return (index2 == 6
                   && (index1 == 2
                       || (index1 == 0 && position == 1)
@@ -517,11 +477,13 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
                   && (index2 == 5
                       || (index2 == 3 && position == 1)
                       || (index2 == 7 && position == 3)));
+        }
       case DP5T:
         return (index1 == 0 || index2 == 11) && index2 - index1 == position + 1;
       case _4P5T:
         return (index1 == 0 || index1 == 12 || index2 == 11 || index2 == 23)
             && index2 - index1 == position + 1;
+      default:
     }
     return false;
   }
