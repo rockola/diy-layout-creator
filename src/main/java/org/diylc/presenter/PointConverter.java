@@ -51,7 +51,6 @@ public class PointConverter implements Converter {
         (int) Math.round(y * Constants.PIXELS_PER_INCH));
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
   public boolean canConvert(Class clazz) {
     return Point.class.isAssignableFrom(clazz);
