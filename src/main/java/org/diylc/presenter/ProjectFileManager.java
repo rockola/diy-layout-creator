@@ -64,41 +64,37 @@ import org.xml.sax.SAXException;
 public class ProjectFileManager {
 
   private static final Logger LOG = LogManager.getLogger(ProjectFileManager.class);
+  private static final String ENCODING = "UTF-8";
 
   // Deserializer for 3.0.7 < DIYLC version < 3.x.y
   private static XStream xStream;
   // Legacy deserializer for 3.0.1 through 3.0.7, loads Points referenced in
   // pixels.
   private static XStream xStreamOld;
+  private static List<IOldFileParser> parsers;
+  private static Set<String> missingFields = new HashSet<String>();
 
   private String currentFileName = null;
   private boolean modified = false;
-
   private MessageDispatcher<EventType> messageDispatcher;
 
-  private static List<IOldFileParser> parsers;
-
-  private static Set<String> missingFields = new HashSet<String>();
-
   static {
-    xStream =
-        new XStream(new DomDriver("UTF-8")) {
+    xStream = new XStream(new DomDriver(ENCODING)) {
 
-          @Override
-          protected MapperWrapper wrapMapper(MapperWrapper next) {
-            return new MapperWrapper(next) {
-              @SuppressWarnings("rawtypes")
-              @Override
-              public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                if (definedIn == Object.class) {
-                  missingFields.add(definedIn.getName() + "." + fieldName);
-                  return false;
-                }
-                return super.shouldSerializeMember(definedIn, fieldName);
+        @Override
+        protected MapperWrapper wrapMapper(MapperWrapper next) {
+          return new MapperWrapper(next) {
+            @Override
+            public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+              if (definedIn == Object.class) {
+                missingFields.add(definedIn.getName() + "." + fieldName);
+                return false;
               }
-            };
-          }
-        };
+              return super.shouldSerializeMember(definedIn, fieldName);
+            }
+          };
+        }
+      };
 
     XStream.setupDefaultSecurity(xStream);
     String[] allowTypes = new String[] {"org.diylc.**", "java.awt.**"};
@@ -170,16 +166,20 @@ public class ProjectFileManager {
   }
 
   public synchronized void serializeProjectToFile(
-      Project project, String fileName, boolean isBackup) throws IOException {
+      Project project,
+      String fileName,
+      boolean isBackup) throws IOException {
     if (!isBackup) {
-      LOG.info(String.format("serializeProjectToFile(%s)", fileName));
+      LOG.info("serializeProjectToFile({})", fileName);
     }
-    FileOutputStream fos;
-    fos = new FileOutputStream(fileName);
-    Writer writer = new OutputStreamWriter(fos, "UTF-8");
-    writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-    xStream.toXML(project, writer);
-    fos.close();
+    try (FileOutputStream fos = new FileOutputStream(fileName)) {
+      Writer writer = new OutputStreamWriter(fos, ENCODING);
+      writer.write(String.format("<?xml version=\"1.0\" encoding=\"%s\" ?>%n", ENCODING));
+      xStream.toXML(project, writer);
+    } catch (IOException e) {
+      LOG.error("Could not serialize project to file", e);
+      throw e;
+    }
     if (!isBackup) {
       this.currentFileName = fileName;
       this.modified = false;
@@ -192,7 +192,7 @@ public class ProjectFileManager {
     Project project = null;
     List<String> warnings = new ArrayList<String>();
     try {
-      project = (Project) deserializeProjectFromFileInternal(fileName, warnings);
+      project = (Project) deserializeProjectInternal(fileName, warnings);
     } catch (Exception e) {
       for (String w : warnings) {
         LOG.warn(w);
@@ -205,16 +205,15 @@ public class ProjectFileManager {
 
   public Project deserializeProjectFromFile(String fileName, List<String> warnings)
       throws SAXException, IOException, ParserConfigurationException {
-    Project p = deserializeProjectFromFileInternal(fileName, warnings);
+    Project p = deserializeProjectInternal(fileName, warnings);
     this.currentFileName = fileName;
     this.modified = false;
     return p;
   }
 
-  private static Project deserializeProjectFromFileInternal(String fileName,
-                                                            List<String> warnings)
+  private static Project deserializeProjectInternal(String fileName, List<String> warnings)
       throws SAXException, IOException, ParserConfigurationException {
-    LOG.info(String.format("loadProjectFromFile(%s)", fileName));
+    LOG.info("deserializeProjectInternal({})", fileName);
     Project project = null;
     File file = new File(fileName);
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -233,12 +232,14 @@ public class ProjectFileManager {
 
       // try to find a parser for an older version
       for (int i = 0; i < parsers.size(); i++) {
-        if (parsers.get(i).canParse(formatVersion))
+        if (parsers.get(i).canParse(formatVersion)) {
           project = parsers.get(i).parseFile(doc.getDocumentElement(), warnings);
+        }
       }
 
-      if (project == null)
+      if (project == null) {
         throw new IllegalArgumentException("Unknown file format version: " + formatVersion);
+      }
     }
     Collections.sort(warnings);
     return project;
@@ -262,21 +263,22 @@ public class ProjectFileManager {
         EventType.FILE_STATUS_CHANGED, getCurrentFileName(), isModified());
   }
 
-  private static Project parseV3File(String fileName, List<String> warnings) throws IOException {
-
+  private static Project parseV3File(String fileName, List<String> warnings)
+      throws IOException {
     Project project;
     VersionNumber fileVersion;
     try {
       fileVersion = readV3Version(fileName);
-      if (fileVersion.compareTo(App.getVersionNumber()) > 0)
+      if (fileVersion.compareTo(App.getVersionNumber()) > 0) {
         warnings.add(App.getString("project.newer-version-warning"));
+      }
     } catch (Exception e) {
       warnings.add("Could not read file version number, the file may be corrupted.");
     }
     FileInputStream fis = new FileInputStream(fileName);
     missingFields.clear();
     try {
-      Reader reader = new InputStreamReader(fis, "UTF-8");
+      Reader reader = new InputStreamReader(fis, ENCODING);
       project = (Project) xStream.fromXML(reader);
     } catch (Exception e) {
       LOG.warn("Could not open with the new xStream, trying the old one", e);
@@ -294,17 +296,16 @@ public class ProjectFileManager {
   private static VersionNumber readV3Version(String fileName) throws Exception {
     File fXmlFile = new File(fileName);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-    Document doc = dBuilder.parse(fXmlFile);
+    DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
+    Document doc = docBuilder.parse(fXmlFile);
     doc.getDocumentElement().normalize();
 
     NodeList nList = doc.getElementsByTagName("fileVersion");
-
     int items = nList.getLength();
 
-    if (items != 1)
+    if (items != 1) {
       throw new Exception("File version information could not be read from XML.");
+    }
 
     Node versionNode = nList.item(0);
     Node n = versionNode.getFirstChild().getNextSibling();
