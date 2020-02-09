@@ -36,7 +36,7 @@ public enum FileFilterEnum {
   FileFilter filter;
   String[] extensions;
 
-  private FileFilterEnum(final String description, final String... extensions) {
+  FileFilterEnum(final String description, final String... extensions) {
     this.extensions = extensions;
     filter = new FileFilter() {
 

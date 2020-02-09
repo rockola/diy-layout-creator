@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.file;
 
 import java.awt.Color;
@@ -32,6 +33,10 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.appframework.Serializer;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
@@ -50,6 +55,7 @@ public class ProjectPreview extends JPanel
     implements PropertyChangeListener, IFileChooserAccessory {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(ProjectPreview.class);
 
   private transient IPlugInPort presenter;
   private Project emptyProject;
@@ -88,7 +94,8 @@ public class ProjectPreview extends JPanel
       try {
         selectedProject = (Project) Serializer.fromFile(selectedFile);
       } catch (Exception e) {
-        // TODO: Log error from e !!!
+        LOG.error("Could not serialize Project from file {}", selectedFile);
+        throw new RuntimeException(e);
       }
       update = true;
     }
@@ -96,10 +103,8 @@ public class ProjectPreview extends JPanel
     nameLabel.setText(selectedProject.getTitle());
     presenter.loadProject(selectedProject, true, null);
 
-    if (update) {
-      if (renderComponent.isShowing()) {
-        renderComponent.repaint();
-      }
+    if (update && renderComponent.isShowing()) {
+      renderComponent.repaint();
     }
   }
 
@@ -118,10 +123,7 @@ public class ProjectPreview extends JPanel
 
       Graphics2D g2d = (Graphics2D) g;
       Dimension d = presenter.getCanvasDimensions(false, false);
-      // System.out.println(d);
       Rectangle rect = getBounds();
-      // System.out.println(rect);
-
       double projectRatio = d.getWidth() / d.getHeight();
       double actualRatio = rect.getWidth() / rect.getHeight();
       double zoomRatio;
@@ -133,8 +135,6 @@ public class ProjectPreview extends JPanel
       // d.setSize(d.getWidth() * zoomRatio, d.getHeight() * zoomRatio);
       // int x = (int) (rect.getWidth() - d.getWidth() * zoomRatio) / 2;
       // int y = (int) (rect.getHeight() - d.getHeight() * zoomRatio) / 2;
-
-      // System.out.println(x + "," + y);
 
       // g2d.translate(x, y);
       //      g2d.scale(zoomRatio, zoomRatio);

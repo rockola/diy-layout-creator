@@ -25,6 +25,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.App;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
@@ -37,6 +40,8 @@ import org.diylc.swingframework.IDrawingProvider;
  * @author Branislav Stojkovic
  */
 public class ProjectDrawingProvider implements IDrawingProvider {
+
+  private static final Logger LOG = LogManager.getLogger(ProjectDrawingProvider.class);
 
   private IPlugInPort plugInPort;
   private boolean useZoom;
@@ -75,6 +80,7 @@ public class ProjectDrawingProvider implements IDrawingProvider {
     if (includeExtraSpace) {
       drawOptions.add(DrawOption.EXTRA_SPACE);
     }
+    LOG.trace("draw({}, [Graphics g], {}) drawOptions {}", page, zoomFactor, drawOptions);
     plugInPort.draw((Graphics2D) g, drawOptions, null, zoomFactor);
   }
 

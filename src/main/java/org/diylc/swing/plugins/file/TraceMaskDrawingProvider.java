@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.file;
 
 import java.awt.Dimension;
@@ -77,7 +78,7 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
 
   private PCBLayer[] getUsedLayers() {
     Set<PCBLayer> layers = EnumSet.noneOf(PCBLayer.class);
-    for (IDIYComponent<?> c : plugInPort.getCurrentProject().getComponents()) {
+    for (IDIYComponent<?> c : plugInPort.currentProject().getComponents()) {
       Class<?> clazz = c.getClass();
       try {
         Method m = clazz.getMethod("getLayer");
