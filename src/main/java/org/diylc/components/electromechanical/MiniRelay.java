@@ -20,22 +20,20 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import org.diylc.appframework.miscutils.ConfigurationManager;
+
 import org.diylc.common.Display;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -60,34 +58,31 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.gray;
-  public static Color BORDER_COLOR = Color.gray.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color INDENT_COLOR = Color.gray.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static int EDGE_RADIUS = 6;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
-  public static Size BODY_MARGIN = new Size(0.05d, SizeUnit.in);
-
-  public static Size MINI_PIN_SPACING = new Size(0.2d, SizeUnit.in);
-  public static Size MINI_ROW_SPACING = new Size(0.3d, SizeUnit.in);
-  public static Size MINI_WIDTH = new Size(20.1d, SizeUnit.mm);
-  public static Size MINI_HEIGHT = new Size(9.9d, SizeUnit.mm);
-  public static Size MINI_GAP = new Size(0.1d, SizeUnit.in);
-
-  public static Size ULTRA_PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size ULTRA_ROW_SPACING = new Size(0.2d, SizeUnit.in);
-  public static Size ULTRA_WIDTH = new Size(12.2d, SizeUnit.mm);
-  public static Size ULTRA_HEIGHT = new Size(7.2d, SizeUnit.mm);
-  public static Size ULTRA_GAP = new Size(0.1d, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.gray;
+  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color INDENT_COLOR = Color.gray.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final int EDGE_RADIUS = 6;
+  public static final Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
+  public static final Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size BODY_MARGIN = new Size(0.05d, SizeUnit.in);
+  public static final Size MINI_PIN_SPACING = new Size(0.2d, SizeUnit.in);
+  public static final Size MINI_ROW_SPACING = new Size(0.3d, SizeUnit.in);
+  public static final Size MINI_WIDTH = new Size(20.1d, SizeUnit.mm);
+  public static final Size MINI_HEIGHT = new Size(9.9d, SizeUnit.mm);
+  public static final Size MINI_GAP = new Size(0.1d, SizeUnit.in);
+  public static final Size ULTRA_PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size ULTRA_ROW_SPACING = new Size(0.2d, SizeUnit.in);
+  public static final Size ULTRA_WIDTH = new Size(12.2d, SizeUnit.mm);
+  public static final Size ULTRA_HEIGHT = new Size(7.2d, SizeUnit.mm);
+  public static final Size ULTRA_GAP = new Size(0.1d, SizeUnit.in);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  protected Display display = Display.NAME;
   private RelayType type = RelayType.DPDT;
   private RelaySize size = RelaySize.Miniature;
   private Voltage voltage = new Voltage(12d, VoltageUnit.V);
@@ -96,6 +91,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   public MiniRelay() {
     super();
     updateControlPoints();
+    display = Display.NAME;
   }
 
   @EditableProperty
@@ -361,10 +357,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
       return;
     }
     Area mainArea = getBody()[0];
-    final Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
@@ -479,12 +472,12 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     return false;
   }
 
-  public static enum RelayType {
+  public enum RelayType {
     SPDT,
     DPDT;
   }
 
-  public static enum RelaySize {
+  public enum RelaySize {
     Miniature,
     Ultra_miniature;
 
