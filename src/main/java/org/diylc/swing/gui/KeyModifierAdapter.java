@@ -17,11 +17,13 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +35,7 @@ public class KeyModifierAdapter extends XmlAdapter<String, Integer> {
 
   @Override
   public Integer unmarshal(String v) throws Exception {
+    LOG.trace("unmarshal({})", v);
     int i = 0;
     for (String s : v.split("\\s+")) { // split at whitespace
       if (s.equals("Menu")) {
@@ -49,6 +52,7 @@ public class KeyModifierAdapter extends XmlAdapter<String, Integer> {
 
   @Override
   public String marshal(Integer v) throws Exception {
+    LOG.trace("marshal({})", v);
     return Binding.modifierToString(v);
   }
 }
