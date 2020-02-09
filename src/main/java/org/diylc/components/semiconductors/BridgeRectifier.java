@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
@@ -407,7 +408,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
           g2d.rotate(-HALF_PI, centerX, centerY);
         }
 
-        if (label.length == 2) {
+        if (label.size() == 2) {
           if (i == 0) {
             g2d.translate(0, -textHeight / 2);
           } else if (i == 1) {
