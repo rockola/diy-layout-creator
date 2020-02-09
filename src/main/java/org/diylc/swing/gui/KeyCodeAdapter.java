@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.event.KeyEvent;
@@ -233,7 +234,9 @@ public class KeyCodeAdapter extends XmlAdapter<String, Integer> {
   @Override
   public Integer unmarshal(String v) throws Exception {
     Integer r = keyCodes.get(v);
-    if (r == null) LOG.error("unmarshal({}) keycode not found", v);
+    if (r == null) {
+      LOG.error("unmarshal({}) keycode not found", v);
+    }
 
     return r;
   }
