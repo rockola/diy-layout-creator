@@ -33,6 +33,7 @@ import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.PinCount;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.BlankBoard;
 import org.diylc.components.boards.PerfBoard;
@@ -60,7 +61,6 @@ import org.diylc.components.passive.Resistor;
 import org.diylc.components.passive.ResistorSymbol;
 import org.diylc.components.semiconductors.BJTSymbol;
 import org.diylc.components.semiconductors.DIL_IC;
-import org.diylc.components.semiconductors.DIL_IC.PinCount;
 import org.diylc.components.semiconductors.DiodePlastic;
 import org.diylc.components.semiconductors.DiodeSymbol;
 import org.diylc.components.semiconductors.ICPointCount;
@@ -79,8 +79,6 @@ import org.diylc.core.measures.CapacitanceUnit;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.ResistanceUnit;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
-import org.diylc.presenter.Presenter;
 import org.diylc.utils.Constants;
 
 import org.nfunk.jep.JEP;
@@ -92,7 +90,7 @@ import org.w3c.dom.NodeList;
 public class V2FileParser implements IOldFileParser {
 
   private static final Logger LOG = LogManager.getLogger(V2FileParser.class);
-  private static final Size V2_GRID_SPACING = new Size(0.1d, SizeUnit.in);
+  private static final Size V2_GRID_SPACING = Size.in(0.1);
 
   @Override
   public boolean canParse(String version) {
@@ -104,8 +102,8 @@ public class V2FileParser implements IOldFileParser {
     parser.addStandardConstants();
     parser.addStandardFunctions();
     parser.setImplicitMul(true);
-    parser.addConstant("mm", Constants.PIXELS_PER_INCH / 25.4f);
-    parser.addConstant("cm", Constants.PIXELS_PER_INCH / 2.54f);
+    parser.addConstant("mm", Constants.PIXELS_PER_INCH / Constants.MM_PER_INCH);
+    parser.addConstant("cm", 10 * Constants.PIXELS_PER_INCH / Constants.MM_PER_INCH);
     parser.addConstant("in", Constants.PIXELS_PER_INCH * 1f);
     parser.addConstant("grid", Constants.PIXELS_PER_INCH * 0.1f);
     parser.addConstant("degree", Constants.DEGREES_PER_RADIAN);
@@ -114,11 +112,11 @@ public class V2FileParser implements IOldFileParser {
     parser.parseExpression(text);
 
     Double value = parser.getValue(); // in pixels
-    boolean metric = App.getBoolean(IPlugInPort.Key.METRIC, true);
-
-    return new Size(
-        value / Constants.PIXELS_PER_INCH * (metric ? 25.4f : 1.0f),
-        metric ? SizeUnit.mm : SizeUnit.in);
+    if (App.metric()) {
+      return Size.mm(value / Constants.PIXELS_PER_INCH * Constants.MM_PER_INCH);
+    } else {
+      return Size.in(value / Constants.PIXELS_PER_INCH);
+    }
   }
 
   @Override
@@ -160,13 +158,13 @@ public class V2FileParser implements IOldFileParser {
           String valueString = "";
           int transparency = 100;
           int pins = 6;
-          Size sizePro = new Size(5.0, SizeUnit.mm);
-          Size thicknessPro = new Size(5.0, SizeUnit.mm);
-          Size diameterPro = new Size(5.0, SizeUnit.mm);
-          Size lengthPro = new Size(0.0, SizeUnit.mm);
-          Size bodyPro = new Size(5.0, SizeUnit.mm);
-          Size spacingPro = new Size(0.0, SizeUnit.mm);
-          Size radiusPro = new Size(1.0, SizeUnit.mm);
+          Size sizePro = Size.mm(5.0);
+          Size thicknessPro = Size.mm(5.0);
+          Size diameterPro = Size.mm(5.0);
+          Size lengthPro = Size.mm(0.0);
+          Size bodyPro = Size.mm(5.0);
+          Size spacingPro = Size.mm(0.0);
+          Size radiusPro = Size.mm(1.0);
           CapacitanceUnit cp = CapacitanceUnit.nF;
           ResistanceUnit ru = ResistanceUnit.K;
 
@@ -218,7 +216,7 @@ public class V2FileParser implements IOldFileParser {
                 case "angle":
                   Size anglePro = parseString(nodeValue);
                   angle = anglePro.getValue() * Constants.PIXELS_PER_INCH
-                          / 25.4f
+                          / Constants.MM_PER_INCH
                           / Constants.DEGREES_PER_RADIAN;
                   angle = Math.floor(angle);
                   break;
@@ -289,8 +287,6 @@ public class V2FileParser implements IOldFileParser {
           String lcNodeName =
               node.getAttributes().getNamedItem("name").getNodeValue().toLowerCase();
           AbstractBoard board = null;
-          AbstractLeadedComponent trace = null;
-          AbstractLeadedComponent capacitor = null;
           TubeSocket ts = null;
           Point point;
           int x;
@@ -316,7 +312,7 @@ public class V2FileParser implements IOldFileParser {
               perf.setBoardColor(Color.white);
               perf.setBorderColor(Color.black);
               perf.setName(comName != "" ? comName : "Main board");
-              perf.setSpacing(new Size(0.07, SizeUnit.in));
+              perf.setSpacing(Size.in(0.07));
               perf.setControlPoint(tacke.get(0), 0);
               perf.setControlPoint(tacke.get(1), 1);
               project.getComponents().add(perf);
@@ -381,7 +377,7 @@ public class V2FileParser implements IOldFileParser {
               }
               vero.setControlPoint(tacke.get(0), 0);
               vero.setControlPoint(tacke.get(1), 1);
-              vero.setSpacing(new Size(0.08, SizeUnit.in));
+              vero.setSpacing(Size.in(0.08));
               project.getComponents().add(vero);
               break;
             case "trace cut":
@@ -405,7 +401,7 @@ public class V2FileParser implements IOldFileParser {
               x = (int) (tacke.get(0).getX() + 20);
               y = (int) (tacke.get(0).getY() + 10);
               point = new Point(x, y);
-              sw.setSpacing(new Size(0.1, SizeUnit.in));
+              sw.setSpacing(Size.in(0.1));
               sw.setControlPoint(point, 0);
               x = (int) (tacke.get(0).getX() + 40);
               y = (int) (tacke.get(0).getY() + 10);
@@ -477,7 +473,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 aec.setName("A_E_C");
               }
-              aec.setAlpha((byte) transparency);
+              aec.setAlpha(transparency);
               if (value != -9999) {
                 aec.setValue(new Capacitance(value, cp));
               }
@@ -497,7 +493,7 @@ public class V2FileParser implements IOldFileParser {
               if (comName != "") {
                 afc.setName(comName);
               }
-              afc.setAlpha((byte) transparency);
+              afc.setAlpha(transparency);
               if (value != -9999) {
                 afc.setValue(new Capacitance(value, cp));
               } else {
@@ -521,7 +517,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 rcdc.setName("Radial_Ceramic_Capacitor");
               }
-              rcdc.setAlpha((byte) transparency);
+              rcdc.setAlpha(transparency);
               if (value != -9999) {
                 rcdc.setValue(new Capacitance(value, cp));
               }
@@ -543,7 +539,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 rfc.setName("Radial_Film_Capacitor");
               }
-              rfc.setAlpha((byte) transparency);
+              rfc.setAlpha(transparency);
               if (value != -9999) {
                 rfc.setValue(new Capacitance(value, cp));
               }
@@ -568,7 +564,7 @@ public class V2FileParser implements IOldFileParser {
               if (value != -9999) {
                 re.setValue(new Capacitance(value, cp));
               }
-              re.setAlpha((byte) transparency);
+              re.setAlpha(transparency);
               re.setLength(diameterPro);
               re.setControlPoint(tacke.get(0), 0);
               re.setControlPoint(tacke.get(1), 1);
@@ -584,7 +580,7 @@ public class V2FileParser implements IOldFileParser {
               if (value != -9999) {
                 panel.setValue(new Resistance(value, ru));
               }
-              panel.setAlpha((byte) transparency);
+              panel.setAlpha(transparency);
               if (angle > 45 && angle <= 135) {
                 panel.setOrientation(Orientation._90);
               } else if (angle > 135 && angle <= 225) {
@@ -598,7 +594,7 @@ public class V2FileParser implements IOldFileParser {
               panel.setControlPoint(point, 0);
               panel.setBodyDiameter(bodyPro);
               panel.setSpacing(spacingPro);
-              panel.setLugDiameter(new Size(0.1, SizeUnit.in));
+              panel.setLugDiameter(Size.in(0.1));
               project.getComponents().add(panel);
               break;
             case "resistor":
@@ -612,7 +608,7 @@ public class V2FileParser implements IOldFileParser {
               if (value != -9999) {
                 resistor.setValue(new Resistance(value, ru));
               }
-              resistor.setAlpha((byte) transparency);
+              resistor.setAlpha(transparency);
               resistor.setWidth(diameterPro);
               if (lengthPro.getValue() != 0) {
                 resistor.setLength(lengthPro);
@@ -631,7 +627,7 @@ public class V2FileParser implements IOldFileParser {
               if (value != -9999) {
                 cap.setValue(new Capacitance(value, cp));
               }
-              cap.setLength(new Size(distance, SizeUnit.mm));
+              cap.setLength(Size.mm(distance));
               cap.setWidth(lengthPro);
               cap.setBodyColor(cl);
               cap.setBorderColor(cl);
@@ -690,7 +686,9 @@ public class V2FileParser implements IOldFileParser {
                 ps.setName("ps");
               }
               ps.setColor(cl);
-              if (valueString != "") ps.setValue(valueString);
+              if (valueString != "") {
+                ps.setValue(valueString);
+              }
               x = (int) (tacke.get(0).getX() - 70);
               y = (int) tacke.get(0).getY();
               point = new Point(x, y);
@@ -707,7 +705,7 @@ public class V2FileParser implements IOldFileParser {
               if (value != -9999) {
                 cs.setValue(new Capacitance(value, cp));
               }
-              cs.setLength(new Size(distance, SizeUnit.mm));
+              cs.setLength(Size.mm(distance));
               cs.setWidth(lengthPro);
               cs.setPolarized(true);
               cs.setBorderColor(cl);
@@ -722,8 +720,10 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ic.setName("ics");
               }
-              if (valueString != "") ic.setValue(valueString);
-              ic.setAlpha((byte) transparency);
+              if (valueString != "") {
+                ic.setValue(valueString);
+              }
+              ic.setAlpha(transparency);
               x = (int) (tacke.get(0).getX() - 70);
               y = (int) tacke.get(0).getY() - 20;
               point = new Point(x, y);
@@ -798,7 +798,7 @@ public class V2FileParser implements IOldFileParser {
               if (valueString != "") {
                 dp.setValue(valueString);
               }
-              dp.setAlpha((byte) transparency);
+              dp.setAlpha(transparency);
               if (display.equals("Name")) {
                 dp.setDisplay(Display.NAME);
               } else {
@@ -812,60 +812,29 @@ public class V2FileParser implements IOldFileParser {
               break;
             case "ic dil":
               DIL_IC dil = new DIL_IC();
-              if (comName != "") {
-                dil.setName(comName);
-              } else {
-                dil.setName("dil");
+              dil.setName(comName != "" ? comName : "dil");
+              PinCount pinCount = dil.getPinCount().setPins(pins);
+              if (pinCount == null) {
+                LOG.error("pin count error, cannot handle {} pins", pins);
+                // TODO show error in UI as this means an invalid input file
               }
-              switch (pins) {
-                case 4: dil.setPinCount(PinCount._4); break;
-                case 6: dil.setPinCount(PinCount._6); break;
-                case 8: dil.setPinCount(PinCount._8); break;
-                case 10: dil.setPinCount(PinCount._10); break;
-                case 12: dil.setPinCount(PinCount._12); break;
-                case 14: dil.setPinCount(PinCount._14); break;
-                case 16: dil.setPinCount(PinCount._16); break;
-                case 18: dil.setPinCount(PinCount._18); break;
-                case 20: dil.setPinCount(PinCount._20); break;
-                case 22: dil.setPinCount(PinCount._22); break;
-                case 24: dil.setPinCount(PinCount._24); break;
-                case 26: dil.setPinCount(PinCount._26); break;
-                case 28: dil.setPinCount(PinCount._28); break;
-                case 30: dil.setPinCount(PinCount._30); break;
-                case 32: dil.setPinCount(PinCount._32); break;
-                case 34: dil.setPinCount(PinCount._34); break;
-                case 36: dil.setPinCount(PinCount._36); break;
-                case 38: dil.setPinCount(PinCount._38); break;
-                case 40: dil.setPinCount(PinCount._40); break;
-                case 42: dil.setPinCount(PinCount._42); break;
-                case 44: dil.setPinCount(PinCount._44); break;
-                case 46: dil.setPinCount(PinCount._46); break;
-                case 48: dil.setPinCount(PinCount._48); break;
-                case 50: dil.setPinCount(PinCount._50); break;
-                default:
-                  LOG.error("pin count error, cannot handle {} pins", pins);
-              }
-              dil.setAlpha((byte) transparency);
+              dil.setAlpha(transparency);
               if (valueString != "") {
                 dil.setValue(valueString);
               }
               dil.setRowSpacing(spacingPro);
               dil.setControlPoint(tacke.get(0), 0);
-              dil.setPinSpacing(new Size(0.1d, SizeUnit.in));
+              dil.setPinSpacing(Size.in(0.1));
               project.getComponents().add(dil);
               break;
             case "transistor":
               TransistorTO92 trans = new TransistorTO92();
-              if (comName != "") {
-                trans.setName(comName);
-              } else {
-                trans.setName("tr");
-              }
-              trans.setAlpha((byte) transparency);
+              trans.setName(comName != "" ? comName : "tr");
+              trans.setAlpha(transparency);
               if (valueString != "") {
                 trans.setValue(valueString);
               }
-              trans.setPinSpacing(new Size(0.1, SizeUnit.in));
+              trans.setPinSpacing(Size.in(0.1));
               Point point0 = null;
               Point point1 = null;
               // note: code used to just compare angle with ints with
@@ -902,6 +871,7 @@ public class V2FileParser implements IOldFileParser {
                   x = (int) (tacke.get(1).getX());
                   y = (int) (tacke.get(1).getY() + 20);
                   point1 = new Point(x, y);
+                  break;
                 default:
                   LOG.error("Unknown transistor angle {}", angle);
               }
@@ -923,7 +893,7 @@ public class V2FileParser implements IOldFileParser {
             case "ellipse":
               Ellipse el = new Ellipse();
               el.setName("elipse");
-              el.setAlpha((byte) transparency);
+              el.setAlpha(transparency);
               el.setColor(cl);
               el.setControlPoint(tacke.get(0), 0);
               el.setControlPoint(tacke.get(1), 1);
@@ -941,7 +911,7 @@ public class V2FileParser implements IOldFileParser {
               Rectangle rec = new Rectangle();
               rec.setName("rec");
               rec.setColor(cl);
-              rec.setAlpha((byte) transparency);
+              rec.setAlpha(transparency);
               rec.setEdgeRadius(radiusPro);
               rec.setControlPoint(tacke.get(0), 0);
               rec.setControlPoint(tacke.get(1), 1);
@@ -954,7 +924,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ts.setName("ts");
               }
-              ts.setAlpha((byte) transparency);
+              ts.setAlpha(transparency);
               if (valueString != "") {
                 ts.setValue(valueString);
               }
@@ -996,7 +966,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ts.setName("ts");
               }
-              ts.setAlpha((byte) transparency);
+              ts.setAlpha(transparency);
               if (valueString != "") {
                 ts.setValue(valueString);
               }
@@ -1012,7 +982,7 @@ public class V2FileParser implements IOldFileParser {
               } else {
                 ts.setName("ts");
               }
-              ts.setAlpha((byte) transparency);
+              ts.setAlpha(transparency);
               if (valueString != "") {
                 ts.setValue(valueString);
               }

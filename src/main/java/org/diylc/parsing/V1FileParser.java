@@ -69,7 +69,6 @@ import org.diylc.core.Project;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.presenter.CalcUtils;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.utils.Constants;
@@ -82,7 +81,7 @@ public class V1FileParser implements IOldFileParser {
 
   private static final Logger LOG = LogManager.getLogger(V1FileParser.class);
 
-  private static final Size V1_GRID_SPACING = new Size(0.1d, SizeUnit.in);
+  private static final Size V1_GRID_SPACING = Size.in(0.1);
   private static final Map<String, Color> V1_COLOR_MAP = new HashMap<String, Color>();
 
   static {
@@ -217,9 +216,7 @@ public class V1FileParser implements IOldFileParser {
           long seed = Long.parseLong(node.getAttributes().getNamedItem("Seed").getNodeValue());
           Random r = new Random(seed);
           randSeed = seed;
-          int d = (int) Math.round(Math.sqrt(Math.pow(point1.x - point2.x, 2)
-                                             + Math.pow(point1.y - point2.y, 2))
-                                   / 2);
+          int d = (int) Math.round(Math.hypot(point1.x - point2.x, point1.y - point2.y) / 2);
           int x2 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.40) + myRandom(d, r));
           int y2 = (int) (point1.y + Math.round((point2.y - point1.y) * 0.40) + myRandom(d, r));
           int x3 = (int) (point1.x + Math.round((point2.x - point1.x) * 0.60) + myRandom(d, r));
@@ -242,8 +239,8 @@ public class V1FileParser implements IOldFileParser {
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
-          resistor.setLength(new Size(6.35d, SizeUnit.mm));
-          resistor.setWidth(new Size(2.2d, SizeUnit.mm));
+          resistor.setLength(Size.mm(6.35));
+          resistor.setWidth(Size.mm(2.2));
           resistor.setControlPoint(point1, 0);
           resistor.setControlPoint(point2, 1);
           component = resistor;
@@ -256,8 +253,8 @@ public class V1FileParser implements IOldFileParser {
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
-          capacitor.setLength(new Size(6d, SizeUnit.mm));
-          capacitor.setWidth(new Size(2d, SizeUnit.mm));
+          capacitor.setLength(Size.mm(6));
+          capacitor.setWidth(Size.mm(2));
           capacitor.setControlPoint(point1, 0);
           capacitor.setControlPoint(point2, 1);
           component = capacitor;
@@ -273,16 +270,16 @@ public class V1FileParser implements IOldFileParser {
           try {
             String sizeAttr = node.getAttributes().getNamedItem("Size").getNodeValue();
             if (sizeAttr.equalsIgnoreCase("small")) {
-              capacitor.setLength(new Size(3.5d, SizeUnit.mm));
+              capacitor.setLength(Size.mm(3.5));
             } else if (sizeAttr.equalsIgnoreCase("medium")) {
-              capacitor.setLength(new Size(5d, SizeUnit.mm));
+              capacitor.setLength(Size.mm(5));
             } else if (sizeAttr.equalsIgnoreCase("large")) {
-              capacitor.setLength(new Size(7d, SizeUnit.mm));
+              capacitor.setLength(Size.mm(7));
             } else {
-              capacitor.setLength(new Size(4d, SizeUnit.mm));
+              capacitor.setLength(Size.mm(4));
             }
           } catch (Exception e) {
-            capacitor.setLength(new Size(5d, SizeUnit.mm));
+            capacitor.setLength(Size.mm(5));
             LOG.debug("Could not set size of " + nameAttr);
           }
           capacitor.setControlPoint(point1, 0);
@@ -297,8 +294,8 @@ public class V1FileParser implements IOldFileParser {
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
-          capacitor.setLength(new Size(6d, SizeUnit.mm));
-          capacitor.setWidth(new Size(2d, SizeUnit.mm));
+          capacitor.setLength(Size.mm(6));
+          capacitor.setWidth(Size.mm(2));
           capacitor.setControlPoint(point1, 0);
           capacitor.setControlPoint(point2, 1);
           component = capacitor;
@@ -309,7 +306,7 @@ public class V1FileParser implements IOldFileParser {
           led.setValue(valueAttr);
           led.setBodyColor(Color.red);
           led.setBorderColor(Color.red.darker());
-          led.setLength(new Size(3d, SizeUnit.mm));
+          led.setLength(Size.mm(3));
           led.setControlPoint(point1, 0);
           led.setControlPoint(point2, 1);
           component = led;
@@ -356,8 +353,8 @@ public class V1FileParser implements IOldFileParser {
             pinCount = (x2Attr - x1Attr + 1) * 2;
             ic.setOrientation(Orientation._270);
           }
-          ic.setRowSpacing(new Size(0.1 * rowSpace, SizeUnit.in));
-          ic.setPinCount(DIL_IC.PinCount.valueOf("_" + pinCount));
+          ic.setRowSpacing(Size.mm(0.1 * rowSpace));
+          ic.setPinCount(DIL_IC.defaultPinCount().setPins(pinCount));
           ic.setName(nameAttr);
           // Translate control points.
           for (int j = 0; j < ic.getControlPointCount(); j++) {
@@ -409,7 +406,7 @@ public class V1FileParser implements IOldFileParser {
             sw.setName(nameAttr);
             sw.setOrientation(orientation);
             sw.setValue(switchType);
-            sw.setSpacing(new Size(0.1, SizeUnit.in));
+            sw.setSpacing(Size.in(0.1));
             // compensate for potential negative coordinates after the type and orientation have
             // been set. Make sure that the top left corner is at (0, 0)
             int dx = 0;
@@ -436,19 +433,19 @@ public class V1FileParser implements IOldFileParser {
           SIL_IC ic = new SIL_IC();
           int pinCount = 8;
           if (x1Attr == x2Attr && y1Attr < y2Attr) {
-            pinCount = (y2Attr - y1Attr + 1);
+            pinCount = y2Attr - y1Attr + 1;
             ic.setOrientation(Orientation.DEFAULT);
           } else if (x1Attr > x2Attr && y1Attr == y2Attr) {
-            pinCount = (x1Attr - x2Attr + 1);
+            pinCount = x1Attr - x2Attr + 1;
             ic.setOrientation(Orientation._90);
           } else if (x1Attr == x2Attr && y1Attr > y2Attr) {
-            pinCount = (y1Attr - y2Attr + 1);
+            pinCount = y1Attr - y2Attr + 1;
             ic.setOrientation(Orientation._180);
           } else if (x1Attr < x2Attr && y1Attr == y2Attr) {
-            pinCount = (x2Attr - x1Attr + 1);
+            pinCount = x2Attr - x1Attr + 1;
             ic.setOrientation(Orientation._270);
           }
-          ic.setPinCount(SIL_IC.PinCount.valueOf("_" + pinCount));
+          ic.setPinCount(SIL_IC.defaultPinCount().setPins(pinCount));
           ic.setName(nameAttr);
           // Translate control points.
           for (int j = 0; j < ic.getControlPointCount(); j++) {
@@ -461,8 +458,8 @@ public class V1FileParser implements IOldFileParser {
         } else if (nodeName.equalsIgnoreCase("pot")) {
           LOG.debug("Recognized " + nodeName);
           PotentiometerPanel pot = new PotentiometerPanel();
-          pot.setBodyDiameter(new Size(14d, SizeUnit.mm));
-          pot.setSpacing(new Size(0.2, SizeUnit.in));
+          pot.setBodyDiameter(Size.mm(14));
+          pot.setSpacing(Size.in(0.2));
           pot.setName(nameAttr);
           try {
             pot.setValue(Resistance.parseResistance(valueAttr));
@@ -507,7 +504,6 @@ public class V1FileParser implements IOldFileParser {
               p.translate(point1.x, point1.y + delta);
               pot.setControlPoint(p, j);
             }
-            ;
           }
           component = pot;
         } else if (nodeName.equalsIgnoreCase("trimmer")) {
@@ -684,7 +680,7 @@ public class V1FileParser implements IOldFileParser {
             ((AbstractLeadedComponent<?>) component).setDisplay(Display.NAME);
           }
           if (component instanceof AbstractTransparentComponent<?>) {
-            ((AbstractTransparentComponent<?>) component).setAlpha((byte) 100);
+            ((AbstractTransparentComponent<?>) component).setAlpha(100);
           }
           project.getComponents().add(component);
         }
@@ -779,10 +775,11 @@ public class V1FileParser implements IOldFileParser {
 
   private long randSeed = 0;
 
-  @SuppressWarnings("unused")
+  /*
   private int randInt(int range) {
     long newSeed = randSeed * 0x08088405 + 1;
     randSeed = newSeed;
     return (int) ((long) newSeed * range >> 32);
   }
+  */
 }
