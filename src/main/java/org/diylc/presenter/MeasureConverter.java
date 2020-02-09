@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -36,15 +37,17 @@ import org.diylc.core.measures.AbstractMeasure;
  */
 public class MeasureConverter implements Converter {
 
-  @SuppressWarnings("rawtypes")
   @Override
   public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
     AbstractMeasure m = (AbstractMeasure) object;
-    if (m.getValue() != null) writer.addAttribute("value", Double.toString(m.getValue()));
-    if (m.getUnit() != null) writer.addAttribute("unit", m.getUnit().name());
+    if (m.getValue() != null) {
+      writer.addAttribute("value", Double.toString(m.getValue()));
+    }
+    if (m.getUnit() != null) {
+      writer.addAttribute("unit", m.getUnit().name());
+    }
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
     Double value = null;
@@ -55,14 +58,20 @@ public class MeasureConverter implements Converter {
     } else {
       if (reader.hasMoreChildren()) {
         reader.moveDown();
-        if (reader.getNodeName().equals("value")) value = Double.parseDouble(reader.getValue());
-        else if (reader.getNodeName().equals("unit")) unitStr = reader.getValue();
+        if (reader.getNodeName().equals("value")) {
+          value = Double.parseDouble(reader.getValue());
+        } else if (reader.getNodeName().equals("unit")) {
+          unitStr = reader.getValue();
+        }
         reader.moveUp();
       }
       if (reader.hasMoreChildren()) {
         reader.moveDown();
-        if (reader.getNodeName().equals("value")) value = Double.parseDouble(reader.getValue());
-        else if (reader.getNodeName().equals("unit")) unitStr = reader.getValue();
+        if (reader.getNodeName().equals("value")) {
+          value = Double.parseDouble(reader.getValue());
+        } else if (reader.getNodeName().equals("unit")) {
+          unitStr = reader.getValue();
+        }
         reader.moveUp();
       }
     }
@@ -83,7 +92,6 @@ public class MeasureConverter implements Converter {
     return null;
   }
 
-  @SuppressWarnings("rawtypes")
   @Override
   public boolean canConvert(Class clazz) {
     return AbstractMeasure.class.isAssignableFrom(clazz);
