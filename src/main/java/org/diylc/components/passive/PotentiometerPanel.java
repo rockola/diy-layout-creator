@@ -20,21 +20,21 @@
 
 package org.diylc.components.passive;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.Area;
 import org.diylc.components.transform.PotentiometerTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
@@ -60,16 +60,16 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   private static final long serialVersionUID = 1L;
 
-  protected static Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
-  protected static Size SPACING = new Size(0.3d, SizeUnit.in);
-  protected static Size LUG_DIAMETER = new Size(0.15d, SizeUnit.in);
-  protected static Size PIN_SIZE = new Size(0.05d, SizeUnit.in);
-  protected static Size NUT_SIZE = new Size(0.4d, SizeUnit.in);
-  protected static Size SHAFT_SIZE = new Size(1 / 4d, SizeUnit.in);
-  protected static Color BODY_COLOR = Color.lightGray;
-  protected static Color WAFER_COLOR = Color.decode("#CD8500");
-  protected static Color BORDER_COLOR = Color.gray;
-  protected static Color NUT_COLOR = Color.decode("#CBD5DB");
+  protected static final Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
+  protected static final Size SPACING = new Size(0.3d, SizeUnit.in);
+  protected static final Size LUG_DIAMETER = new Size(0.15d, SizeUnit.in);
+  protected static final Size PIN_SIZE = new Size(0.05d, SizeUnit.in);
+  protected static final Size NUT_SIZE = new Size(0.4d, SizeUnit.in);
+  protected static final Size SHAFT_SIZE = new Size(1 / 4d, SizeUnit.in);
+  protected static final Color BODY_COLOR = Color.lightGray;
+  protected static final Color WAFER_COLOR = Color.decode("#CD8500");
+  protected static final Color BORDER_COLOR = Color.gray;
+  protected static final Color NUT_COLOR = Color.decode("#CBD5DB");
 
   protected Size bodyDiameter = BODY_DIAMETER;
   protected Size spacing = SPACING;
@@ -264,31 +264,27 @@ public class PotentiometerPanel extends AbstractPotentiometer {
         }
         // Make holes in the lugs.
         for (int i = 0; i < 3; i++) {
-          body[4 + i].subtract(
-              new Area(
-                  new Ellipse2D.Double(
-                      controlPoints[i].x - holeDiameter / 2,
-                      controlPoints[i].y - holeDiameter / 2,
-                      holeDiameter,
-                      holeDiameter)));
+          body[4 + i].subtract(new Area(new Ellipse2D.Double(
+              controlPoints[i].x - holeDiameter / 2,
+              controlPoints[i].y - holeDiameter / 2,
+              holeDiameter,
+              holeDiameter)));
         }
       }
 
       if (getView() == View.ShaftUp) {
         int nutSize = (int) NUT_SIZE.convertToPixels();
         int shaftSize = (int) SHAFT_SIZE.convertToPixels();
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
+        int[] pointsX = new int[6];
+        int[] pointsY = new int[6];
         for (int i = 0; i < 6; i++) {
           double alpha = Math.toRadians(60 * i);
-          xPoints[i] = (int) (centerX + Math.cos(alpha) * nutSize / 2);
-          yPoints[i] = (int) (centerY + Math.sin(alpha) * nutSize / 2);
+          pointsX[i] = (int) (centerX + Math.cos(alpha) * nutSize / 2);
+          pointsY[i] = (int) (centerY + Math.sin(alpha) * nutSize / 2);
         }
-        body[7] = new Area(new Polygon(xPoints, yPoints, 6));
-        body[8] =
-            new Area(
-                new Ellipse2D.Double(
-                    centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
+        body[7] = new Area(new Polygon(pointsX, pointsY, 6));
+        body[8] = new Area(new Ellipse2D.Double(
+            centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
       }
     }
     return body;
@@ -318,30 +314,32 @@ public class PotentiometerPanel extends AbstractPotentiometer {
     Area[] body = getBody();
     for (int i = 0; i < body.length; i++) {
       Area shape = body[i];
-      // determine color
       if (shape != null) {
+        // determine color
+        Color theColor = getBodyColor();
         switch (i) {
           case 7:
-            g2d.setColor(getNutColor());
+            theColor = getNutColor();
             break;
           case 9:
-            g2d.setColor(getWaferColor());
+            theColor = getWaferColor();
             break;
           default:
-            g2d.setColor(getBodyColor());
+        }
+        g2d.setColor(theColor);
+
+        if (!outlineMode) {
+          final Composite oldComposite = setTransparency(g2d);
+          if (i == 3) {
+            drawingObserver.startTrackingContinuityArea(true);
+          }
+          g2d.fill(shape);
+          if (i == 3) {
+            drawingObserver.stopTrackingContinuityArea();
+          }
+          g2d.setComposite(oldComposite);
         }
 
-        Composite oldComposite = g2d.getComposite();
-        if (alpha < MAX_ALPHA) {
-          g2d.setComposite(
-              AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-        }
-        if (!outlineMode) {
-          if (i == 3) drawingObserver.startTrackingContinuityArea(true);
-          g2d.fill(shape);
-          if (i == 3) drawingObserver.stopTrackingContinuityArea();
-        }
-        g2d.setComposite(oldComposite);
         Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
         g2d.setColor(finalBorderColor);
         g2d.draw(shape);
@@ -421,7 +419,9 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty
   public Type getType() {
-    if (type == null) type = Type.ThroughHole;
+    if (type == null) {
+      type = Type.ThroughHole;
+    }
     return type;
   }
 
@@ -432,7 +432,9 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "Nut")
   public Color getNutColor() {
-    if (nutColor == null) nutColor = NUT_COLOR;
+    if (nutColor == null) {
+      nutColor = NUT_COLOR;
+    }
     return nutColor;
   }
 
@@ -480,7 +482,9 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "View")
   public View getView() {
-    if (view == null) view = showShaft ? View.ShaftUp : View.ShaftDown;
+    if (view == null) {
+      view = showShaft ? View.ShaftUp : View.ShaftDown;
+    }
     return view;
   }
 
@@ -491,7 +495,9 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @EditableProperty(name = "Wafer")
   public Color getWaferColor() {
-    if (waferColor == null) waferColor = WAFER_COLOR;
+    if (waferColor == null) {
+      waferColor = WAFER_COLOR;
+    }
     return waferColor;
   }
 
@@ -501,10 +507,12 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   @Override
   public String getInternalLinkName(int index1, int index2) {
-    if (index1 > index2) return getInternalLinkName(index2, index1);
-
-    if (index2 - index1 == 1) return (index1 + 1) + "-" + (index2 + 1);
-
+    if (index1 > index2) {
+      return getInternalLinkName(index2, index1);
+    }
+    if (index2 - index1 == 1) {
+      return (index1 + 1) + "-" + (index2 + 1);
+    }
     return null;
   }
 
@@ -519,7 +527,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
     private String value;
 
-    private Type(String value) {
+    Type(String value) {
       this.value = value;
     }
 
@@ -535,7 +543,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
     private String value;
 
-    private View(String value) {
+    View(String value) {
       this.value = value;
     }
 
