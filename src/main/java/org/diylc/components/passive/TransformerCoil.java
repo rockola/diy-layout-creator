@@ -50,7 +50,7 @@ import org.diylc.utils.Constants;
     category = "Schematic Symbols",
     instanceNamePrefix = "L",
     description =
-        "Transformer coil symbol. Use multiple instances together with \"Transformer Core Symbol\"<br>to draw transformer schematics.",
+        "Transformer coil symbol. Use together with \"Transformer Core Symbol\"<br>for transformer schematics.",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic")
@@ -58,11 +58,11 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
 
   private static final long serialVersionUID = 1L;
 
-  public static Size TAP_SPACING = new Size(0.2d, SizeUnit.in);
-  public static Size LEAD_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size OFFSET = new Size(0.025d, SizeUnit.in);
-  public static Color COLOR = Color.blue;
-  public static Color LEAD_COLOR = Color.black;
+  public static final Size TAP_SPACING = new Size(0.2d, SizeUnit.in);
+  public static final Size LEAD_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size OFFSET = new Size(0.025d, SizeUnit.in);
+  public static final Color COLOR = Color.blue;
+  public static final Color LEAD_COLOR = Color.black;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   private Orientation orientation = Orientation.DEFAULT;
@@ -240,14 +240,10 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
           break;
       }
 
-      GeneralPath leads = new GeneralPath();
-      GeneralPath coil = new GeneralPath();
-
       int coilsPerTap =
           (int) Math.round(4 * tapSpacing.convertToPixels() / TAP_SPACING.convertToPixels());
-
       double offset = OFFSET.convertToPixels();
-
+      GeneralPath leads = new GeneralPath();
       int i = 0;
       leads.moveTo(this.controlPoints[i].x, this.controlPoints[i].y);
       leads.lineTo(
@@ -261,7 +257,6 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       double dx = this.controlPoints[i + 1].getX() - this.controlPoints[i].getX();
       double dy = this.controlPoints[i + 1].getY() - this.controlPoints[i].getY();
       double d = Math.max(Math.abs(dx), Math.abs(dy)) / coilsPerTap;
-
       double x1 = this.controlPoints[i].getX() + fx * (spacing + d + offset);
       double y1 = this.controlPoints[i].getY() + fy * (spacing + d + offset);
       double x2 = this.controlPoints[i + 1].getX() + fx * (spacing + d + offset);
@@ -269,10 +264,10 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       double dxa = x2 - x1;
       double dya = y2 - y1;
 
+      GeneralPath coil = new GeneralPath();
       coil.moveTo(
           this.controlPoints[i].getX() + fx * (spacing + offset),
           this.controlPoints[i].getY() + fy * (spacing + offset));
-
       for (int j = 0; j < coilsPerTap; j++) {
         coil.curveTo(
             x1 + dxa / coilsPerTap * j,
@@ -282,8 +277,8 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
             this.controlPoints[i].getX() + fx * (spacing + offset) + dx / coilsPerTap * (j + 1),
             this.controlPoints[i].getY() + fy * (spacing + offset) + dy / coilsPerTap * (j + 1));
       }
-      body = new Shape[2];
 
+      body = new Shape[2];
       body[0] = leads;
       body[1] = coil;
     }

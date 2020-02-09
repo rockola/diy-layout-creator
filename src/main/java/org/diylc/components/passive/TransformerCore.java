@@ -48,7 +48,7 @@ import org.diylc.utils.Constants;
     category = "Schematic Symbols",
     instanceNamePrefix = "T",
     description =
-        "Transformer core symbol. Use multiple instances together with \"Transformer Coil Symbol\"<br>to draw transformer schematics.",
+        "Transformer core symbol. Use together with \"Transformer Coil Symbol\"<br>for transformer schematics.",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     creationMethod = CreationMethod.POINT_BY_POINT,
@@ -57,8 +57,8 @@ public class TransformerCore extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size SPACING = new Size(0.025d, SizeUnit.in);
-  public static Color COLOR = Color.blue;
+  public static final Size SPACING = new Size(0.025d, SizeUnit.in);
+  public static final Color COLOR = Color.blue;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
 
@@ -113,10 +113,9 @@ public class TransformerCore extends AbstractComponent<Void> {
       return;
     }
 
-    double theta = Math.atan2(
+    double theta = HALF_PI + Math.atan2(
         this.controlPoints[1].y - this.controlPoints[0].y,
-        this.controlPoints[1].x - this.controlPoints[0].x)
-                   + Math.PI / 2;
+        this.controlPoints[1].x - this.controlPoints[0].x);
     double spacing = SPACING.convertToPixels();
 
     Color finalColor = tryColor(outlineMode, color);
