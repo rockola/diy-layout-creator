@@ -36,7 +36,7 @@ public abstract class AbstractRadialComponent<T> extends AbstractLeadedComponent
 
   private static final long serialVersionUID = 1L;
 
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
   private Size pinSpacing = PIN_SPACING;
 
   @Override
