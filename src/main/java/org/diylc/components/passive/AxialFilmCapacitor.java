@@ -34,7 +34,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Film Capacitor (Axial)",
@@ -49,8 +48,8 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(0.5);
+  public static final Size DEFAULT_HEIGHT = Size.in(0.125);
   public static final Color BODY_COLOR = Color.decode("#FFE303");
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
 

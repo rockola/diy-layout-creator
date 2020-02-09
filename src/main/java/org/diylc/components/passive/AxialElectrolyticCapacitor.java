@@ -40,7 +40,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -56,8 +55,8 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(.5);
+  public static final Size DEFAULT_HEIGHT = Size.in(.125);
   public static final Color BODY_COLOR = Color.decode("#6B6DCE");
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
   public static final Color MARKER_COLOR = Color.decode("#8CACEA");

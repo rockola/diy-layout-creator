@@ -34,7 +34,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class RadialCapacitor extends AbstractRadialComponent<Capacitance> {
 

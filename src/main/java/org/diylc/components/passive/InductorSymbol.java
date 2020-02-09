@@ -36,7 +36,6 @@ import org.diylc.core.measures.Current;
 import org.diylc.core.measures.Inductance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Inductor",
@@ -53,8 +52,8 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in);
-  public static final Size DEFAULT_WIDTH = new Size(0.08, SizeUnit.in);
+  public static final Size DEFAULT_LENGTH = Size.in(0.3);
+  public static final Size DEFAULT_WIDTH = Size.in(0.08);
 
   private Inductance value = null;
   private Current current = null;

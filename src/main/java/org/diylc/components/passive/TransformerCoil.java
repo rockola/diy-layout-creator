@@ -41,7 +41,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -58,9 +57,9 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size TAP_SPACING = new Size(0.2d, SizeUnit.in);
-  public static final Size LEAD_SPACING = new Size(0.1d, SizeUnit.in);
-  public static final Size OFFSET = new Size(0.025d, SizeUnit.in);
+  public static final Size TAP_SPACING = Size.in(0.2);
+  public static final Size LEAD_SPACING = Size.in(0.1);
+  public static final Size OFFSET = Size.in(0.025);
   public static final Color COLOR = Color.blue;
   public static final Color LEAD_COLOR = Color.black;
 

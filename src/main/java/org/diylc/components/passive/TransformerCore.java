@@ -39,7 +39,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -57,7 +56,7 @@ public class TransformerCore extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size SPACING = new Size(0.025d, SizeUnit.in);
+  public static final Size SPACING = Size.in(0.025);
   public static final Color COLOR = Color.blue;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};

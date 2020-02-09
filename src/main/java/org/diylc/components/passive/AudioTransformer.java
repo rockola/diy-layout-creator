@@ -53,7 +53,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -77,16 +76,16 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
   public static final Color LABEL_COLOR = Color.white;
   public static final int EDGE_RADIUS = 6;
-  public static final Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
+  public static final Size PIN_SIZE = Size.in(0.03);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
-  private Size leadSpacing = new Size(0.1d, SizeUnit.in);
-  private Size windingSpacing = new Size(0.5d, SizeUnit.in);
-  private Size coreThickness = new Size(0.15d, SizeUnit.in);
-  private Size coreWidth = new Size(0.6, SizeUnit.in);
-  private Size coilWidth = new Size(0.5, SizeUnit.in);
-  private Size coilLength = new Size(0.6, SizeUnit.in);
+  private Size leadSpacing = Size.in(0.1);
+  private Size windingSpacing = Size.in(0.5);
+  private Size coreThickness = Size.in(0.15);
+  private Size coreWidth = Size.in(0.6);
+  private Size coilWidth = Size.in(0.5);
+  private Size coilLength = Size.in(0.6);
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color coreColor = CORE_COLOR;
   private Color coreBorderColor = CORE_BORDER_COLOR;

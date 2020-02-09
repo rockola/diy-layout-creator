@@ -44,7 +44,6 @@ import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -60,12 +59,12 @@ public class PotentiometerPanel extends AbstractPotentiometer {
 
   private static final long serialVersionUID = 1L;
 
-  protected static final Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
-  protected static final Size SPACING = new Size(0.3d, SizeUnit.in);
-  protected static final Size LUG_DIAMETER = new Size(0.15d, SizeUnit.in);
-  protected static final Size PIN_SIZE = new Size(0.05d, SizeUnit.in);
-  protected static final Size NUT_SIZE = new Size(0.4d, SizeUnit.in);
-  protected static final Size SHAFT_SIZE = new Size(1 / 4d, SizeUnit.in);
+  protected static final Size BODY_DIAMETER = Size.in(1);
+  protected static final Size SPACING = Size.in(0.3);
+  protected static final Size LUG_DIAMETER = Size.in(0.15);
+  protected static final Size PIN_SIZE = Size.in(0.05);
+  protected static final Size NUT_SIZE = Size.in(0.4);
+  protected static final Size SHAFT_SIZE = Size.in(0.25);
   protected static final Color BODY_COLOR = Color.lightGray;
   protected static final Color WAFER_COLOR = Color.decode("#CD8500");
   protected static final Color BORDER_COLOR = Color.gray;

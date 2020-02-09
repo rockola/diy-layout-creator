@@ -50,7 +50,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -72,9 +71,9 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public static final Color PIN_COLOR = METAL_COLOR; // Color.decode("#00B2EE");
   //  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
   public static final Color LABEL_COLOR = Color.white;
-  public static final Size PIN_SIZE = new Size(0.08d, SizeUnit.in);
-  //  public static final Size PIN_SPACING = new Size(0.05d, SizeUnit.in);
-  public static final Size BODY_DIAMETER = new Size(1d, SizeUnit.in);
+  public static final Size PIN_SIZE = Size.in(0.08);
+  //  public static final Size PIN_SPACING = Size.in(0.05);
+  public static final Size BODY_DIAMETER = Size.in(1);
   private static final double[] RELATIVE_DIAMETERS = new double[] {0.4d, 0.6d};
   private static final Format format = new DecimalFormat("0.#####");
 
@@ -400,30 +399,15 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     }
 
     // Draw label.
-    g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getStringValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    } else if (getDisplay() == Display.NAME) {
-      label = getName();
-    } else if (getDisplay() == Display.VALUE) {
-      label = getStringValue();
-    } else if (getDisplay() == Display.BOTH) {
-      label = getName() + "\n" + getStringValue();
-    }
-
     Rectangle bounds = area[0].getBounds();
-
+    g2d.setFont(project.getFont());
     StringUtils.drawCenteredText(
         g2d,
-        label,
+        getLabelForDisplay(),
         bounds.x + bounds.width / 2,
-        bounds.y + bounds.height / 2,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        bounds.y + bounds.height / 2);
 
     // draw polarity markers
     g2d.setColor(pinColor.darker());
@@ -444,23 +428,17 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     int margin = 2 * width / 32;
     Area area = new Area(new Ellipse2D.Double(
         margin, margin, width - 2 * margin, width - 2 * margin));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(area);
-    g2d.setColor(BORDER_COLOR);
-    g2d.draw(area);
-    g2d.setColor(BASE_COLOR);
+    area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     margin = 6 * width / 32;
     area = new Area(new Ellipse2D.Double(
         margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
-    g2d.fill(area);
-    g2d.setColor(PIN_COLOR);
+    area.fill(g2d, BASE_COLOR);
     int pinSize = 2 * width / 32;
     for (int i = 0; i < 3; i++) {
-      g2d.fillOval(
+      Area.circle(
           (i == 1 ? width * 3 / 8 : width / 2) - pinSize / 2,
           height / 2 + (i - 1) * (height / 5),
-          pinSize,
-          pinSize);
+          pinSize).fill(g2d, PIN_COLOR);
     }
   }
 

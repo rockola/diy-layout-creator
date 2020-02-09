@@ -34,7 +34,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Current;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Fuse",
@@ -51,8 +50,8 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_LENGTH = new Size(0.3, SizeUnit.in);
-  public static final Size DEFAULT_WIDTH = new Size(0.12, SizeUnit.in);
+  public static final Size DEFAULT_LENGTH = Size.in(0.3);
+  public static final Size DEFAULT_WIDTH = Size.in(0.12);
 
   private Current value = null;
 

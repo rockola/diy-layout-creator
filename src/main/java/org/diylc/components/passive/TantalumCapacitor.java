@@ -23,15 +23,16 @@ package org.diylc.components.passive;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractRadialComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -39,7 +40,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -55,12 +55,12 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_SIZE = new Size(1d / 4, SizeUnit.in);
-  public static Color BODY_COLOR = Color.decode("#CFAD28");
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color MARKER_COLOR = BODY_COLOR.darker();
-  public static Color TICK_COLOR = Color.white;
-  public static Size HEIGHT = new Size(0.4d, SizeUnit.in);
+  public static final Size DEFAULT_SIZE = Size.in(1d / 4);
+  public static final Color BODY_COLOR = Color.decode("#CFAD28");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color MARKER_COLOR = BODY_COLOR.darker();
+  public static final Color TICK_COLOR = Color.white;
+  public static final Size HEIGHT = Size.in(0.4);
 
   private Capacitance value = null;
   private org.diylc.core.measures.Voltage voltageNew = null;

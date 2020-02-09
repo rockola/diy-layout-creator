@@ -34,7 +34,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Capacitor",
@@ -51,8 +50,8 @@ public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> 
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_LENGTH = new Size(0.05, SizeUnit.in);
-  public static final Size DEFAULT_WIDTH = new Size(0.15, SizeUnit.in);
+  public static final Size DEFAULT_LENGTH = Size.in(0.05);
+  public static final Size DEFAULT_WIDTH = Size.in(0.15);
 
   private Capacitance value = null;
   @Deprecated private Voltage voltage = Voltage._63V;

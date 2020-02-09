@@ -28,16 +28,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
@@ -46,7 +48,6 @@ import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -61,27 +62,22 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
   private static final long serialVersionUID = 1L;
 
-  protected static Size FLAT_BODY_SIZE = new Size(9.5d, SizeUnit.mm);
-  protected static Size FLAT_LARGE_BODY_SIZE = new Size(13d, SizeUnit.mm);
-  protected static Size FLAT_SMALL_BODY_SIZE = new Size(5d, SizeUnit.mm);
-  protected static Size FLAT_SMALL2_BODY_SIZE = new Size(9.5d, SizeUnit.mm);
-  protected static Size FLAT_SHAFT_SIZE = new Size(4.5d, SizeUnit.mm);
-  protected static Size VERTICAL_BODY_LENGTH = new Size(9.5d, SizeUnit.mm);
-  protected static Size VERTICAL_BODY_WIDTH = new Size(4.5d, SizeUnit.mm);
-  protected static Size ROUNDED_EDGE = new Size(1d, SizeUnit.mm);
-  protected static Size SPACING = new Size(0.1d, SizeUnit.in);
-  private static Color BODY_COLOR = Color.decode("#FFFFE0");
-  private static Color BORDER_COLOR = Color.decode("#8E8E38");
-  private static Color SHAFT_COLOR = Color.decode("#FFFFE0");
-  private static Color SHAFT_BORDER_COLOR = Color.decode("#8E8E38");
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  protected static Display DISPLAY = Display.NAME;
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Size PIN_SIZE = Size.in(0.03);
+
+  protected static final Size FLAT_SHAFT_SIZE = Size.mm(4.5);
+  protected static final Size ROUNDED_EDGE = Size.mm(1);
+  protected static final Size SPACING = Size.in(0.1);
+  protected static final Display DISPLAY = Display.NAME;
+
+  private static final Color BODY_COLOR = Color.decode("#FFFFE0");
+  private static final Color BORDER_COLOR = Color.decode("#8E8E38");
+  private static final Color SHAFT_COLOR = Color.decode("#FFFFE0");
+  private static final Color SHAFT_BORDER_COLOR = Color.decode("#8E8E38");
 
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
-  protected Display display = DISPLAY;
   // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
   protected transient Shape[] body = null;
 
@@ -90,206 +86,17 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   public TrimmerPotentiometer() {
     controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
     updateControlPoints();
+    display = DISPLAY;
   }
 
   protected void updateControlPoints() {
     int spacing = (int) SPACING.convertToPixels();
-    int dx1 = 0;
-    int dy1 = 0;
-    int dx2 = 0;
-    int dy2 = 0;
-    switch (getOrientation()) {
-      case DEFAULT:
-        switch (getType()) {
-          case FLAT_SMALL:
-          case FLAT_XSMALL:
-            dx1 = 2 * spacing;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-          case FLAT_SMALL2:
-            dx1 = 4 * spacing;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-          case FLAT_LARGE:
-            dx1 = 4 * spacing;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-          case FLAT_XLARGE:
-            dx1 = 5 * spacing;
-            dy1 = 2 * spacing;
-            dx2 = 0;
-            dy2 = 4 * spacing;
-            break;
-          case VERTICAL_INLINE:
-            dx1 = 0;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-          case VERTICAL_OFFSET:
-            dx1 = spacing;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-          case VERTICAL_OFFSET_BIG_GAP:
-            dx1 = 2 * spacing;
-            dy1 = spacing;
-            dx2 = 0;
-            dy2 = 2 * spacing;
-            break;
-        }
-        break;
-      case _90:
-        switch (getType()) {
-          case FLAT_SMALL:
-          case FLAT_XSMALL:
-            dx1 = -spacing;
-            dy1 = 2 * spacing;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_SMALL2:
-            dx1 = -spacing;
-            dy1 = 4 * spacing;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_LARGE:
-            dx1 = -spacing;
-            dy1 = 4 * spacing;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_XLARGE:
-            dx1 = -2 * spacing;
-            dy1 = 5 * spacing;
-            dx2 = -4 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_INLINE:
-            dx1 = -spacing;
-            dy1 = 0;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_OFFSET:
-            dx1 = -spacing;
-            dy1 = spacing;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_OFFSET_BIG_GAP:
-            dx1 = -spacing;
-            dy1 = 2 * spacing;
-            dx2 = -2 * spacing;
-            dy2 = 0;
-            break;
-        }
-        break;
-      case _180:
-        switch (getType()) {
-          case FLAT_SMALL:
-          case FLAT_XSMALL:
-            dx1 = -2 * spacing;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-          case FLAT_SMALL2:
-            dx1 = -4 * spacing;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-          case FLAT_LARGE:
-            dx1 = -4 * spacing;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-          case FLAT_XLARGE:
-            dx1 = -5 * spacing;
-            dy1 = -2 * spacing;
-            dx2 = 0;
-            dy2 = -4 * spacing;
-            break;
-          case VERTICAL_INLINE:
-            dx1 = 0;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-          case VERTICAL_OFFSET:
-            dx1 = -spacing;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-          case VERTICAL_OFFSET_BIG_GAP:
-            dx1 = -2 * spacing;
-            dy1 = -spacing;
-            dx2 = 0;
-            dy2 = -2 * spacing;
-            break;
-        }
-        break;
-      case _270:
-        switch (getType()) {
-          case FLAT_SMALL:
-          case FLAT_XSMALL:
-            dx1 = spacing;
-            dy1 = -2 * spacing;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_SMALL2:
-            dx1 = spacing;
-            dy1 = -4 * spacing;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_LARGE:
-            dx1 = spacing;
-            dy1 = -4 * spacing;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-          case FLAT_XLARGE:
-            dx1 = 2 * spacing;
-            dy1 = -5 * spacing;
-            dx2 = 4 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_INLINE:
-            dx1 = spacing;
-            dy1 = 0;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_OFFSET:
-            dx1 = spacing;
-            dy1 = -spacing;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-          case VERTICAL_OFFSET_BIG_GAP:
-            dx1 = spacing;
-            dy1 = -2 * spacing;
-            dx2 = 2 * spacing;
-            dy2 = 0;
-            break;
-        }
-        break;
-      default:
-        break;
-    }
+    int[] multipliers = getType().getControlPointMultipliers(getOrientation());
+    int dx1 = multipliers[0] * spacing;
+    int dy1 = multipliers[1] * spacing;
+    int dx2 = multipliers[2] * spacing;
+    int dy2 = multipliers[3] * spacing;
+
     controlPoints[1].setLocation(controlPoints[0].x + dx1, controlPoints[0].y + dy1);
     controlPoints[2].setLocation(controlPoints[0].x + dx2, controlPoints[0].y + dy2);
   }
@@ -300,50 +107,33 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
       // Calculate the center point as center of the minimum bounding
       // rectangle.
-      int centerX =
+      final int centerX =
           (Math.max(Math.max(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x)
                   + Math.min(Math.min(controlPoints[0].x, controlPoints[1].x), controlPoints[2].x))
               / 2;
-      int centerY =
+      final int centerY =
           (Math.max(Math.max(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y)
                   + Math.min(Math.min(controlPoints[0].y, controlPoints[1].y), controlPoints[2].y))
               / 2;
 
       // Calculate body dimensions based on the selected type.
-      int length = 0;
-      int width = 0;
+      int length = getClosestOdd(getType().getLength().convertToPixels());
+      int width = getClosestOdd(getType().getWidth().convertToPixels());
       switch (getType()) {
         case FLAT_LARGE:
         case FLAT_SMALL:
         case FLAT_XSMALL:
         case FLAT_XLARGE:
         case FLAT_SMALL2:
-          if (getType() == TrimmerType.FLAT_XSMALL)
-            length = getClosestOdd(FLAT_SMALL_BODY_SIZE.convertToPixels());
-          else if (getType() == TrimmerType.FLAT_XLARGE)
-            length = getClosestOdd(FLAT_LARGE_BODY_SIZE.convertToPixels());
-          else if (getType() == TrimmerType.FLAT_SMALL2)
-            length = getClosestOdd(FLAT_SMALL2_BODY_SIZE.convertToPixels());
-          else length = getClosestOdd(FLAT_BODY_SIZE.convertToPixels());
-          width = length;
           int shaftSize = getClosestOdd(FLAT_SHAFT_SIZE.convertToPixels());
-          Area shaft =
-              new Area(
-                  new Ellipse2D.Double(
-                      centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
-          Area slot =
-              new Area(
-                  new Rectangle2D.Double(
-                      centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize, shaftSize / 4));
+          Area shaft = Area.circle(centerX, centerY, shaftSize);
+          Area slot = new Area(new Rectangle2D.Double(
+              centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize, shaftSize / 4));
           slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, centerX, centerY));
           shaft.subtract(slot);
           body[1] = shaft;
           break;
-        case VERTICAL_INLINE:
-        case VERTICAL_OFFSET:
-        case VERTICAL_OFFSET_BIG_GAP:
-          length = getClosestOdd(VERTICAL_BODY_LENGTH.convertToPixels());
-          width = getClosestOdd(VERTICAL_BODY_WIDTH.convertToPixels());
+        default:
           break;
       }
       if (orientation == Orientation.DEFAULT || orientation == Orientation._180) {
@@ -351,13 +141,14 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
         length = width;
         width = p;
       }
-      double edge = ROUNDED_EDGE.convertToPixels();
-      if (getType() == TrimmerType.FLAT_SMALL2)
-        body[0] = new Ellipse2D.Double(centerX - length / 2, centerY - width / 2, length, width);
-      else
-        body[0] =
-            new RoundRectangle2D.Double(
-                centerX - length / 2, centerY - width / 2, length, width, edge, edge);
+      switch (getType()) {
+        case FLAT_SMALL2:
+          body[0] = Area.oval(centerX, centerY, length, width);
+          break;
+        default:
+          double edge = ROUNDED_EDGE.convertToPixels();
+          body[0] = Area.centeredRoundRect(centerX, centerY, length, width, edge);
+      }
     }
     return body;
   }
@@ -390,21 +181,17 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     Shape shaftShape = getBody()[1];
     if (mainShape != null) {
       g2d.setColor(bodyColor);
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
       if (!outlineMode) {
+        Composite oldComposite = setTransparency(g2d);
         g2d.fill(mainShape);
+        if (shaftShape != null) {
+          g2d.setColor(SHAFT_COLOR);
+          g2d.fill(shaftShape);
+          g2d.setColor(SHAFT_BORDER_COLOR);
+          g2d.draw(shaftShape);
+        }
+        g2d.setComposite(oldComposite);
       }
-      if (!outlineMode && shaftShape != null) {
-        g2d.setColor(SHAFT_COLOR);
-        g2d.fill(shaftShape);
-        g2d.setColor(SHAFT_BORDER_COLOR);
-        g2d.draw(shaftShape);
-      }
-      g2d.setComposite(oldComposite);
       Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
       g2d.setColor(finalBorderColor);
       g2d.draw(mainShape);
@@ -414,11 +201,9 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     int pinSize = getClosestOdd(PIN_SIZE.convertToPixels());
     for (Point point : controlPoints) {
       if (!outlineMode) {
-        g2d.setColor(PIN_COLOR);
-        g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        Area.circle(point, pinSize).fill(g2d, PIN_COLOR);
       }
-      g2d.setColor(tryBorderColor(outlineMode, PIN_BORDER_COLOR));
-      g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+      Area.circle(point, pinSize).draw(g2d, tryBorderColor(outlineMode, PIN_BORDER_COLOR));
     }
 
     // Draw label.
@@ -426,26 +211,14 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
     Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
-    FontMetrics fontMetrics = g2d.getFontMetrics();
-    Rectangle2D bodyRect = getBody()[0].getBounds2D();
-    int panelHeight = (int) bodyRect.getHeight();
-    int panelWidth = (int) bodyRect.getWidth();
-
-    String label = "";
-    label =
-        (getDisplay() == Display.NAME)
-            ? getName()
-            : (getValue() == null ? "" : getValue().toString());
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
-
-    Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
-    int textHeight = (int) rect.getHeight();
-    int textWidth = (int) rect.getWidth();
+    String label = getLabelForDisplay();
+    final FontMetrics fontMetrics = g2d.getFontMetrics();
+    final Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
+    final int textHeight = (int) rect.getHeight();
+    final int textWidth = (int) rect.getWidth();
+    final Rectangle2D bodyRect = getBody()[0].getBounds2D();
+    final int panelHeight = (int) bodyRect.getHeight();
+    final int panelWidth = (int) bodyRect.getWidth();
     int x = (panelWidth - textWidth) / 2;
     int y = (panelHeight - textHeight) / 2 + fontMetrics.getAscent();
     g2d.drawString(label, (int) (bodyRect.getX() + x), (int) (bodyRect.getY() + y));
@@ -461,10 +234,8 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     g2d.drawRect(margin, margin, width - 2 * margin, width - 2 * margin);
     int shaftSize = 11;
     int slotSize = 2;
-    Area area =
-        new Area(
-            new Ellipse2D.Double(
-                width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
+    Area area = new Area(new Ellipse2D.Double(
+        width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
     Area slot = new Area(new Rectangle2D.Double(0, width / 2 - slotSize / 2, width, slotSize));
     slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, width / 2));
     area.subtract(slot);
@@ -536,25 +307,70 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     return false;
   }
 
-  public static enum TrimmerType {
-    FLAT_SMALL("Horizontal Small 1"),
-    FLAT_SMALL2("Horizontal Small 2"),
-    FLAT_XSMALL("Horizontal X-Small"),
-    FLAT_LARGE("Horizontal Medium"),
-    FLAT_XLARGE("Horizontal Large"),
-    VERTICAL_INLINE("Vertical Inline"),
-    VERTICAL_OFFSET("Vertical Offset 1"),
-    VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2");
+  public enum TrimmerType {
+    FLAT_SMALL("Horizontal Small 1",
+               Size.mm(9.5),
+               2, 1, 0, 2),
+    FLAT_SMALL2("Horizontal Small 2",
+                Size.mm(9.5),
+                4, 1, 0, 2),
+    FLAT_XSMALL("Horizontal X-Small",
+                Size.mm(5),
+                2, 1, 0, 2),
+    FLAT_LARGE("Horizontal Medium",
+               Size.mm(9.5),
+               4, 1, 0, 2),
+    FLAT_XLARGE("Horizontal Large",
+                Size.mm(13),
+                5, 2, 0, 4),
+    VERTICAL_INLINE("Vertical Inline",
+                    Size.mm(9.5),
+                    Size.mm(4.5),
+                    0, 1, 0, 2),
+    VERTICAL_OFFSET("Vertical Offset 1",
+                    Size.mm(9.5),
+                    Size.mm(4.5),
+                    1, 1, 0, 2),
+    VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2",
+                            Size.mm(9.5),
+                            Size.mm(4.5),
+                            2, 1, 0, 2);
 
-    String label;
+    private Size bodyLength;
+    private Size bodyWidth;
+    private Map<Orientation, int[]> multipliers = new HashMap<>();
+    private String label;
 
-    private TrimmerType(String label) {
+    TrimmerType(
+        String label, Size bodyLength, Size bodyWidth, int mx1, int my1, int mx2, int my2) {
       this.label = label;
+      this.bodyLength = bodyLength;
+      this.bodyWidth = bodyWidth;
+      this.multipliers.put(Orientation.DEFAULT, new int[]{ mx1, my1, mx2, my2 });
+      this.multipliers.put(Orientation._90, new int[]{ -my1, mx1, -my2, mx2 });
+      this.multipliers.put(Orientation._180, new int[]{ -mx1, -my1, -mx2, -my2 });
+      this.multipliers.put(Orientation._270, new int[]{ my1, -mx1, my2, -mx2 });
+    }
+
+    TrimmerType(String label, Size bodySize, int mx1, int my1, int mx2, int my2) {
+      this(label, bodySize, bodySize, mx1, my1, mx2, my2);
     }
 
     @Override
     public String toString() {
-      return label; // name().substring(0, 1) + name().substring(1).toLowerCase().replace("_", " ");
+      return label;
+    }
+
+    public Size getLength() {
+      return bodyLength;
+    }
+
+    public Size getWidth() {
+      return bodyWidth;
+    }
+
+    public int[] getControlPointMultipliers(Orientation o) {
+      return this.multipliers.get(o);
     }
   }
 }

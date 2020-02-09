@@ -36,7 +36,6 @@ import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Inductance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 // @ComponentDescriptor(name = "Air-Core Inductor", author = "Branislav Stojkovic", category =
 // "Passive",
@@ -48,8 +47,8 @@ public class AirCoreInductor extends AbstractLeadedComponent<Inductance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_WIDTH = new Size(8d, SizeUnit.mm);
-  public static final Size DEFAULT_HEIGHT = new Size(14d, SizeUnit.mm);
+  public static final Size DEFAULT_WIDTH = Size.mm(8);
+  public static final Size DEFAULT_HEIGHT = Size.mm(14);
   public static final Color BODY_COLOR = new Color(0, 0, 0, 0);
   public static final Color LABEL_COLOR = Color.white;
   public static final Color BORDER_COLOR = BODY_COLOR;
