@@ -406,11 +406,11 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     terminal.subtract(Area.circle(
         2 * width / 32 + holeSize,
         height * 3 / 10 - holeSize / 2,
-        holeSize)));
+        holeSize));
     terminal.subtract(Area.circle(
         width - 2 * width / 32 - holeSize * 2,
         height * 3 / 10 - holeSize / 2,
-        holeSize)));
+        holeSize));
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
     g2d.translate(0, height * 2 / 5);
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
