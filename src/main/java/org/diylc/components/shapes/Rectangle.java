@@ -63,13 +63,7 @@ public class Rectangle extends AbstractShape {
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
 
-    float alpha = this.alpha;
-    if (componentState == ComponentState.DRAGGING) alpha = 0;
-
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d, 0);
     g2d.setColor(color);
     g2d.fillRoundRect(
         firstPoint.x,

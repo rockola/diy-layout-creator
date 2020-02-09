@@ -57,12 +57,7 @@ public class Ellipse extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
 
-    float alpha = this.alpha;
-    if (componentState == ComponentState.DRAGGING) alpha = 0;
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d, 0);
     g2d.setColor(color);
     g2d.fillOval(
         firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);

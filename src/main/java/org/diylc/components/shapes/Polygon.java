@@ -82,10 +82,7 @@ public class Polygon extends AbstractShape {
       yPoints[i] = controlPoints[i].y;
     }
 
-    Composite oldComposite = g2d.getComposite();
-    if (this.alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(3, 1.0F * this.alpha / MAX_ALPHA));
-    }
+    Composite oldComposite = setTransparency(g2d);
     g2d.fillPolygon(xPoints, yPoints, controlPoints.length);
     g2d.setComposite(oldComposite);
 
@@ -102,7 +99,9 @@ public class Polygon extends AbstractShape {
   }
 
   public void setPointCount(PointCount pointCount) {
-    if (this.pointCount == pointCount) return;
+    if (this.pointCount == pointCount) {
+      return;
+    }
     int oldPointCount = Integer.parseInt(this.pointCount.toString());
     int newPointCount = Integer.parseInt(pointCount.toString());
     this.controlPoints = Arrays.copyOf(this.controlPoints, newPointCount);
@@ -139,6 +138,6 @@ public class Polygon extends AbstractShape {
 
     public String toString() {
       return name().substring(1);
-    };
+    }
   }
 }

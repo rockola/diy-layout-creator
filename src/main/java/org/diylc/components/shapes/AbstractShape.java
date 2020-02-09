@@ -1,28 +1,28 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.shapes;
 
 import java.awt.Color;
 import java.awt.Point;
+
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
@@ -34,10 +34,10 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.white;
-  public static Color BORDER_COLOR = Color.black;
-  public static Size DEFAULT_WIDTH = new Size(0.6d, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
+  public static final Color COLOR = Color.white;
+  public static final Color BORDER_COLOR = Color.black;
+  public static final Size DEFAULT_WIDTH = new Size(0.6d, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
 
   protected String value = "";
   protected Point[] controlPoints =
