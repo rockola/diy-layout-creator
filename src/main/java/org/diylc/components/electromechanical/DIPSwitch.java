@@ -20,7 +20,6 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -28,17 +27,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
-import org.diylc.components.transform.DIL_ICTransformer;
+import org.diylc.components.Area;
+import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -61,21 +58,21 @@ import org.diylc.utils.Constants;
     description = "Dual-in-line package switch",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
-    transformer = DIL_ICTransformer.class)
+    transformer = InlinePackageTransformer.class)
 public class DIPSwitch extends AbstractTransparentComponent<String> implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.decode("#E84E46");
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color TICK_COLOR = Color.white;
-  public static Color LABEL_COLOR = Color.white;
-  public static int EDGE_RADIUS = 2;
-  public static Size PIN_SIZE = new Size(0.04d, SizeUnit.in);
-  public static Size DEFAULT_WIDTH = new Size(0.4d, SizeUnit.in);
-  public static Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.decode("#E84E46");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color TICK_COLOR = Color.white;
+  public static final Color LABEL_COLOR = Color.white;
+  public static final int EDGE_RADIUS = 2;
+  public static final Size PIN_SIZE = new Size(0.04d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = new Size(0.4d, SizeUnit.in);
+  public static final Size INDENT_SIZE = new Size(0.07d, SizeUnit.in);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
@@ -83,7 +80,6 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
   private Size pinSpacing = new Size(0.1d, SizeUnit.in);
   private Size rowSpacing = new Size(0.3d, SizeUnit.in);
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  protected Display display = Display.NONE;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
@@ -104,7 +100,8 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
   public DIPSwitch() {
     super();
     updateControlPoints();
-    alpha = (byte) 100;
+    alpha = 100;
+    display = Display.NONE;
   }
 
   @EditableProperty
@@ -400,10 +397,8 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
         g2d.drawRect(point.x - pinWidth / 2, point.y - pinHeight / 2, pinWidth, pinHeight);
       }
     }
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);
@@ -415,8 +410,12 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
       Area area = new Area(mainArea);
       area.subtract(getBody()[1]);
       g2d.draw(area);
-      if (getBody()[1] != null) g2d.draw(getBody()[1]);
-      if (getBody()[2] != null) g2d.draw(getBody()[2]);
+      if (getBody()[1] != null) {
+        g2d.draw(getBody()[1]);
+      }
+      if (getBody()[2] != null) {
+        g2d.draw(getBody()[2]);
+      }
     } else {
       g2d.draw(mainArea);
       if (getBody()[1] != null) {
@@ -458,21 +457,23 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
         int x = bounds.x + (bounds.width - textWidth) / 2;
         int y = bounds.y + (bounds.height - textHeight) / 2 + fontMetrics.getAscent();
 
-        AffineTransform oldTransform = g2d.getTransform();
+        final AffineTransform oldTransform = g2d.getTransform();
 
         if (getOrientation() == Orientation.DEFAULT || getOrientation() == Orientation._180) {
           int centerX = bounds.x + bounds.width / 2;
           int centerY = bounds.y + bounds.height / 2;
-          g2d.rotate(-Math.PI / 2, centerX, centerY);
+          g2d.rotate(-HALF_PI, centerX, centerY);
         }
 
         if (label.length == 2) {
-          if (i == 0) g2d.translate(0, -textHeight / 2);
-          else if (i == 1) g2d.translate(0, textHeight / 2);
+          if (i == 0) {
+            g2d.translate(0, -textHeight / 2);
+          } else if (i == 1) {
+            g2d.translate(0, textHeight / 2);
+          }
         }
 
         g2d.drawString(l, x, y);
-
         g2d.setTransform(oldTransform);
       }
     }
@@ -554,7 +555,7 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
     body = null;
   }
 
-  public static enum SwitchCount {
+  public enum SwitchCount {
     _2,
     _3,
     _4,
@@ -587,7 +588,9 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
     String binary = toBinary(position);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < getSwitchCount().getValue(); i++) {
-      if (sb.length() > 0) sb.append("-");
+      if (sb.length() > 0) {
+        sb.append("-");
+      }
       sb.append(binary.charAt(i) == '0' ? "OFF" : "ON");
     }
     return sb.toString();
@@ -611,7 +614,9 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
       builder.append(n % 2);
       n = n / 2;
     } while (n > 0);
-    while (builder.length() < getSwitchCount().getValue()) builder.append("0");
+    while (builder.length() < getSwitchCount().getValue()) {
+      builder.append("0");
+    }
     return builder.toString();
   }
 }
