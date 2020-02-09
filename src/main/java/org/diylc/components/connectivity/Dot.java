@@ -35,7 +35,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Dot",
@@ -51,7 +50,7 @@ public class Dot extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size SIZE = new Size(1d, SizeUnit.mm);
+  public static final Size SIZE = Size.mm(1);
   public static final Color COLOR = Color.black;
 
   private Size size = SIZE;
@@ -69,15 +68,13 @@ public class Dot extends AbstractComponent<Void> {
       return;
     }
     int diameter = getClosestOdd((int) getSize().convertToPixels());
-    g2d.setColor(tryColor(false, color));
-    g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
+    Area.circle(point, diameter).fill(g2d, tryColor(false, color));
   }
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = 7 * width / 32;
-    g2d.setColor(COLOR);
-    g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
+    Area.circle(width, height, diameter).fill(g2d, COLOR);
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)

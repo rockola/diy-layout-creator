@@ -36,7 +36,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Curved Trace",
@@ -55,7 +54,7 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
   private static final long serialVersionUID = 1L;
 
   public static final Color COLOR = Color.black;
-  public static final Size SIZE = new Size(1d, SizeUnit.mm);
+  public static final Size SIZE = Size.mm(1);
 
   protected Size size = SIZE;
   private PCBLayer layer = PCBLayer._1;

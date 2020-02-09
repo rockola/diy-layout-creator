@@ -37,7 +37,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Copper Trace",
@@ -56,7 +55,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size THICKNESS = new Size(1d, SizeUnit.mm);
+  public static final Size THICKNESS = Size.mm(1);
   public static final Color COLOR = Color.black;
 
   private Size thickness = THICKNESS;

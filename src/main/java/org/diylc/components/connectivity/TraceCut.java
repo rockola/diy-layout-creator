@@ -37,7 +37,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Trace Cut",
@@ -55,18 +54,18 @@ public class TraceCut extends AbstractComponent<Void> {
 
   public static final Color BORDER_COLOR = Color.red;
   public static final Color FILL_COLOR = Color.white;
-  public static final Size CUT_WIDTH = new Size(0.5d, SizeUnit.mm);
-  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
-  public static final Size SIZE = new Size(0.08d, SizeUnit.in);
+  public static final Size CUT_WIDTH = Size.mm(0.5);
+  public static final Size HOLE_SIZE = Size.mm(0.7);
+  public static final Size SIZE = Size.in(0.08);
+
+  protected Point point = new Point(0, 0);
 
   private Size size = SIZE;
   private Color fillColor = FILL_COLOR;
-  @Deprecated private Color borderColor = BORDER_COLOR;
   private Color boardColor = AbstractBoard.BOARD_COLOR;
   private Boolean cutBetweenHoles = false;
   private Size holeSpacing = VeroBoard.SPACING;
-
-  protected Point point = new Point(0, 0);
+  @Deprecated private Color borderColor = BORDER_COLOR;
 
   @Override
   public void draw(
@@ -93,25 +92,24 @@ public class TraceCut extends AbstractComponent<Void> {
       g2d.fillRoundRect(point.x - size / 2, point.y - size / 2, size, size, size, size);
       drawingObserver.stopTrackingContinuityArea();
 
-      g2d.setColor(CANVAS_COLOR);
       int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels());
-      g2d.fillOval(point.x - holeSize / 2, point.y - holeSize / 2, holeSize, holeSize);
-      g2d.setColor(boardColor.darker());
-      g2d.drawOval(point.x - holeSize / 2, point.y - holeSize / 2, holeSize, holeSize);
+      Area.circle(point, holeSize).fillDraw(g2d, CANVAS_COLOR, boardColor.darker());
     }
   }
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    g2d.setColor(AbstractBoard.BOARD_COLOR);
-    g2d.fillRect(0, 2 / factor, width - 1, height - 4 / factor);
-    g2d.setColor(AbstractBoard.BORDER_COLOR);
-    g2d.drawRect(0, 2 / factor, width - 1, height - 4 / factor);
-    g2d.setColor(COPPER_COLOR);
-    g2d.fillRect(1 / factor, width / 3, width - 2 / factor, getClosestOdd(width / 3) + 1);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawRect(1 / factor, width / 3, width - 2 / factor, getClosestOdd(width / 3) + 1);
+    Area.rect(
+        0,
+        2 / factor,
+        width - 1,
+        height - 4 / factor).fillDraw(g2d, AbstractBoard.BOARD_COLOR, AbstractBoard.BORDER_COLOR);
+    Area.rect(
+        1 / factor,
+        width / 3,
+        width - 2 / factor,
+        getClosestOdd(width / 3) + 1).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
 
     g2d.setColor(AbstractBoard.BOARD_COLOR);
     g2d.fillRoundRect(
@@ -122,12 +120,16 @@ public class TraceCut extends AbstractComponent<Void> {
         width / 3,
         width / 3);
 
-    g2d.setColor(COPPER_COLOR);
-    g2d.fillRect(1 / factor, 2 / factor, width - 2 / factor, 4 / factor);
-    g2d.fillRect(1 / factor, height - 6 / factor, width - 2 / factor, 4 / factor);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawRect(1 / factor, 2 / factor, width - 2 / factor, 4 / factor);
-    g2d.drawRect(1 / factor, height - 6 / factor, width - 2 / factor, 4 / factor);
+    Area.rect(
+        1 / factor,
+        2 / factor,
+        width - 2 / factor,
+        4 / factor).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(
+        1 / factor,
+        height - 6 / factor,
+        width - 2 / factor,
+        4 / factor).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
 
     g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(

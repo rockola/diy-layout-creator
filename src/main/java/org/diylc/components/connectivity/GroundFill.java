@@ -38,7 +38,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Ground Fill",
@@ -55,8 +54,8 @@ public class GroundFill extends AbstractComponent<Void> {
   private static final long serialVersionUID = 1L;
 
   public static final Color COLOR = Color.black;
-  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(1.5);
+  public static final Size DEFAULT_HEIGHT = Size.in(1.2);
 
   protected Point[] controlPoints =
       new Point[] {
@@ -143,10 +142,9 @@ public class GroundFill extends AbstractComponent<Void> {
     if (oldPointCount < newPointCount) {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
-        this.controlPoints[i] =
-            new Point(
-                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
-                (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
+        this.controlPoints[i] = new Point(
+            (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+            (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
     this.pointCount = pointCount;

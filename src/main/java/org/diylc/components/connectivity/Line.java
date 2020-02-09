@@ -42,7 +42,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Line",
@@ -63,8 +62,8 @@ public class Line extends AbstractLeadedComponent<Void> {
 
   private Color color = COLOR;
   protected LineStyle style = LineStyle.SOLID;
-  private Size thickness = new Size(1d, SizeUnit.px);
-  private Size arrowSize = new Size(5d, SizeUnit.px);
+  private Size thickness = Size.px(1);
+  private Size arrowSize = Size.px(5);
   private Polygon arrow = null;
   private AffineTransform arrowTx = new AffineTransform();
   private boolean arrowStart = false;

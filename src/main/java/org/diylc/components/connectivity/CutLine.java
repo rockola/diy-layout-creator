@@ -39,7 +39,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Cut Line",
@@ -55,8 +54,8 @@ public class CutLine extends AbstractTransparentComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size WIDTH = new Size(0.125d, SizeUnit.in);
-  public static final Size LENGTH = new Size(3.125d, SizeUnit.in);
+  public static final Size WIDTH = Size.in(0.125);
+  public static final Size LENGTH = Size.in(3.125);
   public static final Color COLOR = Color.black;
 
   private Size width = WIDTH;

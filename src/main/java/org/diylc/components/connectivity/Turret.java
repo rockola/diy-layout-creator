@@ -38,7 +38,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Turret Lug",
@@ -55,8 +54,8 @@ public class Turret extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size SIZE = new Size(0.16d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.0625d, SizeUnit.in);
+  public static final Size SIZE = Size.in(0.16);
+  public static final Size HOLE_SIZE = Size.in(0.0625);
   public static final Color COLOR = Color.decode("#E0C04C");
 
   private Size size = SIZE;
@@ -94,16 +93,10 @@ public class Turret extends AbstractComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = getClosestOdd(width / 2);
+    int center = new Point(width / 2d, height / 2d);
+    Area.circle(center, diameter).fillDraw(g2d, COLOR, COLOR.darker());
     int holeDiameter = 5;
-    g2d.setColor(COLOR);
-    g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(COLOR.darker());
-    g2d.drawOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(CANVAS_COLOR);
-    g2d.fillOval(
-        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
-    g2d.drawOval(
-        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    Area.circle(center, holeDiameter).fillDraw(g2d, CANVAS_COLOR, COLOR.darker());
   }
 
   @EditableProperty

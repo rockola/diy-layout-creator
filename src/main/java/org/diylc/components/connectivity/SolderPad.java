@@ -44,7 +44,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Solder Pad",
@@ -62,8 +61,8 @@ public class SolderPad extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size SIZE = new Size(0.09d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.8d, SizeUnit.mm);
+  public static final Size SIZE = Size.in(0.09);
+  public static final Size HOLE_SIZE = Size.mm(0.8);
   public static final Color COLOR = Color.black;
 
   private Size size = SIZE;
@@ -92,12 +91,10 @@ public class SolderPad extends AbstractComponent<Void> {
         g2d.fill(Area.circle(point, diameter));
         break;
       case OVAL_HORIZONTAL:
-        g2d.fill(new Ellipse2D.Double(
-            point.x - diameter / 2, point.y - diameter * 3 / 8, diameter, diameter * 3 / 4));
+        g2d.fill(Area.oval(point, diameter, 0.75 * diameter));
         break;
       case OVAL_VERTICAL:
-        g2d.fill(new Ellipse2D.Double(
-            point.x - diameter * 3 / 8, point.y - diameter / 2, diameter * 3 / 4, diameter));
+        g2d.fill(Area.oval(point, 0.75 * diameter, diameter));
         break;
       default:
         g2d.fill(Area.centeredSquare(point, diameter));
@@ -112,12 +109,9 @@ public class SolderPad extends AbstractComponent<Void> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = getClosestOdd(width / 2);
+    Area.circle(width / 2, height / 2, diameter).fill(g2d, COLOR);
     int holeDiameter = 5;
-    g2d.setColor(COLOR);
-    g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(CANVAS_COLOR);
-    g2d.fillOval(
-        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    Area.circle(width / 2, height / 2, holeDiameter).fill(g2d, CANVAS_COLOR);
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)

@@ -39,7 +39,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Eyelet",
@@ -56,8 +55,8 @@ public class Eyelet extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size SIZE = new Size(0.2d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
+  public static final Size SIZE = Size.in(0.2);
+  public static final Size HOLE_SIZE = Size.in(0.1);
   public static final Color COLOR = Color.decode("#C3E4ED");
 
   private Size size = SIZE;
@@ -77,38 +76,22 @@ public class Eyelet extends AbstractComponent<String> {
       return;
     }
     g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
-    g2d.setColor(color);
     drawingObserver.startTrackingContinuityArea(true);
-
     int diameter = getClosestOdd((int) size.convertToPixels());
+    Area.circle(point, diameter).fillDraw(color, tryColor(false, color.darker()));
     g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
     drawingObserver.stopTrackingContinuityArea();
-    g2d.setColor(tryColor(false, color.darker()));
-    g2d.drawOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
 
-    g2d.setColor(CANVAS_COLOR);
     int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
-    g2d.fillOval(
-        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
-    g2d.setColor(tryColor(false, color.darker()));
-    g2d.drawOval(
-        point.x - holeDiameter / 2, point.y - holeDiameter / 2, holeDiameter, holeDiameter);
+    Area.circle(point, holeDiameter).fillDraw(CANVAS_COLOR, tryColor(false, color.darker()));
   }
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = getClosestOdd(width / 2);
+    Area.circle(width, height, diameter).fillDraw(g2d, COLOR, COLOR.darker());
     int holeDiameter = 5;
-    g2d.setColor(COLOR);
-    g2d.fillOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(COLOR.darker());
-    g2d.drawOval((width - diameter) / 2, (height - diameter) / 2, diameter, diameter);
-    g2d.setColor(CANVAS_COLOR);
-    g2d.fillOval(
-        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
-    g2d.setColor(COLOR.darker());
-    g2d.drawOval(
-        (width - holeDiameter) / 2, (height - holeDiameter) / 2, holeDiameter, holeDiameter);
+    Area.circle(width, height, holeDiameter).fillDraw(g2d, CANVAS_COLOR, COLOR.darker());
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)
