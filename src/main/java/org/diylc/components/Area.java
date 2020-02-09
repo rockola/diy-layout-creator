@@ -259,6 +259,10 @@ public class Area extends java.awt.geom.Area {
     return centeredRect(center, size, size);
   }
 
+  public static Area centeredSquare(int x, int y, int size) {
+    return centeredSquare(new Point(x, y), (double) size);
+  }
+
   /**
      Create a rectangle with a round hole in the middle.
 
