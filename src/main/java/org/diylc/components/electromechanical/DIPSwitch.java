@@ -435,20 +435,10 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
     final Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
-    String[] label = null;
-
-    if (getDisplay() == Display.NAME) {
-      label = new String[] {getName()};
-    } else if (getDisplay() == Display.VALUE) {
-      label = new String[] {getValue().toString()};
-    } else if (getDisplay() == Display.BOTH) {
-      String value = getValue().toString();
-      label = value.isEmpty() ? new String[] {getName()} : new String[] {getName(), value};
-    }
-
-    if (label != null) {
-      for (int i = 0; i < label.length; i++) {
-        String l = label[i];
+    List<String> label = getLabelListForDisplay();
+    if (!label.isEmpty()) {
+      int i = 0;
+      for (String l : label) {
         Rectangle2D rect = fontMetrics.getStringBounds(l, g2d);
         int textHeight = (int) (rect.getHeight());
         int textWidth = (int) (rect.getWidth());
@@ -475,6 +465,7 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
 
         g2d.drawString(l, x, y);
         g2d.setTransform(oldTransform);
+        i++;
       }
     }
   }
