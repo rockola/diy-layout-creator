@@ -59,58 +59,32 @@ public class PotentiometerTransformer implements IComponentTransformer {
     Orientation o = potentiometer.getOrientation();
     int oValue = o.ordinal();
     oValue += direction;
-    if (oValue < 0) oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length) oValue = 0;
+    if (oValue < 0) {
+      oValue = Orientation.values().length - 1;
+    }
+    if (oValue >= Orientation.values().length) {
+      oValue = 0;
+    }
     o = Orientation.values()[oValue];
     potentiometer.setOrientation(o);
   }
 
-  @SuppressWarnings("incomplete-switch")
   @Override
   public void mirror(IDIYComponent<?> component, Point center, int direction) {
     PotentiometerPanel potentiometer = (PotentiometerPanel) component;
     int dx = center.x - potentiometer.getControlPoint(1).x;
     int dy = center.y - potentiometer.getControlPoint(1).y;
-    if (direction == IComponentTransformer.HORIZONTAL) {
-      Orientation o = potentiometer.getOrientation();
-      switch (o) {
-        case _90:
-          o = Orientation._270;
-          break;
-        case _270:
-          o = Orientation._90;
-      }
-
-      for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
-        Point p = potentiometer.getControlPoint(i);
-        potentiometer.setControlPoint(
-            new Point(
-                p.x + 2 * dx,
-                p.y + (potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y)),
-            i);
-      }
-
-      potentiometer.setOrientation(o);
-    } else {
-      Orientation o = potentiometer.getOrientation();
-      switch (o) {
-        case DEFAULT:
-          o = Orientation._180;
-          break;
-        case _180:
-          o = Orientation.DEFAULT;
-      }
-
-      for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
-        Point p = potentiometer.getControlPoint(i);
-        potentiometer.setControlPoint(
-            new Point(
-                p.x + (potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x),
-                p.y + 2 * dy),
-            i);
-      }
-
-      potentiometer.setOrientation(o);
+    Orientation o = potentiometer.getOrientation().mirror(direction);
+    potentiometer.setOrientation(o);
+    for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
+      Point p = potentiometer.getControlPoint(i);
+      int px = p.x + (direction == IComponentTransformer.HORIZONTAL
+                      ? 2 * dx
+                      : potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x);
+      int py = p.y + (direction == IComponentTransformer.HORIZONTAL
+                      ? potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y
+                      : 2 * dy);
+      potentiometer.setControlPoint(new Point(px, py), i);
     }
   }
 }

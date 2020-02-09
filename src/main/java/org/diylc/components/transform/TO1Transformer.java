@@ -1,28 +1,28 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.semiconductors.TransistorTO1;
@@ -32,12 +32,12 @@ public class TO1Transformer implements IComponentTransformer {
 
   @Override
   public boolean canRotate(IDIYComponent<?> component) {
-    return component.getClass().equals(TransistorTO1.class);
+    return component instanceof TransistorTO1;
   }
 
   @Override
   public boolean canMirror(IDIYComponent<?> component) {
-    return component.getClass().equals(TransistorTO1.class);
+    return component instanceof TransistorTO1;
   }
 
   @Override
@@ -77,13 +77,13 @@ public class TO1Transformer implements IComponentTransformer {
           o = Orientation._180;
           break;
         case _90:
-          dx -= (transistor.getControlPoint(1).x - transistor.getControlPoint(0).x);
+          dx -= transistor.getControlPoint(1).x - transistor.getControlPoint(0).x;
           break;
         case _180:
           o = Orientation.DEFAULT;
           break;
         case _270:
-          dx -= (transistor.getControlPoint(1).x - transistor.getControlPoint(0).x);
+          dx -= transistor.getControlPoint(1).x - transistor.getControlPoint(0).x;
           break;
       }
 
@@ -92,7 +92,7 @@ public class TO1Transformer implements IComponentTransformer {
         transistor.setControlPoint(
             new Point(
                 p.x + 2 * dx,
-                p.y + (transistor.getControlPoint(2).y - transistor.getControlPoint(0).y)),
+                p.y + transistor.getControlPoint(2).y - transistor.getControlPoint(0).y),
             i);
       }
 
@@ -101,13 +101,13 @@ public class TO1Transformer implements IComponentTransformer {
       Orientation o = transistor.getOrientation();
       switch (o) {
         case DEFAULT:
-          dy -= (transistor.getControlPoint(1).y - transistor.getControlPoint(0).y);
+          dy -= transistor.getControlPoint(1).y - transistor.getControlPoint(0).y;
           break;
         case _90:
           o = Orientation._270;
           break;
         case _180:
-          dy -= (transistor.getControlPoint(1).y - transistor.getControlPoint(0).y);
+          dy -= transistor.getControlPoint(1).y - transistor.getControlPoint(0).y;
           break;
         case _270:
           o = Orientation._90;
@@ -118,7 +118,7 @@ public class TO1Transformer implements IComponentTransformer {
         Point p = transistor.getControlPoint(i);
         transistor.setControlPoint(
             new Point(
-                p.x + (transistor.getControlPoint(2).x - transistor.getControlPoint(0).x),
+                p.x + transistor.getControlPoint(2).x - transistor.getControlPoint(0).x,
                 p.y + 2 * dy),
             i);
       }
