@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.netlist;
 
 import java.util.List;
@@ -70,22 +69,36 @@ public class TreeLeaf implements ITree {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null
+        || getClass() != obj.getClass()) {
+      return false;
+    }
     TreeLeaf other = (TreeLeaf) obj;
     if (component == null) {
-      if (other.component != null) return false;
-    } else if (!component.equals(other.component)) return false;
-    if (pointIndex1 != other.pointIndex1) return false;
-    if (pointIndex2 != other.pointIndex2) return false;
+      if (other.component != null) {
+        return false;
+      }
+    } else if (!component.equals(other.component)) {
+      return false;
+    }
+    if (pointIndex1 != other.pointIndex1
+        || pointIndex2 != other.pointIndex2) {
+      return false;
+    }
     return true;
   }
 
   public boolean equals(TreeLeaf other, boolean forceDirection) {
     if (component == null) {
-      if (other.component != null) return false;
-    } else if (!component.equals(other.component)) return false;
+      if (other.component != null) {
+        return false;
+      }
+    } else if (!component.equals(other.component)) {
+      return false;
+    }
     return (pointIndex1 == other.pointIndex1 && pointIndex2 == other.pointIndex2)
         || (!forceDirection
             && (pointIndex1 == other.pointIndex2 && pointIndex2 == other.pointIndex1));
@@ -94,7 +107,9 @@ public class TreeLeaf implements ITree {
   @Override
   public String toString() {
     String linkName = component.getInternalLinkName(pointIndex1, pointIndex2);
-    if (component.getName().equals(linkName)) return linkName;
+    if (component.getName().equals(linkName)) {
+      return linkName;
+    }
     return component.getName() + "." + linkName;
   }
 

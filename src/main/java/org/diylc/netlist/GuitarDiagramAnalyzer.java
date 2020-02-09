@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JLabel;
 import org.diylc.common.INetlistAnalyzer;
-import org.diylc.components.electromechanical.ClosedJack1_4;
-import org.diylc.components.electromechanical.OpenJack1_4;
+import org.diylc.components.electromechanical.ClosedJack;
+import org.diylc.components.electromechanical.OpenJack;
 import org.diylc.components.guitar.AbstractGuitarPickup;
 import org.diylc.components.guitar.HumbuckerPickup;
 import org.diylc.components.guitar.JazzBassPickup;
@@ -51,8 +51,8 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
   private static Set<String> CAP_TYPES = new HashSet<String>();
 
   static {
-    JACK_TYPES.add(OpenJack1_4.class.getCanonicalName());
-    JACK_TYPES.add(ClosedJack1_4.class.getCanonicalName());
+    JACK_TYPES.add(OpenJack.class.getCanonicalName());
+    JACK_TYPES.add(ClosedJack.class.getCanonicalName());
 
     POT_TYPES.add(PotentiometerPanel.class.getCanonicalName());
 
@@ -101,34 +101,34 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       noiseCount = 0;
 
       // analyze hum-cancellation and phase
-      pickupTree.walk(
-          new ITreeWalker() {
+      pickupTree.walk(new ITreeWalker() {
 
-            @Override
-            public void visit(Tree t) {}
+          @Override
+          public void visit(Tree t) {}
 
-            @Override
-            public void visit(TreeLeaf l) {
-              if ((l.toString().toLowerCase().contains("north")
-                      && (l.toString().toLowerCase().contains("->")))
-                  || (l.toString().toLowerCase().contains("south")
-                      && (l.toString().toLowerCase().contains("<-")))) {
-                noiseCount++;
-              }
-              if ((l.toString().toLowerCase().contains("north")
-                      && (l.toString().toLowerCase().contains("<-")))
-                  || (l.toString().toLowerCase().contains("south")
-                      && (l.toString().toLowerCase().contains("->")))) {
-                noiseCount--;
-              }
-              if (l.toString().toLowerCase().contains("->")) {
-                positiveCount++;
-              }
-              if (l.toString().toLowerCase().contains("<-")) {
-                negativeCount++;
-              }
+          @Override
+          public void visit(TreeLeaf l) {
+            String leaf = l.toString().toLowerCase();
+            if ((leaf.contains("north")
+                 && leaf.contains("->"))
+                || (leaf.contains("south")
+                    && leaf.contains("<-"))) {
+              noiseCount++;
             }
-          });
+            if ((leaf.contains("north")
+                 && leaf.contains("<-"))
+                || (leaf.contains("south")
+                    && leaf.contains("->"))) {
+              noiseCount--;
+            }
+            if (leaf.contains("->")) {
+              positiveCount++;
+            }
+            if (leaf.contains("<-")) {
+              negativeCount++;
+            }
+          }
+        });
 
       Set<IDIYComponent<?>> pickups = tree.extractComponents(PICKUP_TYPES);
       Map<IDIYComponent<?>, Tree> pickupRoots = new HashMap<IDIYComponent<?>, Tree>();
@@ -143,21 +143,25 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
             Tree nTree = tree.locate(nLeaf, false);
             Tree sTree = tree.locate(sLeaf, false);
             Tree parent = tree.findCommonParent(nTree, sTree);
-            if (parent != null) pickupRoots.put(pickup, parent);
+            if (parent != null) {
+              pickupRoots.put(pickup, parent);
+            }
             if (nTree != null && sTree != null && parent != null) {
-              notes.add(
-                  "'"
-                  + pickup.getName()
-                  + "' pickup wired in humbucking mode with "
-                  + parent.getConnectionType().name().toLowerCase()
-                  + " coils");
+              notes.add(String.format(
+                  "'%s' pickup wired in humbucking mode with %s coils",
+                  pickup.getName(),
+                  parent.getConnectionType().name().toLowerCase()));
             } else if ((nTree == null && sTree != null) || (nTree != null && sTree == null)) {
-              notes.add("'" + pickup.getName() + "' pickup wired in coil-split mode");
+              notes.add(String.format(
+                  "'%s' pickup wired in coil-split mode",
+                  pickup.getName()));
             }
           } else {
             TreeLeaf leaf = new TreeLeaf(pickup, 1, 2);
             Tree t = tree.locate(leaf, false);
-            if (t != null) pickupRoots.put(pickup, t);
+            if (t != null) {
+              pickupRoots.put(pickup, t);
+            }
           }
         }
       }
@@ -168,29 +172,35 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         for (IDIYComponent<?> c : pickupRoots.keySet()) {
-          if (!first) sb.append(pickupRoots.size() == 2 ? " and " : ", ");
+          if (!first) {
+            sb.append(pickupRoots.size() == 2 ? " and " : ", ");
+          }
           first = false;
           sb.append("'").append(c.getName()).append("'");
         }
-        sb.append(" pickups engaged, wired in ")
-            .append(root.getConnectionType().name().toLowerCase());
+        sb.append(" pickups engaged, wired in ").append(
+            root.getConnectionType().name().toLowerCase());
         notes.add(sb.toString());
       } else if (pickupRoots.size() == 1) {
         AbstractGuitarPickup pickup =
             (AbstractGuitarPickup) pickupRoots.keySet().iterator().next();
-        notes.add("'" + pickup.getName() + "' is the only engaged pickup");
+        notes.add(String.format("'%s' is the only engaged pickup", pickup.getName()));
       }
 
       boolean humCancelling = noiseCount == 0;
-
-      if (humCancelling) notes.add("This configuration is hum-cancelling");
-      else notes.add("This configuration is NOT hum-cancelling");
+      notes.add(String.format(
+          "This configuration is%s hum-cancelling",
+          humCancelling ? "": " NOT"));
 
       if (positiveCount > 1 || negativeCount > 1 || (positiveCount == 1 && negativeCount == 1)) {
         boolean inPhase =
-            (positiveCount == 0 && negativeCount > 0) || (positiveCount > 0 && negativeCount == 0);
-        if (inPhase) notes.add("All pickup coils are wired in-phase");
-        else notes.add("Some pickup coils are wired OUT-of-phase");
+            (positiveCount == 0 && negativeCount > 0)
+            || (positiveCount > 0 && negativeCount == 0);
+        if (inPhase) {
+          notes.add("All pickup coils are wired in-phase");
+        } else {
+          notes.add("Some pickup coils are wired OUT-of-phase");
+        }
       }
 
       // locate volume and tone pots
@@ -243,7 +253,9 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         }
 
         // volume
-        if (tree1 == null || tree2 == null) continue;
+        if (tree1 == null || tree2 == null) {
+          continue;
+        }
         for (Map.Entry<IDIYComponent<?>, Tree> r : pickupRoots.entrySet()) {
           Tree parent1 = tree.findCommonParent(tree1, r.getValue());
           Tree parent2 = tree.findCommonParent(tree2, r.getValue());
@@ -272,12 +284,13 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       }
 
       for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e : volPotPickupMap.entrySet()) {
-        StringBuilder sb =
-            new StringBuilder(
-                "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
+        StringBuilder sb = new StringBuilder(
+            "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
         boolean first = true;
         for (IDIYComponent<?> c : e.getValue()) {
-          if (!first) sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          if (!first) {
+            sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          }
           first = false;
           sb.append("'").append(c.getName()).append("'");
         }
@@ -285,13 +298,14 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       }
 
       for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e :
-          volPotPickupReverseMap.entrySet()) {
-        StringBuilder sb =
-            new StringBuilder(
-                "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
+               volPotPickupReverseMap.entrySet()) {
+        StringBuilder sb = new StringBuilder(
+            "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
         boolean first = true;
         for (IDIYComponent<?> c : e.getValue()) {
-          if (!first) sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          if (!first) {
+            sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          }
           first = false;
           sb.append("'").append(c.getName()).append("'");
         }
@@ -300,12 +314,13 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       }
 
       for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e : tonePotPickupMap.entrySet()) {
-        StringBuilder sb =
-            new StringBuilder(
-                "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
+        StringBuilder sb = new StringBuilder(
+            "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
         boolean first = true;
         for (IDIYComponent<?> c : e.getValue()) {
-          if (!first) sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          if (!first) {
+            sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          }
           first = false;
           sb.append("'").append(c.getName()).append("'");
         }
@@ -314,12 +329,13 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
 
       for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e :
           tonePotPickupReverseMap.entrySet()) {
-        StringBuilder sb =
-            new StringBuilder(
-                "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
+        StringBuilder sb = new StringBuilder(
+            "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
         boolean first = true;
         for (IDIYComponent<?> c : e.getValue()) {
-          if (!first) sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          if (!first) {
+            sb.append(e.getValue().size() == 2 ? " and " : ", ");
+          }
           first = false;
           sb.append("'").append(c.getName()).append("'");
         }
@@ -331,7 +347,9 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
     StringBuilder sb = new StringBuilder();
 
     sb.append("Parallel/Series connectivity tree:<br><br>").append(tree.toHTML(0));
-    if (!notes.isEmpty()) sb.append("<br><br>Notes:<br>");
+    if (!notes.isEmpty()) {
+      sb.append("<br><br>Notes:<br>");
+    }
     for (String v : notes) {
       sb.append("&nbsp;&nbsp;").append(v).append("<br>");
     }

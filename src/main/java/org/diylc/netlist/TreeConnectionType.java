@@ -28,7 +28,7 @@ public enum TreeConnectionType {
   private String label;
   private String color;
 
-  private TreeConnectionType(String label, String color) {
+  TreeConnectionType(String label, String color) {
     this.label = label;
     this.color = color;
   }

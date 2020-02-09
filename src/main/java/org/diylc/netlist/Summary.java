@@ -55,16 +55,28 @@ public class Summary implements Comparable<Summary> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null
+        || getClass() != obj.getClass()) {
+      return false;
+    }
     Summary other = (Summary) obj;
     if (netlist == null) {
-      if (other.netlist != null) return false;
-    } else if (!netlist.equals(other.netlist)) return false;
+      if (other.netlist != null) {
+        return false;
+      }
+    } else if (!netlist.equals(other.netlist)) {
+      return false;
+    }
     if (summary == null) {
-      if (other.summary != null) return false;
-    } else if (!summary.equals(other.summary)) return false;
+      if (other.summary != null) {
+        return false;
+      }
+    } else if (!summary.equals(other.summary)) {
+      return false;
+    }
     return true;
   }
 

@@ -63,26 +63,35 @@ public class Node implements Comparable<Node> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null
+        || getClass() != obj.getClass()) {
+      return false;
+    }
     Node other = (Node) obj;
     if (component == null) {
-      if (other.component != null) return false;
-    } else if (!component.equals(other.component)) return false;
-    if (pointIndex != other.pointIndex) return false;
+      if (other.component != null) {
+        return false;
+      }
+    } else if (!component.equals(other.component)) {
+      return false;
+    }
+    if (pointIndex != other.pointIndex) {
+      return false;
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    if (component.getControlPointCount() == 1) return component.getName();
-    return component.getName()
-        + "."
-        + getDisplayName()
-        /*+ " @ (" + component.getControlPoint(pointIndex).getX()
-          + ":" + component.getControlPoint(pointIndex).getY() + ")"*/
-        ;
+    if (component.getControlPointCount() == 1) {
+      return component.getName();
+    }
+    return component.getName() + "." + getDisplayName();
+    /* + " @ (" + component.getControlPoint(pointIndex).getX()
+       + ":" + component.getControlPoint(pointIndex).getY() + ")"*/
   }
 
   @Override

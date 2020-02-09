@@ -17,12 +17,14 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.netlist;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.core.IDIYComponent;
 
@@ -66,16 +68,22 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
 
     int maxLen = 0;
     for (IDIYComponent<?> c : allComponents) {
-      if (c.getName().length() > maxLen) maxLen = c.getName().length();
+      if (c.getName().length() > maxLen) {
+        maxLen = c.getName().length();
+      }
     }
 
     for (IDIYComponent<?> c : allComponents) {
       // change the prefix to match spice convention if needed
       String name = c.getName();
       String prefix = null;
-      if (c instanceof ISpiceMapper) prefix = ((ISpiceMapper) c).getPrefix();
-      if (prefix != null && !name.toLowerCase().startsWith(prefix.toLowerCase()))
+      if (c instanceof ISpiceMapper) {
+        prefix = ((ISpiceMapper) c).getPrefix();
+      }
+      if (prefix != null
+          && !name.toLowerCase().startsWith(prefix.toLowerCase())) {
         name = prefix + name;
+      }
 
       sb.append(fill(name, (int) (Math.ceil(maxLen / 5.0) * 5)));
       sb.append(" ");
@@ -86,14 +94,15 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
         int pointIndex = i;
 
         int nodeIndex = find(new Node(c, pointIndex), groups);
-        if (nodeIndex < 0) nodeIndex = unconnectedIndex++;
+        if (nodeIndex < 0) {
+          nodeIndex = unconnectedIndex++;
+        }
 
-        // 1-based convention
-        nodeIndex++;
-
+        nodeIndex++; // 1-based convention
         // remap if needed
-        if (c instanceof ISpiceMapper) pointIndex = ((ISpiceMapper) c).mapToSpiceNode(pointIndex);
-
+        if (c instanceof ISpiceMapper) {
+          pointIndex = ((ISpiceMapper) c).mapToSpiceNode(pointIndex);
+        }
         nodeIndices[pointIndex] = nodeIndex;
       }
 
@@ -107,7 +116,9 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
 
       if (c instanceof ISpiceMapper) {
         String comment = ((ISpiceMapper) c).getComment();
-        if (comment != null) sb.append(" ; ").append(comment);
+        if (comment != null) {
+          sb.append(" ; ").append(comment);
+        }
       }
       sb.append("<br>");
     }
@@ -120,8 +131,7 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
   }
 
   private String fill(String source, int desiredLength) {
-    StringBuffer res = new StringBuffer();
-    res.append(source);
+    StringBuffer res = new StringBuffer().append(source);
     for (int i = 0; i < desiredLength - source.length(); i++) {
       res.append("&nbsp;");
     }

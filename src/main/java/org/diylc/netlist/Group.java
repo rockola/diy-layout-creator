@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
+
 import org.diylc.core.IDIYComponent;
 
 /**
@@ -72,7 +74,9 @@ public class Group implements Cloneable, Comparable<Group> {
       return true;
     }
     if (obj == null
-        || getClass() != obj.getClass()) return false;
+        || getClass() != obj.getClass()) {
+      return false;
+    }
     Group other = (Group) obj;
     if (nodes == null) {
       if (other.nodes != null) {
@@ -86,13 +90,12 @@ public class Group implements Cloneable, Comparable<Group> {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
     List<Node> list = getSortedNodes();
+    StringJoiner sj = new StringJoiner(" <-> ");
     for (Node n : list) {
-      if (sb.length() > 0) sb.append(" <-> ");
-      sb.append(n);
+      sj.add(n.toString());
     }
-    return sb.toString();
+    return sj.toString();
   }
 
   @Override
