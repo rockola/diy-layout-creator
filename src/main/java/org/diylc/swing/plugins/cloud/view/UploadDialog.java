@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view;
 
 import java.awt.Color;
@@ -218,7 +217,7 @@ public class UploadDialog extends ButtonDialog {
   }
 
   private Dimension getThumbnailSize() {
-    Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
+    Dimension d = plugInPort.getCanvasDimensions(false, false);
     if (d.height > d.width) {
       return new Dimension(192 * d.width / d.height, 192);
     } else {
@@ -230,7 +229,7 @@ public class UploadDialog extends ButtonDialog {
     if (nameField == null) {
       nameField = new JTextField();
 
-      List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.getCurrentProject());
+      List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.currentProject());
 
       // set default from the project
       for (int i = 0; i < props.size(); i++) {
@@ -262,7 +261,7 @@ public class UploadDialog extends ButtonDialog {
     if (descriptionArea == null) {
       descriptionArea = new HTMLTextArea();
 
-      List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.getCurrentProject());
+      List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.currentProject());
 
       // set default from the project
       for (int i = 0; i < props.size(); i++) {
@@ -285,7 +284,7 @@ public class UploadDialog extends ButtonDialog {
       keywordsField = new JTextField();
       keywordsField.setColumns(32);
       keywordsField.setText(KeywordExtractor.getInstance().extractKeywords(
-          plugInPort.getCurrentProject()));
+          plugInPort.currentProject()));
     }
     return keywordsField;
   }
@@ -316,13 +315,13 @@ public class UploadDialog extends ButtonDialog {
     g2d.setColor(Color.white);
     g2d.fill(rect);
 
-    Dimension d = UploadDialog.this.plugInPort.getCanvasDimensions(false, false);
+    Dimension d = plugInPort.getCanvasDimensions(false, false);
     double projectRatio = d.getWidth() / d.getHeight();
     double actualRatio = rect.getWidth() / rect.getHeight();
     double zoomRatio = (projectRatio > actualRatio)
                        ? rect.getWidth() / d.getWidth()
                        : rect.getHeight() / d.getHeight();
-    UploadDialog.this.plugInPort.draw(g2d, EnumSet.of(DrawOption.ANTIALIASING), null, zoomRatio);
+    plugInPort.draw(g2d, EnumSet.of(DrawOption.ANTIALIASING), null, zoomRatio);
   }
 
   public String getKeywords() {

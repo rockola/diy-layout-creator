@@ -190,16 +190,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
   private SearchHeaderPanel getSearchHeaderPanel() {
     if (searchHeaderPanel == null) {
       searchHeaderPanel = new SearchHeaderPanel();
-      searchHeaderPanel
-          .getGoButton()
-          .addActionListener(
-              new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                  search();
-                }
-              });
+      searchHeaderPanel.getGoButton().addActionListener((e) -> search());
     }
     return searchHeaderPanel;
   }

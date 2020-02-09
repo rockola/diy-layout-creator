@@ -332,7 +332,7 @@ public class ResultsScrollPanel extends JScrollPane {
                               @Override
                               public Void doInBackground() throws Exception {
                                 LOG.debug("Opening from " + file.getAbsolutePath());
-                                plugInPort.loadProjectFromFile(file.getAbsolutePath());
+                                plugInPort.loadProject(file.getAbsolutePath());
                                 return null;
                               }
 
@@ -460,7 +460,7 @@ public class ResultsScrollPanel extends JScrollPane {
                       @Override
                       public String[] doInBackground() throws Exception {
                         LOG.debug("Uploading from {}", file.getAbsolutePath());
-                        thumbnailPresenter.loadProjectFromFile(file.getAbsolutePath());
+                        thumbnailPresenter.loadProject(file.getAbsolutePath());
                         return CloudPresenter.Instance.getCategories();
                       }
 
@@ -689,41 +689,40 @@ public class ResultsScrollPanel extends JScrollPane {
 
   private JLabel getLoadMoreLabel() {
     if (loadMoreLabel == null) {
-      loadMoreLabel =
-          new JLabel("Loading more data...") {
+      loadMoreLabel = new JLabel("Loading more data...") {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void paint(Graphics g) {
-              super.paint(g);
-              if (armed && searchSession != null && searchSession.hasMoreData()) {
-                // disarm immediately so we don't trigger
-                // successive requests to the provider
-                LOG.info("Paging mechanism is disarmed");
-                armed = false;
-                SwingWorker<List<ProjectEntity>, Void> worker =
-                    new SwingWorker<List<ProjectEntity>, Void>() {
+          @Override
+          public void paint(Graphics g) {
+            super.paint(g);
+            SwingWorker<List<ProjectEntity>, Void> worker = null;
+            if (armed && searchSession != null && searchSession.hasMoreData()) {
+              // disarm immediately so we don't trigger
+              // successive requests to the provider
+              LOG.info("Paging mechanism is disarmed");
+              armed = false;
+              worker = new SwingWorker<List<ProjectEntity>, Void>() {
 
-                      @Override
-                      protected List<ProjectEntity> doInBackground() throws Exception {
-                        return searchSession.requestMoreData();
-                      }
+                  @Override
+                  protected List<ProjectEntity> doInBackground() throws Exception {
+                    return searchSession.requestMoreData();
+                  }
 
-                      @Override
-                      protected void done() {
-                        try {
-                          List<ProjectEntity> newResults = get();
-                          addData(newResults);
-                        } catch (Exception e) {
-                          cloudUI.error(App.getString("cloud.search-failed"));
-                        }
-                      }
-                    };
-                worker.execute();
-              }
+                  @Override
+                  protected void done() {
+                    try {
+                      List<ProjectEntity> newResults = get();
+                      addData(newResults);
+                    } catch (Exception e) {
+                      cloudUI.error(App.getString("cloud.search-failed"));
+                    }
+                  }
+                };
+              worker.execute();
             }
-          };
+          }
+        };
       loadMoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
       loadMoreLabel.setFont(loadMoreLabel.getFont().deriveFont(10f));
     }

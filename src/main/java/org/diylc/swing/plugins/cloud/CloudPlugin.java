@@ -4,19 +4,18 @@
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 package org.diylc.swing.plugins.cloud;
@@ -121,7 +120,7 @@ public class CloudPlugin implements IPlugIn {
 
           @Override
           public Boolean doInBackground() throws Exception {
-            return CloudPresenter.Instance.tryLogInWithToken();
+            return CloudPresenter.Instance.tryLoginWithToken();
           }
 
           @Override
@@ -132,7 +131,9 @@ public class CloudPlugin implements IPlugIn {
           @Override
           public void complete(Boolean result) {
             try {
-              if (result) loggedIn();
+              if (result) {
+                loggedIn();
+              }
             } catch (Exception e) {
               LOG.error("Error while trying to login with token", e);
             }
@@ -260,7 +261,9 @@ public class CloudPlugin implements IPlugIn {
           } catch (CloudException e1) {
             App.ui().error(getMsg("could-not-login"), e1);
           }
-        } else break;
+        } else {
+          break;
+        }
       } while (true);
     }
   }
@@ -483,12 +486,13 @@ public class CloudPlugin implements IPlugIn {
                               @Override
                               public void complete(Void result) {
                                 App.ui().info(getMsg("upload-success"),
-                                                getMsg("project-uploaded"));
+                                              getMsg("project-uploaded"));
                                 synchronized (taskIterator) {
-                                  if (taskIterator.hasPrevious())
+                                  if (taskIterator.hasPrevious()) {
                                     App.ui().executeBackgroundTask(
                                         taskIterator.previous(),
                                         true);
+                                  }
                                 }
                               }
                             },
@@ -510,8 +514,9 @@ public class CloudPlugin implements IPlugIn {
         }
 
         synchronized (taskIterator) {
-          if (taskIterator.hasPrevious())
+          if (taskIterator.hasPrevious()) {
             App.ui().executeBackgroundTask(taskIterator.previous(), true);
+          }
         }
       }
     }
