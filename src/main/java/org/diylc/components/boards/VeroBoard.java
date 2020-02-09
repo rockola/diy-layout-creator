@@ -20,12 +20,12 @@
 
 package org.diylc.components.boards;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;
@@ -39,7 +39,6 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.SizeUnit;
-import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
     name = "Vero Board",
@@ -56,11 +55,10 @@ public class VeroBoard extends AbstractBoard {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BORDER_COLOR = BOARD_COLOR.darker();
-
-  public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Color BORDER_COLOR = BOARD_COLOR.darker();
+  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
 
   protected Size spacing = SPACING;
   protected Color stripColor = COPPER_COLOR;
@@ -80,12 +78,8 @@ public class VeroBoard extends AbstractBoard {
       return;
     }
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       Point p = new Point(firstPoint);
       int stripSize = getClosestOdd((int) STRIP_SIZE.convertToPixels());
       int holeSize = getClosestOdd((int) HOLE_SIZE.convertToPixels());
@@ -105,7 +99,7 @@ public class VeroBoard extends AbstractBoard {
               p.x + spacing / 2, p.y - stripSize / 2, secondPoint.x - spacing - p.x, stripSize);
           while (p.x < secondPoint.x - spacing - holeSize) {
             p.x += spacing;
-            g2d.setColor(Constants.CANVAS_COLOR);
+            g2d.setColor(CANVAS_COLOR);
             g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
             g2d.setColor(stripColor.darker());
             g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
@@ -125,7 +119,7 @@ public class VeroBoard extends AbstractBoard {
               p.x - stripSize / 2, p.y + spacing / 2, stripSize, secondPoint.y - spacing - p.y);
           while (p.y < secondPoint.y - spacing - holeSize) {
             p.y += spacing;
-            g2d.setColor(Constants.CANVAS_COLOR);
+            g2d.setColor(CANVAS_COLOR);
             g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
             g2d.setColor(stripColor.darker());
             g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
@@ -188,7 +182,7 @@ public class VeroBoard extends AbstractBoard {
     g2d.drawRect(1 / factor, 2 / factor, width - 2 / factor, 3 / factor);
     g2d.drawRect(1 / factor, height - 5 / factor, width - 2 / factor, 3 / factor);
 
-    g2d.setColor(Constants.CANVAS_COLOR);
+    g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         width / 3 - 2 / factor,
         width / 2 - 2 / factor,
