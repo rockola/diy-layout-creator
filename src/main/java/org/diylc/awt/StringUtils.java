@@ -291,4 +291,12 @@ public class StringUtils {
 
     g2d.drawString(text, textX, textY);
   }
+
+  public static void drawCenteredText(
+      Graphics2D g2d,
+      String text,
+      int x,
+      int y) {
+    drawCenteredText(g2d, text, x, y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+  }
 }
