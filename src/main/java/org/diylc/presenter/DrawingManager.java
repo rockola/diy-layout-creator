@@ -30,17 +30,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -48,14 +42,15 @@ import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
 import org.diylc.appframework.simplemq.MessageDispatcher;
+import org.diylc.common.Config;
 import org.diylc.common.DrawOption;
 import org.diylc.common.EventType;
 import org.diylc.common.GridType;
 import org.diylc.common.IComponentFilter;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IContinuity;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
@@ -71,24 +66,18 @@ import org.diylc.utils.Constants;
 public class DrawingManager {
 
   private static final Logger LOG = LogManager.getLogger(DrawingManager.class);
+  private static final boolean SHADE_EXTRA_SPACE = true;
 
   public static final int CONTROL_POINT_SIZE = 7;
-  public static double EXTRA_SPACE = 0.25;
-
+  public static final double EXTRA_SPACE = 0.25;
   public static final String ZOOM_KEY = "zoom";
+  public static final Color CONTROL_POINT_COLOR = Color.blue;
+  public static final Color SELECTED_CONTROL_POINT_COLOR = Color.green;
 
-  private static boolean SHADE_EXTRA_SPACE = true;
-
-  public static Color CONTROL_POINT_COLOR = Color.blue;
-  public static Color SELECTED_CONTROL_POINT_COLOR = Color.green;
-
-  private Theme theme = (Theme) App.getObject(IPlugInPort.THEME_KEY, Constants.DEFAULT_THEME);
   private Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private Composite lockedComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
-
   private double zoomLevel = 1d; // ConfigurationManager.readDouble(ZOOM_KEY, 1d);
-
   private MessageDispatcher<EventType> messageDispatcher;
 
   public DrawingManager(MessageDispatcher<EventType> messageDispatcher) {
@@ -142,15 +131,18 @@ public class DrawingManager {
       return failedComponents;
     }
     LOG.trace(
-        "drawProject({}, ...) {}, externalZoom {}",
-        project,
+        "drawProject(g2d, [Project {}], {}, ...) {}, externalZoom {}",
+        project.getSequenceNumber(),
+        drawOptions,
         dragInProgress ? "*DRAGGING*" : "not dragging",
         externalZoom);
     logTraceComponentSet(project.getSelection(), "selected");
     logTraceComponentSet(lockedComponents, "locked");
     logTraceComponentSet(groupedComponents, "grouped");
 
-    double zoom = (drawOptions.contains(DrawOption.ZOOM) ? zoomLevel : 1 / Constants.PIXEL_SIZE);
+    double zoom = drawOptions.contains(DrawOption.ZOOM)
+                  ? zoomLevel
+                  : 1 / Constants.PIXEL_SIZE;
     if (externalZoom != null) {
       zoom *= externalZoom;
     }
@@ -160,6 +152,7 @@ public class DrawingManager {
       G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
 
       boolean antiAliasing = drawOptions.contains(DrawOption.ANTIALIASING);
+      boolean hiQuality = App.highQualityRendering();
 
       g2d.setRenderingHint(
           RenderingHints.KEY_ANTIALIASING,
@@ -169,9 +162,6 @@ public class DrawingManager {
           antiAliasing
           ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON
           : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-      boolean hiQuality = App.highQualityRendering();
-
       g2d.setRenderingHint(
           RenderingHints.KEY_ALPHA_INTERPOLATION,
           hiQuality
@@ -200,37 +190,45 @@ public class DrawingManager {
           zoom,
           drawOptions.contains(DrawOption.EXTRA_SPACE));
 
-      g2dWrapper.setColor(theme.getBgColor());
+      g2dWrapper.setColor(theme().getBgColor());
       g2dWrapper.fillRect(0, 0, d.width, d.height);
       g2d.clip(new Rectangle(new Point(0, 0), d));
 
       GridType gridType = GridType.LINES;
-      if (drawOptions.contains(DrawOption.GRID) && gridType != GridType.NONE) {
-        double zoomStep = project.getGridSpacing().convertToPixels() * zoom;
+      if (drawOptions.contains(DrawOption.GRID)
+          && gridType != GridType.NONE) {
+        float zoomStep = (float) (project.getGridSpacing().convertToPixels() * zoom);
         float gridThickness = (float) (1f * (zoom > 1 ? 1 : zoom));
-        if (gridType == GridType.CROSSHAIR) {
-          g2d.setStroke(
-              new BasicStroke(
-                  gridThickness,
-                  BasicStroke.CAP_BUTT,
-                  BasicStroke.JOIN_MITER,
-                  10f,
-                  new float[] {(float) zoomStep / 2, (float) zoomStep / 2},
-                  (float) zoomStep / 4));
-        } else if (gridType == GridType.DOT) {
-          g2d.setStroke(
-              new BasicStroke(
-                  gridThickness,
-                  BasicStroke.CAP_BUTT,
-                  BasicStroke.JOIN_MITER,
-                  10f,
-                  new float[] {1f, (float) zoomStep - 1},
-                  0f));
-        } else {
-          g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(gridThickness));
+        switch (gridType) {
+          case CROSSHAIR:
+            g2d.setStroke(new BasicStroke(
+                gridThickness,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                10f,
+                new float[] {
+                  zoomStep / 2f,
+                  zoomStep / 2f
+                },
+                zoomStep / 4f));
+            break;
+          case DOT:
+            g2d.setStroke(new BasicStroke(
+                gridThickness,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                10f,
+                new float[] {
+                  1f,
+                  zoomStep - 1f
+                },
+                0f));
+            break;
+          default:
+            g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(gridThickness));
         }
 
-        g2dWrapper.setColor(theme.getGridColor());
+        g2dWrapper.setColor(theme().getGridColor());
         for (double i = zoomStep; i < d.width; i += zoomStep) {
           g2dWrapper.draw(new Line2D.Double(i, 0, i, d.height - 1));
         }
@@ -247,18 +245,17 @@ public class DrawingManager {
         Dimension dInner = getCanvasDimensions(project, zoom, false);
         extraSpace = getExtraSpace(project) * zoom;
         float borderThickness = (float) (3f * (zoom > 1 ? 1 : zoom));
-        g2d.setStroke(
-            ObjectCache.getInstance()
-            .fetchStroke(
-                borderThickness,
-                new float[] {
-                  borderThickness * 4, borderThickness * 4,
-                },
-                0,
-                BasicStroke.CAP_BUTT));
-        g2dWrapper.setColor(theme.getOutlineColor());
-        extraSpaceRect =
-            new Rectangle2D.Double(extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
+        g2d.setStroke(ObjectCache.getInstance().fetchStroke(
+            borderThickness,
+            new float[] {
+              borderThickness * 4,
+              borderThickness * 4,
+            },
+            0,
+            BasicStroke.CAP_BUTT));
+        g2dWrapper.setColor(theme().getOutlineColor());
+        extraSpaceRect = new Rectangle2D.Double(
+            extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
         g2d.draw(extraSpaceRect);
         extraSpaceTx = g2d.getTransform();
 
@@ -284,7 +281,7 @@ public class DrawingManager {
         // Do not track the area if component is not invalidated and was
         // drawn in the same state.
         ComponentState lastState = component.getState();
-        boolean trackArea = (lastState != state);
+        boolean trackArea = lastState != state;
         LOG.trace(
             "Component {} {} lastState {} and state {} so trackArea is {}",
             component.getIdentifier(),
@@ -304,10 +301,15 @@ public class DrawingManager {
           }
           // Draw the component through the g2dWrapper.
           try {
+            component.setState(state);
+            boolean outlineMode = drawOptions.contains(DrawOption.OUTLINE_MODE);
+            LOG.trace("drawOptions {} DrawOption.OUTLINE_MODE",
+                      outlineMode ? "contains" : "does not contain");
+            component.setOutlineMode(outlineMode);
             component.draw(
                 g2dWrapper,
                 state,
-                drawOptions.contains(DrawOption.OUTLINE_MODE),
+                outlineMode,
                 project,
                 g2dWrapper);
             if (g2dWrapper.isTrackingContinuityArea()) {
@@ -402,13 +404,16 @@ public class DrawingManager {
       if (componentSlot != null) {
         g2dWrapper.startedDrawingComponent();
         g2dWrapper.setComposite(slotComposite);
+        ComponentState state = ComponentState.NORMAL;
+        boolean outlineMode = drawOptions.contains(DrawOption.OUTLINE_MODE);
         for (IDIYComponent<?> component : componentSlot) {
           try {
-
+            component.setState(state);
+            component.setOutlineMode(outlineMode);
             component.draw(
                 g2dWrapper,
-                ComponentState.NORMAL,
-                drawOptions.contains(DrawOption.OUTLINE_MODE),
+                state,
+                outlineMode,
                 project,
                 g2dWrapper);
 
@@ -458,24 +463,33 @@ public class DrawingManager {
       }
 
       // Draw component/continuity areas when debugging
-      final boolean debugComponentAreas = App.isDebug(IPlugInPort.Debug.COMPONENT_AREA);
-      final boolean debugContinuityAreas = App.isDebug(IPlugInPort.Debug.CONTINUITY_AREA);
+      final boolean debugComponentAreas = App.isDebug(Config.Flag.DEBUG_COMPONENT_AREA);
+      final boolean debugContinuityAreas = App.isDebug(Config.Flag.DEBUG_CONTINUITY_AREA);
       if (debugComponentAreas || debugContinuityAreas) {
         g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
         for (IDIYComponent<?> component : project.getComponents()) {
+          LOG.trace("Component {}", component.getIdentifier());
           ComponentArea area = component.getArea();
-          if (debugComponentAreas) {
-            g2d.setColor(Color.red);
-            g2d.draw(area.getOutlineArea());
-          }
-          if (debugContinuityAreas) {
-            g2d.setColor(Color.green);
-            for (Area continuityPositive : area.getContinuityPositiveAreas()) {
-              g2d.draw(continuityPositive);
+          if (area == null) {
+            LOG.error("Component {} area is NULL!", component.getIdentifier());
+          } else {
+            if (debugComponentAreas) {
+              g2d.setColor(Color.red);
+              g2d.draw(area.getOutlineArea());
             }
-            g2d.setColor(Color.blue);
-            for (Area continuityNegative : area.getContinuityNegativeAreas()) {
-              g2d.draw(continuityNegative);
+            if (debugContinuityAreas) {
+              if (area.hasContinuityPositiveAreas()) {
+                g2d.setColor(Color.green);
+                for (Area continuityPositive : area.getContinuityPositiveAreas()) {
+                  g2d.draw(continuityPositive);
+                }
+              }
+              if (area.hasContinuityNegativeAreas()) {
+                g2d.setColor(Color.blue);
+                for (Area continuityNegative : area.getContinuityNegativeAreas()) {
+                  g2d.draw(continuityNegative);
+                }
+              }
             }
           }
         }
@@ -493,7 +507,7 @@ public class DrawingManager {
         extraSpaceArea.subtract(new Area(extraSpaceRect));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05f));
         g2d.setTransform(extraSpaceTx);
-        g2d.setColor(theme.getOutlineColor());
+        g2d.setColor(theme().getOutlineColor());
         g2d.fill(extraSpaceArea);
       }
     } finally {
@@ -558,13 +572,18 @@ public class DrawingManager {
     }
   }
 
+  private Theme theme() {
+    return App.getTheme();
+  }
+
   public Theme getTheme() {
-    return theme;
+    return theme();
   }
 
   public void setTheme(Theme theme) {
-    this.theme = theme;
-    App.putValue(IPlugInPort.THEME_KEY, theme);
-    if (messageDispatcher != null) messageDispatcher.dispatchMessage(EventType.REPAINT);
+    App.setTheme(theme);
+    if (messageDispatcher != null) {
+      messageDispatcher.dispatchMessage(EventType.REPAINT);
+    }
   }
 }
