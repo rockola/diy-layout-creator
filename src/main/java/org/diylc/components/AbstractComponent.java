@@ -20,23 +20,39 @@
 
 package org.diylc.components;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
 import org.diylc.common.Config;
-import org.diylc.core.IDIYComponent; // should probably be in this package
+import org.diylc.common.Display;
 import org.diylc.core.ComponentState; // should probably be in this package
+import org.diylc.core.IDIYComponent; // should probably be in this package
 import org.diylc.core.Theme;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.parsing.XmlNode;
 import org.diylc.presenter.ComponentArea; // should probably be in this package
 
 /**
@@ -44,33 +60,36 @@ import org.diylc.presenter.ComponentArea; // should probably be in this package
  * component name and toString.
  *
  * <p>IMPORTANT: to improve performance, all fields except for
- * <code>Point</code> and <code>Point </code> arrays should be
+ * <code>Point</code> and <code>Point</code> arrays should be
  * immutable. Failing to comply with this can result in annoying and
  * hard to trace bugs.
  *
  * @author Branislav Stojkovic
- * @param <T>
+ * @param <T> Value type.
  */
 public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(AbstractComponent.class);
+
+  public static final Color CANVAS_COLOR = Color.white;
+  public static final Color SELECTION_COLOR = Color.red;
+  public static final Color LABEL_COLOR = Color.black;
+  public static final Color LABEL_COLOR_SELECTED = Color.red;
+  public static final Font LABEL_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
+  public static final Color METAL_COLOR = Color.decode("#759DAF");
+  public static final Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
+  public static final Color COPPER_COLOR = Color.decode("#DA8A67");
+  public static final int ICON_SIZE = 32;
+
+  protected static final double HALF_PI = Math.PI / 2;
+  protected static final double SQRT_TWO = Math.sqrt(2);
 
   protected String name = "";
-
-  public static Color SELECTION_COLOR = Color.red;
-  public static Color LABEL_COLOR = Color.black;
-  public static Color LABEL_COLOR_SELECTED = Color.red;
-  public static Font LABEL_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
-  public static Color METAL_COLOR = Color.decode("#759DAF");
-  public static Color LIGHT_METAL_COLOR = Color.decode("#EEEEEE");
-  public static Color COPPER_COLOR = Color.decode("#DA8A67");
-
-  protected static Theme theme = (Theme) App.getObject(Theme.THEME_KEY, Theme.DEFAULT_THEME);
-
+  protected Display display = Display.NAME;
   protected transient int sequenceNumber = 0;
 
   private static int componentSequenceNumber = 0;
-
   private transient ComponentArea componentArea;
 
   private int nextSequenceNumber() {
@@ -93,7 +112,21 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     setArea(null);
   }
 
-  private transient ComponentState componentState;
+  protected transient boolean outlineMode;
+
+  public boolean getOutlineMode() {
+    return outlineMode;
+  }
+
+  public void setOutlineMode(boolean outlineMode) {
+    this.outlineMode = outlineMode;
+  }
+
+  public void resetOutlineMode() {
+    this.outlineMode = false;
+  }
+
+  protected transient ComponentState componentState;
 
   public ComponentState getState() {
     return componentState;
@@ -107,9 +140,20 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     setState(null);
   }
 
+  public boolean isSelected() {
+    return componentState.isSelected();
+  }
+
+  public boolean isDragging() {
+    return componentState.isDragging();
+  }
+
   public boolean isSelectedOrDragging() {
-    return (componentState == ComponentState.SELECTED
-            || componentState == ComponentState.DRAGGING);
+    return componentState.isSelectedOrDragging();
+  }
+
+  protected Theme theme() {
+    return App.getTheme();
   }
 
   private Color getColorUnlessSelectedOrDragging(
@@ -119,7 +163,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     if (isSelectedOrDragging()) {
       return selectedOrDraggingColor;
     }
-    return outlineMode ? theme.getOutlineColor() : color;
+    return outlineMode ? theme().getOutlineColor() : color;
   }
 
   /**
@@ -131,8 +175,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
      @param outlineMode true if outline mode color should override.
      @param color Color to use unless outline mode/selection/drag overrides.
-     @returns color
-   */
+     @return color
+  */
   public Color tryColor(boolean outlineMode, Color color) {
     return getColorUnlessSelectedOrDragging(outlineMode, SELECTION_COLOR, color);
   }
@@ -146,8 +190,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
      @param outlineMode true if outline mode color should override.
      @param color Color to use unless outline mode/selection/drag overrides.
-     @returns color
-   */
+     @return color
+  */
   public Color tryBorderColor(boolean outlineMode, Color color) {
     return tryColor(outlineMode, color);
   }
@@ -161,8 +205,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
 
      @param outlineMode true if outline mode color should override.
      @param color Color to use unless outline mode/selection/drag overrides.
-     @returns color
-   */
+     @return color
+  */
   public Color tryLabelColor(boolean outlineMode, Color color) {
     return getColorUnlessSelectedOrDragging(outlineMode, LABEL_COLOR_SELECTED, color);
   }
@@ -173,8 +217,8 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
      If selected or dragging, returns SELECTION_COLOR.
 
      @param color Color to use unless selected or dragging.
-     @returns color unless selected or dragging, defaults to SELECTION_COLOR otherwise
-   */
+     @return color unless selected or dragging, defaults to SELECTION_COLOR otherwise
+  */
   public Color tryLeadColor(Color color) {
     return getColorUnlessSelectedOrDragging(false, SELECTION_COLOR, color);
   }
@@ -196,6 +240,10 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     }
   }
 
+  public Point midpoint(Point a, Point b) {
+    return new Point((a.x + b.x) / 2, (a.y + b.y) / 2);
+  }
+
   @Override
   public String getIdentifier() {
     if (sequenceNumber == 0) {
@@ -207,6 +255,45 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
         this.getClass().getName(),
         sequenceNumber,
         getName());
+  }
+
+  protected String getLabelForDisplay() {
+    String s = "";
+    switch (display) {
+      case NAME:
+        return getName();
+      case NONE:
+        return "";
+      case BOTH:
+        s = getName() + " ";
+        // fallthrough intentional
+      case VALUE:
+        // fallthrough intentional
+      default:
+        return getValue() == null ? s : s + getValue().toString();
+    }
+  }
+
+  protected List<String> getLabelListForDisplay() {
+    List<String> strings = new ArrayList<>();
+    switch (display) {
+      case NAME:
+        strings.add(getName());
+        break;
+      case NONE:
+        strings.add("");
+      case BOTH:
+        strings.add(getName());
+        // fallthrough intentional
+      case VALUE:
+        // fallthrough intentional
+      default:
+        String value = getValue().toString();
+        if (!value.isEmpty()) {
+          strings.add(value);
+        }
+    }
+    return strings;
   }
 
   @EditableProperty(defaultable = false)
@@ -291,7 +378,6 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return !clip.intersects(rect);
   }
 
-  @SuppressWarnings("unchecked")
   public IDIYComponent<T> clone() throws CloneNotSupportedException {
     try {
       // Instantiate object of the same type
@@ -325,7 +411,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
             }
             // Deep copy points.
             // TODO: something nicer
-            if (value != null && value instanceof Point) {
+            if (value instanceof Point) {
               value = new Point((Point) value);
             }
 
@@ -423,5 +509,70 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
       p.y += offsetY;
       setControlPoint(p, i);
     }
+  }
+
+  public static double deltaX(Point p1, Point p2) {
+    return p2.x - p1.x;
+  }
+
+  public static double deltaY(Point p1, Point p2) {
+    return p2.y - p1.y;
+  }
+
+  public static double distance(Point p1, Point p2) {
+    return Math.hypot(deltaX(p1, p2), deltaY(p1, p2));
+  }
+
+  public Icon getImageIcon() {
+    Image image = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2d = (Graphics2D) image.getGraphics();
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    drawIcon(g2d, ICON_SIZE, ICON_SIZE);
+    return new ImageIcon(image);
+  }
+
+  /****************************************************************
+   * Unmarshal XML
+   */
+
+  /**
+     TODO: turn this into an exception class
+   */
+
+  private RuntimeException unsupportedUnmarshalFunction(String f) {
+    return new RuntimeException(f + "() not supported for " + getClass().getName());
+  }
+
+  public void setAngle(String s) {
+    throw unsupportedUnmarshalFunction("setAngle");
+  }
+
+  public void setShowLabels(String s) {
+    throw unsupportedUnmarshalFunction("setShowLabels");
+  }
+
+  protected ListMultimap<String, XmlNode> fillField(
+      ListMultimap<String, XmlNode> contents,
+      String key,
+      final BiConsumer<AbstractComponent, String> setter) {
+
+    List<XmlNode> payload = contents.get(key);
+    for (XmlNode node : payload) {
+      setter.accept(this, node.getValue());
+    }
+    contents.removeAll(key);
+    return contents;
+  }
+
+  protected ListMultimap<String, XmlNode> fillFields(ListMultimap<String, XmlNode> contents) {
+    LOG.trace("fillFields(...)");
+    contents = fillField(contents, "name", AbstractComponent::setName);
+    return contents;
+  }
+
+  protected ListMultimap<String, XmlNode> fillFields(XmlNode node) {
+    // handle node attributes here if needed
+    return fillFields(node.children);
   }
 }
