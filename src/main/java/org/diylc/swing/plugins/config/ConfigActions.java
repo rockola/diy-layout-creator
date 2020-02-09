@@ -22,6 +22,8 @@ package org.diylc.swing.plugins.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 
 import org.diylc.App;
 import org.diylc.common.Config;
@@ -29,38 +31,35 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.swing.action.ActionFactory;
 
 public class ConfigActions {
-  private List<ConfigAction> actions;
+  private final List<ConfigAction> actions = new ArrayList<ConfigAction>();
 
-  public ConfigActions() {
-    actions = new ArrayList<ConfigAction>();
-  }
+  public ConfigActions() {}
 
-  public void add(String name, String action, boolean defaultValue) {
+  public void add(String name, Config.Flag action, boolean defaultValue) {
     actions.add(new ConfigAction(Config.getString("menu.config." + name), action, defaultValue));
-  }
-
-  public void add(String name, IPlugInPort.Key action, boolean defaultValue) {
-    add(name, action.toString(), defaultValue);
-  }
-
-  public void add(String name, IPlugInPort.Debug action, boolean defaultValue) {
-    add(name, action.toString(), defaultValue);
   }
 
   public void injectActions(IPlugInPort plugInPort, String menuName) {
     for (ConfigAction a : actions) {
-      App.ui().injectMenuAction(ActionFactory.createConfigAction(
-          plugInPort, a.getName(), a.getAction(), a.getDefault()),
-                                menuName);
+      a.setMenuItem(App.ui().injectMenuAction(
+          ActionFactory.createConfigAction(plugInPort, a.getName(), a.getAction(), a.getDefault()),
+          menuName));
+    }
+  }
+
+  public void reset() {
+    for (ConfigAction action : actions) {
+      action.getMenuItem().setState(action.getDefault());
     }
   }
 
   private static class ConfigAction {
     private String name;
-    private String action;
+    private Config.Flag action;
     private boolean defaultValue;
+    private JCheckBoxMenuItem menuItem;
 
-    public ConfigAction(String name, String action, boolean defaultValue) {
+    public ConfigAction(String name, Config.Flag action, boolean defaultValue) {
       this.name = name;
       this.action = action;
       this.defaultValue = defaultValue;
@@ -70,12 +69,20 @@ public class ConfigActions {
       return name;
     }
 
-    public String getAction() {
+    public Config.Flag getAction() {
       return action;
     }
 
     public boolean getDefault() {
       return defaultValue;
+    }
+
+    public void setMenuItem(JComponent menuItem) {
+      this.menuItem = (JCheckBoxMenuItem) menuItem;
+    }
+
+    public JCheckBoxMenuItem getMenuItem() {
+      return menuItem;
     }
   }
 }

@@ -27,12 +27,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
-import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.Serializer;
+import org.diylc.appframework.miscutils.Utils;
+import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.components.autocreate.SolderPadAutoCreator;
 import org.diylc.core.Theme;
 import org.diylc.images.Icon;
 import org.diylc.swing.action.ActionFactory;
@@ -45,6 +45,33 @@ import org.diylc.swing.action.ActionFactory;
 public class ConfigPlugin implements IPlugIn {
 
   private static final Logger LOG = LogManager.getLogger(ConfigPlugin.class);
+  private static final String configMenu = App.getString("menu.config.title");
+  private static final ConfigActions actions = new ConfigActions();
+
+  static {
+    actions.add("anti-aliasing", Config.Flag.ANTI_ALIASING, App.antiAliasing());
+    // TODO: get default value for AUTO_PADS from Config
+    actions.add("auto-create-pads", Config.Flag.AUTO_PADS, false);
+    actions.add("auto-edit-mode", Config.Flag.AUTO_EDIT, App.autoEdit());
+    actions.add(
+        "continuous-creation", Config.Flag.CONTINUOUS_CREATION, App.continuousCreation());
+    actions.add("export-grid", Config.Flag.EXPORT_GRID, App.exportGrid());
+    actions.add("extra-working-area", Config.Flag.EXTRA_SPACE, App.extraSpace());
+    actions.add(
+        "hardware-acceleration", Config.Flag.HARDWARE_ACCELERATION, App.hardwareAcceleration());
+    actions.add(
+        "hi-quality-rendering", Config.Flag.HI_QUALITY_RENDER, App.highQualityRendering());
+    actions.add(
+        "highlight-connected-areas",
+        Config.Flag.HIGHLIGHT_CONTINUITY_AREA,
+        App.highlightContinuityArea());
+    actions.add("mouse-wheel-zoom", Config.Flag.WHEEL_ZOOM, App.wheelZoom());
+    actions.add("outline-mode", Config.Flag.OUTLINE, App.outlineMode());
+    actions.add("show-rulers", Config.Flag.SHOW_RULERS, App.showRulers());
+    actions.add("show-grid", Config.Flag.SHOW_GRID, App.showGrid());
+    actions.add("snap-to-grid", Config.Flag.SNAP_TO_GRID, App.snapToGrid());
+    actions.add("sticky-points", Config.Flag.STICKY_POINTS, App.stickyPoints());
+  }
 
   public static final String COMPONENT_BROWSER = "componentBrowser";
   public static final String SEARCHABLE_TREE = "Searchable Tree";
@@ -56,48 +83,14 @@ public class ConfigPlugin implements IPlugIn {
 
   @Override
   public void connect(IPlugInPort plugInPort) {
-    final ConfigActions actions = new ConfigActions();
-
-    // TODO: get default values from config?
-    actions.add("anti-aliasing", IPlugInPort.Key.ANTI_ALIASING, true);
-    actions.add("auto-create-pads", SolderPadAutoCreator.AUTO_PADS_KEY, false);
-    actions.add("auto-edit-mode", IPlugInPort.Key.AUTO_EDIT, true);
-    actions.add("continuous-creation", IPlugInPort.Key.CONTINUOUS_CREATION, false);
-    actions.add("export-grid", IPlugInPort.Key.EXPORT_GRID, false);
-    actions.add("extra-working-area", IPlugInPort.Key.EXTRA_SPACE, true);
-    actions.add("hardware-acceleration", IPlugInPort.Key.HARDWARE_ACCELERATION, false);
-    actions.add("hi-quality-rendering", IPlugInPort.Key.HI_QUALITY_RENDER, false);
-    actions.add("highlight-connected-areas", IPlugInPort.Key.HIGHLIGHT_CONTINUITY_AREA, false);
-    actions.add("mouse-wheel-zoom", IPlugInPort.Key.WHEEL_ZOOM, false);
-    actions.add("outline-mode", IPlugInPort.Key.OUTLINE, false);
-    actions.add("show-rulers", IPlugInPort.Key.SHOW_RULERS, true);
-    actions.add("show-grid", IPlugInPort.Key.SHOW_GRID, true);
-    actions.add("snap-to-grid", IPlugInPort.Key.SNAP_TO_GRID, true);
-    actions.add("sticky-points", IPlugInPort.Key.STICKY_POINTS, true);
-
-    final String configMenu = App.getString("menu.config.title");
-
     actions.injectActions(plugInPort, configMenu);
 
-    // Themes
-    // TODO - get default themes from resources
-    File themeDir = new File(Utils.getUserDataDirectory() + "themes");
-    if (themeDir.exists()) {
-      final String themeMenu = App.getString("menu.config.theme");
-      App.ui().injectSubmenu(themeMenu, Icon.Pens, configMenu);
-      for (File file : themeDir.listFiles()) {
-        if (file.getName().toLowerCase().endsWith(".xml")) {
-          try {
-            Theme theme = (Theme) Serializer.fromFile(file);
-            LOG.debug("Found theme: " + theme.getName());
-            App.ui().injectMenuAction(
-                ActionFactory.createThemeAction(plugInPort, theme),
-                themeMenu);
-          } catch (Exception e) {
-            LOG.error("Could not load theme file " + file.getName(), e);
-          }
-        }
-      }
+    final String themeMenu = App.getString("menu.config.theme");
+    App.ui().injectSubmenu(themeMenu, Icon.Pens, configMenu);
+    for (String themeName : Theme.getThemes().keySet()) {
+      App.ui().injectMenuAction(
+          ActionFactory.createThemeAction(plugInPort, Theme.getTheme(themeName)),
+          themeMenu);
     }
 
     // Toolbox
@@ -111,13 +104,21 @@ public class ConfigPlugin implements IPlugIn {
         componentBrowserMenu);
 
     // Developer Tools
-    final ConfigActions developerActions = new ConfigActions();
     final String developerMenu = App.getString("menu.config.developer");
+    final ConfigActions developerActions = new ConfigActions();
     App.ui().injectSubmenu(developerMenu, Icon.Screwdriver, configMenu);
     // TODO: get default values from Config - developer might want to always set these
-    developerActions.add("debug-component-areas", IPlugInPort.Debug.COMPONENT_AREA, false);
-    developerActions.add("debug-continuity-areas", IPlugInPort.Debug.CONTINUITY_AREA, false);
+    developerActions.add("debug-component-areas", Config.Flag.DEBUG_COMPONENT_AREA, false);
+    developerActions.add("debug-continuity-areas", Config.Flag.DEBUG_CONTINUITY_AREA, false);
     developerActions.injectActions(plugInPort, developerMenu);
+
+    App.ui().injectMenuAction(
+        ActionFactory.createResetOptionsAction(this),
+        configMenu);
+  }
+
+  public void resetOptionsToDefaults() {
+    actions.reset();
   }
 
   @Override
