@@ -65,7 +65,6 @@ public class ObjectListTable<T> extends AutoFitTable {
    * @throws SecurityException
    * @throws NoSuchMethodException
    */
-  @SuppressWarnings("unchecked")
   public ObjectListTable(
       Class<? extends T> dataClass, String[] fields, IActionProcessor<T> clickListener)
       throws SecurityException, NoSuchMethodException {
@@ -115,7 +114,6 @@ public class ObjectListTable<T> extends AutoFitTable {
    *
    * @param data
    */
-  @SuppressWarnings("unchecked")
   public void setData(List<T> data) {
     ((ObjectListTableModel<T>) getModel()).setData(data);
   }
@@ -144,11 +142,10 @@ public class ObjectListTable<T> extends AutoFitTable {
 
   /** Returns the appropriate background color for the given row. */
   protected Color colorForRow(int row) {
-    return (row % 2 == 1) ? new Color(240, 240, 240) : getBackground();
+    return (row % 2 != 0) ? new Color(240, 240, 240) : getBackground();
   }
 
   /** Shades alternate rows in different colors. */
-  @SuppressWarnings("unchecked")
   public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
     Component c = super.prepareRenderer(renderer, row, column);
     if (!((ObjectListTableModel<T>) getModel()).getActionColumns().contains(column)) {

@@ -156,9 +156,9 @@ public class ObjectListTableModel<T> extends AbstractTableModel {
   }
 
   @Override
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+  public void setValueAt(Object value, int rowIndex, int columnIndex) {
     try {
-      fieldSetters.get(columnIndex).invoke(data.get(rowIndex), aValue);
+      fieldSetters.get(columnIndex).invoke(data.get(rowIndex), value);
     } catch (Exception e) {
       LOG.error(e.getMessage());
     }
