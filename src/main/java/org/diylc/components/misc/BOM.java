@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.misc;
 
 import java.awt.Color;
@@ -29,6 +28,7 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
+
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -54,12 +54,13 @@ import org.diylc.utils.BomMaker;
     autoEdit = false)
 public class BOM extends AbstractComponent<Void> {
 
-  public static Size DEFAULT_SIZE = new Size(10d, SizeUnit.cm);
-  public static Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color COLOR = Color.black;
-  public static String DEFAULT_TEXT = "No components to show in the Bill of Materials";
-
   private static final long serialVersionUID = 1L;
+
+  public static final Size DEFAULT_SIZE = new Size(10d, SizeUnit.cm);
+  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
+  public static final String DEFAULT_TEXT = "No components to show in the Bill of Materials";
+
   private Size size = DEFAULT_SIZE;
 
   private Point point = new Point(0, 0);
@@ -87,10 +88,7 @@ public class BOM extends AbstractComponent<Void> {
       }
     }
     g2d.setFont(project.getFont());
-    g2d.setColor(
-        componentState == ComponentState.DRAGGING || componentState == ComponentState.SELECTED
-            ? SELECTION_COLOR
-            : getColor());
+    g2d.setColor(componentState.isSelectedOrDragging() ? SELECTION_COLOR : getColor());
     // Determine maximum name length and maximum value length to calculate
     // number of columns.
     FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -122,7 +120,9 @@ public class BOM extends AbstractComponent<Void> {
     // Calculate maximum entry size.
     int maxEntrySize = maxNameWidth + maxValueWidth + 2 * (int) SPACING.convertToPixels();
     int columnCount = (int) size.convertToPixels() / maxEntrySize;
-    if (columnCount == 0) columnCount = 1;
+    if (columnCount == 0) {
+      columnCount = 1;
+    }
     int columnWidth = (int) size.convertToPixels() / columnCount;
     int entriesPerColumn = (int) Math.ceil(1.d * bom.size() / columnCount);
     if (entriesPerColumn == 0) {
