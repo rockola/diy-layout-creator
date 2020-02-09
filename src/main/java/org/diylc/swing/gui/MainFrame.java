@@ -80,7 +80,8 @@ import org.diylc.swing.plugins.file.FileMenuPlugin;
 import org.diylc.swing.plugins.help.HelpMenuPlugin;
 import org.diylc.swing.plugins.layers.LayersMenuPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
-import org.diylc.swing.plugins.toolbox.ToolBox;
+import org.diylc.swing.plugins.toolbox.ComponentTabbedPane;
+import org.diylc.swing.plugins.toolbox.Toolbox;
 import org.diylc.swing.plugins.tree.ComponentTree;
 import org.diylc.swingframework.ButtonDialog;
 
@@ -96,39 +97,37 @@ public class MainFrame extends JFrame {
   private JPanel topPanel;
   private JPanel bottomPanel;
 
-  private Presenter presenter;
+  private Presenter presenter = null;
 
-  private JMenuBar mainMenuBar;
-  private Map<String, JMenu> menuMap;
-  private Map<String, ButtonGroup> buttonGroupMap;
+  private JMenuBar mainMenuBar = new JMenuBar();
+  private Map<String, JMenu> menuMap = new HashMap<String, JMenu>();
+  private Map<String, ButtonGroup> buttonGroupMap = new HashMap<String, ButtonGroup>();
 
-  private CanvasPlugin canvasPlugin;
+  private CanvasPlugin canvasPlugin = new CanvasPlugin();
+  private ComponentTabbedPane componentTabbedPane = new ComponentTabbedPane();
 
   public MainFrame() {
     super(Config.getString("app.title"));
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     setPreferredSize(new Dimension(1024, 700));
+    setJMenuBar(mainMenuBar);
     createBasePanels();
-    menuMap = new HashMap<String, JMenu>();
-    buttonGroupMap = new HashMap<String, ButtonGroup>();
-    /*
-    setIconImages(Arrays.asList(Icon.IconSmall.image(),
-    			    Icon.IconMedium.image(),
-    			    Icon.IconLarge.image()));
-    */
     setIconImages(Arrays.asList(Icon.AppSmall.image(), Icon.AppMedium.image(), Icon.App.image()));
     DialogFactory.getInstance().initialize(this);
+
+    topPanel.add(componentTabbedPane);
+    pack();
+    componentTabbedPane.setVisible(App.getString(
+        ConfigPlugin.COMPONENT_BROWSER,
+        ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.TABBED_TOOLBAR));
   }
 
-  public void installPlugins() {
-
+  public void activate() {
     if (presenter == null) {
-      this.presenter = new Presenter();
+      presenter = new Presenter();
 
-      canvasPlugin = new CanvasPlugin();
-
-      presenter.installPlugin(new ToolBox());
+      presenter.installPlugin(new Toolbox());
       presenter.installPlugin(new FileMenuPlugin());
       presenter.installPlugin(new EditMenuPlugin());
       presenter.installPlugin(new ConfigPlugin());
@@ -148,35 +147,39 @@ public class MainFrame extends JFrame {
 
       presenter.createNewProject();
 
-      addWindowListener(
-          new WindowAdapter() {
+      addWindowListener(new WindowAdapter() {
 
-            private void doExit() {
-              if (presenter.allowFileAction()) {
-                App.putValue(IPlugInPort.Key.ABNORMAL_EXIT, false);
-                dispose();
-                System.exit(0);
-              }
+          private void doExit() {
+            if (presenter.allowFileAction()) {
+              App.putValue(Config.Flag.ABNORMAL_EXIT, false);
+              dispose();
+              System.exit(0);
             }
+          }
 
-            @Override
-            public void windowClosed(WindowEvent e) {
-              doExit();
-            }
+          @Override
+          public void windowClosed(WindowEvent e) {
+            doExit();
+          }
 
-            @Override
-            public void windowClosing(WindowEvent e) {
-              doExit();
-            }
-          });
+          @Override
+          public void windowClosing(WindowEvent e) {
+            doExit();
+          }
+        });
 
       setGlassPane(new CustomGlassPane());
-      // getGlassPane().setVisible(true);
+      setLocationRelativeTo(null);
+      setVisible(true);
     }
   }
 
   public Presenter getPresenter() {
     return presenter;
+  }
+
+  public ComponentTabbedPane getComponentTabbedPane() {
+    return componentTabbedPane;
   }
 
   @Override
@@ -221,14 +224,6 @@ public class MainFrame extends JFrame {
     c.add(rightPanel, BorderLayout.EAST);
 
     setContentPane(c);
-  }
-
-  private JMenuBar getMainMenuBar() {
-    if (mainMenuBar == null) {
-      mainMenuBar = new JMenuBar();
-      setJMenuBar(mainMenuBar);
-    }
-    return mainMenuBar;
   }
 
   public void showMessage(String message, String title, int messageType) {
@@ -292,14 +287,16 @@ public class MainFrame extends JFrame {
     return ButtonDialog.OK.equals(editor.getSelectedButtonCaption());
   }
 
+  public JMenu findMenu(String menuName) {
+    return menuMap.get(menuName);
+  }
+
   private JMenu findOrCreateMenu(String menuName) {
-    JMenu menu;
-    if (menuMap.containsKey(menuName)) {
-      menu = menuMap.get(menuName);
-    } else {
+    JMenu menu = findMenu(menuName);
+    if (menu == null) {
       menu = new JMenu(menuName);
       menuMap.put(menuName, menu);
-      getMainMenuBar().add(menu);
+      mainMenuBar.add(menu);
     }
     return menu;
   }
@@ -348,40 +345,44 @@ public class MainFrame extends JFrame {
   }
 
   /**
-   * Injects a custom menu action into application's main menu. If <code>action</code> is set to
-   * null {@link Separator} will be added. If the specified menu does not exist it will be
+   * Inject a custom menu action into application main menu.
+   *
+   * <p>If <code>action</code> is set to null, a menu separator will
+   * be added. If the specified menu does not exist, it will be
    * automatically created.
    *
    * @param action {@link Action} to insert
    * @param menuName name of the menu to insert into
    */
-  public void injectMenuAction(Action action, String menuName) {
+  public JComponent injectMenuAction(Action action, String menuName) {
     LOG.trace(
         "injectMenuAction({}, {})",
         action == null ? "Separator" : action.getValue(Action.NAME), menuName);
     JMenu menu = findOrCreateMenu(menuName);
     if (action == null) {
       menu.addSeparator();
-    } else {
-      Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
-      String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
-      if (isCheckBox != null && isCheckBox) {
-        menu.add(new JCheckBoxMenuItem(action));
-      } else if (groupName != null) {
-        ButtonGroup group;
-        if (buttonGroupMap.containsKey(groupName)) {
-          group = buttonGroupMap.get(groupName);
-        } else {
-          group = new ButtonGroup();
-          buttonGroupMap.put(groupName, group);
-        }
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
-        group.add(item);
-        menu.add(item);
-      } else {
-        menu.add(action);
-      }
+      return null;
     }
+    Boolean isCheckBox = (Boolean) action.getValue(IView.CHECK_BOX_MENU_ITEM);
+    String groupName = (String) action.getValue(IView.RADIO_BUTTON_GROUP_KEY);
+    if (isCheckBox != null && isCheckBox) {
+      JCheckBoxMenuItem checkbox = new JCheckBoxMenuItem(action);
+      menu.add(checkbox);
+      return checkbox;
+    } else if (groupName != null) {
+      ButtonGroup group;
+      if (buttonGroupMap.containsKey(groupName)) {
+        group = buttonGroupMap.get(groupName);
+      } else {
+        group = new ButtonGroup();
+        buttonGroupMap.put(groupName, group);
+      }
+      JRadioButtonMenuItem item = new JRadioButtonMenuItem(action);
+      group.add(item);
+      menu.add(item);
+      return item;
+    }
+    return menu.add(action);
   }
 
   /**
@@ -396,13 +397,15 @@ public class MainFrame extends JFrame {
     LOG.trace("injectSubmenu({}, icon, {})", name, parentMenuName);
     JMenu menu = findOrCreateMenu(parentMenuName);
     JMenu submenu = new JMenu(name);
-    if (icon != null) submenu.setIcon(icon.icon());
+    if (icon != null) {
+      submenu.setIcon(icon.icon());
+    }
     menu.add(submenu);
     menuMap.put(name, submenu);
   }
 
   public void injectMenuComponent(JComponent component) {
-    getMainMenuBar().add(component);
+    mainMenuBar.add(component);
   }
 
   /**
@@ -428,38 +431,32 @@ public class MainFrame extends JFrame {
     emptyItem.setEnabled(false);
     submenu.add(emptyItem);
 
-    submenu.addMenuListener(
-        new MenuListener() {
+    submenu.addMenuListener(new MenuListener() {
 
-          @Override
-          public void menuSelected(MenuEvent e) {
-            submenu.removeAll();
-            List<String> items = handler.getAvailableItems();
-            if (items == null || items.isEmpty()) submenu.add(emptyItem);
-            else
-              for (String item : items) {
-                final JMenuItem menuItem = new JMenuItem(item);
-                menuItem.addActionListener(
-                    new ActionListener() {
-
-                      @Override
-                      public void actionPerformed(ActionEvent e) {
-                        handler.onActionPerformed(menuItem.getText());
-                      }
-                    });
-                submenu.add(menuItem);
-              }
-            //        submenu.revalidate();
-            //        submenu.repaint();
-            //        submenu.doClick();
+        @Override
+        public void menuSelected(MenuEvent e) {
+          submenu.removeAll();
+          List<String> items = handler.getAvailableItems();
+          if (items == null || items.isEmpty()) {
+            submenu.add(emptyItem);
+          } else {
+            for (String item : items) {
+              final JMenuItem menuItem = new JMenuItem(item);
+              menuItem.addActionListener((ev) -> handler.onActionPerformed(menuItem.getText()));
+              submenu.add(menuItem);
+            }
           }
+          //        submenu.revalidate();
+          //        submenu.repaint();
+          //        submenu.doClick();
+        }
 
-          @Override
-          public void menuDeselected(MenuEvent e) {}
+        @Override
+        public void menuDeselected(MenuEvent e) {}
 
-          @Override
-          public void menuCanceled(MenuEvent e) {}
-        });
+        @Override
+        public void menuCanceled(MenuEvent e) {}
+      });
   }
 
   /**
@@ -468,34 +465,37 @@ public class MainFrame extends JFrame {
    * @param task
    * @param blockUI
    */
-  public <T extends Object> void executeBackgroundTask(final ITask<T> task, boolean blockUI) {
+  public <T extends Object> void executeBackgroundTask(
+      final ITask<T> task,
+      boolean blockUI) {
 
-    if (blockUI) getGlassPane().setVisible(true);
-    SwingWorker<T, Void> worker =
-        new SwingWorker<T, Void>() {
+    if (blockUI) {
+      getGlassPane().setVisible(true);
+    }
+    SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
 
-          @Override
-          protected T doInBackground() throws Exception {
-            return task.doInBackground();
+        @Override
+        protected T doInBackground() throws Exception {
+          return task.doInBackground();
+        }
+
+        @Override
+        protected void done() {
+          try {
+            T result = get();
+            task.complete(result);
+            getGlassPane().setVisible(false);
+          } catch (ExecutionException e) {
+            getGlassPane().setVisible(false);
+            LOG.error("Background task execution failed", e);
+            task.failed(e);
+          } catch (InterruptedException e) {
+            getGlassPane().setVisible(false);
+            LOG.error("Background task execution interrupted", e);
+            task.failed(e);
           }
-
-          @Override
-          protected void done() {
-            try {
-              T result = get();
-              task.complete(result);
-              getGlassPane().setVisible(false);
-            } catch (ExecutionException e) {
-              getGlassPane().setVisible(false);
-              LOG.error("Background task execution failed", e);
-              task.failed(e);
-            } catch (InterruptedException e) {
-              getGlassPane().setVisible(false);
-              LOG.error("Background task execution interrupted", e);
-              task.failed(e);
-            }
-          }
-        };
+        }
+      };
     worker.execute();
   }
 
@@ -505,13 +505,12 @@ public class MainFrame extends JFrame {
   }
 
   public File promptFileSave() {
-    return DialogFactory.getInstance()
-        .showSaveDialog(
-            this,
-            FileFilterEnum.DIY.getFilter(),
-            null,
-            FileFilterEnum.DIY.getExtensions()[0],
-            null);
+    return DialogFactory.getInstance().showSaveDialog(
+        this,
+        FileFilterEnum.DIY.getFilter(),
+        null,
+        FileFilterEnum.DIY.getExtensions()[0],
+        null);
   }
 
   class FramePlugin implements IPlugIn {
