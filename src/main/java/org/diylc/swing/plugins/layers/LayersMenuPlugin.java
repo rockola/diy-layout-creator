@@ -50,51 +50,43 @@ public class LayersMenuPlugin implements IPlugIn {
     selectAllActionMap = new HashMap<Integer, Action>();
     for (Layer layer : Layer.values()) {
       final int zOrder = layer.getZOrder();
-      AbstractAction lockAction =
-          new AbstractAction("Lock") {
+      AbstractAction lockAction = new AbstractAction("Lock") {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              LayersMenuPlugin.this.plugInPort.setLayerLocked(
-                  zOrder, (Boolean) getValue(Action.SELECTED_KEY));
-              //          selectAllActionMap.get(zOrder).setEnabled(!(Boolean)
-              // getValue(Action.SELECTED_KEY));
-            }
-          };
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            LayersMenuPlugin.this.plugInPort.setLayerLocked(
+                zOrder, (Boolean) getValue(Action.SELECTED_KEY));
+          }
+        };
       lockAction.putValue(IView.CHECK_BOX_MENU_ITEM, true);
       lockActionMap.put(layer, lockAction);
 
-      AbstractAction visibleAction =
-          new AbstractAction("Visible") {
+      AbstractAction visibleAction = new AbstractAction("Visible") {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              LayersMenuPlugin.this.plugInPort.setLayerVisibility(
-                  zOrder,
-                  getValue(Action.SELECTED_KEY) == null
-                      ? true
-                      : (Boolean) getValue(Action.SELECTED_KEY));
-              //          selectAllActionMap.get(zOrder).setEnabled(!(Boolean)
-              // getValue(Action.SELECTED_KEY));
-            }
-          };
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            LayersMenuPlugin.this.plugInPort.setLayerVisibility(
+                zOrder,
+                (getValue(Action.SELECTED_KEY) == null
+                 || (Boolean) getValue(Action.SELECTED_KEY)));
+          }
+        };
       visibleAction.putValue(IView.CHECK_BOX_MENU_ITEM, true);
       visibleActionMap.put(layer, visibleAction);
 
-      AbstractAction selectAllAction =
-          new AbstractAction("Select All") {
+      AbstractAction selectAllAction = new AbstractAction("Select All") {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              LayersMenuPlugin.this.plugInPort.selectAll(zOrder);
-            }
-          };
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            LayersMenuPlugin.this.plugInPort.selectAll(zOrder);
+          }
+        };
       selectAllActionMap.put(zOrder, selectAllAction);
 
       App.ui().injectSubmenu(layer.title, null, LOCK_LAYERS_TITLE);
@@ -114,27 +106,26 @@ public class LayersMenuPlugin implements IPlugIn {
     return EnumSet.of(EventType.LAYER_STATE_CHANGED, EventType.LAYER_VISIBILITY_CHANGED);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void processMessage(EventType eventType, Object... params) {
     if (eventType == EventType.LAYER_STATE_CHANGED) {
       Set<Integer> lockedLayers = (Set<Integer>) params[0];
       for (Layer layer : Layer.values()) {
-        lockActionMap
-            .get(layer)
-            .putValue(Action.SELECTED_KEY, lockedLayers.contains(layer.getZOrder()));
+        lockActionMap.get(layer).putValue(
+            Action.SELECTED_KEY,
+            lockedLayers.contains(layer.getZOrder()));
       }
     } else if (eventType == EventType.LAYER_VISIBILITY_CHANGED) {
       Set<Integer> hiddenLayers = (Set<Integer>) params[0];
       for (Layer layer : Layer.values()) {
-        visibleActionMap
-            .get(layer)
-            .putValue(Action.SELECTED_KEY, !hiddenLayers.contains(layer.getZOrder()));
+        visibleActionMap.get(layer).putValue(
+            Action.SELECTED_KEY,
+            !hiddenLayers.contains(layer.getZOrder()));
       }
     }
   }
 
-  static enum Layer {
+  public enum Layer {
     CHASSIS("Chassis", IDIYComponent.CHASSIS),
     BOARD("Board", IDIYComponent.BOARD),
     TRACE("Trace", IDIYComponent.TRACE),
@@ -144,7 +135,7 @@ public class LayersMenuPlugin implements IPlugIn {
     String title;
     int zOrder;
 
-    private Layer(String title, int order) {
+    Layer(String title, int order) {
       this.title = title;
       zOrder = order;
     }
