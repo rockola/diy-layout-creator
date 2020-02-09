@@ -1,30 +1,30 @@
 /*
-
   DIY Layout Creator (DIYLC).
   Copyright (c) 2009-2018 held jointly by the individual authors.
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
+
 package org.diylc.components.misc;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
@@ -51,8 +51,8 @@ public class GroundSymbol extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.black;
-  public static Size SIZE = new Size(0.15d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
+  public static final Size SIZE = new Size(0.15d, SizeUnit.in);
 
   private Point point = new Point(0, 0);
   private Color color = COLOR;
@@ -178,13 +178,13 @@ public class GroundSymbol extends AbstractComponent<Void> {
   @Override
   public void setValue(Void value) {}
 
-  public static enum GroundSymbolType {
+  public enum GroundSymbolType {
     DEFAULT("Default"),
     TRIANGLE("Triangle");
 
     private String title;
 
-    private GroundSymbolType(String title) {
+    GroundSymbolType(String title) {
       this.title = title;
     }
 

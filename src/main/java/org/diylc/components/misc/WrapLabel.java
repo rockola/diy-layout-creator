@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.misc;
 
 import java.awt.Color;
@@ -27,6 +26,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.components.AbstractComponent;
@@ -57,13 +57,15 @@ public class WrapLabel extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(0.5d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(0.5d, SizeUnit.in);
 
   protected Point[] controlPoints =
       new Point[] {
         new Point(0, 0),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+        new Point(
+            (int) DEFAULT_WIDTH.convertToPixels(),
+            (int) DEFAULT_HEIGHT.convertToPixels())
       };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
