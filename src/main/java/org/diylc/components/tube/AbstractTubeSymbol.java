@@ -49,18 +49,20 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Color COLOR = Color.black;
+  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Color COLOR = Color.black;
 
   protected String value = "";
-
   protected Color color = COLOR;
-  protected Display display = Display.NAME;
-  protected transient Shape[] body;
   protected boolean showHeaters;
   protected Orientation orientation = Orientation.DEFAULT;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
   protected Point[] controlPoints;
+  protected transient Shape[] body;
+
+  {
+    display = Display.NAME;
+  }
 
   @Override
   public void draw(
@@ -127,7 +129,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
 
-    if (index == controlPoints.length - 1) this.body = null;
+    if (index == controlPoints.length - 1) {
+      this.body = null;
+    }
   }
 
   @EditableProperty
@@ -172,7 +176,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   @EditableProperty
   public Orientation getOrientation() {
-    if (orientation == null) orientation = Orientation.DEFAULT;
+    if (orientation == null) {
+      orientation = Orientation.DEFAULT;
+    }
 
     return orientation;
   }
@@ -186,7 +192,9 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
   @EditableProperty
   public SymbolFlipping getFlip() {
-    if (flip == null) flip = SymbolFlipping.NONE;
+    if (flip == null) {
+      flip = SymbolFlipping.NONE;
+    }
     return flip;
   }
 
@@ -273,14 +281,14 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
       }
     }
 
-    if (getOrientation() == Orientation.DEFAULT) return;
-
-    Point first = this.controlPoints[0];
-    double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-    AffineTransform rotate =
-        AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
-    for (int i = 1; i < this.controlPoints.length; i++) {
-      rotate.transform(this.controlPoints[i], this.controlPoints[i]);
+    if (getOrientation() != Orientation.DEFAULT) {
+      Point first = this.controlPoints[0];
+      double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
+      AffineTransform rotate =
+          AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
+      for (int i = 1; i < this.controlPoints.length; i++) {
+        rotate.transform(this.controlPoints[i], this.controlPoints[i]);
+      }
     }
   }
 

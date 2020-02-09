@@ -20,14 +20,12 @@
 
 package org.diylc.components.tube;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
@@ -39,6 +37,7 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -61,28 +60,26 @@ import org.diylc.utils.Constants;
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
 public class TubeSocket extends AbstractTransparentComponent<String> {
 
+  private static final long serialVersionUID = 1L;
   private static final Size B9A_PIN_SPACING_CHASSIS = new Size(12.5d, SizeUnit.mm);
   private static final Size B9A_PIN_SPACING_PCB = new Size(21d, SizeUnit.mm);
   private static final Size OCTAL_PIN_SPACING = new Size(17.5d, SizeUnit.mm);
   private static final Size B7G_PIN_SPACING = new Size(12d, SizeUnit.mm);
   private static final Size B7G_CUTOUT_DIAMETER = new Size(4d, SizeUnit.mm);
   private static final Size B9A_CUTOUT_DIAMETER = new Size(5.5d, SizeUnit.mm);
-
   private static final Size OCTAL_DIAMETER = new Size(25d, SizeUnit.mm);
   private static final Size B9A_DIAMETER = new Size(3 / 4d, SizeUnit.in);
   private static final Size B7G_DIAMETER = new Size(17d, SizeUnit.mm);
+  private static final Color BODY_COLOR = Color.decode("#F7F7EF");
+  private static final Color LABEL_COLOR = BODY_COLOR.darker();
+  private static final Size PIN_WIDTH = new Size(0.08d, SizeUnit.in);
+  private static final Size PIN_THICKNESS = new Size(0.02d, SizeUnit.in);
 
-  private static final long serialVersionUID = 1L;
-
-  private static Color BODY_COLOR = Color.decode("#F7F7EF");
-  private static Color LABEL_COLOR = BODY_COLOR.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Size PIN_DIAMETER = new Size(1d, SizeUnit.mm);
-  private static Size PIN_WIDTH = new Size(0.08d, SizeUnit.in);
-  private static Size PIN_THICKNESS = new Size(0.02d, SizeUnit.in);
-  public static Size HOLE_SIZE = new Size(5d, SizeUnit.mm);
-  public static Size OCTAL_TICK_SIZE = new Size(2d, SizeUnit.mm);
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Size PIN_DIAMETER = new Size(1d, SizeUnit.mm);
+  public static final Size HOLE_SIZE = new Size(5d, SizeUnit.mm);
+  public static final Size OCTAL_TICK_SIZE = new Size(2d, SizeUnit.mm);
 
   private Base base = Base.B9A;
   private String type = "";
@@ -93,9 +90,7 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
   private String electrodeLabels = null;
   private Mount mount = null;
   private Color labelColor = LABEL_COLOR;
-
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
-
   private transient Shape body;
 
   public TubeSocket() {
@@ -116,7 +111,6 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
   }
 
   @EditableProperty
-  @SuppressWarnings("incomplete-switch")
   public int getAngle() {
     if (orientation != null) {
       switch (orientation) {
@@ -129,6 +123,8 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         case _270:
           angle = 270;
           break;
+        default:
+          angle = 0;
       }
       orientation = null;
     }
@@ -299,11 +295,8 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 
     // Draw body
     Shape body = getBody();
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-    if (componentState != ComponentState.DRAGGING) {
+    Composite oldComposite = setTransparency(g2d);
+    if (!isDragging()) {
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getColor());
       g2d.fill(body);
     }
@@ -320,26 +313,22 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         Shape pinShape;
         if (getMount() == Mount.PCB) {
           int pinSize = getClosestOdd(PIN_DIAMETER.convertToPixels());
-          pinShape =
-              new Ellipse2D.Double(
-                  controlPoints[i].x - pinSize / 2,
-                  controlPoints[i].y - pinSize / 2,
-                  pinSize,
-                  pinSize);
+          pinShape = new Ellipse2D.Double(
+              controlPoints[i].x - pinSize / 2,
+              controlPoints[i].y - pinSize / 2,
+              pinSize,
+              pinSize);
         } else {
           int pinWidth = getClosestOdd(PIN_WIDTH.convertToPixels());
           int pinThickness = getClosestOdd(PIN_THICKNESS.convertToPixels());
-          pinShape =
-              new Rectangle2D.Double(
-                  controlPoints[i].x - pinWidth / 2,
-                  controlPoints[i].y - pinThickness / 2,
-                  pinWidth,
-                  pinThickness);
-          double theta =
-              Math.atan2(
-                      controlPoints[i].y - controlPoints[0].y,
-                      controlPoints[i].x - controlPoints[0].x)
-                  + Math.PI / 2;
+          pinShape = new Rectangle2D.Double(
+              controlPoints[i].x - pinWidth / 2,
+              controlPoints[i].y - pinThickness / 2,
+              pinWidth,
+              pinThickness);
+          double theta = HALF_PI + Math.atan2(
+              controlPoints[i].y - controlPoints[0].y,
+              controlPoints[i].x - controlPoints[0].x);
           Area rotatedPin = new Area(pinShape);
           rotatedPin.transform(
               AffineTransform.getRotateInstance(theta, controlPoints[i].x, controlPoints[i].y));
@@ -363,10 +352,9 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
       for (int i = 0; i < labels.length; i++) {
         if (i < controlPoints.length - 1) {
           String label = labels[i];
-          double theta =
-              Math.atan2(
-                  controlPoints[i + 1].y - controlPoints[0].y,
-                  controlPoints[i + 1].x - controlPoints[0].x);
+          double theta = Math.atan2(
+              controlPoints[i + 1].y - controlPoints[0].y,
+              controlPoints[i + 1].x - controlPoints[0].x);
           double x = controlPoints[i + 1].x - Math.cos(theta) * electrodeLabelOffset;
           double y = controlPoints[i + 1].y - Math.sin(theta) * electrodeLabelOffset;
           StringUtils.drawCenteredText(
@@ -437,7 +425,9 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 
   @EditableProperty(name = "Electrode Labels")
   public String getElectrodeLabels() {
-    if (electrodeLabels == null) electrodeLabels = "1,2,3,4,5,6,7,8,9";
+    if (electrodeLabels == null) {
+      electrodeLabels = "1,2,3,4,5,6,7,8,9";
+    }
     return electrodeLabels;
   }
 
@@ -447,7 +437,9 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 
   @EditableProperty(name = "Label")
   public Color getLabelColor() {
-    if (labelColor == null) labelColor = LABEL_COLOR;
+    if (labelColor == null) {
+      labelColor = LABEL_COLOR;
+    }
     return labelColor;
   }
 
@@ -457,7 +449,9 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
 
   @EditableProperty(name = "Mount")
   public Mount getMount() {
-    if (mount == null) mount = Mount.PCB;
+    if (mount == null) {
+      mount = Mount.PCB;
+    }
     return mount;
   }
 
@@ -469,14 +463,14 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     body = null;
   }
 
-  public static enum Base {
+  public enum Base {
     B9A("Noval B9A"),
     OCTAL("Octal"),
     B7G("Small-button B7G");
 
     String name;
 
-    private Base(String name) {
+    Base(String name) {
       this.name = name;
     }
 
@@ -486,13 +480,13 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
     }
   }
 
-  static enum Mount {
+  public enum Mount {
     CHASSIS("Chassis"),
     PCB("PCB");
 
     String name;
 
-    private Mount(String name) {
+    Mount(String name) {
       this.name = name;
     }
 

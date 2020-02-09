@@ -20,7 +20,6 @@
 
 package org.diylc.components.tube;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
@@ -28,15 +27,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
+import org.diylc.components.PinCount;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
@@ -54,20 +55,20 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color BODY_COLOR = Color.lightGray;
-  public static Color BORDER_COLOR = Color.gray;
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
-  public static Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
-  public static Size BODY_WIDTH = new Size(0.4d, SizeUnit.in);
-  public static Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm);
-  public static Size BODY_HEIGHT = new Size(9d, SizeUnit.mm);
-  public static Size DIAMETER = new Size(0.4d, SizeUnit.in);
-  public static Size LENGTH = new Size(1.375d, SizeUnit.in);
-  public static Size LEAD_LENGTH = new Size(0.2d, SizeUnit.in);
-  public static Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm);
+  public static final Color BODY_COLOR = Color.lightGray;
+  public static final Color BORDER_COLOR = Color.gray;
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
+  public static final Size PIN_SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size BODY_WIDTH = new Size(0.4d, SizeUnit.in);
+  public static final Size BODY_THICKNESS = new Size(4.5d, SizeUnit.mm);
+  public static final Size BODY_HEIGHT = new Size(9d, SizeUnit.mm);
+  public static final Size DIAMETER = new Size(0.4d, SizeUnit.in);
+  public static final Size LENGTH = new Size(1.375d, SizeUnit.in);
+  public static final Size LEAD_LENGTH = new Size(0.2d, SizeUnit.in);
+  public static final Size LEAD_THICKNESS = new Size(0.8d, SizeUnit.mm);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
@@ -75,19 +76,19 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   private transient Shape[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
-  private Display display = Display.NAME;
   private boolean folded = false;
   private Size leadLength = LEAD_LENGTH;
   private PinArrangement leadArrangement = PinArrangement.Circular;
   private boolean topLead = false;
   private Size diameter = DIAMETER;
   private Size length = LENGTH;
-  private PinCount pinCount = PinCount._8;
+  private final PinCount pinCount = new PinCount(3,10).setPins(8);
   private Size leadSpacing = PIN_SPACING;
 
   public SubminiTube() {
     super();
     updateControlPoints();
+    display = Display.NAME;
   }
 
   @EditableProperty
@@ -142,7 +143,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     // Update control points.
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
-    int newPointCount = getPinCount().getValue();
+    int newPointCount = getPinCount().pins();
     // Need a new array
     if (newPointCount != controlPoints.length) {
       controlPoints = new Point[newPointCount];
@@ -375,11 +376,8 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
     Shape mainArea = getBody()[0];
-    //Shape tabArea = getBody()[1];
-    //Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
+
+    Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
 
@@ -441,14 +439,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
-    String label = "";
-    label = (getDisplay() == Display.NAME) ? getName() : getValue();
-    if (getDisplay() == Display.NONE) {
-      label = "";
-    }
-    if (getDisplay() == Display.BOTH) {
-      label = getName() + "  " + (getValue() == null ? "" : getValue().toString());
-    }
+    String label = getLabelForDisplay();
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
     int textHeight = (int) (rect.getHeight());
@@ -458,6 +449,8 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     int x = bounds.x + (bounds.width - textWidth) / 2;
     int y = bounds.y + (bounds.height - textHeight) / 2 + fontMetrics.getAscent();
     g2d.drawString(label, x, y);
+
+    g2d.setComposite(oldComposite);
   }
 
   @Override
@@ -594,7 +587,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   }
 
   public void setPinCount(PinCount pinCount) {
-    this.pinCount = pinCount;
+    this.pinCount.setPins(pinCount);
     updateControlPoints();
   }
 
@@ -608,39 +601,19 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     updateControlPoints();
   }
 
-  public static enum PinArrangement {
+  public enum PinArrangement {
     Inline("In-line"),
     Circular("Circular");
 
     private String label;
 
-    private PinArrangement(String label) {
+    PinArrangement(String label) {
       this.label = label;
     }
 
     @Override
     public String toString() {
       return label;
-    }
-  }
-
-  public static enum PinCount {
-    _3,
-    _4,
-    _5,
-    _6,
-    _7,
-    _8,
-    _9,
-    _10;
-
-    @Override
-    public String toString() {
-      return name().replace("_", "");
-    }
-
-    public int getValue() {
-      return Integer.parseInt(toString());
     }
   }
 }
