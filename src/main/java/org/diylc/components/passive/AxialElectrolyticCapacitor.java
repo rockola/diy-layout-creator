@@ -17,20 +17,22 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.passive;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -54,12 +56,12 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
-  public static Color BODY_COLOR = Color.decode("#6B6DCE");
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
-  public static Color MARKER_COLOR = Color.decode("#8CACEA");
-  public static Color TICK_COLOR = Color.white;
+  public static final Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.decode("#6B6DCE");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color MARKER_COLOR = Color.decode("#8CACEA");
+  public static final Color TICK_COLOR = Color.white;
 
   private Capacitance value = null;
   @Deprecated private Voltage voltage = Voltage._63V;
@@ -169,30 +171,22 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
         new RoundRectangle2D.Double(0f, 0f, length, width, width / 6, width / 6);
     Area a = new Area(rect);
     double notchDiameter = width / 4;
-    a.subtract(
-        new Area(
-            new Ellipse2D.Double(
-                notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
-    a.subtract(
-        new Area(
-            new Ellipse2D.Double(
-                notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
+    a.subtract(new Area(new Ellipse2D.Double(
+        notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
+    a.subtract(new Area(new Ellipse2D.Double(
+        notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
 
     if (!getPolarized()) {
-      a.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  length - notchDiameter * 2,
-                  -notchDiameter * 3 / 4,
-                  notchDiameter,
-                  notchDiameter)));
-      a.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  length - notchDiameter * 2,
-                  width - notchDiameter / 4,
-                  notchDiameter,
-                  notchDiameter)));
+      a.subtract(new Area(new Ellipse2D.Double(
+          length - notchDiameter * 2,
+          -notchDiameter * 3 / 4,
+          notchDiameter,
+          notchDiameter)));
+      a.subtract(new Area(new Ellipse2D.Double(
+          length - notchDiameter * 2,
+          width - notchDiameter / 4,
+          notchDiameter,
+          notchDiameter)));
     }
     return a;
   }
