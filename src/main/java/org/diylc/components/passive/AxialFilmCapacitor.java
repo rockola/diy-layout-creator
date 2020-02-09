@@ -1,30 +1,30 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.passive;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.CreationMethod;
@@ -49,10 +49,10 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
-  public static Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
-  public static Color BODY_COLOR = Color.decode("#FFE303");
-  public static Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Size DEFAULT_WIDTH = new Size(1d / 2, SizeUnit.in);
+  public static final Size DEFAULT_HEIGHT = new Size(1d / 8, SizeUnit.in);
+  public static final Color BODY_COLOR = Color.decode("#FFE303");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
   private Capacitance value = null;
   @Deprecated private Voltage voltage = Voltage._63V;
