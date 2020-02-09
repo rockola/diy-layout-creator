@@ -64,7 +64,6 @@ import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.measures.Nudge;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.images.Icon;
 import org.diylc.netlist.Group;
 import org.diylc.netlist.Netlist;
@@ -88,6 +87,7 @@ public class ActionFactory {
 
   private static final Logger LOG = LogManager.getLogger(ActionFactory.class);
 
+  /*
   private static ActionFactory instance;
 
   private static ActionFactory getInstance() {
@@ -96,6 +96,7 @@ public class ActionFactory {
     }
     return instance;
   }
+  */
 
   private ActionFactory() {}
 
@@ -170,93 +171,104 @@ public class ActionFactory {
 
   // Edit menu actions.
 
-  public static CutAction createCutAction(
+  public static ActionFactoryAction createUndoAction() {
+    return new UndoAction();
+  }
+
+  public static ActionFactoryAction createRedoAction() {
+    return new RedoAction();
+  }
+
+  public static ActionFactoryAction createCutAction(
       IPlugInPort plugInPort, Clipboard clipboard, ClipboardOwner clipboardOwner) {
     return new CutAction(plugInPort, clipboard, clipboardOwner);
   }
 
-  public static CopyAction createCopyAction(
+  public static ActionFactoryAction createCopyAction(
       IPlugInPort plugInPort, Clipboard clipboard, ClipboardOwner clipboardOwner) {
     return new CopyAction(plugInPort, clipboard, clipboardOwner);
   }
 
-  public static PasteAction createPasteAction(IPlugInPort plugInPort, Clipboard clipboard) {
+  public static ActionFactoryAction createPasteAction(IPlugInPort plugInPort, Clipboard clipboard) {
     return new PasteAction(plugInPort, clipboard);
   }
 
-  public static DuplicateAction createDuplicateAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createDuplicateAction(IPlugInPort plugInPort) {
     return new DuplicateAction(plugInPort);
   }
 
-  public static SelectAllAction createSelectAllAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createSelectAllAction(IPlugInPort plugInPort) {
     return new SelectAllAction(plugInPort);
   }
 
-  public static GroupAction createGroupAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createGroupAction(IPlugInPort plugInPort) {
     return new GroupAction(plugInPort);
   }
 
-  public static UngroupAction createUngroupAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createUngroupAction(IPlugInPort plugInPort) {
     return new UngroupAction(plugInPort);
   }
 
-  public static EditProjectAction createEditProjectAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createEditProjectAction(IPlugInPort plugInPort) {
     return new EditProjectAction(plugInPort);
   }
 
-  public static EditSelectionAction createEditSelectionAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createEditSelectionAction(IPlugInPort plugInPort) {
     return new EditSelectionAction(plugInPort);
   }
 
-  public static DeleteSelectionAction createDeleteSelectionAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createDeleteSelectionAction(IPlugInPort plugInPort) {
     return new DeleteSelectionAction(plugInPort);
   }
 
-  public static SaveAsTemplateAction createSaveAsTemplateAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createSaveAsTemplateAction(IPlugInPort plugInPort) {
     return new SaveAsTemplateAction(plugInPort);
   }
 
-  public static SaveAsBlockAction createSaveAsBlockAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createSaveAsBlockAction(IPlugInPort plugInPort) {
     return new SaveAsBlockAction(plugInPort);
   }
 
-  public static ExpandSelectionAction createExpandSelectionAction(
+  public static ActionFactoryAction createExpandSelectionAction(
       IPlugInPort plugInPort, ExpansionMode expansionMode) {
     return new ExpandSelectionAction(plugInPort, expansionMode);
   }
 
-  public static RotateSelectionAction createRotateSelectionAction(
+  public static ActionFactoryAction createRotateSelectionAction(
       IPlugInPort plugInPort, int direction) {
+    if (plugInPort == null) {
+      LOG.error("createRotateSelectionAction(null, {}) plugInPort is NULL?!?!?", direction);
+    }
     return new RotateSelectionAction(plugInPort, direction);
   }
 
-  public static MirrorSelectionAction createMirrorSelectionAction(
+  public static ActionFactoryAction createMirrorSelectionAction(
       IPlugInPort plugInPort, int direction) {
     return new MirrorSelectionAction(plugInPort, direction);
   }
 
-  public static SendToBackAction createSendToBackAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createSendToBackAction(IPlugInPort plugInPort) {
     return new SendToBackAction(plugInPort);
   }
 
-  public static BringToFrontAction createBringToFrontAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createBringToFrontAction(IPlugInPort plugInPort) {
     return new BringToFrontAction(plugInPort);
   }
 
-  public static NudgeAction createNudgeAction(IPlugInPort plugInPort) {
+  public static ActionFactoryAction createNudgeAction(IPlugInPort plugInPort) {
     return new NudgeAction(plugInPort);
   }
 
   // Config actions.
 
   public static ConfigAction createConfigAction(
-      IPlugInPort plugInPort, String title, String configKey, boolean defaultValue) {
+      IPlugInPort plugInPort, String title, Config.Flag configKey, boolean defaultValue) {
     return new ConfigAction(plugInPort, title, configKey, defaultValue);
   }
 
   public static ConfigAction createConfigAction(IPlugInPort plugInPort,
                                                 String title,
-                                                String configKey,
+                                                Config.Flag configKey,
                                                 boolean defaultValue,
                                                 String tipKey) {
     return new ConfigAction(plugInPort, title, configKey, defaultValue, tipKey);
@@ -283,6 +295,25 @@ public class ActionFactory {
     return new SummarizeNetlistAction(plugInPort, summarizer);
   }
 
+  public static ResetOptionsAction createResetOptionsAction(ConfigPlugin configPlugin) {
+    return new ResetOptionsAction(configPlugin);
+  }
+
+  public static class ResetOptionsAction extends ActionFactoryAction {
+    private ConfigPlugin configPlugin;
+
+    public ResetOptionsAction(ConfigPlugin configPlugin) {
+      super(null, "Reset Options", "Reset Options");
+      this.configPlugin = configPlugin;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      LOG.info("ResetOptionsAction triggered");
+      configPlugin.resetOptionsToDefaults();
+    }
+  }
+
   // File menu actions.
 
   /**
@@ -303,12 +334,12 @@ public class ActionFactory {
         return;
       }
       plugInPort.createNewProject();
-      List<PropertyWrapper> properties = plugInPort.getProperties(plugInPort.getCurrentProject());
+      List<PropertyWrapper> properties = plugInPort.getProperties(plugInPort.currentProject());
       PropertyEditorDialog editor =
           DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Project", true);
       editor.setVisible(true);
       if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
-        plugInPort.applyProperties(plugInPort.getCurrentProject(), properties);
+        plugInPort.applyProperties(plugInPort.currentProject(), properties);
       }
       // Save default values.
       for (PropertyWrapper property : editor.getDefaultedProperties()) {
@@ -328,7 +359,7 @@ public class ActionFactory {
     // private static final long serialVersionUID = 1L;
 
     public OpenAction(IPlugInPort plugInPort) {
-      super(plugInPort, "Open", "Open", Icon.FolderOut.icon());
+      super(plugInPort, "Open", "Open", Icon.FolderOpen.icon());
     }
 
     @Override
@@ -347,7 +378,7 @@ public class ActionFactory {
               @Override
               public Void doInBackground() throws Exception {
                 LOG.debug("Opening from " + file.getAbsolutePath());
-                plugInPort.loadProjectFromFile(file.getAbsolutePath());
+                plugInPort.loadProject(file.getAbsolutePath());
                 return null;
               }
 
@@ -551,14 +582,14 @@ public class ActionFactory {
     // private static final long serialVersionUID = 1L;
 
     public CreateBomAction(IPlugInPort plugInPort) {
-      super(plugInPort, "Create B.O.M.", Icon.BOM.icon());
+      super(plugInPort, getMsg("create-bom"), Icon.BOM.icon());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("CreateBomAction triggered");
       List<BomEntry> bom =
-          BomMaker.getInstance().createBom(plugInPort.getCurrentProject().getComponents());
+          BomMaker.getInstance().createBom(plugInPort.currentProject().getComponents());
 
       String initialFileName = null;
       String currentFile = plugInPort.getCurrentFileName();
@@ -597,8 +628,8 @@ public class ActionFactory {
       String currentFile = plugInPort.getCurrentFileName();
       if (currentFile != null) {
         File cFile = new File(currentFile);
-        initialFile =
-            new File(cFile.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
+        initialFile = new File(
+            cFile.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
       }
 
       final File file = DialogFactory.getInstance().showSaveDialog(
@@ -613,8 +644,7 @@ public class ActionFactory {
               @Override
               public Void doInBackground() throws Exception {
                 LOG.debug("Exporting to " + file.getAbsolutePath());
-                DrawingExporter.getInstance()
-                    .exportPDF(ExportPDFAction.this.drawingProvider, file);
+                DrawingExporter.exportPDF(ExportPDFAction.this.drawingProvider, file);
                 return null;
               }
 
@@ -674,8 +704,7 @@ public class ActionFactory {
               @Override
               public Void doInBackground() throws Exception {
                 LOG.debug("Exporting to " + file.getAbsolutePath());
-                DrawingExporter.getInstance()
-                    .exportPNG(ExportPNGAction.this.drawingProvider, file);
+                DrawingExporter.exportPNG(ExportPNGAction.this.drawingProvider, file);
                 return null;
               }
 
@@ -710,7 +739,7 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("PrintAction triggered");
       try {
-        DrawingExporter.getInstance().print(this.drawingProvider);
+        DrawingExporter.print(this.drawingProvider);
       } catch (PrinterException e1) {
         e1.printStackTrace();
       }
@@ -730,14 +759,14 @@ public class ActionFactory {
     public ExportVariantsAction(IPlugInPort plugInPort) {
       super(plugInPort, "Export Variants");
 
-      Map<String, List<ComponentType>> componentTypes = plugInPort.getComponentTypes();
-      for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet())
+      Map<String, List<ComponentType>> componentTypes = ComponentType.getComponentTypes();
+      for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet()) {
         for (ComponentType type : entry.getValue()) {
           typeMap.put(type.getInstanceClass().getCanonicalName(), type);
         }
+      }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("ExportVariantsAction triggered");
@@ -746,7 +775,7 @@ public class ActionFactory {
 
       try {
         Map<String, List<Template>> variantMap =
-            (Map<String, List<Template>>) App.getObject(IPlugInPort.Key.TEMPLATES);
+            (Map<String, List<Template>>) App.getObject(Config.Flag.TEMPLATES);
         if (variantMap == null || variantMap.isEmpty()) {
           App.ui().error(getMsg("no-variants"));
           return;
@@ -755,8 +784,11 @@ public class ActionFactory {
         List<ComponentType> types = new ArrayList<ComponentType>();
         for (String className : variantMap.keySet()) {
           ComponentType type = typeMap.get(className);
-          if (type != null) types.add(type);
-          else LOG.warn("Could not find type for: " + className);
+          if (type != null) {
+            types.add(type);
+          } else {
+            LOG.warn("Could not find type for: " + className);
+          }
         }
 
         Collections.sort(
@@ -774,7 +806,9 @@ public class ActionFactory {
 
         dialog.setVisible(true);
 
-        if (dialog.getSelectedButtonCaption() != "OK") return;
+        if (dialog.getSelectedButtonCaption() != "OK") {
+          return;
+        }
 
         Object[] selected = dialog.getSelectedOptions();
 
@@ -788,7 +822,9 @@ public class ActionFactory {
           ComponentType type = (ComponentType) key;
           String clazz = type.getInstanceClass().getCanonicalName();
           List<Template> variants = variantMap.get(clazz);
-          if (variants != null) selectedVariants.put(clazz, variants);
+          if (variants != null) {
+            selectedVariants.put(clazz, variants);
+          }
         }
       } catch (Exception ex) {
         LOG.error("Error preparing variants for export", ex);
@@ -797,7 +833,7 @@ public class ActionFactory {
       }
 
       final VariantPackage variantPkg =
-          new VariantPackage(selectedVariants, System.getProperty("user.name"));
+          new VariantPackage(selectedVariants, App.getString("user.name"));
 
       File initialFile =
           new File(
@@ -904,7 +940,6 @@ public class ActionFactory {
       // putValue(AbstractAction.SMALL_ICON, IconLoader.Print.getIcon());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("ExportBuildingBlocksAction triggered");
@@ -913,7 +948,7 @@ public class ActionFactory {
 
       try {
         Map<String, List<IDIYComponent<?>>> blocks =
-            (Map<String, List<IDIYComponent<?>>>) App.getObject(IPlugInPort.Key.BLOCKS);
+            (Map<String, List<IDIYComponent<?>>>) App.getObject(Config.Flag.BLOCKS);
         if (blocks == null || blocks.isEmpty()) {
           App.ui().error(getMsg("no-building-blocks"));
           return;
@@ -931,13 +966,14 @@ public class ActionFactory {
               }
             });
 
-        CheckBoxListDialog dialog =
-            new CheckBoxListDialog(
-                App.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
+        CheckBoxListDialog dialog = new CheckBoxListDialog(
+            App.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
 
         dialog.setVisible(true);
 
-        if (dialog.getSelectedButtonCaption() != "OK") return;
+        if (dialog.getSelectedButtonCaption() != "OK") {
+          return;
+        }
 
         Object[] selected = dialog.getSelectedOptions();
 
@@ -957,7 +993,7 @@ public class ActionFactory {
       }
 
       final BuildingBlockPackage variantPkg =
-          new BuildingBlockPackage(selectedBlocks, System.getProperty("user.name"));
+          new BuildingBlockPackage(selectedBlocks, App.getString("user.name"));
 
       File initialFile =
           new File(variantPkg.getOwner() == null
@@ -1088,6 +1124,34 @@ public class ActionFactory {
   // Edit menu actions.
 
   /**
+     Undo. Redoable.
+  */
+  public static class UndoAction extends ActionFactoryAction {
+    public UndoAction() {
+      super(null, getMsg("undo"), "Undo", Icon.Undo.icon());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      LOG.info("Undo triggered");
+    }
+  }
+
+  /**
+     Redo. Undoable.
+  */
+  public static class RedoAction extends ActionFactoryAction {
+    public RedoAction() {
+      super(null, getMsg("redo"), "Redo", Icon.Redo.icon());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      LOG.info("Redo triggered");
+    }
+  }
+
+  /**
      Cut. Undoable.
   */
   public static class CutAction extends ActionFactoryAction {
@@ -1108,7 +1172,7 @@ public class ActionFactory {
       LOG.info("Cut triggered");
       clipboard.setContents(
           new ComponentTransferable(cloneComponents(
-              plugInPort.getCurrentProject().getSelection())),
+              plugInPort.currentProject().getSelection())),
           clipboardOwner);
       plugInPort.deleteSelectedComponents();
     }
@@ -1128,7 +1192,6 @@ public class ActionFactory {
       this.clipboard = clipboard;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("Paste triggered");
@@ -1162,8 +1225,7 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Copy triggered");
       clipboard.setContents(
-          new ComponentTransferable(cloneComponents(
-              plugInPort.getCurrentProject().getSelection())),
+          new ComponentTransferable(cloneComponents(plugInPort.currentProject().getSelection())),
           clipboardOwner);
     }
   }
@@ -1183,8 +1245,8 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Duplicate triggered");
       try {
-        // plugInPort.duplicateSelection();
-        plugInPort.getCurrentProject().duplicateSelection();
+        Project p = plugInPort.currentProject();
+        p.duplicateSelection();
       } catch (Exception ex) {
         LOG.error("Could not duplicate", ex);
         throw new RuntimeException(ex);
@@ -1236,7 +1298,7 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.trace("Group Selection triggered");
-      plugInPort.getCurrentProject().groupSelection();
+      plugInPort.currentProject().groupSelection();
     }
   }
 
@@ -1254,7 +1316,7 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.trace("Ungroup Selection triggered");
-      plugInPort.getCurrentProject().ungroupSelection();
+      plugInPort.currentProject().ungroupSelection();
     }
   }
 
@@ -1272,12 +1334,12 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("Edit Project triggered");
-      List<PropertyWrapper> properties = plugInPort.getProperties(plugInPort.getCurrentProject());
+      List<PropertyWrapper> properties = plugInPort.getProperties(plugInPort.currentProject());
       PropertyEditorDialog editor =
           DialogFactory.getInstance().createPropertyEditorDialog(properties, "Edit Project", true);
       editor.setVisible(true);
       if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
-        plugInPort.applyProperties(plugInPort.getCurrentProject(), properties);
+        plugInPort.applyProperties(plugInPort.currentProject(), properties);
       }
       // Save default values.
       for (PropertyWrapper property : editor.getDefaultedProperties()) {
@@ -1304,22 +1366,14 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Nudge triggered");
       Nudge n = new Nudge();
-      boolean metric = App.getBoolean(IPlugInPort.Key.METRIC, true);
-      if (metric) {
-        n.setxOffset(new Size(0d, SizeUnit.mm));
-        n.setyOffset(new Size(0d, SizeUnit.mm));
-      } else {
-        n.setxOffset(new Size(0d, SizeUnit.in));
-        n.setyOffset(new Size(0d, SizeUnit.in));
-      }
+      n.setOffsets(App.metric() ? Size.mm(0) : Size.in(0));
       List<PropertyWrapper> properties = plugInPort.getProperties(n);
-      PropertyEditorDialog editor =
-          DialogFactory.getInstance()
-              .createPropertyEditorDialog(properties, "Nudge Selection", false);
+      PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(
+          properties, "Nudge Selection", false);
       editor.setVisible(true);
       if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
         plugInPort.applyProperties(n, properties);
-        plugInPort.nudgeSelection(n.getxOffset(), n.getyOffset(), n.getAffectStuckComponents());
+        plugInPort.nudgeSelection(n.getOffsetX(), n.getOffsetY(), n.getAffectStuckComponents());
       }
     }
   }
@@ -1540,13 +1594,13 @@ public class ActionFactory {
 
     private static final long serialVersionUID = 1L;
 
-    private String configKey;
+    private Config.Flag configKey;
     private String tipKey;
 
     public ConfigAction(
         IPlugInPort plugInPort,
         String title,
-        String configKey,
+        Config.Flag configKey,
         boolean defaultValue,
         String tipKey) {
       super(plugInPort, title);
@@ -1557,13 +1611,15 @@ public class ActionFactory {
     }
 
     public ConfigAction(
-        IPlugInPort plugInPort, String title, String configKey, boolean defaultValue) {
+        IPlugInPort plugInPort, String title, Config.Flag configKey, boolean defaultValue) {
       this(plugInPort, title, configKey, defaultValue, null);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info(getValue(AbstractAction.NAME) + " triggered");
+      LOG.info("{} triggered ({})", getValue(AbstractAction.NAME), configKey);
+      LOG.trace("configKey {} tipKey {} SELECTED_KEY {}",
+                configKey, tipKey, getValue(AbstractAction.SELECTED_KEY));
       App.putValue(configKey, getValue(AbstractAction.SELECTED_KEY));
       if ((Boolean) getValue(AbstractAction.SELECTED_KEY)
           && tipKey != null
@@ -1634,8 +1690,8 @@ public class ActionFactory {
 
     private boolean xAxisFirst;
 
-    public RenumberAction(IPlugInPort plugInPort, boolean xAxisFirst) {
-      super(plugInPort, xAxisFirst ? "Top-to-Bottom" : "Left-to-Right");
+    public RenumberAction(IPlugInPort plugInPort, boolean topToBottom) {
+      super(plugInPort, getMsg(topToBottom ? "renumber-x-axis-first" : "renumber-y-axis-first"));
       this.xAxisFirst = xAxisFirst;
     }
 
@@ -1659,49 +1715,47 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      App.ui().executeBackgroundTask(
-          new ITask<List<Netlist>>() {
+      App.ui().executeBackgroundTask(new ITask<List<Netlist>>() {
 
-            @Override
-            public List<Netlist> doInBackground() throws Exception {
-              return plugInPort.extractNetlists(true);
+          @Override
+          public List<Netlist> doInBackground() throws Exception {
+            return plugInPort.currentProject().extractNetlists(true);
+          }
+
+          @Override
+          public void failed(Exception e) {
+            App.ui().error("Failed to generate the netlist.", e);
+          }
+
+          @Override
+          public void complete(List<Netlist> res) {
+            if (res == null) {
+              App.ui().info("The generated netlist is empty, nothing to show.");
+              return;
             }
+            StringBuilder sb = new StringBuilder("<html>");
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Failed to generate the netlist.", e);
-            }
-
-            @Override
-            public void complete(List<Netlist> res) {
-              if (res == null) {
-                App.ui().info("The generated netlist is empty, nothing to show.");
-                return;
+            for (Netlist netlist : res) {
+              sb.append(
+                  "<p style=\"font-family: "
+                  + new JLabel().getFont().getName()
+                  + "; font-size: 9px\"><b>Switch configuration: ")
+                  .append(netlist.getSwitchSetup())
+                  .append("</b><br><br>Connected node groups:<br>");
+              for (Group v : netlist.getSortedGroups()) {
+                sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
               }
-              StringBuilder sb = new StringBuilder("<html>");
-
-              for (Netlist netlist : res) {
-                sb.append(
-                    "<p style=\"font-family: "
-                    + new JLabel().getFont().getName()
-                    + "; font-size: 9px\"><b>Switch configuration: ")
-                    .append(netlist.getSwitchSetup())
-                    .append("</b><br><br>Connected node groups:<br>");
-                for (Group v : netlist.getSortedGroups()) {
-                  sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
-                }
-                sb.append("</p><br><hr>");
-              }
-              sb.append("</html>");
-              new TextDialog(
-                  App.ui().getOwnerFrame().getRootPane(),
-                  sb.toString(),
-                  "DIYLC Netlist",
-                  new Dimension(600, 480))
-                  .setVisible(true);
+              sb.append("</p><br><hr>");
             }
-          },
-          true);
+            sb.append("</html>");
+            new TextDialog(
+                App.ui().getOwnerFrame().getRootPane(),
+                sb.toString(),
+                "DIYLC Netlist",
+                new Dimension(600, 480)).setVisible(true);
+          }
+        },
+        true);
     }
   }
 
@@ -1730,7 +1784,7 @@ public class ActionFactory {
 
             @Override
             public List<Summary> doInBackground() throws Exception {
-              List<Netlist> netlists = plugInPort.extractNetlists(true);
+              List<Netlist> netlists = plugInPort.currentProject().extractNetlists(true);
               if (netlists == null || netlists.isEmpty()) {
                 throw new Exception(getMsg("empty-netlist"));
               }
@@ -1756,16 +1810,19 @@ public class ActionFactory {
                     .append(summarizer.getFontName())
                     .append("; font-size: 9px\">");
 
-                if (res.size() > 1)
+                if (res.size() > 1) {
                   sb.append("<b>Switch configuration: ")
                       .append(summary.getNetlist().getSwitchSetup())
                       .append("</b><br><br>");
+                }
 
                 sb.append(summary.getSummary());
 
                 sb.append("</p><br>");
 
-                if (res.size() > 1) sb.append("<hr>");
+                if (res.size() > 1) {
+                  sb.append("<hr>");
+                }
               }
               sb.append("</html>");
               new TextDialog(

@@ -35,13 +35,22 @@ public abstract class ActionFactoryAction extends AbstractAction {
     super();
     this.plugInPort = plugInPort;
     putValue(AbstractAction.NAME, name);
-    if (actionKeyStroke != null) putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
-    if (icon != null) putValue(AbstractAction.SMALL_ICON, icon);
+    if (actionKeyStroke != null) {
+      putValue(AbstractAction.ACCELERATOR_KEY, actionKeyStroke);
+    }
+    if (icon != null) {
+      putValue(AbstractAction.SMALL_ICON, icon);
+    }
   }
 
   protected ActionFactoryAction(
       IPlugInPort plugInPort, String name, String actionName, Object icon) {
     this(plugInPort, name, App.getKeyStroke(actionName), icon);
+  }
+
+  protected ActionFactoryAction(
+      IPlugInPort plugInPort, String name, String actionName) {
+    this(plugInPort, name, App.getKeyStroke(actionName), null);
   }
 
   protected ActionFactoryAction(IPlugInPort plugInPort, String name, Object icon) {
