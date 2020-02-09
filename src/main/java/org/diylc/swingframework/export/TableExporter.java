@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework.export;
 
 import java.awt.Component;
@@ -73,7 +74,6 @@ public class TableExporter {
 
   public void exportToExcel(JTable table, File file) throws IOException {
     LOG.info("Exporting table to Excel file {}", file.getAbsolutePath());
-    FileOutputStream fileOut = new FileOutputStream(file);
 
     LOG.debug("Creating workbook");
     HSSFWorkbook wb = new HSSFWorkbook();
@@ -154,8 +154,9 @@ public class TableExporter {
       bomSheet.autoSizeColumn(i);
     }
     LOG.debug("Writing to the file");
-    wb.write(fileOut);
-    fileOut.close();
+    try (FileOutputStream fileOut = new FileOutputStream(file)) {
+      wb.write(fileOut);
+    }
     LOG.debug("Done");
   }
 
@@ -235,11 +236,7 @@ public class TableExporter {
             out.write(method.invoke(rendererComponent).toString());
           } catch (Exception e) {
             LOG.error(
-                "exportToCSV("
-                + table.toString()
-                + ", "
-                + file.toString()
-                + ") failed",
+                "exportToCSV({" + table.toString() + ", " + file.toString() + ") failed",
                 e);
           }
         }
