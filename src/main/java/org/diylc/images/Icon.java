@@ -22,7 +22,10 @@ package org.diylc.images;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -30,118 +33,109 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public enum Icon {
+  About,
+  Add,
   App,
   AppMedium,
   AppSmall,
   ApplicationEdit,
   Arrow,
-  BranchAdd,
-  BriefcaseInto,
-  CloudBg,
-  CloudDelete,
-  CloudGear,
-  CloudUpload,
-  CloudWait,
-  Component,
-  Cut,
-  DataFind,
-  Delete,
-  DocumentEdit,
-  Donate,
-  Error,
-  Excel,
-  Exit,
-  FitToSize,
-  FlipHorizontal,
-  Form,
-  FormAdd,
-  Garbage,
-  Guitar,
-  History,
-  IconSmall,
-  IconMedium,
-  IconLarge,
-  IdCard,
-  KeyEdit,
-  LightBulbOff,
-  MagicWand,
-  Megaphone,
-  Messages,
-  MoveSmall,
-  NavRightBlue,
-  NavigateCheck,
-  PhotoScenery,
-  PinGreen,
-  RotateCCW,
-  Screwdriver,
-  ScrollInformation,
-  Selection,
-  Size,
-  Sort,
-  Splash,
-  SplashElectrolytic,
-  SplashResistor,
-  StarBlue,
-  Ungroup,
-  Upload,
-  WindowColors,
-  About,
-  Add,
   BOM,
   Back,
   BlackBoard,
+  BranchAdd,
   BriefcaseAdd,
+  BriefcaseInto,
   Bug,
   CSV,
   Chest,
   Cloud,
+  CloudBg,
   CloudBig,
+  CloudDelete,
   CloudDownload,
   CloudEdit,
+  CloudGear,
   CloudUp,
+  CloudUpload,
+  CloudWait,
   CoffeebeanEdit,
+  Component,
   ComponentAdd,
   Copy,
+  Cut,
   Dashboard,
+  DataFind,
+  Delete,
   DiskBlue,
+  DocumentEdit,
   DocumentPlain,
   DocumentPlainYellow,
   DocumentsGear,
+  Donate,
   Download,
   EditComponent,
   ElementInto,
   ElementsSelection,
+  Error,
+  Excel,
+  Exit,
   Eye,
   Faq,
   Find,
+  FitToSize,
+  FlipHorizontal,
   FlipVertical,
-  FolderOut,
+  Folder,
+  FolderOpen,
+  Form,
+  FormAdd,
   Front,
+  Garbage,
   Gears,
   Group,
+  Guitar,
   HTML,
   Hammer,
   Help,
+  History,
+  IconLarge,
+  IconMedium,
+  IconSmall,
+  IdCard,
   IdCardAdd,
   IdCardEdit,
   Image,
   JarBeanInto,
+  KeyEdit,
+  LightBulbOff,
   LightBulbOn,
+  MagicWand,
   Manual,
+  Megaphone,
+  Messages,
   MissingImage,
+  MoveSmall,
   NavLeftBlue,
+  NavRightBlue,
+  NavigateCheck,
   Node,
   NotebookAdd,
   PDF,
   Paste,
   Pens,
+  PhotoScenery,
+  PinGreen,
   PinGrey,
   Plugin,
   Print,
   Redo,
+  RotateCCW,
   RotateCW,
   SaveAs,
   Scientist,
+  Screwdriver,
+  ScrollInformation,
   Scroll_Center,
   Scroll_E,
   Scroll_N,
@@ -152,49 +146,76 @@ public enum Icon {
   Scroll_SW,
   Scroll_W,
   SearchBox,
+  Selection,
+  Size,
+  Sort,
   Spinning,
+  Splash,
   SplashCeramic,
+  SplashElectrolytic,
   SplashFilm,
+  SplashResistor,
+  StarBlue,
   StarGrey,
   TraceMask,
   Undo,
+  Ungroup,
+  Upload,
   Warning,
   Web,
+  WindowColors,
   WindowGear,
   Wrench,
   ZoomSmall;
 
   private static final Logger LOG = LogManager.getLogger(Icon.class);
 
-  private static HashMap<Icon, ImageIcon> icons = new HashMap<>();
+  private static List<String> iconDirectories = new ArrayList<>();
 
-  private String resourcePNG() {
+  static {
+    iconDirectories.add("/icons/MaterialDesign/18px/");
+    iconDirectories.add("/icons/material.io/");
+    iconDirectories.add("");
+  }
+
+  private ImageIcon imageIcon;
+
+  private URL resourcePNG() {
     String resourceID = "icon." + this.toString();
-    String r = org.diylc.App.getString(resourceID) + ".png";
-    if (r == null || r.isEmpty()) {
+    //String r = org.diylc.App.getString(resourceID) + ".png";
+    URL resource = null;
+    String r = null;
+    for (String iconDirectory: iconDirectories) {
+      r = iconDirectory + org.diylc.App.getString(resourceID) + ".png";
+      resource = Icon.class.getResource(r);
+      if (resource != null) {
+        break;
+      }
+      LOG.trace("Didn't find icon for {} in {}", resourceID, r);
+    }
+    if (resource == null) {
       LOG.error("{} not found in icons! Tried resource {}", this, resourceID);
     } else {
-      LOG.debug("Asked for {}, looking for {} in icons...", resourceID, r);
+      LOG.debug("Asked for {}, found {} in icons", resourceID, r);
     }
-    return r;
+    return resource;
   }
 
   public ImageIcon imageIcon() {
-    ImageIcon i = icons.get(this);
-    if (i == null) {
+    if (imageIcon == null) {
       // this icon hasn't been requested yet, let's load it from
       // resources
       try {
-        i = new ImageIcon(Icon.class.getResource(resourcePNG()));
+        ImageIcon i = new ImageIcon(resourcePNG());
         // let's store the icon for future reference
         LOG.debug("storing ImageIcon for {}", this.toString());
-        icons.put(this, i);
+        imageIcon = i;
       } catch (NullPointerException e) {
         LOG.error("Cannot create ImageIcon for {}", this.toString());
         throw e;
       }
     }
-    return i;
+    return imageIcon;
   }
 
   public javax.swing.Icon icon() {
@@ -202,12 +223,11 @@ public enum Icon {
   }
 
   public Image image() {
-    Image r = null;
-    try {
-      r = ImageIO.read(Icon.class.getResourceAsStream(resourcePNG()));
-    } catch (IOException e) {
-      LOG.error(this.toString() + ".image() failed", e);
+    ImageIcon r = imageIcon();
+    if (r == null) {
+      LOG.error(this.toString() + ".image() not found");
+      // TODO throw exception?
     }
-    return r;
+    return r == null ? null : r.getImage();
   }
 }
