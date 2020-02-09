@@ -43,19 +43,10 @@ public class TextDialog extends JDialog {
     holderPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
     setContentPane(holderPanel);
-
     setPreferredSize(preferredSize == null ? new Dimension(480, 400) : preferredSize);
-
     pack();
     setLocationRelativeTo(getOwner());
-
-    SwingUtilities.invokeLater(
-        new Runnable() {
-
-          public void run() {
-            scrollPane.getVerticalScrollBar().setValue(0);
-          }
-        });
+    SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
   }
 
   private JPanel createButtonPanel() {
@@ -63,14 +54,7 @@ public class TextDialog extends JDialog {
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
 
     JButton cancelButton = new JButton("Close");
-    cancelButton.addActionListener(
-        new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            TextDialog.this.setVisible(false);
-          }
-        });
+    cancelButton.addActionListener((e) -> TextDialog.this.setVisible(false));
     buttonPanel.add(cancelButton);
 
     return buttonPanel;
