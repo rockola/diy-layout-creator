@@ -39,13 +39,14 @@ import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.swing.plugins.config.ConfigPlugin;
 import org.diylc.swing.plugins.statusbar.StatusBar;
+import org.diylc.swing.tree.ComponentTreePanel;
 
 public class ComponentTree implements IPlugIn {
 
   private static final Logger LOG = LogManager.getLogger(StatusBar.class);
 
   private IPlugInPort plugInPort;
-  private TreePanel treePanel;
+  private ComponentTreePanel treePanel;
   private JComponent canvasPanel;
 
   public ComponentTree(JComponent canvasPanel) {
@@ -62,42 +63,29 @@ public class ComponentTree implements IPlugIn {
     }
     ConfigurationManager.addListener(
         ConfigPlugin.COMPONENT_BROWSER,
-        new IConfigListener() {
-
-          @Override
-          public void valueChanged(String key, Object value) {
-            getTreePanel()
-                .setVisible(
-                    ConfigPlugin.COMPONENT_BROWSER.equals(key)
-                        && ConfigPlugin.SEARCHABLE_TREE.equals(value));
-          }
-        });
-
+        (key, value) -> getTreePanel().setVisible(
+            ConfigPlugin.COMPONENT_BROWSER.equals(key)
+            && ConfigPlugin.SEARCHABLE_TREE.equals(value)));
     getTreePanel().setVisible(App.getString(
         ConfigPlugin.COMPONENT_BROWSER,
         ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE));
 
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
-        new KeyEventDispatcher() {
-
-          @Override
-          public boolean dispatchKeyEvent(KeyEvent e) {
-            if ((canvasPanel.hasFocus() || treePanel.hasFocus())
-                && e.getKeyChar() == 'q'
-                && App.getString(
-                    ConfigPlugin.COMPONENT_BROWSER,
-                    ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
-              getTreePanel().getSearchField().requestFocusInWindow();
-              return true;
-            }
-            return false;
-          }
-        });
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((e) -> {
+        if ((canvasPanel.hasFocus() || treePanel.hasFocus())
+            && e.getKeyChar() == 'q'
+            && App.getString(
+                ConfigPlugin.COMPONENT_BROWSER,
+                ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
+          getTreePanel().getSearchField().requestFocusInWindow();
+          return true;
+        }
+        return false;
+      });
   }
 
-  public TreePanel getTreePanel() {
+  public ComponentTreePanel getTreePanel() {
     if (treePanel == null) {
-      treePanel = new TreePanel(plugInPort);
+      treePanel = new ComponentTreePanel(); // new TreePanel(plugInPort);
     }
     return treePanel;
   }
