@@ -23,9 +23,9 @@ package org.diylc.appframework.undo;
 /**
  * Interface for undo/redo notifications.
  *
+ * @param <T> class of objects of interest
  * @see UndoHandler
  * @author Branislav Stojkovic
- * @param <T>
  */
 public interface IUndoListener<T> {
 
