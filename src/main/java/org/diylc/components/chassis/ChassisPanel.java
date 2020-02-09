@@ -34,7 +34,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Chassis Panel",
@@ -50,7 +49,7 @@ public class ChassisPanel extends AbstractShape {
 
   private static final long serialVersionUID = 1L;
 
-  protected Size edgeRadius = new Size(0d, SizeUnit.mm);
+  protected Size edgeRadius = Size.mm(0);
 
   public ChassisPanel() {
     this.color = LIGHT_METAL_COLOR;
