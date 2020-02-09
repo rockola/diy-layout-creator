@@ -1,3 +1,23 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.swingframework.export;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -6,9 +26,11 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+
 import com.orsonpdf.PDFDocument;
 import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -27,15 +49,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.diylc.common.Config;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
- * Utility class that handles image exports to:
+ * Export layout images.
  *
+ * Export destinations:
  * <ul>
  *   <li>PDF
- *   <li>PNG ` *
+ *   <li>PNG
  *   <li>Printer
  * </ul>
  *
@@ -43,19 +70,12 @@ import org.diylc.swingframework.IDrawingProvider;
  */
 public class DrawingExporter {
 
+  private static final Logger LOG = LogManager.getLogger(DrawingExporter.class);
+
   private static final double margin = 0; // 1cm
   private static final int PDF_RESOLUTION = 72;
   private static final int PNG_RESOLUTION = 300;
   private static final int SCREEN_RESOLUTION = Toolkit.getDefaultToolkit().getScreenResolution();
-
-  private static DrawingExporter instance;
-
-  public static DrawingExporter getInstance() {
-    if (instance == null) {
-      instance = new DrawingExporter();
-    }
-    return instance;
-  }
 
   private DrawingExporter() {}
 
@@ -65,54 +85,54 @@ public class DrawingExporter {
    * @param provider
    * @throws PrinterException
    */
-  public void print(final IDrawingProvider provider) throws PrinterException {
+  public static void print(final IDrawingProvider provider) throws PrinterException {
     PrinterJob printJob = PrinterJob.getPrinterJob();
     final int pageCount = provider.getPageCount();
-    printJob.setPrintable(
-        new Printable() {
+    printJob.setPrintable(new Printable() {
 
-          @Override
-          public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-              throws PrinterException {
-            if (pageIndex >= pageCount) {
-              return (NO_SUCH_PAGE);
+        @Override
+        public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+            throws PrinterException {
+          if (pageIndex >= pageCount) {
+            return (NO_SUCH_PAGE);
+          } else {
+            Graphics2D g2d = (Graphics2D) graphics;
+
+            Dimension d = provider.getSize();
+
+            double pageRatio = (pageFormat.getWidth() / pageFormat.getHeight());
+            double imageRatio = d.getWidth() / d.getHeight();
+            double scale;
+            if (imageRatio > pageRatio) {
+              scale = ((pageFormat.getWidth() - 2 * margin) / d.getWidth());
             } else {
-              Graphics2D g2d = (Graphics2D) graphics;
-
-              Dimension d = provider.getSize();
-
-              double pageRatio = (pageFormat.getWidth() / pageFormat.getHeight());
-              double imageRatio = d.getWidth() / d.getHeight();
-              double scale;
-              if (imageRatio > pageRatio) {
-                scale = ((pageFormat.getWidth() - 2 * margin) / d.getWidth());
-              } else {
-                scale = ((pageFormat.getHeight() - 2 * margin) / d.getHeight());
-              }
-              if (scale > 1) {
-                scale = 1d;
-              }
-
-              g2d.translate(
-                  pageFormat.getImageableX() + margin, pageFormat.getImageableY() + margin);
-
-              g2d.setFont(new Font(Config.getString("font.sans-serif"), Font.PLAIN, 6));
-              FontMetrics metrics = g2d.getFontMetrics();
-              g2d.setColor(Color.gray);
-
-              if (scale < 1) {
-                String warningStr = "Note: image has been scaled down to fit the page.";
-                g2d.drawString(warningStr, 0, (int) (d.getHeight() * scale + metrics.getHeight()));
-              }
-
-              // g2d.scale(scale, scale);
-
-              provider.draw(pageIndex, g2d, scale);
-
-              return (PAGE_EXISTS);
+              scale = ((pageFormat.getHeight() - 2 * margin) / d.getHeight());
             }
+            if (scale > 1) {
+              scale = 1d;
+            }
+
+            g2d.translate(
+                pageFormat.getImageableX() + margin,
+                pageFormat.getImageableY() + margin);
+
+            g2d.setFont(new Font(Config.getString("font.sans-serif"), Font.PLAIN, 6));
+            FontMetrics metrics = g2d.getFontMetrics();
+            g2d.setColor(Color.gray);
+
+            if (scale < 1) {
+              String warningStr = "Note: image has been scaled down to fit the page.";
+              g2d.drawString(warningStr, 0, (int) (d.getHeight() * scale + metrics.getHeight()));
+            }
+
+            // g2d.scale(scale, scale);
+
+            provider.draw(pageIndex, g2d, scale);
+
+            return (PAGE_EXISTS);
           }
-        });
+        }
+      });
     if (printJob.printDialog()) {
       printJob.print();
     }
@@ -125,9 +145,8 @@ public class DrawingExporter {
    * @param file // * @throws DocumentException
    * @throws FileNotFoundException
    */
-  public void exportPDF(IDrawingProvider provider, File file)
+  public static void exportPDF(IDrawingProvider provider, File file)
       throws FileNotFoundException, IOException {
-    // throws FileNotFoundException, DocumentException {
 
     Dimension d = provider.getSize();
     // We have to scale everything down because PDF resolution is slightly
@@ -153,7 +172,7 @@ public class DrawingExporter {
     // document.open();
     /* iText 5 stuff
     DefaultFontMapper mapper = new DefaultFontMapper() {
-    	@Override
+        @Override
         public BaseFontParameters getBaseFontParameters(String arg0) {
             BaseFontParameters p = super.getBaseFontParameters(arg0);
             if (p != null)
@@ -161,6 +180,7 @@ public class DrawingExporter {
             return p;
         }
         };
+        // TODO use system fonts
     if (Utils.isWindows()) {
         mapper.insertDirectory(System.getenv("windir") + "\\Fonts");
     } else if (Utils.isMac()) {
@@ -212,48 +232,30 @@ public class DrawingExporter {
    * @param provider
    * @param file
    */
-  public void exportPNG(IDrawingProvider provider, File file) {
+  public static void exportPNG(IDrawingProvider provider, File file) {
     try {
       int pageCount = provider.getPageCount();
       Dimension d = provider.getSize();
       double factor = 1f * PNG_RESOLUTION / SCREEN_RESOLUTION;
-
-      if (pageCount == 1) {
-        BufferedImage image =
-            new BufferedImage(
-                (int) (d.getWidth() * factor),
-                (int) (d.getHeight() * factor),
-                BufferedImage.TYPE_INT_RGB);
+      for (int i = 0; i < pageCount; i++) {
+        BufferedImage image = new BufferedImage(
+            (int) (d.getWidth() * factor),
+            (int) (d.getHeight() * factor),
+            BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
-
-        //				g2d.scale(factor, factor);
         provider.draw(0, g2d, factor);
+        // Move down
+        g2d.translate(0, (int) (d.getHeight() * factor));
+        // TODO: what is the point of translate() when dispose() is immediately after?
         g2d.dispose();
-
-        ImageIO.write(image, "PNG", file);
-      } else {
-        for (int i = 0; i < pageCount; i++) {
-          BufferedImage image =
-              new BufferedImage(
-                  (int) (d.getWidth() * factor),
-                  (int) (d.getHeight() * factor),
-                  BufferedImage.TYPE_INT_RGB);
-          Graphics2D g2d = (Graphics2D) image.getGraphics();
-
-          //					g2d.scale(factor, factor);
-          // Draw a page
-          provider.draw(i, g2d, factor);
-          // Move down
-          g2d.translate(0, (int) (d.getHeight() * factor));
-          g2d.dispose();
-          ImageIO.write(
-              image,
-              "PNG",
-              new File(file.getAbsolutePath().replaceAll("\\.png", "_" + (i + 1) + ".png")));
-        }
+        File outFile =
+            i == 0
+            ? file
+            : new File(file.getAbsolutePath().replaceAll("\\.png", "_" + (i + 1) + ".png"));
+        ImageIO.write(image, "PNG", outFile);
       }
     } catch (Exception e) {
-      System.out.println("Error exporting: " + e);
+      LOG.error("Error exporting PNG", e);
     }
   }
 }
