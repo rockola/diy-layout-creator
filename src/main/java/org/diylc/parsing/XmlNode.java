@@ -101,10 +101,14 @@ public class XmlNode {
      @return value if found, or null
    */
   public String getValue(String key) {
+    String value = null;
     for (XmlNode n : children.get(key)) {
-      return n.getValue();
+      value = n.getValue();
+      if (value != null) {
+        break;
+      }
     }
-    return null;
+    return value;
   }
 
   public String getValue() {
