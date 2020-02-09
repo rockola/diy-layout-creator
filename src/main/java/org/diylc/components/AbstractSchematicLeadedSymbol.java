@@ -24,16 +24,16 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+
 import org.diylc.common.LabelPosition;
-import org.diylc.core.ComponentState;
 import org.diylc.core.annotations.EditableProperty;
 
 public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedComponent<T> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color COLOR = Color.blue;
-  public static Color LEAD_COLOR = Color.black;
+  public static final Color COLOR = Color.blue;
+  public static final Color LEAD_COLOR = Color.black;
 
   protected LabelPosition labelPosition = LabelPosition.ABOVE;
 
@@ -76,7 +76,7 @@ public abstract class AbstractSchematicLeadedSymbol<T> extends AbstractLeadedCom
   protected Point calculateLabelPosition(Point point1, Point point2) {
     double x = (point1.x + point2.x) / 2.0;
     double y = (point1.y + point2.y) / 2.0;
-    double theta = Math.atan2(point2.y - point1.y, point2.x - point1.x) - Math.PI / 2;
+    double theta = Math.atan2(point2.y - point1.y, point2.x - point1.x) - HALF_PI;
     double r = width.convertToPixels() / 2 + LABEL_FONT.getSize() / 2;
     return new Point((int) (x + Math.cos(theta) * r), (int) (y + Math.sin(theta) * r));
   }
