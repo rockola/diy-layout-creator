@@ -61,12 +61,8 @@ public class EllipticalCutout extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
 
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       g2d.setColor(color);
       g2d.fillOval(
           firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);

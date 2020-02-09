@@ -75,25 +75,22 @@ public class PolygonalCutout extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     g2d.setColor(color);
-    int[] xPoints = new int[controlPoints.length];
-    int[] yPoints = new int[controlPoints.length];
+    int[] pointsX = new int[controlPoints.length];
+    int[] pointsY = new int[controlPoints.length];
     for (int i = 0; i < controlPoints.length; i++) {
-      xPoints[i] = controlPoints[i].x;
-      yPoints[i] = controlPoints[i].y;
+      pointsX[i] = controlPoints[i].x;
+      pointsY[i] = controlPoints[i].y;
     }
 
-    Composite oldComposite = g2d.getComposite();
-    if (this.alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(3, 1.0F * this.alpha / MAX_ALPHA));
-    }
-    g2d.fillPolygon(xPoints, yPoints, controlPoints.length);
+    final Composite oldComposite = setTransparency(g2d);
+    g2d.fillPolygon(pointsX, pointsY, controlPoints.length);
     g2d.setComposite(oldComposite);
 
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
     g2d.setColor(tryBorderColor(false, borderColor));
-    g2d.drawPolygon(xPoints, yPoints, controlPoints.length);
+    g2d.drawPolygon(pointsX, pointsY, controlPoints.length);
   }
 
   @EditableProperty(name = "Edges")
@@ -111,10 +108,9 @@ public class PolygonalCutout extends AbstractShape {
     if (oldPointCount < newPointCount) {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
-        this.controlPoints[i] =
-            new Point(
-                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
-                (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
+        this.controlPoints[i] = new Point(
+            (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+            (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
     this.pointCount = pointCount;

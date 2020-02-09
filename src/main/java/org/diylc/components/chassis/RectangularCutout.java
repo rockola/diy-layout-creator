@@ -67,12 +67,8 @@ public class RectangularCutout extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
-    if (componentState != ComponentState.DRAGGING) {
-      Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      Composite oldComposite = setTransparency(g2d);
       g2d.setColor(color);
       g2d.fillRoundRect(
           firstPoint.x,
