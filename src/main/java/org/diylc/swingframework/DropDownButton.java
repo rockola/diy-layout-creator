@@ -282,17 +282,16 @@ public class DropDownButton extends Box {
     }
   }
 
+  /*
+    TODO: move to test
+
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setPreferredSize(new Dimension(300, 400));
     JButton b = new JButton("Test");
     b.addActionListener(
-        new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            System.out.println("hello");
-          }
+        (e) -> {
+          System.out.println("hello");
         });
     DropDownButton ddb = new DropDownButton(b);
     ddb.getMenu().add(new JMenuItem("Nested 1"));
@@ -302,4 +301,5 @@ public class DropDownButton extends Box {
     f.setVisible(true);
     f.pack();
   }
+  */
 }
