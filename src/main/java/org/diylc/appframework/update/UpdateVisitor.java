@@ -37,7 +37,7 @@ import org.commonmark.node.Heading;
 import org.commonmark.node.Text;
 
 public class UpdateVisitor extends AbstractVisitor {
-  private Logger LOG = LogManager.getLogger(UpdateVisitor.class);
+  private static final Logger LOG = LogManager.getLogger(UpdateVisitor.class);
 
   private List<Version> versions = new ArrayList<>();
   private List<DateTimeFormatter> formatters =
@@ -52,9 +52,9 @@ public class UpdateVisitor extends AbstractVisitor {
     return versions;
   }
 
-  private final int VERSION_LEVEL = 2;
-  private final int DATE_LEVEL = 3;
-  private final int CHANGE_LEVEL = 4;
+  private static final int VERSION_LEVEL = 2;
+  private static final int DATE_LEVEL = 3;
+  private static final int CHANGE_LEVEL = 4;
 
   @Override
   public void visit(Heading node) {
@@ -77,14 +77,12 @@ public class UpdateVisitor extends AbstractVisitor {
 
   @Override
   public void visit(Text node) {
-    VersionNumber versionNumber;
-    Date releaseDate;
-    String nodeContent = node.getLiteral();
+    final String nodeContent = node.getLiteral();
 
     switch (lastLevel) {
       case VERSION_LEVEL:
         LOG.debug("Reading {} as version number", nodeContent);
-        versionNumber = new VersionNumber(node.getLiteral());
+        final VersionNumber versionNumber = new VersionNumber(node.getLiteral());
         LOG.debug("Version number is {}", versionNumber);
         version = new Version(versionNumber);
         versions.add(version);
@@ -97,8 +95,8 @@ public class UpdateVisitor extends AbstractVisitor {
 
             // LocalDateTime to java.util.Date via Instant:
             // https://stackoverflow.com/a/19726814/355028
-            LocalDateTime releaseDateAsLDT = LocalDateTime.parse(nodeContent, f);
-            releaseDate = Date.from(releaseDateAsLDT.toInstant(ZoneOffset.UTC));
+            final LocalDateTime localTime = LocalDateTime.parse(nodeContent, f);
+            final Date releaseDate = Date.from(localTime.toInstant(ZoneOffset.UTC));
             LOG.debug("Release date is {}", releaseDate);
             version.setReleaseDate(releaseDate);
             formatSuccess = true;
