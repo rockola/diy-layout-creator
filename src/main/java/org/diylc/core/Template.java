@@ -29,7 +29,6 @@ public class Template {
   private Map<String, Object> values;
   private List<Point> points;
 
-  @SuppressWarnings("unused")
   @Deprecated
   private boolean defaultFlag;
 
@@ -47,6 +46,21 @@ public class Template {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public boolean isName(String name) {
+    return this.name.equals(name);
+  }
+
+  public static Template find(List<Template> templates, String name) {
+    if (templates != null && name != null) {
+      for (Template template : templates) {
+        if (template.isName(name)) {
+          return template;
+        }
+      }
+    }
+    return null;
   }
 
   public Map<String, Object> getValues() {
