@@ -28,15 +28,13 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.components.transform.BatterySnapTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -85,12 +83,8 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     Shape[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    if (componentState != ComponentState.DRAGGING) {
-      final Composite oldComposite = g2d.getComposite();
-      if (alpha < MAX_ALPHA) {
-        g2d.setComposite(
-            AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-      }
+    if (!componentState.isDragging()) {
+      final Composite oldComposite = setTransparency(g2d);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : color);
       g2d.fill(body[0]);
       g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR);
@@ -108,7 +102,6 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     g2d.draw(body[2]);
   }
 
-  @SuppressWarnings("incomplete-switch")
   public Shape[] getBody() {
     if (body == null) {
       body = new Shape[3];
@@ -121,21 +114,14 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       int terminalDiameter = (int) TERMINAL_DIAMETER.convertToPixels();
       int terminalSpacing = (int) TERMINAL_SPACING.convertToPixels();
 
-      Area mainArea = new Area(new Rectangle2D.Double(x, y - width / 2, length, width));
-      mainArea.add(
-          new Area(new Ellipse2D.Double(x + length - width / 2, y - width / 2, width, width)));
+      Area mainArea = Area.rect(x, y - width / 2, length, width);
+      mainArea.add(Area.circle(x + length, y, width));
 
       body[0] = mainArea;
 
-      Area terminalArea =
-          new Area(
-              new Ellipse2D.Double(
-                  x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2,
-                  y - terminalDiameter / 2,
-                  terminalDiameter,
-                  terminalDiameter));
-
       int centerX = x + (totalLength + terminalSpacing) / 2;
+      Area terminalArea = Area.circle(centerX, y, terminalDiameter);
+
       int[] terminalX = new int[6];
       int[] terminalY = new int[6];
 
@@ -148,13 +134,11 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       body[1] = terminalArea;
 
       int terminalBorder = (int) TERMINAL_BORDER.convertToPixels();
-      terminalArea =
-          new Area(
-              new Ellipse2D.Double(
-                  x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder,
-                  y - terminalDiameter / 2 + terminalBorder,
-                  terminalDiameter - 2 * terminalBorder,
-                  terminalDiameter - 2 * terminalBorder));
+      terminalArea = new Area(new Ellipse2D.Double(
+          x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder,
+          y - terminalDiameter / 2 + terminalBorder,
+          terminalDiameter - 2 * terminalBorder,
+          terminalDiameter - 2 * terminalBorder));
 
       for (int i = 0; i < 6; i++) {
         terminalX[i] =
@@ -168,18 +152,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
       // Rotate if needed
       if (orientation != Orientation.DEFAULT) {
-        double theta = 0;
-        switch (orientation) {
-          case _90:
-            theta = Math.PI / 2;
-            break;
-          case _180:
-            theta = Math.PI;
-            break;
-          case _270:
-            theta = Math.PI * 3 / 2;
-            break;
-        }
+        double theta = orientation.getTheta();
         AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
