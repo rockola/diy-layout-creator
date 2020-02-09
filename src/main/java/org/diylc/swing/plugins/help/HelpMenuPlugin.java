@@ -29,6 +29,7 @@ import javax.swing.AbstractAction;
 import org.apache.logging.log4j.LogManager;
 
 import org.diylc.App;
+import org.diylc.Splash;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
@@ -50,7 +51,6 @@ public class HelpMenuPlugin implements IPlugIn {
 
   private static final String HELP_TITLE = Config.getString("menu.help.title");
 
-  private IPlugInPort plugInPort;
   private AboutDialog aboutDialog;
 
   private void navigateURL(String menuEntry, Icon icon, String key) {
@@ -78,7 +78,7 @@ public class HelpMenuPlugin implements IPlugIn {
 
   @Override
   public void connect(IPlugInPort plugInPort) {
-    this.plugInPort = plugInPort;
+    //this.plugInPort = plugInPort;
   }
 
   @Override
