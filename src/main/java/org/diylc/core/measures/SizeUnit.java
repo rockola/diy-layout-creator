@@ -1,49 +1,61 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.diylc.utils.Constants;
 
 public enum SizeUnit implements Unit {
-  px(25.4d / Constants.PIXELS_PER_INCH),
+  px(Constants.MM_PER_INCH / Constants.PIXELS_PER_INCH),
   mm(1d),
   cm(10d),
   m(1e4d),
-  in(25.4d),
-  ft(25.4d * 12),
+  in(Constants.MM_PER_INCH),
+  ft(Constants.MM_PER_INCH * 12),
   yd(9144d);
 
-  double factor;
+  private double factor;
+  private double pixels;
 
-  private SizeUnit(double factor) {
+  SizeUnit(double factor) {
     this.factor = factor;
+    this.pixels = factor / Constants.MM_PER_INCH * Constants.PIXELS_PER_INCH;
   }
 
-  private SizeUnit(SizeUnit u) {
-    this.factor = u.factor;
+  SizeUnit(SizeUnit u) {
+    this(u.factor);
   }
 
   @Override
   public double getFactor() {
     return factor;
+  }
+
+  public double getPixels() {
+    return pixels;
+  }
+
+  public double asPixels(double value) {
+    return value * getPixels();
   }
 }
