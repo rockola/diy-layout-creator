@@ -28,7 +28,6 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
 
@@ -36,8 +35,8 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
 
   public static final Color COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.black;
-  public static final Size DEFAULT_WIDTH = new Size(0.6d, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(0.4d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(0.6);
+  public static final Size DEFAULT_HEIGHT = Size.in(0.4);
 
   protected String value = "";
   protected Point[] controlPoints =
@@ -47,10 +46,9 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
       };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
-
   protected Color color = COLOR;
   protected Color borderColor = BORDER_COLOR;
-  protected Size borderThickness = new Size(0.2d, SizeUnit.mm);
+  protected Size borderThickness = Size.mm(0.2);
 
   @EditableProperty(name = "Color")
   public Color getColor() {
