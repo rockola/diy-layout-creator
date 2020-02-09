@@ -39,7 +39,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.BomEntry;
 import org.diylc.utils.BomMaker;
 
@@ -56,8 +55,8 @@ public class BOM extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_SIZE = new Size(10d, SizeUnit.cm);
-  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size DEFAULT_SIZE = Size.cm(10);
+  public static final Size SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
   public static final String DEFAULT_TEXT = "No components to show in the Bill of Materials";
 

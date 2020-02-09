@@ -36,7 +36,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Ground",
@@ -52,7 +51,7 @@ public class GroundSymbol extends AbstractComponent<Void> {
   private static final long serialVersionUID = 1L;
 
   public static final Color COLOR = Color.black;
-  public static final Size SIZE = new Size(0.15d, SizeUnit.in);
+  public static final Size SIZE = Size.in(0.15);
 
   private Point point = new Point(0, 0);
   private Color color = COLOR;

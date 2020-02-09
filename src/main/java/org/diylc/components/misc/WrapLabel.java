@@ -41,7 +41,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Auto-Wrap Label",
@@ -57,8 +56,8 @@ public class WrapLabel extends AbstractComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(0.5d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(1.5);
+  public static final Size DEFAULT_HEIGHT = Size.in(0.5);
 
   protected Point[] controlPoints =
       new Point[] {
