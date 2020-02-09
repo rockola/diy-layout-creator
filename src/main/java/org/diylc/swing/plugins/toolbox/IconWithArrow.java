@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC. If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.awt.Color;
@@ -26,52 +27,60 @@ import javax.swing.UIManager;
 import org.diylc.images.Icon;
 
 class IconWithArrow implements javax.swing.Icon {
+
+  private static javax.swing.Icon arrow = Icon.Arrow.icon();
+  private static int arrowHeight = arrow.getIconHeight();
+  private static Color bright;
+  private static Color dark;
+
+  static {
+    bright = UIManager.getColor("controlHighlight");
+    dark = UIManager.getColor("controlShadow");
+  }
+
   private javax.swing.Icon orig;
-  private javax.swing.Icon arrow = Icon.Arrow.icon();
   private boolean paintRollOver;
+
+  private int height;
+  private int origHeight;
+  private int origWidth;
 
   public IconWithArrow(javax.swing.Icon orig, boolean paintRollOver) {
     assert (orig != null);
     this.orig = orig;
     this.paintRollOver = paintRollOver;
+    this.height = getIconHeight();
+    this.origHeight = orig.getIconHeight();
+    this.origWidth = orig.getIconWidth();
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    int height = getIconHeight();
-    this.orig.paintIcon(c, g, x, y + (height - this.orig.getIconHeight()) / 2);
-    this.arrow.paintIcon(
-        c, g, x + 6 + this.orig.getIconWidth(), y + (height - this.arrow.getIconHeight()) / 2);
-    if (this.paintRollOver) {
-      Color brighter = UIManager.getColor("controlHighlight");
-      Color darker = UIManager.getColor("controlShadow");
-      if ((null == brighter) || (null == darker)) {
+    orig.paintIcon(c, g, x, y + (height - origHeight) / 2);
+    arrow.paintIcon(c, g, x + 6 + origWidth, y + (height - arrowHeight) / 2);
+    if (paintRollOver) {
+      Color brighter = bright;
+      Color darker = dark;
+      if ((brighter == null) || (darker == null)) {
         brighter = c.getBackground().brighter();
         darker = c.getBackground().darker();
       }
-      if ((null != brighter) && (null != darker)) {
+      if (brighter != null) {
         g.setColor(brighter);
-        g.drawLine(
-            x + this.orig.getIconWidth() + 1,
-            y,
-            x + this.orig.getIconWidth() + 1,
-            y + getIconHeight());
-
+        g.drawLine(x + origWidth + 1, y, x + origWidth + 1, y + height);
+      }
+      if (darker != null) {
         g.setColor(darker);
-        g.drawLine(
-            x + this.orig.getIconWidth() + 2,
-            y,
-            x + this.orig.getIconWidth() + 2,
-            y + getIconHeight());
+        g.drawLine(x + origWidth + 2, y, x + origWidth + 2, y + height);
       }
     }
   }
 
   public int getIconWidth() {
-    return this.orig.getIconWidth() + 6 + this.arrow.getIconWidth();
+    return orig.getIconWidth() + 6 + arrow.getIconWidth();
   }
 
   public int getIconHeight() {
-    return Math.max(this.orig.getIconHeight(), this.arrow.getIconHeight());
+    return Math.max(orig.getIconHeight(), arrow.getIconHeight());
   }
 
   public static int getArrowAreaWidth() {

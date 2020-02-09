@@ -16,7 +16,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public final class DropDownButtonFactory {
+
+  private static final Logger LOG = LogManager.getLogger(DropDownButtonFactory.class);
+
   public static final String PROP_DROP_DOWN_MENU = "dropDownMenu";
 
   private DropDownButtonFactory() {}
@@ -28,13 +34,6 @@ public final class DropDownButtonFactory {
   private static class DropDownButton extends JButton {
 
     private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    private boolean mouseInButton = false;
-
-    private boolean mouseInArrowArea = false;
-    private Map<String, Icon> regIcons = new HashMap<String, Icon>(5);
-    private Map<String, Icon> arrowIcons = new HashMap<String, Icon>(5);
     private static final String ICON_NORMAL = "normal";
     private static final String ICON_PRESSED = "pressed";
     private static final String ICON_ROLLOVER = "rollover";
@@ -44,127 +43,140 @@ public final class DropDownButtonFactory {
     private static final String ICON_DISABLED_SELECTED = "disabledSelected";
     private static final String ICON_ROLLOVER_LINE = "rolloverLine";
     private static final String ICON_ROLLOVER_SELECTED_LINE = "rolloverSelectedLine";
-    private PopupMenuListener menuListener;
+
+    private boolean mouseInButton = false;
+    private boolean mouseInArrowArea = false;
+    private Map<String, Icon> regIcons = new HashMap<String, Icon>(5);
+    private Map<String, Icon> arrowIcons = new HashMap<String, Icon>(5);
+    private transient PopupMenuListener menuListener = new PopupMenuListener() {
+
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+          if (e.getSource() instanceof DropDownButton) {
+            DropDownButton button = (DropDownButton) e.getSource();
+            if (button.getModel() instanceof Model) {
+              ((Model) button.getModel())._release();
+            }
+            JPopupMenu menu;
+            if ((menu = button.getPopupMenu()) != null) {
+              menu.removePopupMenuListener(this);
+            }
+          }
+        }
+
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {}
+      };
 
     public DropDownButton(Icon icon, JPopupMenu popup) {
       // Parameters.notNull((CharSequence) "icon", (Object) icon);
       assert (icon != null);
-      this.putClientProperty("dropDownMenu", popup);
-      this.setIcon(icon);
-      this.setDisabledIcon(ImageUtilities.createDisabledIcon((Icon) icon));
-      this.resetIcons();
-      this.addPropertyChangeListener(
+      putClientProperty("dropDownMenu", popup);
+      setIcon(icon);
+      setDisabledIcon(ImageUtilities.createDisabledIcon((Icon) icon));
+      resetIcons();
+      addPropertyChangeListener(
           "dropDownMenu",
-          new PropertyChangeListener() {
+          (e) -> ((DropDownButton) e.getSource()).resetIcons());
+      addMouseMotionListener(new MouseMotionAdapter() {
 
-            @Override
-            public void propertyChange(PropertyChangeEvent e) {
-              DropDownButton.this.resetIcons();
+          @Override
+          public void mouseMoved(MouseEvent e) {
+            DropDownButton button = (DropDownButton) e.getSource();
+            if (button.getPopupMenu() != null) {
+              button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
+              button.updateRollover();
             }
-          });
-      this.addMouseMotionListener(
-          new MouseMotionAdapter() {
+          }
+        });
+      addMouseListener(new MouseAdapter() {
+          private boolean popupMenuOperation;
 
-            @Override
-            public void mouseMoved(MouseEvent e) {
-              if (DropDownButton.this.getPopupMenu() != null) {
-                DropDownButton.this.mouseInArrowArea =
-                    DropDownButton.this.isInArrowArea(e.getPoint());
-                DropDownButton.this.updateRollover(
-                    DropDownButton.this.dropDownButtonRolloverIcon(),
-                    DropDownButton.this.dropDownButtonRolloverSelectedIcon());
-              }
-            }
-          });
-      this.addMouseListener(
-          new MouseAdapter() {
-            private boolean popupMenuOperation;
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-              this.popupMenuOperation = false;
-              JPopupMenu menu = DropDownButton.this.getPopupMenu();
-              if (menu != null && DropDownButton.this.getModel() instanceof Model) {
-                Model model = (Model) DropDownButton.this.getModel();
-                if (!model._isPressed()) {
-                  if (DropDownButton.this.isInArrowArea(e.getPoint())
-                      && menu.getComponentCount() > 0) {
-                    model._press();
-                    menu.addPopupMenuListener(DropDownButton.this.getMenuListener());
-                    menu.show(DropDownButton.this, 0, DropDownButton.this.getHeight());
-                    this.popupMenuOperation = true;
-                  }
-                } else {
-                  model._release();
-                  menu.removePopupMenuListener(DropDownButton.this.getMenuListener());
+          @Override
+          public void mousePressed(MouseEvent e) {
+            DropDownButton button = (DropDownButton) e.getSource();
+            this.popupMenuOperation = false;
+            JPopupMenu menu = button.getPopupMenu();
+            if (menu != null && button.getModel() instanceof Model) {
+              Model model = (Model) button.getModel();
+              if (!model._isPressed()) {
+                if (button.isInArrowArea(e.getPoint()) && menu.getComponentCount() > 0) {
+                  model._press();
+                  menu.addPopupMenuListener(button.getMenuListener());
+                  menu.show(button, 0, button.getHeight());
                   this.popupMenuOperation = true;
                 }
+              } else {
+                model._release();
+                menu.removePopupMenuListener(button.getMenuListener());
+                this.popupMenuOperation = true;
               }
             }
+          }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-              if (this.popupMenuOperation) {
-                this.popupMenuOperation = false;
-                e.consume();
-              }
+          @Override
+          public void mouseReleased(MouseEvent e) {
+            if (this.popupMenuOperation) {
+              this.popupMenuOperation = false;
+              e.consume();
             }
+          }
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-              DropDownButton.this.mouseInButton = true;
-              if (DropDownButton.this.hasPopupMenu()) {
-                DropDownButton.this.mouseInArrowArea =
-                    DropDownButton.this.isInArrowArea(e.getPoint());
-                DropDownButton.this.updateRollover(
-                    DropDownButton.this.dropDownButtonRolloverIcon(),
-                    DropDownButton.this.dropDownButtonRolloverSelectedIcon());
-              }
+          @Override
+          public void mouseEntered(MouseEvent e) {
+            DropDownButton button = (DropDownButton) e.getSource();
+            button.mouseInButton = true;
+            if (button.hasPopupMenu()) {
+              button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
+              button.updateRollover();
             }
+          }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-              DropDownButton.this.mouseInButton = false;
-              DropDownButton.this.mouseInArrowArea = false;
-              if (DropDownButton.this.hasPopupMenu()) {
-                DropDownButton.this.updateRollover(
-                    DropDownButton.this.dropDownButtonRolloverIcon(),
-                    DropDownButton.this.dropDownButtonRolloverSelectedIcon());
-              }
+          @Override
+          public void mouseExited(MouseEvent e) {
+            DropDownButton button = (DropDownButton) e.getSource();
+            button.mouseInButton = false;
+            button.mouseInArrowArea = false;
+            if (button.hasPopupMenu()) {
+              button.updateRollover();
             }
-          });
+          }
+        });
       this.setModel(new Model());
     }
 
     private PopupMenuListener getMenuListener() {
-      if (this.menuListener == null) {
-        this.menuListener =
-            new PopupMenuListener() {
-
-              @Override
-              public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-
-              @Override
-              public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                JPopupMenu menu;
-                if (DropDownButton.this.getModel() instanceof Model) {
-                  ((Model) DropDownButton.this.getModel())._release();
-                }
-                if ((menu = DropDownButton.this.getPopupMenu()) != null) {
-                  menu.removePopupMenuListener(this);
-                }
-              }
-
-              @Override
-              public void popupMenuCanceled(PopupMenuEvent e) {}
-            };
-      }
-      return this.menuListener;
+      return menuListener;
     }
 
-    private void updateRollover(Icon rollover, Icon rolloverSelected) {
-      super.setRolloverIcon(rollover);
-      super.setRolloverSelectedIcon(rolloverSelected);
+    private void updateRollover() {
+      super.setRolloverIcon(rolloverIcon(false));
+      super.setRolloverSelectedIcon(rolloverIcon(true));
+    }
+
+    private Icon rolloverIcon(boolean selected) {
+      LOG.trace("rolloverIcon({})", selected);
+      String rollover = selected ? ICON_ROLLOVER_SELECTED : ICON_ROLLOVER;
+      String line = selected ? ICON_ROLLOVER_SELECTED_LINE : ICON_ROLLOVER_LINE;
+      Icon icon = arrowIcons.get(mouseInArrowArea ? rollover : line);
+      if (icon == null) {
+        Icon orig = regIcons.get(rollover);
+        if (orig == null) {
+          orig = regIcons.get(ICON_ROLLOVER);
+        }
+        if (orig == null) {
+          orig = regIcons.get(ICON_NORMAL);
+        }
+        LOG.trace("rolloverIcon({}) creating IconWithArrow (mouse%s in arrow area)",
+                  selected,
+                  mouseInArrowArea ? "" : " not");
+        icon = new IconWithArrow(orig, !mouseInArrowArea);
+        arrowIcons.put(mouseInArrowArea ? rollover : line, icon);
+      }
+      return icon;
     }
 
     private void resetIcons() {
@@ -192,39 +204,6 @@ public final class DropDownButtonFactory {
       }
     }
 
-    private Icon dropDownButtonRolloverIcon() {
-      Icon icon = null;
-      icon = this.arrowIcons.get(this.mouseInArrowArea ? ICON_ROLLOVER : ICON_ROLLOVER_LINE);
-      if (icon == null) {
-        Icon orig = this.regIcons.get(ICON_ROLLOVER);
-        if (orig == null) {
-          orig = this.regIcons.get(ICON_NORMAL);
-        }
-        icon = new IconWithArrow(orig, !this.mouseInArrowArea);
-        this.arrowIcons.put(this.mouseInArrowArea ? ICON_ROLLOVER : ICON_ROLLOVER_LINE, icon);
-      }
-      return icon;
-    }
-
-    private Icon dropDownButtonRolloverSelectedIcon() {
-      Icon icon = null;
-      icon = this.arrowIcons.get(
-          this.mouseInArrowArea ? ICON_ROLLOVER_SELECTED : ICON_ROLLOVER_SELECTED_LINE);
-      if (icon == null) {
-        Icon orig = this.regIcons.get(ICON_ROLLOVER_SELECTED);
-        if (orig == null) {
-          orig = this.regIcons.get(ICON_ROLLOVER);
-        }
-        if (orig == null) {
-          orig = this.regIcons.get(ICON_NORMAL);
-        }
-        icon = new IconWithArrow(orig, !this.mouseInArrowArea);
-        this.arrowIcons.put(
-            this.mouseInArrowArea ? ICON_ROLLOVER_SELECTED : ICON_ROLLOVER_SELECTED_LINE, icon);
-      }
-      return icon;
-    }
-
     JPopupMenu getPopupMenu() {
       Object menu = this.getClientProperty("dropDownMenu");
       if (menu instanceof JPopupMenu) {
@@ -238,44 +217,44 @@ public final class DropDownButtonFactory {
     }
 
     private boolean isInArrowArea(Point p) {
-      return (p.getLocation().x
-              >= this.getWidth() - IconWithArrow.getArrowAreaWidth() - this.getInsets().right);
+      return (p.getLocation().x >=
+              getWidth() - IconWithArrow.getArrowAreaWidth() - getInsets().right);
     }
 
     @Override
     public void setIcon(Icon icon) {
       assert (icon != null);
-      Icon arrow = this.updateIcons(icon, ICON_NORMAL);
-      this.arrowIcons.remove(ICON_ROLLOVER_LINE);
-      this.arrowIcons.remove(ICON_ROLLOVER_SELECTED_LINE);
-      this.arrowIcons.remove(ICON_ROLLOVER);
-      this.arrowIcons.remove(ICON_ROLLOVER_SELECTED);
-      super.setIcon(this.hasPopupMenu() ? arrow : icon);
+      Icon arrow = updateIcons(icon, ICON_NORMAL);
+      arrowIcons.remove(ICON_ROLLOVER_LINE);
+      arrowIcons.remove(ICON_ROLLOVER_SELECTED_LINE);
+      arrowIcons.remove(ICON_ROLLOVER);
+      arrowIcons.remove(ICON_ROLLOVER_SELECTED);
+      super.setIcon(hasPopupMenu() ? arrow : icon);
     }
 
     private Icon updateIcons(Icon orig, String iconType) {
       ImageIcon arrow = null;
       if (orig == null) {
-        this.regIcons.remove(iconType);
-        this.arrowIcons.remove(iconType);
+        regIcons.remove(iconType);
+        arrowIcons.remove(iconType);
       } else {
-        this.regIcons.put(iconType, orig);
+        regIcons.put(iconType, orig);
         arrow = new ImageIcon(ImageUtilities.icon2Image((Icon) new IconWithArrow(orig, false)));
-        this.arrowIcons.put(iconType, arrow);
+        arrowIcons.put(iconType, arrow);
       }
       return arrow;
     }
 
     @Override
     public void setPressedIcon(Icon icon) {
-      Icon arrow = this.updateIcons(icon, ICON_PRESSED);
-      super.setPressedIcon(this.hasPopupMenu() ? arrow : icon);
+      Icon arrow = updateIcons(icon, ICON_PRESSED);
+      super.setPressedIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override
     public void setSelectedIcon(Icon icon) {
       Icon arrow = this.updateIcons(icon, ICON_SELECTED);
-      super.setSelectedIcon(this.hasPopupMenu() ? arrow : icon);
+      super.setSelectedIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override
@@ -283,26 +262,26 @@ public final class DropDownButtonFactory {
       Icon arrow = this.updateIcons(icon, ICON_ROLLOVER);
       this.arrowIcons.remove(ICON_ROLLOVER_LINE);
       this.arrowIcons.remove(ICON_ROLLOVER_SELECTED_LINE);
-      super.setRolloverIcon(this.hasPopupMenu() ? arrow : icon);
+      super.setRolloverIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override
     public void setRolloverSelectedIcon(Icon icon) {
       Icon arrow = this.updateIcons(icon, ICON_ROLLOVER_SELECTED);
       this.arrowIcons.remove(ICON_ROLLOVER_SELECTED_LINE);
-      super.setRolloverSelectedIcon(this.hasPopupMenu() ? arrow : icon);
+      super.setRolloverSelectedIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override
     public void setDisabledIcon(Icon icon) {
       Icon arrow = this.updateIcons(icon, ICON_DISABLED);
-      super.setDisabledIcon(this.hasPopupMenu() ? arrow : icon);
+      super.setDisabledIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override
     public void setDisabledSelectedIcon(Icon icon) {
       Icon arrow = this.updateIcons(icon, ICON_DISABLED_SELECTED);
-      super.setDisabledSelectedIcon(this.hasPopupMenu() ? arrow : icon);
+      super.setDisabledSelectedIcon(hasPopupMenu() ? arrow : icon);
     }
 
     @Override

@@ -4,19 +4,18 @@
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 package org.diylc.swing.plugins.toolbox;
@@ -45,6 +44,7 @@ import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
+import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
@@ -57,7 +57,7 @@ import org.diylc.presenter.Presenter;
  *
  * @author Branislav Stojkovic
  */
-class ComponentTabbedPane extends JTabbedPane {
+public class ComponentTabbedPane extends JTabbedPane {
 
   private static final long serialVersionUID = 1L;
 
@@ -65,37 +65,31 @@ class ComponentTabbedPane extends JTabbedPane {
 
   public static int SCROLL_STEP = Presenter.ICON_SIZE + ComponentButtonFactory.MARGIN * 2 + 2;
 
-  private final IPlugInPort plugInPort;
+  private IPlugInPort plugInPort;
   private Container recentToolbar;
   private Container buildingBlocksToolbar;
   private List<String> pendingRecentComponents = null;
 
-  public ComponentTabbedPane(IPlugInPort plugInPort) {
+  public ComponentTabbedPane() {
     super();
-    this.plugInPort = plugInPort;
     addTab("Recently Used", createRecentComponentsPanel());
     //    addTab("Building Blocks", createBuildingBlocksPanel());
-    Map<String, List<ComponentType>> componentTypes = plugInPort.getComponentTypes();
+    Map<String, List<ComponentType>> componentTypes = ComponentType.getComponentTypes();
     List<String> categories = new ArrayList<String>(componentTypes.keySet());
     Collections.sort(categories);
     for (String category : categories) {
       JPanel panel = createTab((componentTypes.get(category)));
       addTab(category, panel);
     }
-    addChangeListener(
-        new ChangeListener() {
-
-          @Override
-          public void stateChanged(ChangeEvent e) {
-            ComponentTabbedPane.this.plugInPort.setNewComponentTypeSlot(null, null, false);
-            // Refresh recent components if needed
-            if (pendingRecentComponents != null) {
-              refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
-              getRecentToolbar().invalidate();
-              pendingRecentComponents = null;
-            }
-          }
-        });
+    addChangeListener(e -> {
+        App.ui().getPresenter().setNewComponentTypeSlot(null, null, false);
+        // Refresh recent components if needed
+        if (pendingRecentComponents != null) {
+          refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
+          getRecentToolbar().invalidate();
+          pendingRecentComponents = null;
+        }
+      });
   }
 
   private JPanel createTab(List<ComponentType> componentTypes) {
@@ -185,7 +179,6 @@ class ComponentTabbedPane extends JTabbedPane {
     return toolbar;
   }
 
-  @SuppressWarnings("unchecked")
   private Component createRecentComponentsPanel() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(false);
@@ -193,25 +186,19 @@ class ComponentTabbedPane extends JTabbedPane {
     final Container toolbar = getRecentToolbar();
     refreshRecentComponentsToolbar(
         toolbar,
-        (List<String>) App.getObject(IPlugInPort.Key.RECENT_COMPONENTS, new ArrayList<String>()));
+        (List<String>) App.getObject(Config.Flag.RECENT_COMPONENTS, new ArrayList<String>()));
     ConfigurationManager.addListener(
-        IPlugInPort.Key.RECENT_COMPONENTS,
-        new IConfigListener() {
-
-          @Override
-          public void valueChanged(String key, Object value) {
-            // Cache the new list, we'll refresh when there's a
-            // chance
-            pendingRecentComponents = (List<String>) value;
-          }
+        Config.Flag.RECENT_COMPONENTS,
+        (key, value) -> {
+          // Cache the new list, we'll refresh when there's a chance
+          pendingRecentComponents = (List<String>) value;
         });
-
     panel.add(toolbar, BorderLayout.CENTER);
 
     return panel;
   }
 
-  @SuppressWarnings("unused")
+  /*
   private Component createBuildingBlocksPanel() {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(false);
@@ -222,21 +209,22 @@ class ComponentTabbedPane extends JTabbedPane {
 
     return panel;
   }
+  */
 
-  @SuppressWarnings("unchecked")
   private void refreshRecentComponentsToolbar(
       Container toolbar, List<String> recentComponentClassList) {
     toolbar.removeAll();
     for (String componentClassName : recentComponentClassList) {
-      ComponentType componentType;
       try {
-        componentType =
-            ComponentProcessor.extractComponentTypeFrom(
-                (Class<? extends IDIYComponent<?>>) Class.forName(componentClassName));
-        Component button =
-            ComponentButtonFactory.create(
-                plugInPort, componentType, createVariantPopup(componentType));
-        toolbar.add(button);
+        LOG.trace("refreshRecentComponentsToolbar(...) Setting up {}", componentClassName);
+        ComponentType componentType = ComponentType.byName(componentClassName);
+        if (componentType == null) {
+          LOG.trace("refreshRecentComponentsToolbar(...) Unknown class {}", componentClassName);
+        } else {
+          LOG.trace("refreshRecentComponentsToolbar(...) Found class for {}", componentClassName);
+          toolbar.add(ComponentButtonFactory.create(
+              plugInPort, componentType, createVariantPopup(componentType)));
+        }
       } catch (Exception e) {
         LOG.error("Could not create recent component button for " + componentClassName, e);
       }
@@ -246,32 +234,31 @@ class ComponentTabbedPane extends JTabbedPane {
   private JPopupMenu createVariantPopup(final ComponentType componentType) {
     final JPopupMenu variantPopup = new JPopupMenu();
     variantPopup.add("Loading...");
-    variantPopup.addPopupMenuListener(
-        new PopupMenuListener() {
+    variantPopup.addPopupMenuListener(new PopupMenuListener() {
 
-          @Override
-          public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-            variantPopup.removeAll();
-            List<Template> variants = plugInPort.getVariantsFor(componentType);
-            if (variants == null || variants.isEmpty()) {
-              JMenuItem item = new JMenuItem("<no variants>");
-              item.setEnabled(false);
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+          variantPopup.removeAll();
+          List<Template> variants = componentType.getVariants();
+          if (variants == null || variants.isEmpty()) {
+            JMenuItem item = new JMenuItem("<no variants>");
+            item.setEnabled(false);
+            variantPopup.add(item);
+          } else {
+            for (Template variant : variants) {
+              JMenuItem item = ComponentButtonFactory.createVariantItem(
+                  plugInPort, variant, componentType);
               variantPopup.add(item);
-            } else {
-              for (Template variant : variants) {
-                JMenuItem item =
-                    ComponentButtonFactory.createVariantItem(plugInPort, variant, componentType);
-                variantPopup.add(item);
-              }
             }
           }
+        }
 
-          @Override
-          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
-          @Override
-          public void popupMenuCanceled(PopupMenuEvent e) {}
-        });
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {}
+      });
     return variantPopup;
   }
 }
