@@ -17,10 +17,11 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +56,10 @@ public class Keymap {
 
   public String toString() {
     StringBuilder b = new StringBuilder();
-    b.append(
-        String.format(
-            "<Keymap bindings.size() %d actionBindingMap.size() %d>%n",
-            bindings.size(),
-            actionBindingMap.size()));
+    b.append(String.format(
+        "<Keymap bindings.size() %d actionBindingMap.size() %d>%n",
+        bindings.size(),
+        actionBindingMap.size()));
     for (Binding bi : bindings) {
       b.append(bi.toString() + "\n");
     }
@@ -93,9 +93,7 @@ public class Keymap {
   }
 
   public KeyStroke stroke(String actionName) {
-    if (actionName == null) // perfectly OK to pass null here
-    return null;
-    return getKeyForAction(actionName);
+    return actionName == null ? null : getKeyForAction(actionName);
   }
 
   public static Keymap getDefaultKeymap() throws JAXBException, IOException {
