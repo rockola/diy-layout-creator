@@ -35,9 +35,8 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
-import org.diylc.components.transform.ClosedJackTransformer;
+import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -56,8 +55,9 @@ import org.diylc.utils.Constants;
     description = "Enclosed panel mount phono jack",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "J",
+    xmlTag = "jack:closed",
     autoEdit = false,
-    transformer = ClosedJackTransformer.class)
+    transformer = JackTransformer.class)
 public class ClosedJack extends AbstractJack {
 
   private static final long serialVersionUID = 1L;
@@ -76,29 +76,28 @@ public class ClosedJack extends AbstractJack {
   private static Size BODY_LENGTH = new Size(0.8d, SizeUnit.in);
   private static JackSize JACK_SIZE = JackSize.QUARTER_INCH;
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  private JackType type = JackType.MONO;
-  private Orientation orientation = Orientation.DEFAULT;
-  private transient Area[] body;
-  private String value = "";
+  {
+    controlPoints = new Point[] {new Point(0, 0)};
+  }
 
-  public ClosedJack1_4() {
+  public ClosedJack() {
     super();
     updateControlPoints();
   }
 
-  private void updateControlPoints() {
+  @Override
+  protected void updateControlPoints() {
     // invalidate body shape
     body = null;
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int spacing = (int) SPACING.convertToPixels();
     int bodyLength = (int) BODY_LENGTH.convertToPixels();
-    controlPoints = new Point[type == JackType.STEREO ? 3 : 2];
+    controlPoints = new Point[type.isStereo() ? 3 : 2];
 
     controlPoints[0] = new Point(x, y);
     controlPoints[1] = new Point(x + bodyLength, y);
-    if (type == JackType.STEREO) {
+    if (type.isStereo()) {
       controlPoints[2] = new Point(x, y + 2 * spacing);
     }
 
@@ -162,11 +161,11 @@ public class ClosedJack extends AbstractJack {
       Area lugs = new Area();
 
       int spacing = (int) SPACING.convertToPixels();
-      Point[] untransformedControlPoints = new Point[type == JackType.STEREO ? 3 : 2];
+      Point[] untransformedControlPoints = new Point[type.isStereo() ? 3 : 2];
 
       untransformedControlPoints[0] = new Point(x, y);
       untransformedControlPoints[1] = new Point(x + bodyLength, y);
-      if (type == JackType.STEREO) {
+      if (type.isStereo()) {
         untransformedControlPoints[2] = new Point(x, y + 2 * spacing);
       }
 
@@ -229,12 +228,7 @@ public class ClosedJack extends AbstractJack {
     final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     g2d.setFont(project.getFont());
-    Rectangle bounds = body[0].getBounds();
-    int centerX = bounds.x + bounds.width / 2;
-    int centerY = bounds.y + bounds.height / 2;
-    StringUtils.drawCenteredText(
-        g2d, name, centerX, centerY, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-
+    StringUtils.drawCenteredText(g2d, name, body[0].getBounds());
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 
@@ -257,80 +251,5 @@ public class ClosedJack extends AbstractJack {
 
     g2d.fillRect(width * 7 / 16, height * 6 / 7 + 1, width / 8, height / 7 - 1);
     g2d.fillRect(width * 7 / 16, height / 7 + 2, width / 8, height / 7 - 1);
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
-  }
-
-  @Override
-  public boolean isControlPointSticky(int index) {
-    return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty
-  public JackType getType() {
-    return type;
-  }
-
-  public void setType(JackType type) {
-    this.type = type;
-    updateControlPoints();
-  }
-
-  @EditableProperty
-  public Orientation getOrientation() {
-    return orientation;
-  }
-
-  public void setOrientation(Orientation orientation) {
-    this.orientation = orientation;
-    updateControlPoints();
-  }
-
-  @Override
-  public String getControlPointNodeName(int index) {
-    switch (index) {
-      case 0:
-        return "Tip";
-      case 1:
-        return "Sleeve";
-      case 2:
-        return "Ring";
-    }
-    return null;
-  }
-
-  @Override
-  public boolean canPointMoveFreely(int pointIndex) {
-    return false;
   }
 }

@@ -30,8 +30,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 
-import org.apache.commons.text.WordUtils;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -39,13 +37,12 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
+import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
@@ -53,13 +50,15 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "Open 1/4\" Jack",
+    name = "Open Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
-    description = "Switchcraft-style open panel mount 1/4\" phono jack, stereo and mono",
+    description = "Switchcraft-style open panel mount jack, stereo and mono",
     zOrder = IDIYComponent.COMPONENT,
-    instanceNamePrefix = "J")
-public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
+    instanceNamePrefix = "J",
+    xmlTag = "jack:open",
+    transformer = JackTransformer.class)
+public class OpenJack extends AbstractJack {
 
   private static final double RING_THETA = Math.PI * 0.795;
   private static final double SLEEVE_THETA = Math.PI * 0.29444444444;
@@ -79,15 +78,12 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
   private static Size HOLE_DIAMETER = new Size(0.05d, SizeUnit.in);
   private static Size HOLE_TO_EDGE = new Size(0.063d, SizeUnit.in);
 
-  private String value = "";
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  transient Area[] body;
-  @Deprecated private Orientation orientation = Orientation.DEFAULT;
-  private Integer angle = 0;
-  private OpenJackType type = OpenJackType.MONO;
-  private boolean showLabels = true;
+  {
+    controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+    showLabels = true;
+  }
 
-  public OpenJack1_4() {
+  public OpenJack() {
     super();
     updateControlPoints();
   }
@@ -142,12 +138,12 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
           new Point(controlPoints[0].x, (int) (controlPoints[0].y + holeToEdge * 1.25));
       AffineTransform ringTransform =
           AffineTransform.getRotateInstance(
-              getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA,
+              getType().isSwitched() ? SWITCH_THETA : RING_THETA,
               controlPoints[0].x,
               centerY);
       AffineTransform sleeveTransform =
           AffineTransform.getRotateInstance(
-              getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
+              getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
               controlPoints[0].x,
               centerY);
       Point ringOrSwitchLabel = new Point(0, 0);
@@ -164,9 +160,9 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
       }
       drawJackConnectionLabel(g2d, "T", tipLabel);
       drawJackConnectionLabel(g2d, "S", sleeveLabel);
-      if (getType() == OpenJackType.STEREO) {
+      if (getType().isStereo()) {
         drawJackConnectionLabel(g2d, "R", ringOrSwitchLabel);
-      } else if (getType() == OpenJackType.SWITCHED) {
+      } else if (getType().isSwitched()) {
         // are there no stereo switched jacks?
         drawJackConnectionLabel(g2d, "Sw", ringOrSwitchLabel);
       }
@@ -232,7 +228,7 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
           x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
       sleeve.transform(
           AffineTransform.getRotateInstance(
-              getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
+              getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
               x,
               centerY));
       sleeve.add(new Area(new Ellipse2D.Double(
@@ -244,7 +240,7 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
           innerDiameter)));
       body[2] = sleeve;
 
-      if (getType() != OpenJackType.MONO) {
+      if (!getType().isMono()) {
         Area ringOrSwitch = new Area(new RoundRectangle2D.Double(
             x - springWidth / 2,
             y - holeToEdge,
@@ -252,16 +248,12 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
             springLength,
             springWidth,
             springWidth));
-        ringOrSwitch.subtract(new Area(new Ellipse2D.Double(
-            x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
-        ringOrSwitch.transform(
-            AffineTransform.getRotateInstance(
-                getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA, x, centerY));
-        ringOrSwitch.subtract(new Area(new Ellipse2D.Double(
-            x - outerDiameter / 2,
-            centerY - outerDiameter / 2,
-            outerDiameter,
-            outerDiameter)));
+        ringOrSwitch.subtract(Area.circle(x, y, holeDiameter));
+        ringOrSwitch.transform(AffineTransform.getRotateInstance(
+            getType().isSwitched() ? SWITCH_THETA : RING_THETA,
+            x,
+            centerY));
+        ringOrSwitch.subtract(Area.circle(x, centerY, outerDiameter));
         body[3] = ringOrSwitch;
       }
 
@@ -282,7 +274,8 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     return body;
   }
 
-  private void updateControlPoints() {
+  @Override
+  protected void updateControlPoints() {
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     final int springLength = (int) SPRING_LENGTH.convertToPixels();
@@ -290,11 +283,11 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
     final int centerY = y + springLength - holeToEdge;
 
     AffineTransform.getRotateInstance(
-            getType() == OpenJackType.SWITCHED ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
+        getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
             x,
             centerY).transform(controlPoints[0], controlPoints[1]);
     AffineTransform.getRotateInstance(
-            getType() == OpenJackType.SWITCHED ? SWITCH_THETA : RING_THETA,
+        getType().isSwitched() ? SWITCH_THETA : RING_THETA,
             x,
             centerY).transform(controlPoints[0], controlPoints[2]);
     // Rotate if needed
@@ -310,149 +303,25 @@ public class OpenJack1_4 extends AbstractMultiPartComponent<String> {
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int waferDiameter = 15 * width / 32;
     int sleeveDiameter = 9 * width / 32;
-
+    int x = width / 2;
+    int y = height / 2;
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
     g2d.setColor(BASE_COLOR);
-    g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 4);
+    g2d.drawLine(x, 4 * width / 32, x, width / 4);
 
     g2d.rotate(RING_THETA, width / 2, height / 2);
-    g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 4);
+    g2d.drawLine(x, 4 * width / 32, x, width / 4);
 
     g2d.setColor(WAFER_COLOR);
-    g2d.draw(new Ellipse2D.Double(
-        width / 2 - waferDiameter / 2,
-        height / 2 - waferDiameter / 2,
-        waferDiameter,
-        waferDiameter));
+    g2d.draw(Area.circle(x, y, waferDiameter));
 
     g2d.setColor(BASE_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2f * width / 32));
-    g2d.draw(new Ellipse2D.Double(
-        width / 2 - sleeveDiameter / 2,
-        height / 2 - sleeveDiameter / 2,
-        sleeveDiameter,
-        sleeveDiameter));
+    g2d.draw(Area.circle(x, y, sleeveDiameter));
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(6f * width / 32));
-    g2d.rotate(-HALF_PI, width / 2, height / 2);
+    g2d.rotate(-HALF_PI, x, y);
 
-    g2d.drawLine(width / 2, 4 * width / 32, width / 2, width / 3);
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
-  public boolean isControlPointSticky(int index) {
-    return index < 2 || getType() == OpenJackType.STEREO;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
-    // Invalidate the body
-    body = null;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty
-  public Integer getAngle() {
-    if (angle == null) {
-      if (orientation != null && orientation != Orientation.DEFAULT) {
-        angle = Integer.parseInt(orientation.name().replace("_", ""));
-      } else {
-        angle = 0;
-      }
-    }
-    return angle;
-  }
-
-  public void setAngle(Integer angle) {
-    this.angle = angle;
-    updateControlPoints();
-    // Invalidate the body
-    body = null;
-  }
-
-  protected double getTheta() {
-    return Math.toRadians(getAngle());
-  }
-
-  @EditableProperty
-  public OpenJackType getType() {
-    return type;
-  }
-
-  public void setType(OpenJackType type) {
-    this.type = type;
-    updateControlPoints();
-    // Invalidate the body
-    body = null;
-  }
-
-  @EditableProperty(name = "Labels")
-  public boolean getShowLabels() {
-    return showLabels;
-  }
-
-  public void setShowLabels(boolean showLabels) {
-    this.showLabels = showLabels;
-  }
-
-  @Override
-  public String getControlPointNodeName(int index) {
-    switch (index) {
-      case 0:
-        return "Tip";
-      case 1:
-        return "Sleeve";
-      case 2:
-        if (getType() == OpenJackType.STEREO) {
-          return "Ring";
-        } else if (getType() == OpenJackType.SWITCHED) {
-          return "Shunt";
-        }
-        break;
-      default:
-        // if none of the above, let's return null and let the caller figure it out
-    }
-    return null;
-  }
-
-  @Override
-  public boolean canPointMoveFreely(int pointIndex) {
-    return false;
-  }
-
-  public enum OpenJackType {
-    MONO,
-    STEREO,
-    SWITCHED;
-
-    @Override
-    public String toString() {
-      return WordUtils.capitalize(name());
-    }
+    g2d.drawLine(x, 4 * width / 32, x, width / 3);
   }
 }
