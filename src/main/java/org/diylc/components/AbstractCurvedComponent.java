@@ -20,7 +20,6 @@
 
 package org.diylc.components;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -45,8 +44,8 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
 
   private static final long serialVersionUID = 1L;
 
-  public static Color GUIDELINE_COLOR = Color.blue;
-  public static Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
+  public static final Color GUIDELINE_COLOR = Color.blue;
+  public static final Size DEFAULT_SIZE = new Size(1d, SizeUnit.in);
 
   // for backward compatibility
   protected Point[] controlPoints = null;
@@ -70,10 +69,10 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
   /**
    * Draws the specified curve onto graphics.
    *
-   * @param curve
-   * @param g2d
-   * @param componentState
-   * @param theme
+   * @param curve Curve to draw.
+   * @param g2d Graphics context for drawing.
+   * @param componentState State of components.
+   * @param drawingObserver Observer for drawing events.
    */
   protected abstract void drawCurve(
       Path2D curve,
@@ -158,13 +157,8 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
       path.curveTo(p[4].x, p[4].y, p[5].x, p[5].y, p[6].x, p[6].y);
     }
 
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
-
+    Composite oldComposite = setTransparency(g2d);
     drawCurve(path, g2d, componentState, drawingObserver);
-
     g2d.setComposite(oldComposite);
   }
 
