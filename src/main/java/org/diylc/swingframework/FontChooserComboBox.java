@@ -297,7 +297,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
         try {
           textField.setSelectionStart(k);
           textField.setSelectionEnd(getLength());
-        } catch (Exception exception) {
+        } catch (Exception e) {
+          LOG.error("remove({}, {}) exception caught, selection start {}", i, j, k, e);
+          // TODO why are we catching and ignoring every exception here?
         }
       }
     }
@@ -384,7 +386,9 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
           StringBuilder thisPreview = new StringBuilder();
           for (int i = 0; i < previewString.length(); i++) {
             char c = previewString.charAt(i);
-            if (font.canDisplay(c)) thisPreview.append(c);
+            if (font.canDisplay(c)) {
+              thisPreview.append(c);
+            }
           }
           JLabel labelFont = new JLabel(thisPreview.toString());
           labelFont.setFont(font);
