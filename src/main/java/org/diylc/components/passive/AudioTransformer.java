@@ -28,9 +28,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
 
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
@@ -41,7 +41,8 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractMultiPartComponent;
-import org.diylc.components.transform.DIL_ICTransformer;
+import org.diylc.components.Area;
+import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -63,20 +64,20 @@ import org.diylc.utils.Constants;
     description = "Small signal audio transformer with EI core",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
-    transformer = DIL_ICTransformer.class)
+    transformer = InlinePackageTransformer.class)
 public class AudioTransformer extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static Color CORE_COLOR = METAL_COLOR;
-  public static Color CORE_BORDER_COLOR = CORE_COLOR.darker();
-  public static Color COIL_COLOR = Color.decode("#DDDDDD");
-  public static Color COIL_BORDER_COLOR = COIL_COLOR.darker();
-  public static Color PIN_COLOR = Color.decode("#00B2EE");
-  public static Color PIN_BORDER_COLOR = PIN_COLOR.darker();
-  public static Color LABEL_COLOR = Color.white;
-  public static int EDGE_RADIUS = 6;
-  public static Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
+  public static final Color CORE_COLOR = METAL_COLOR;
+  public static final Color CORE_BORDER_COLOR = CORE_COLOR.darker();
+  public static final Color COIL_COLOR = Color.decode("#DDDDDD");
+  public static final Color COIL_BORDER_COLOR = COIL_COLOR.darker();
+  public static final Color PIN_COLOR = Color.decode("#00B2EE");
+  public static final Color PIN_BORDER_COLOR = PIN_COLOR.darker();
+  public static final Color LABEL_COLOR = Color.white;
+  public static final int EDGE_RADIUS = 6;
+  public static final Size PIN_SIZE = new Size(0.03d, SizeUnit.in);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
@@ -87,7 +88,6 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   private Size coilWidth = new Size(0.5, SizeUnit.in);
   private Size coilLength = new Size(0.6, SizeUnit.in);
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  protected Display display = Display.BOTH;
   private Color coreColor = CORE_COLOR;
   private Color coreBorderColor = CORE_BORDER_COLOR;
   private Color coilColor = COIL_COLOR;
@@ -102,6 +102,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     super();
     updateControlPoints();
     alpha = 100;
+    display = Display.BOTH;
   }
 
   @EditableProperty
@@ -198,14 +199,16 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     double windingSpacing = this.windingSpacing.convertToPixels();
 
     // Update control points.
-    for (int i = 1; i < 2 + (primaryCT ? 1 : 0); i++)
+    for (int i = 1; i < 2 + (primaryCT ? 1 : 0); i++) {
       controlPoints[i] =
           new Point(firstPoint.x, (int) (firstPoint.y + i * leadSpacing * (primaryCT ? 1 : 2)));
-    for (int i = 0; i < 2 + (secondaryCT ? 1 : 0); i++)
+    }
+    for (int i = 0; i < 2 + (secondaryCT ? 1 : 0); i++) {
       controlPoints[2 + (primaryCT ? 1 : 0) + i] =
           new Point(
               (int) (firstPoint.x + windingSpacing),
               (int) (firstPoint.y + i * leadSpacing * (secondaryCT ? 1 : 2)));
+    }
 
     AffineTransform tx = getTx();
 
@@ -229,50 +232,30 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
       int coilWidth = getClosestOdd(this.coilWidth.convertToPixels());
       int coilLength = getClosestOdd(this.coilLength.convertToPixels());
 
-      body[0] =
-          new Area(
-              new Rectangle2D.Double(
-                  centerX - coreThickness / 2, centerY - coreWidth / 2, coreThickness, coreWidth));
-      body[1] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  centerX - coilLength / 2,
-                  centerY - coilWidth / 2,
-                  coilLength,
-                  coilWidth,
-                  coilWidth / 3,
-                  coilWidth / 3));
+      body[0] = Area.centeredRect(centerX, centerY, coreThickness, coreWidth);
+      body[1] = Area.centeredRoundRect(centerX, centerY, coilLength, coilWidth, coilWidth / 3);
       body[1].subtract(body[0]);
 
       AffineTransform tx = getTx();
-      if (tx != null)
+      if (tx != null) {
         for (Area b : body) {
-          if (b != null) b.transform(tx);
+          if (b != null) {
+            b.transform(tx);
+          }
         }
+      }
     }
     return body;
   }
 
-  @SuppressWarnings("incomplete-switch")
   private AffineTransform getTx() {
-    double x = controlPoints[0].x;
-    double y = controlPoints[0].y;
-    if (orientation == Orientation.DEFAULT) return null;
-
-    double theta = 0;
-    switch (orientation) {
-      case _90:
-        theta = Math.PI / 2;
-        break;
-      case _180:
-        theta = Math.PI;
-        break;
-      case _270:
-        theta = Math.PI * 3 / 2;
-        break;
+    AffineTransform rotation = null;
+    if (orientation != Orientation.DEFAULT) {
+      rotation = AffineTransform.getRotateInstance(
+          orientation.getTheta(),
+          controlPoints[0].x,
+          controlPoints[0].y);
     }
-    AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
-
     return rotation;
   }
 
@@ -287,39 +270,34 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
       return;
     }
     Area[] body = getBody();
-    Area coreArea = body[0];
-    Area coilArea = body[1];
 
     if (!outlineMode) {
       int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
       for (Point point : controlPoints) {
+        Area pin = Area.circle(point, pinSize);
         g2d.setColor(PIN_COLOR);
-        g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        g2d.fill(pin);
         g2d.setColor(PIN_BORDER_COLOR);
-        g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        g2d.draw(pin);
       }
     }
-    Composite oldComposite = g2d.getComposite();
-    if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
-    }
 
+    Composite oldComposite = setTransparency(g2d);
     // render coil
+    Area coilArea = body[1];
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getCoilColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.fill(coilArea);
-    Color finalBorderColor = tryColor(outlineMode, getCoilBorderColor());
+    Color finalBorderColor = tryBorderColor(outlineMode, getCoilBorderColor());
     g2d.setColor(finalBorderColor);
     g2d.draw(coilArea);
-
     // render core
+    Area coreArea = body[0];
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getCoreColor());
     g2d.fill(coreArea);
     g2d.setComposite(oldComposite);
 
-    if (!outlineMode) finalBorderColor = getCoreBorderColor();
-
-    g2d.setColor(finalBorderColor);
+    g2d.setColor(tryBorderColor(outlineMode, getCoreBorderColor()));
     g2d.draw(coreArea);
 
     drawingObserver.stopTracking();
@@ -327,63 +305,60 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     g2d.setFont(project.getFont());
 
     // Draw winding designations
-    Point wPoint =
-        new Point(
-            (int) (controlPoints[0].x + project.getFontSize()),
-            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+    Point windingPoint = new Point(
+        (int) (controlPoints[0].x + project.getFontSize()),
+        (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
     AffineTransform tx = getTx();
-    if (tx != null) tx.transform(wPoint, wPoint);
+    if (tx != null) {
+      tx.transform(windingPoint, windingPoint);
+    }
     StringUtils.drawCenteredText(
-        g2d, "P", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    wPoint =
-        new Point(
-            (int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()),
-            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
-    if (tx != null) tx.transform(wPoint, wPoint);
+        g2d, "P", windingPoint.x, windingPoint.y,
+        HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    windingPoint = new Point(
+        (int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()),
+        (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+    if (tx != null) {
+      tx.transform(windingPoint, windingPoint);
+    }
     StringUtils.drawCenteredText(
-        g2d, "S", wPoint.x, wPoint.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+        g2d, "S", windingPoint.x, windingPoint.y,
+        HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
     // Draw label.
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
     g2d.setColor(finalLabelColor);
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
-    String[] label = null;
+    List<String> labels = getLabelListForDisplay();
 
-    if (getDisplay() == Display.NAME) {
-      label = new String[] {getName()};
-    } else if (getDisplay() == Display.VALUE) {
-      label = new String[] {getValue().toString()};
-    } else if (getDisplay() == Display.BOTH) {
-      String value = getValue().toString();
-      label = value.isEmpty() ? new String[] {getName()} : new String[] {getName(), value};
-    }
-
-    if (label != null) {
-      for (int i = 0; i < label.length; i++) {
-        String l = label[i];
-        Rectangle2D rect = fontMetrics.getStringBounds(l, g2d);
+    if (!labels.isEmpty()) {
+      boolean multiple = labels.size() > 1;
+      Rectangle bounds = coreArea.getBounds();
+      int i = 0;
+      final AffineTransform oldTransform = g2d.getTransform();
+      for (String label : labels) {
+        Rectangle2D rect = fontMetrics.getStringBounds(label, g2d);
         int textHeight = (int) (rect.getHeight());
         int textWidth = (int) (rect.getWidth());
         // Center text horizontally and vertically
-        Rectangle bounds = coreArea.getBounds();
         int x = bounds.x + (bounds.width - textWidth) / 2;
         int y = bounds.y + (bounds.height - textHeight) / 2 + fontMetrics.getAscent();
-
-        AffineTransform oldTransform = g2d.getTransform();
 
         if (getOrientation() == Orientation.DEFAULT || getOrientation() == Orientation._180) {
           int centerX = bounds.x + bounds.width / 2;
           int centerY = bounds.y + bounds.height / 2;
-          g2d.rotate(-Math.PI / 2, centerX, centerY);
+          g2d.rotate(-HALF_PI, centerX, centerY);
         }
-
-        if (label.length == 2) {
-          if (i == 0) g2d.translate(0, -textHeight / 2);
-          else if (i == 1) g2d.translate(0, textHeight / 2);
+        if (multiple) {
+          // TODO: this does not handle more than 2 label parts
+          if (i == 0) {
+            g2d.translate(0, -textHeight / 2);
+          } else if (i == 1) {
+            g2d.translate(0, textHeight / 2);
+          }
+          i++;
         }
-
-        g2d.drawString(l, x, y);
-
+        g2d.drawString(label, x, y);
         g2d.setTransform(oldTransform);
       }
     }
@@ -394,23 +369,34 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int radius = (int) (12f * width / 32);
+    int x1 = 1;
+    int y1 = (int) (height / 8f);
+    int x2 = width - 2;
+    int y2 = (int) (height * 6 / 8f);
+
     g2d.setColor(COIL_COLOR);
-    g2d.fillRoundRect(1, (int) (height / 8f), width - 2, (int) (height * 6 / 8f), radius, radius);
+    g2d.fillRoundRect(x1, y1, x2, y2, radius, radius);
     g2d.setColor(COIL_BORDER_COLOR);
-    g2d.drawRoundRect(1, (int) (height / 8f), width - 2, (int) (height * 6 / 8f), radius, radius);
+    g2d.drawRoundRect(x1, y1, x2, y2, radius, radius);
 
+    x1 = width * 3 / 8;
+    y1 = 1;
+    x2 = width / 4;
+    y2 = height - 2;
     g2d.setColor(CORE_COLOR);
-    g2d.fillRect(width * 3 / 8, 1, width / 4, height - 2);
+    g2d.fillRect(x1, y1, x2, y2);
     g2d.setColor(CORE_BORDER_COLOR);
-    g2d.drawRect(width * 3 / 8, 1, width / 4, height - 2);
-
-    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+    g2d.drawRect(x1, y1, x2, y2);
 
     int pinSize = (int) (2f * width / 32);
+    x1 = width / 5 - pinSize + 1;
+    x2 = 4 * width / 5 + 1;
+    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
     g2d.setColor(PIN_COLOR);
     for (int i = 0; i < 3; i++) {
-      g2d.fillOval(width / 5 - pinSize + 1, (height / 6) * (i + 2), pinSize, pinSize);
-      g2d.fillOval(4 * width / 5 + 1, (height / 6) * (i + 2), pinSize, pinSize);
+      y1 = (height / 6) * (i + 2);
+      g2d.fillOval(x1, y1, pinSize, pinSize);
+      g2d.fillOval(x2, y1, pinSize, pinSize);
     }
   }
 
