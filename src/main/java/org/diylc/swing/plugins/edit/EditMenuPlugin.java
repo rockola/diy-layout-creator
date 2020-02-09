@@ -30,7 +30,12 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import javax.swing.AbstractAction;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 
 import org.diylc.App;
 import org.diylc.appframework.undo.IUndoListener;
-import org.diylc.appframework.undo.UndoHandler;
+//import org.diylc.appframework.undo.UndoHandler;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
@@ -54,42 +59,27 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
   private static final Logger LOG = LogManager.getLogger(EditMenuPlugin.class);
 
-  private static final String EDIT_TITLE = "Edit";
-  private static final String TRANSFORM_TITLE = "Transform Selection";
-  private static final String RENUMBER_TITLE = "Renumber Selection";
-  private static final String EXPAND_TITLE = "Expand Selection";
-
   private IPlugInPort plugInPort;
   private Clipboard clipboard;
 
-  private ActionFactoryAction cutAction;
-  private ActionFactoryAction copyAction;
-  private ActionFactoryAction pasteAction;
-  private ActionFactoryAction duplicateAction;
-  private ActionFactoryAction editSelectionAction;
-  private ActionFactoryAction deleteSelectionAction;
-  private ActionFactoryAction groupAction;
-  private ActionFactoryAction ungroupAction;
-  private ActionFactoryAction sendToBackAction;
-  private ActionFactoryAction bringToFrontAction;
-  private ActionFactoryAction nudgeAction;
-  private ActionFactoryAction renumberXAxisAction;
-  private ActionFactoryAction renumberYAxisAction;
-  private ActionFactoryAction expandSelectionAllAction;
-  private ActionFactoryAction expandSelectionImmediateAction;
-  private ActionFactoryAction expandSelectionSameTypeAction;
-  private ActionFactoryAction saveAsTemplateAction;
-  private ActionFactoryAction saveAsBlockAction;
-  private ActionFactoryAction rotateClockwiseAction;
-  private ActionFactoryAction rotateCounterClockwiseAction;
-  private ActionFactoryAction mirrorHorizontallyAction;
-  private ActionFactoryAction mirrorVerticallyAction;
+  private Map<String, AbstractAction> actions = new HashMap<>();
+  private Map<String, AbstractAction> editActions = new LinkedHashMap<>();
+  private Map<String, AbstractAction> transformActions = new LinkedHashMap<>();
+  private Map<String, AbstractAction> renumberActions = new LinkedHashMap<>();
+  private Map<String, AbstractAction> expandActions = new LinkedHashMap<>();
+  private Map<String, AbstractAction> saveAsActions = new LinkedHashMap<>();
 
-  private UndoHandler<Project> undoHandler;
+  private List<String> actionsToRefresh;
+
+  //private UndoHandler<Project> undoHandler;
 
   public EditMenuPlugin() {
 
+    // TODO rethink this
+    plugInPort = App.ui().getPresenter();
+
     clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    /*
     undoHandler = new UndoHandler<Project>(new IUndoListener<Project>() {
 
         @Override
@@ -97,6 +87,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
           plugInPort.loadProject(currentState, false, null);
         }
       });
+    */
     clipboard.addFlavorListener(new FlavorListener() {
 
         @Override
@@ -104,231 +95,122 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
           refreshActions();
         }
       });
-  }
 
-  public ActionFactoryAction getCutAction() {
-    if (cutAction == null) {
-      cutAction = ActionFactory.createCutAction(plugInPort, clipboard, this);
-    }
-    return cutAction;
-  }
+    editActions.put("undo", ActionFactory.createUndoAction());
+    editActions.put("redo", ActionFactory.createRedoAction());
+    editActions.put("cut", ActionFactory.createCutAction(plugInPort, clipboard, this));
+    editActions.put("copy", ActionFactory.createCopyAction(plugInPort, clipboard, this));
+    editActions.put("paste", ActionFactory.createPasteAction(plugInPort, clipboard));
+    editActions.put("duplicate", ActionFactory.createDuplicateAction(plugInPort));
+    editActions.put("select-all", ActionFactory.createSelectAllAction(plugInPort));
+    editActions.put("edit-selection", ActionFactory.createEditSelectionAction(plugInPort));
+    editActions.put("delete-selection", ActionFactory.createDeleteSelectionAction(plugInPort));
 
-  public ActionFactoryAction getCopyAction() {
-    if (copyAction == null) {
-      copyAction = ActionFactory.createCopyAction(plugInPort, clipboard, this);
-    }
-    return copyAction;
-  }
+    transformActions.put("rotate-clockwise", ActionFactory.createRotateSelectionAction(
+        plugInPort, 1));
+    transformActions.put("rotate-counterclockwise", ActionFactory.createRotateSelectionAction(
+        plugInPort, -1));
+    transformActions.put("mirror-horizontally", ActionFactory.createMirrorSelectionAction(
+        plugInPort, IComponentTransformer.HORIZONTAL));
+    transformActions.put("mirror-vertically", ActionFactory.createMirrorSelectionAction(
+        plugInPort, IComponentTransformer.VERTICAL));
+    transformActions.put("nudge", ActionFactory.createNudgeAction(plugInPort));
+    transformActions.put("send-to-back", ActionFactory.createSendToBackAction(plugInPort));
+    transformActions.put("bring-to-front", ActionFactory.createBringToFrontAction(plugInPort));
+    transformActions.put("group", ActionFactory.createGroupAction(plugInPort));
+    transformActions.put("ungroup", ActionFactory.createUngroupAction(plugInPort));
 
-  public ActionFactoryAction getPasteAction() {
-    if (pasteAction == null) {
-      pasteAction = ActionFactory.createPasteAction(plugInPort, clipboard);
-    }
-    return pasteAction;
-  }
+    renumberActions.put("renumber-x-axis", ActionFactory.createRenumberAction(plugInPort, true));
+    renumberActions.put("renumber-y-axis", ActionFactory.createRenumberAction(plugInPort, false));
 
-  public ActionFactoryAction getDuplicateAction() {
-    if (duplicateAction == null) {
-      duplicateAction = ActionFactory.createDuplicateAction(plugInPort);
-    }
-    return duplicateAction;
-  }
+    expandActions.put("expand-all", ActionFactory.createExpandSelectionAction(
+        plugInPort, ExpansionMode.ALL));
+    expandActions.put("expand-immediate", ActionFactory.createExpandSelectionAction(
+        plugInPort, ExpansionMode.IMMEDIATE));
+    expandActions.put("expand-same-type", ActionFactory.createExpandSelectionAction(
+        plugInPort, ExpansionMode.SAME_TYPE));
 
-  public ActionFactoryAction getEditSelectionAction() {
-    if (editSelectionAction == null) {
-      editSelectionAction = ActionFactory.createEditSelectionAction(plugInPort);
-    }
-    return editSelectionAction;
-  }
+    saveAsActions.put("save-as-template", ActionFactory.createSaveAsTemplateAction(plugInPort));
+    saveAsActions.put("save-as-block", ActionFactory.createSaveAsBlockAction(plugInPort));
 
-  public ActionFactoryAction getDeleteSelectionAction() {
-    if (deleteSelectionAction == null) {
-      deleteSelectionAction = ActionFactory.createDeleteSelectionAction(plugInPort);
-    }
-    return deleteSelectionAction;
-  }
-
-  public ActionFactoryAction getGroupAction() {
-    if (groupAction == null) {
-      groupAction = ActionFactory.createGroupAction(plugInPort);
-    }
-    return groupAction;
-  }
-
-  public ActionFactoryAction getUngroupAction() {
-    if (ungroupAction == null) {
-      ungroupAction = ActionFactory.createUngroupAction(plugInPort);
-    }
-    return ungroupAction;
-  }
-
-  public ActionFactoryAction getSendToBackAction() {
-    if (sendToBackAction == null) {
-      sendToBackAction = ActionFactory.createSendToBackAction(plugInPort);
-    }
-    return sendToBackAction;
-  }
-
-  public ActionFactoryAction getBringToFrontAction() {
-    if (bringToFrontAction == null) {
-      bringToFrontAction = ActionFactory.createBringToFrontAction(plugInPort);
-    }
-    return bringToFrontAction;
-  }
-
-  public ActionFactoryAction getNudgeAction() {
-    if (nudgeAction == null) {
-      nudgeAction = ActionFactory.createNudgeAction(plugInPort);
-    }
-    return nudgeAction;
-  }
-
-  public ActionFactoryAction getRenumberXAxisAction() {
-    if (renumberXAxisAction == null) {
-      renumberXAxisAction = ActionFactory.createRenumberAction(plugInPort, true);
-    }
-    return renumberXAxisAction;
-  }
-
-  public ActionFactoryAction getRenumberYAxisAction() {
-    if (renumberYAxisAction == null) {
-      renumberYAxisAction = ActionFactory.createRenumberAction(plugInPort, false);
-    }
-    return renumberYAxisAction;
-  }
-
-  public ActionFactoryAction getExpandSelectionAllAction() {
-    if (expandSelectionAllAction == null) {
-      expandSelectionAllAction =
-          ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.ALL);
-    }
-    return expandSelectionAllAction;
-  }
-
-  public ActionFactoryAction getExpandSelectionImmediateAction() {
-    if (expandSelectionImmediateAction == null) {
-      expandSelectionImmediateAction =
-          ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.IMMEDIATE);
-    }
-    return expandSelectionImmediateAction;
-  }
-
-  public ActionFactoryAction getExpandSelectionSameTypeAction() {
-    if (expandSelectionSameTypeAction == null) {
-      expandSelectionSameTypeAction =
-          ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.SAME_TYPE);
-    }
-    return expandSelectionSameTypeAction;
-  }
-
-  public ActionFactoryAction getSaveAsTemplateAction() {
-    if (saveAsTemplateAction == null) {
-      saveAsTemplateAction = ActionFactory.createSaveAsTemplateAction(plugInPort);
-    }
-    return saveAsTemplateAction;
-  }
-
-  public ActionFactoryAction getSaveAsBlockAction() {
-    if (saveAsBlockAction == null) {
-      saveAsBlockAction = ActionFactory.createSaveAsBlockAction(plugInPort);
-    }
-    return saveAsBlockAction;
-  }
-
-  public ActionFactoryAction getRotateClockwiseAction() {
-    if (rotateClockwiseAction == null) {
-      rotateClockwiseAction = ActionFactory.createRotateSelectionAction(plugInPort, 1);
-    }
-    return rotateClockwiseAction;
-  }
-
-  public ActionFactoryAction getRotateCounterclockwiseAction() {
-    if (rotateCounterClockwiseAction == null) {
-      rotateCounterClockwiseAction = ActionFactory.createRotateSelectionAction(plugInPort, -1);
-    }
-    return rotateCounterClockwiseAction;
-  }
-
-  public ActionFactoryAction getMirrorHorizontallyAction() {
-    if (mirrorHorizontallyAction == null) {
-      mirrorHorizontallyAction =
-          ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.HORIZONTAL);
-    }
-    return mirrorHorizontallyAction;
-  }
-
-  public ActionFactoryAction getMirrorVerticallyAction() {
-    if (mirrorVerticallyAction == null) {
-      mirrorVerticallyAction =
-          ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.VERTICAL);
-    }
-    return mirrorVerticallyAction;
-  }
-
-  private void addActions(List<AbstractAction> actions, String menuTitle) {
-    for (AbstractAction action : actions) {
-      App.ui().injectMenuAction(action, menuTitle);
-    }
+    actionsToRefresh = Arrays.asList(
+        "cut", "copy", "duplicate", "edit-selection", "delete-selection",
+        "group", "ungroup", "expand-all", "expand-immediate", "expand-same-type",
+        "nudge", "send-to-back", "bring-to-front",
+        "rotate-clockwise", "rotate-counterclockwise",
+        "mirror-horizontally", "mirror-vertically",
+        "save-as-template", "save-as-block");
   }
 
   private void separator(String menuTitle) {
     App.ui().injectMenuAction(null, menuTitle);
   }
 
+  private void addActions(
+      String menuTitle,
+      Map<String, AbstractAction> actionMap,
+      Queue<String> separatorsAfter) {
+    for (String key : actionMap.keySet()) {
+      AbstractAction action = actionMap.get(key);
+      // add this action to map of all edit actions
+      actions.put(key, action);
+      App.ui().injectMenuAction(action, menuTitle);
+      // check for separators ----------------
+      if (separatorsAfter != null
+          && !separatorsAfter.isEmpty()
+          && key.equals(separatorsAfter.peek())) {
+        separator(menuTitle);
+        separatorsAfter.remove();
+      }
+    }
+  }
+
+  private static String editTitle() {
+    return App.getString("menu.edit.title");
+  }
+
+  private static String transformTitle() {
+    return App.getString("menu.edit.transform-selection");
+  }
+
+  private static String renumberTitle() {
+    return App.getString("menu.edit.renumber-selection");
+  }
+
+  private static String expandTitle() {
+    return App.getString("menu.edit.expand-selection");
+  }
+
+  private static String saveAsTitle() {
+    return App.getString("menu.edit.save-selection");
+  }
+
   @Override
   public void connect(IPlugInPort plugInPort) {
     this.plugInPort = plugInPort;
-    addActions(
-        new ArrayList<AbstractAction>(Arrays.asList(
-            undoHandler.getUndoAction(),
-            undoHandler.getRedoAction(),
-            null, // ----------------
-            getCutAction(),
-            getCopyAction(),
-            getPasteAction(),
-            getDuplicateAction(),
-            null, // ----------------
-            ActionFactory.createSelectAllAction(plugInPort),
-            getEditSelectionAction(),
-            getDeleteSelectionAction())),
-        EDIT_TITLE);
+    // Edit menu
+    LinkedList<String> separatorsAfter = new LinkedList<>();
+    separatorsAfter.add("redo");
+    separatorsAfter.add("duplicate");
+    addActions(editTitle(), editActions, separatorsAfter);
     //
-    App.ui().injectSubmenu(TRANSFORM_TITLE, Icon.MagicWand, EDIT_TITLE);
+    App.ui().injectSubmenu(transformTitle(), Icon.MagicWand, editTitle());
+    addActions(transformTitle(), transformActions, null);
     // addEditAction(getSaveAsTemplateAction());
-    addActions(
-        new ArrayList<AbstractAction>(Arrays.asList(
-            getRotateClockwiseAction(),
-            getRotateCounterclockwiseAction(),
-            null, // ----------------
-            getMirrorHorizontallyAction(),
-            getMirrorVerticallyAction(),
-            null, // ----------------
-            getNudgeAction(),
-            null, // ----------------
-            getSendToBackAction(),
-            getBringToFrontAction(),
-            null, // ----------------
-            getGroupAction(),
-            getUngroupAction())),
-        TRANSFORM_TITLE);
+    separatorsAfter.clear();
+    separatorsAfter.add("rotate-counterclockwise");
+    separatorsAfter.add("mirror-vertically");
+    separatorsAfter.add("nudge");
+    separatorsAfter.add("bring-to-front");
+    App.ui().injectSubmenu(renumberTitle(), Icon.Sort, editTitle());
+    addActions(renumberTitle(), renumberActions, null);
+    App.ui().injectSubmenu(expandTitle(), Icon.BranchAdd, editTitle());
+    addActions(expandTitle(), expandActions, null);
+    App.ui().injectSubmenu(saveAsTitle(), Icon.DiskBlue, editTitle());
+    addActions(saveAsTitle(), saveAsActions, null);
     // ----------------------------------------------------------------
-    separator(EDIT_TITLE);
-    App.ui().injectSubmenu(RENUMBER_TITLE, Icon.Sort, EDIT_TITLE);
-    addActions(
-        new ArrayList<AbstractAction>(Arrays.asList(
-            getRenumberXAxisAction(),
-            getRenumberYAxisAction())),
-        RENUMBER_TITLE);
-    App.ui().injectSubmenu(EXPAND_TITLE, Icon.BranchAdd, EDIT_TITLE);
-    addActions(
-        new ArrayList<AbstractAction>(Arrays.asList(
-            getExpandSelectionAllAction(),
-            getExpandSelectionImmediateAction(),
-            getExpandSelectionSameTypeAction())),
-        EXPAND_TITLE);
-    // ----------------------------------------------------------------
-    separator(EDIT_TITLE);
-    App.ui().injectMenuAction(ActionFactory.createEditProjectAction(plugInPort), EDIT_TITLE);
+    separator(editTitle());
+    App.ui().injectMenuAction(ActionFactory.createEditProjectAction(plugInPort), editTitle());
 
     refreshActions();
   }
@@ -346,11 +228,13 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
         refreshActions();
         break;
       case PROJECT_MODIFIED:
-        undoHandler.stateChanged((Project) params[0], (Project) params[1], (String) params[2]);
+        // undoHandler.stateChanged((Project) params[0], (Project) params[1], (String) params[2]);
+        actions.get("undo").setEnabled(true); // TODO only for debugging!
+        actions.get("redo").setEnabled(true); // TODO only for debugging!
         break;
       case PROJECT_LOADED:
         if ((Boolean) params[1]) {
-          undoHandler.reset();
+          // TODOTODOTODO undoHandler.reset();
         }
         break;
       default:
@@ -359,32 +243,18 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
   }
 
   private void refreshActions() {
-    boolean enabled = !plugInPort.getCurrentProject().emptySelection();
-    getCutAction().setEnabled(enabled);
-    getCopyAction().setEnabled(enabled);
-    getDuplicateAction().setEnabled(enabled);
+    boolean enabled = !plugInPort.currentProject().emptySelection();
     try {
-      getPasteAction().setEnabled(
+      actions.get("paste").setEnabled(
           clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor));
-    } catch (Exception e) {
-      getPasteAction().setEnabled(false);
+    } catch (IllegalStateException e) {
+      // clipboard unavailable
+      actions.get("paste").setEnabled(false);
     }
-    getEditSelectionAction().setEnabled(enabled);
-    getDeleteSelectionAction().setEnabled(enabled);
-    getGroupAction().setEnabled(enabled);
-    getExpandSelectionAllAction().setEnabled(enabled);
-    getExpandSelectionImmediateAction().setEnabled(enabled);
-    getExpandSelectionSameTypeAction().setEnabled(enabled);
-    getNudgeAction().setEnabled(enabled);
-    getUngroupAction().setEnabled(enabled);
-    getSendToBackAction().setEnabled(enabled);
-    getBringToFrontAction().setEnabled(enabled);
-    getRotateClockwiseAction().setEnabled(enabled);
-    getRotateCounterclockwiseAction().setEnabled(enabled);
-    getMirrorHorizontallyAction().setEnabled(enabled);
-    getMirrorVerticallyAction().setEnabled(enabled);
-    getSaveAsTemplateAction().setEnabled(enabled);
-    getSaveAsBlockAction().setEnabled(enabled);
+    for (String key : actionsToRefresh) {
+      LOG.trace("refreshActions {}", key);
+      actions.get(key).setEnabled(enabled);
+    }
   }
 
   // ClipboardOwner
