@@ -144,10 +144,8 @@ public class PerfBoard extends AbstractBoard {
     x = width / 2;
     Area.circle(x, x, x).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
     g2d.setColor(CANVAS_COLOR);
-    x = width / 2 - 2 / factor;
+    int center = width / 2 - 2 / factor;
     double d = getClosestOdd(5.0 / factor);
-    g2d.fillOval(x, x, d, d);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawOval(x, x, d, d);
+    Area.circle(new Point(center, center), d).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
   }
 }
