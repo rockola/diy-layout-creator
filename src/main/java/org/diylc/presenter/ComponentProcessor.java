@@ -38,13 +38,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.diylc.common.ComponentType;
-import org.diylc.common.IComponentTransformer;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.annotations.BomPolicy;
-import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 
@@ -59,88 +57,10 @@ public class ComponentProcessor {
 
   private static Map<String, List<PropertyWrapper>> propertyCache;
   private static Map<String, IPropertyValidator> propertyValidatorCache;
-  private static Map<String, ComponentType> componentTypeMap;
-  private static Map<String, IComponentTransformer> componentTransformerMap;
 
   static {
     propertyCache = new HashMap<String, List<PropertyWrapper>>();
-    componentTypeMap = new HashMap<String, ComponentType>();
     propertyValidatorCache = new HashMap<String, IPropertyValidator>();
-    componentTransformerMap = new HashMap<String, IComponentTransformer>();
-  }
-
-  /**
-     Extract component type from class.
-     Class should implement IDIYComponent or be a subclass of one that does.
-     Also, class should have a ComponentDescriptor annotation.
-
-     NOTE: Could - and indeed should - this be done at compile time?
-     Runtime handling is of course required if components are to be
-     loaded from external JARs.
-
-     @param clazz The class.
-     @returns component type
-   */
-  public static ComponentType extractComponentTypeFrom(
-      Class<? extends IDIYComponent<?>> clazz) {
-
-    /* have we already seen this class? if so, get it from cache */
-    if (componentTypeMap.containsKey(clazz.getName())) {
-      return componentTypeMap.get(clazz.getName());
-    }
-    /* does this class have the required annotation? can't do much if not */
-    if (!clazz.isAnnotationPresent(ComponentDescriptor.class)) {
-      return null;
-    }
-    /* good to go, let's look at the annotation */
-    ComponentDescriptor annotation = clazz.getAnnotation(ComponentDescriptor.class);
-    String name = annotation.name();
-    String description = annotation.description();
-    CreationMethod creationMethod = annotation.creationMethod();
-    String category = annotation.category();
-    String namePrefix = annotation.instanceNamePrefix();
-    String author = annotation.author();
-    Icon icon = null;
-    double zOrder = annotation.zOrder();
-    boolean flexibleZOrder = annotation.flexibleZOrder();
-    BomPolicy bomPolicy = annotation.bomPolicy();
-    boolean autoEdit = annotation.autoEdit();
-    IComponentTransformer transformer = getComponentTransformer(annotation.transformer());
-    KeywordPolicy keywordPolicy = annotation.keywordPolicy();
-    String keywordTag = annotation.keywordTag();
-
-    try {
-      // Draw component icon for later use
-      IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
-      Image image = new BufferedImage(Presenter.ICON_SIZE,
-                                      Presenter.ICON_SIZE,
-                                      java.awt.image.BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g2d = (Graphics2D) image.getGraphics();
-      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-      componentInstance.drawIcon(g2d, Presenter.ICON_SIZE, Presenter.ICON_SIZE);
-      icon = new ImageIcon(image);
-    } catch (Exception e) {
-      LOG.error("Error drawing component icon for " + clazz.getName(), e);
-    }
-    ComponentType componentType = new ComponentType(
-        name,
-        description,
-        creationMethod,
-        category,
-        namePrefix,
-        author,
-        icon,
-        clazz,
-        zOrder,
-        flexibleZOrder,
-        bomPolicy,
-        autoEdit,
-        transformer,
-        keywordPolicy,
-        keywordTag);
-    componentTypeMap.put(clazz.getName(), componentType);
-    return componentType;
   }
 
   /**
@@ -263,24 +183,5 @@ public class ComponentProcessor {
     }
     propertyValidatorCache.put(clazz.getName(), validator);
     return validator;
-  }
-
-  private static IComponentTransformer getComponentTransformer(
-      Class<? extends IComponentTransformer> clazz) {
-    IComponentTransformer transformer = null;
-    if (clazz != null) {
-      transformer = componentTransformerMap.get(clazz.getName());
-      if (transformer == null) {
-        try {
-          transformer = clazz.newInstance();
-          componentTransformerMap.put(clazz.getName(), transformer);
-        } catch (Exception e) {
-          LOG.error("Could not instantiate validator for " + clazz.getName(), e);
-          // TODO throw exception? if instantiation fails, null is returned,
-          // but is this really the correct behaviour?
-        }
-      }
-    }
-    return transformer;
   }
 }
