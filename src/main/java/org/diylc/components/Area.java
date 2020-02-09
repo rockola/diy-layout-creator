@@ -107,9 +107,13 @@ public class Area extends java.awt.geom.Area {
      @return new Area
   */
   public static Area oval(Point center, double diameterH, double diameterV) {
+    return oval(center.x, center.y, diameterH, diameterV);
+  }
+
+  public static Area oval(int x, int y, double diameterH, double diameterV) {
     return new Area(new Ellipse2D.Double(
-        center.x - diameterH / 2,
-        center.y - diameterV / 2,
+        x - diameterH / 2,
+        y - diameterV / 2,
         diameterH,
         diameterV));
   }
@@ -139,6 +143,10 @@ public class Area extends java.awt.geom.Area {
    */
   public static Area circle(Point center, double diameter) {
     return circle(center.x, center.y, diameter);
+  }
+
+  public static Area circle(Point center, int diameter) {
+    return circle(center.x, center.y, (double) diameter);
   }
 
   public static Area circle(Point center, Size diameter) {
