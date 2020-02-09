@@ -35,9 +35,8 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
-import org.diylc.components.transform.CliffJackTransformer;
+import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -50,15 +49,16 @@ import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "Cliff 1/4\" Jack",
+    name = "Cliff Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Cliff-style closed panel mount 1/4\" phono jack",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "J",
     autoEdit = false,
-    transformer = CliffJackTransformer.class)
-public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
+    xmlTag = "jack:cliff",
+    transformer = JackTransformer.class)
+public class CliffJack extends AbstractJack {
 
   private static final long serialVersionUID = 1L;
 
@@ -73,30 +73,29 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
   private static Size BODY_LENGTH = new Size(0.9d, SizeUnit.in);
   private static Size TAIL_LENGTH = new Size(0.1d, SizeUnit.in);
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  private JackType type = JackType.MONO;
-  private Orientation orientation = Orientation.DEFAULT;
-  private transient Area[] body;
-  private String value = "";
+  {
+    controlPoints = new Point[] {new Point(0, 0)};
+  }
 
-  public CliffJack1_4() {
+  public CliffJack() {
     super();
     updateControlPoints();
   }
 
-  private void updateControlPoints() {
+  @Override
+  protected void updateControlPoints() {
     // invalidate body shape
     body = null;
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int spacing = (int) SPACING.convertToPixels();
-    controlPoints = new Point[type == JackType.STEREO ? 6 : 4];
+    controlPoints = new Point[type.isStereo() ? 6 : 4];
 
     controlPoints[0] = new Point(x, y);
     controlPoints[1] = new Point(x, y + 2 * spacing);
     controlPoints[2] = new Point(x + 2 * spacing, y);
     controlPoints[3] = new Point(x + 2 * spacing, y + 2 * spacing);
-    if (type == JackType.STEREO) {
+    if (type.isStereo()) {
       controlPoints[4] = new Point(x + spacing, y);
       controlPoints[5] = new Point(x + spacing, y + 2 * spacing);
     }
@@ -237,7 +236,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
         height / 2,
         tailWidth,
         height / 2 - 2 * 32 / height,
-        w128).drawBordered(g2d, BODY_COLOR, BORDER_COLOR);
+        w128).fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
 
     // nut
     Area.roundRect(
@@ -245,14 +244,14 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
         2 * 32 / height,
         tailWidth,
         height / 2,
-        w128).drawBordered(g2d, NUT_COLOR, BORDER_COLOR);
+        w128).fillDraw(g2d, NUT_COLOR, BORDER_COLOR);
 
     // "area": what is this part?
     Area.rect(
         (width - bodyWidth) / 2,
         height / 7 + 1,
         bodyWidth,
-        height * 5 / 7).drawBordered(g2d, BODY_COLOR, BORDER_COLOR);
+        height * 5 / 7).fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
 
     final int pinX1 = getClosestOdd((width - bodyWidth * 3 / 4) / 2);
     final int pinX2 = getClosestOdd((width + bodyWidth * 3 / 4) / 2) - 1;
@@ -268,64 +267,7 @@ public class CliffJack1_4 extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty
-  public JackType getType() {
-    return type;
-  }
-
-  public void setType(JackType type) {
-    this.type = type;
-    updateControlPoints();
-  }
-
-  @EditableProperty
-  public Orientation getOrientation() {
-    return orientation;
-  }
-
-  public void setOrientation(Orientation orientation) {
-    this.orientation = orientation;
-    updateControlPoints();
-  }
-
-  @Override
-  public boolean canPointMoveFreely(int pointIndex) {
-    return false;
   }
 }
