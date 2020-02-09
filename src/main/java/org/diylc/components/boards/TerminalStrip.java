@@ -43,7 +43,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
@@ -64,15 +63,15 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
   public static final Color TERMINAL_COLOR = Color.lightGray;
   public static final Color TERMINAL_BORDER_COLOR = TERMINAL_COLOR.darker();
   public static final int EDGE_RADIUS = 2;
-  public static final Size HOLE_SIZE = new Size(0.06d, SizeUnit.in);
-  public static final Size MOUNTING_HOLE_SIZE = new Size(0.07d, SizeUnit.in);
+  public static final Size HOLE_SIZE = Size.in(0.06);
+  public static final Size MOUNTING_HOLE_SIZE = Size.in(0.07);
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private int terminalCount = 10;
-  private Size boardWidth = new Size(0.35d, SizeUnit.in);
-  private Size terminalSpacing = new Size(0.25d, SizeUnit.in);
-  private Size holeSpacing = new Size(0.5d, SizeUnit.in);
+  private Size boardWidth = Size.in(0.35);
+  private Size terminalSpacing = Size.in(0.25);
+  private Size holeSpacing = Size.in(0.5);
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color boardColor = BOARD_COLOR;
   private Color borderColor = BORDER_COLOR;
@@ -394,32 +393,27 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    g2d.setColor(BOARD_COLOR);
-    g2d.fillRect(width / 4, 1, width / 2, height - 4);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect(width / 4, 1, width / 2, height - 4);
+    Area.rect(width / 4, 1, width / 2, height - 4).fillDraw(g2d, BOARD_COLOR, BORDER_COLOR);
     int radius = 6 * width / 32;
     int holeSize = 3 * width / 32;
     int terminalSize = getClosestOdd(height / 5);
     Area terminal = Area.roundRect(
-        2 * width / 32, height / 5, width - 4 * width / 32, terminalSize, radius);
-    terminal.subtract(new Area(new Ellipse2D.Double(
-        2 * width / 32 + holeSize, height * 3 / 10 - holeSize / 2, holeSize, holeSize)));
-    terminal.subtract(new Area(new Ellipse2D.Double(
+        2 * width / 32,
+        height / 5,
+        width - 4 * width / 32,
+        terminalSize,
+        radius);
+    terminal.subtract(Area.circle(
+        2 * width / 32 + holeSize,
+        height * 3 / 10 - holeSize / 2,
+        holeSize)));
+    terminal.subtract(Area.circle(
         width - 2 * width / 32 - holeSize * 2,
         height * 3 / 10 - holeSize / 2,
-        holeSize,
         holeSize)));
-
-    g2d.setColor(TERMINAL_COLOR);
-    g2d.fill(terminal);
-    g2d.setColor(TERMINAL_BORDER_COLOR);
-    g2d.draw(terminal);
+    terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
     g2d.translate(0, height * 2 / 5);
-    g2d.setColor(TERMINAL_COLOR);
-    g2d.fill(terminal);
-    g2d.setColor(TERMINAL_BORDER_COLOR);
-    g2d.draw(terminal);
+    terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
   }
 
   @EditableProperty(name = "Board")

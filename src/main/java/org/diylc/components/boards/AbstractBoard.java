@@ -36,7 +36,6 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 public abstract class AbstractBoard extends AbstractTransparentComponent<String> {
 
@@ -46,8 +45,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
   public static final Color BORDER_COLOR = BOARD_COLOR.darker();
   public static final Color COORDINATE_COLOR = Color.gray.brighter();
   public static final float COORDINATE_FONT_SIZE = 9f;
-  public static final Size DEFAULT_WIDTH = new Size(1.5d, SizeUnit.in);
-  public static final Size DEFAULT_HEIGHT = new Size(1.2d, SizeUnit.in);
+  public static final Size DEFAULT_WIDTH = Size.in(1.5);
+  public static final Size DEFAULT_HEIGHT = Size.in(1.2);
 
   protected String value = "";
   protected Point[] controlPoints =

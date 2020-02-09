@@ -36,7 +36,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Eyelet Board",
@@ -56,9 +55,9 @@ public class EyeletBoard extends AbstractBoard {
   public static final Color BOARD_COLOR = Color.decode("#E3EAB4");
   public static final Color BORDER_COLOR = BOARD_COLOR.darker();
   public static final Color EYELET_COLOR = Color.decode("#C3E4ED");
-  public static final Size SPACING = new Size(0.5d, SizeUnit.in);
-  public static final Size EYELET_SIZE = new Size(0.2d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.1d, SizeUnit.in);
+  public static final Size SPACING = Size.in(0.5);
+  public static final Size EYELET_SIZE = Size.in(0.2);
+  public static final Size HOLE_SIZE = Size.in(0.1);
 
   // private Area copperArea;
   protected Size spacing = SPACING;

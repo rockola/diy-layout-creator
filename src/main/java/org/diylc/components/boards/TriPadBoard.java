@@ -36,7 +36,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "TriPad Board",
@@ -53,9 +52,9 @@ public class TriPadBoard extends AbstractBoard {
   private static final long serialVersionUID = 1L;
 
   public static final Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static final Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Size SPACING = Size.in(0.1);
+  public static final Size STRIP_SIZE = Size.in(0.07);
+  public static final Size HOLE_SIZE = Size.mm(0.7);
 
   /**
    * Determines how many holes are covered by a strip.
@@ -95,39 +94,25 @@ public class TriPadBoard extends AbstractBoard {
 
             int remainingSpace = secondPoint.x - p.x;
             int spacesToDraw = stripSpan;
-
             if (remainingSpace < (stripSize + (stripSpan * spacing))) {
               spacesToDraw = (remainingSpace - stripSize) / spacing;
             }
 
-            g2d.setColor(stripColor);
             drawingObserver.startTrackingContinuityArea(true);
-            g2d.fillRect(
+            Area.rect(
                 p.x + spacing - stripSize / 2,
                 p.y - stripSize / 2,
                 spacing * (spacesToDraw - 1) + stripSize,
-                stripSize);
+                stripSize).fillDraw(g2d, stripColor, stripColor.darker());
             drawingObserver.stopTrackingContinuityArea();
-            g2d.setColor(stripColor.darker());
-
-            g2d.drawRect(
-                p.x + spacing - stripSize / 2,
-                p.y - stripSize / 2,
-                spacing * (spacesToDraw - 1) + stripSize,
-                stripSize);
-
             p.x += spacing * spacesToDraw;
           }
 
           // draw holes
           p.x = firstPoint.x;
-
           while (p.x < secondPoint.x - spacing - holeSize) {
             p.x += spacing;
-            g2d.setColor(CANVAS_COLOR);
-            g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
-            g2d.setColor(stripColor.darker());
-            g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
+            Area.circle(p, holeSize).fillDraw(g2d, CANVAS_COLOR, stripColor.darker());
           }
         }
       } else {
@@ -144,33 +129,23 @@ public class TriPadBoard extends AbstractBoard {
               spacesToDraw = (remainingSpace - stripSize) / spacing;
             }
 
-            g2d.setColor(stripColor);
             drawingObserver.startTrackingContinuityArea(true);
-            g2d.fillRect(
+            double height = spacing * (spacesToDraw - 1) + stripSize;
+            Area.rect(
                 p.x - stripSize / 2,
                 p.y + spacing - stripSize / 2,
                 stripSize,
-                spacing * (spacesToDraw - 1) + stripSize);
+                height).fillDraw(g2d, stripColor, stripColor.darker());
             drawingObserver.stopTrackingContinuityArea();
-            g2d.setColor(stripColor.darker());
-            g2d.drawRect(
-                p.x - stripSize / 2,
-                p.y + spacing - stripSize / 2,
-                stripSize,
-                spacing * (spacesToDraw - 1) + stripSize);
 
             p.y += spacing * spacesToDraw;
           }
 
           // draw holes
           p.y = firstPoint.y;
-
           while (p.y < secondPoint.y - spacing - holeSize) {
             p.y += spacing;
-            g2d.setColor(CANVAS_COLOR);
-            g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
-            g2d.setColor(stripColor.darker());
-            g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
+            Area.circle(p, holeSize).fillDraw(g2d, CANVAS_COLOR, stripColor.darker());
           }
         }
       }
@@ -245,10 +220,7 @@ public class TriPadBoard extends AbstractBoard {
       int y = (verticalSpacing * row) + verticalIndent;
       for (int col = 0; col < 5; col++) {
         int x = (horizontalSpacing * col) + horizontalIndent;
-        g2d.setColor(CANVAS_COLOR);
-        g2d.fillOval(x, y, 2, 2);
-        g2d.setColor(COPPER_COLOR.darker());
-        g2d.drawOval(x, y, 2, 2);
+        Area.circle(x, y, 2).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
       }
     }
   }

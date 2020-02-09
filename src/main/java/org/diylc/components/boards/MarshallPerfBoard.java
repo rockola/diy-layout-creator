@@ -37,7 +37,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Marshall Style Perf Board",
@@ -57,8 +56,8 @@ public class MarshallPerfBoard extends AbstractBoard {
 
   public static final Color BOARD_COLOR = Color.decode("#CD8500");
   public static final Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static final Size SPACING = new Size(3 / 8d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(1 / 8d, SizeUnit.in);
+  public static final Size SPACING = Size.in(3 / 8d);
+  public static final Size HOLE_SIZE = Size.in(1 / 8d);
 
   // private Area copperArea;
   protected Size spacing = SPACING;
@@ -94,10 +93,7 @@ public class MarshallPerfBoard extends AbstractBoard {
         p.y += spacing;
         while (p.x < secondPoint.x - spacing - holeDiameter) {
           p.x += spacing;
-          g2d.setColor(CANVAS_COLOR);
-          g2d.fillOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
-          g2d.setColor(borderColor);
-          g2d.drawOval(p.x - holeDiameter / 2, p.y - holeDiameter / 2, holeDiameter, holeDiameter);
+          Area.circle(p, holeDiameter).fillDraw(g2d, CANVAS_COLOR, borderColor);
         }
       }
       super.drawCoordinates(g2d, spacing, project);

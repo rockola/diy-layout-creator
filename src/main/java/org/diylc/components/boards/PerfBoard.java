@@ -38,7 +38,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Perf Board w/ Pads",
@@ -57,9 +56,9 @@ public class PerfBoard extends AbstractBoard {
   private static final long serialVersionUID = 1L;
 
   public static final Color COPPER_COLOR = Color.decode("#DA8A67");
-  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static final Size PAD_SIZE = new Size(0.08d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Size SPACING = Size.in(0.1);
+  public static final Size PAD_SIZE = Size.in(0.08);
+  public static final Size HOLE_SIZE = Size.mm(0.7);
 
   // private Area copperArea;
   protected Size spacing = SPACING;
@@ -138,25 +137,17 @@ public class PerfBoard extends AbstractBoard {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    g2d.setColor(BOARD_COLOR);
-    g2d.fillRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
-    g2d.setColor(COPPER_COLOR);
-    g2d.fillOval(width / 4, width / 4, width / 2, width / 2);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawOval(width / 4, width / 4, width / 2, width / 2);
+    double x = 2 / factor;
+    double w = width - 4 / factor;
+    double h = height - 4 / factor;
+    Area.rect(x, x, w, h).fillDraw(g2d, BOARD_COLOR, BORDER_COLOR);
+    x = width / 2;
+    Area.circle(x, x, x).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
     g2d.setColor(CANVAS_COLOR);
-    g2d.fillOval(
-        width / 2 - 2 / factor,
-        width / 2 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor));
+    x = width / 2 - 2 / factor;
+    double d = getClosestOdd(5.0 / factor);
+    g2d.fillOval(x, x, d, d);
     g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawOval(
-        width / 2 - 2 / factor,
-        width / 2 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor));
+    g2d.drawOval(x, x, d, d);
   }
 }

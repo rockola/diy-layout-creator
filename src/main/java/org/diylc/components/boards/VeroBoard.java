@@ -38,7 +38,6 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Vero Board",
@@ -56,9 +55,9 @@ public class VeroBoard extends AbstractBoard {
   private static final long serialVersionUID = 1L;
 
   public static final Color BORDER_COLOR = BOARD_COLOR.darker();
-  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
-  public static final Size STRIP_SIZE = new Size(0.07d, SizeUnit.in);
-  public static final Size HOLE_SIZE = new Size(0.7d, SizeUnit.mm);
+  public static final Size SPACING = Size.in(0.1);
+  public static final Size STRIP_SIZE = Size.in(0.07);
+  public static final Size HOLE_SIZE = Size.mm(0.7);
 
   protected Size spacing = SPACING;
   protected Color stripColor = COPPER_COLOR;

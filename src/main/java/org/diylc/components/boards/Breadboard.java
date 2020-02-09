@@ -43,7 +43,6 @@ import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.SizeUnit;
 
 @ComponentDescriptor(
     name = "Breadboard",
@@ -61,15 +60,15 @@ public class Breadboard extends AbstractComponent<Void> {
 
   public static final Color FILL_COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.black;
-  public static final Size BODY_ARC = new Size(3d, SizeUnit.mm);
-  public static final Size SPACING = new Size(0.1d, SizeUnit.in);
+  public static final Size BODY_ARC = Size.mm(3);
+  public static final Size SPACING = Size.in(0.1);
   public static final Color HOLE_COLOR = Color.decode("#EEEEEE");
   public static final Color PLUS_COLOR = Color.red;
   public static final Color MINUS_COLOR = Color.blue;
   public static final float COORDINATE_FONT_SIZE = 9f;
   public static final Color COORDINATE_COLOR = Color.gray.brighter();
-  public static final Size HOLE_SIZE = new Size(1.5, SizeUnit.mm);
-  public static final Size HOLE_ARC = new Size(1d, SizeUnit.mm);
+  public static final Size HOLE_SIZE = Size.mm(1.5);
+  public static final Size HOLE_ARC = Size.mm(1);
 
   protected Point point = new Point(0, 0);
   protected BreadboardSize breadboardSize;
