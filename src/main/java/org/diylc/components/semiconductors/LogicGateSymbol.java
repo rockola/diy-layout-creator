@@ -64,7 +64,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Size PIN_SPACING = new Size.in(0.1);
+  public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color BODY_COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.black;
 
@@ -133,7 +133,8 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     path.curveTo(margin * 4, margin * 2, margin * 4, height - margin * 2, margin, height - margin);
     path.quadTo(width - 2 * margin, height - margin * 2, width - margin, height / 2);
     path.quadTo(width - margin * 2, margin * 2, margin, margin);
-    Area area = new Area(path).intersect(Area.rect(2 * margin, 0, width, height));
+    Area area = new Area(path);
+    area.intersect(Area.rect(2 * margin, 0, width, height));
     g2d.setFont(LABEL_FONT.deriveFont(8f));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
   }
