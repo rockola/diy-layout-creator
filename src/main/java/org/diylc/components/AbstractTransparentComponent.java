@@ -20,22 +20,58 @@
 
 package org.diylc.components;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+
 import org.diylc.core.annotations.EditableProperty;
 
 public abstract class AbstractTransparentComponent<T> extends AbstractComponent<T> {
 
   private static final long serialVersionUID = 1L;
 
-  public static byte MAX_ALPHA = 127;
+  public static final int MAX_ALPHA = 127;
 
-  protected byte alpha = MAX_ALPHA;
+  protected int alpha = MAX_ALPHA;
 
   @EditableProperty
-  public Byte getAlpha() {
+  public int getAlpha() {
     return alpha;
   }
 
-  public void setAlpha(Byte alpha) {
+  public void setAlpha(int alpha) {
     this.alpha = alpha;
+  }
+
+  private Composite setAlphaTransparency(Graphics2D g2d, int alpha) {
+    final Composite oldComposite = g2d.getComposite();
+    alpha = Math.max(0, Math.min(MAX_ALPHA, alpha));
+    if (alpha < MAX_ALPHA) {
+      g2d.setComposite(AlphaComposite.getInstance(
+          AlphaComposite.SRC_OVER,
+          1f * alpha / MAX_ALPHA));
+    }
+    return oldComposite;
+  }
+
+  /**
+     Set transparency using alpha.
+
+     @param g2d Graphics context.
+     @return old Composite for later restoration
+  */
+  protected Composite setTransparency(Graphics2D g2d) {
+    return setAlphaTransparency(g2d, alpha);
+  }
+
+  /**
+     Set transparency using alpha, but use a different alpha when dragging.
+
+     @param g2d Graphics context.
+     @param alphaWhenDragging Alpha to use when dragging (0 = transparent, 100 = opaque).
+     @return old Composite for later restoration
+  */
+  protected Composite setTransparency(Graphics2D g2d, int alphaWhenDragging) {
+    return setAlphaTransparency(g2d, isDragging() ? alphaWhenDragging : alpha);
   }
 }
