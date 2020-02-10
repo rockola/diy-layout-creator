@@ -65,7 +65,7 @@ import org.diylc.utils.Constants;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class DIL_IC extends InlinePackage {
+public class DualInlineIc extends InlinePackage {
 
   private static final long serialVersionUID = 1L;
   private static final Size DEFAULT_ROW_SPACING = Size.in(0.3);
@@ -76,7 +76,7 @@ public class DIL_IC extends InlinePackage {
   private Size rowSpacing;
   private DisplayNumbers displayNumbers = DISPLAY_NUMBERS;
 
-  public DIL_IC() {
+  public DualInlineIc() {
     super(defaultPinCount().setPins(8), Display.BOTH);
   }
 

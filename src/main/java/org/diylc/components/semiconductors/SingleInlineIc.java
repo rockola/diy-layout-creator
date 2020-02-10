@@ -63,14 +63,14 @@ import org.diylc.utils.Constants;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class SIL_IC extends InlinePackage {
+public class SingleInlineIc extends InlinePackage {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size PIN_SIZE = Size.mm(0.8);
   public static final Size THICKNESS = Size.in(0.13);
 
-  public SIL_IC() {
+  public SingleInlineIc() {
     super(defaultPinCount().setPins(8), Display.NAME);
     alpha = 100;
   }
