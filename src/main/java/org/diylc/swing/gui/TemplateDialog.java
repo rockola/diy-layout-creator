@@ -169,50 +169,45 @@ public class TemplateDialog extends JDialog {
     if (fileList == null) {
       fileList = new JList(getFiles().toArray());
       fileList.setPreferredSize(new Dimension(128, -1));
-      fileList.setCellRenderer(
-          new DefaultListCellRenderer() {
+      fileList.setCellRenderer(new DefaultListCellRenderer() {
 
-            private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-            @Override
-            public Component getListCellRendererComponent(
-                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-              JLabel label =
-                  (JLabel)
-                      super.getListCellRendererComponent(
-                          list, value, index, isSelected, cellHasFocus);
-              if (value instanceof File) {
-                label.setText(((File) value).getName());
-              }
-              return label;
+          @Override
+          public Component getListCellRendererComponent(
+              JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(
+                list, value, index, isSelected, cellHasFocus);
+            if (value instanceof File) {
+              label.setText(((File) value).getName());
             }
-          });
-      fileList.addListSelectionListener(
-          new ListSelectionListener() {
+            return label;
+          }
+        });
+      fileList.addListSelectionListener(new ListSelectionListener() {
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-              File file = (File) fileList.getSelectedValue();
-              if (file != null) {
-                Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
-                templateProject = p;
-                // TODO: show p in canvasPanel
-                Dimension dim =
-                    DrawingManager.getCanvasDimensions(
-                        p,
-                        // TODO:
-                        // drawingManager.
-                        // zoomLevel
-                        1.0,
-                        true);
-                // TODO: set zoom level
-                //double xFactor = panelSize.getWidth() / dim.getWidth();
-                //double yFactor = panelSize.getHeight() / dim.getHeight();
-                //presenter.setZoomLevel(Math.min(xFactor, yFactor));
-                getCanvasPanel().repaint();
-              }
+          @Override
+          public void valueChanged(ListSelectionEvent e) {
+            File file = (File) fileList.getSelectedValue();
+            if (file != null) {
+              Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+              templateProject = p;
+              // TODO: show p in canvasPanel
+              Dimension dim = DrawingManager.getCanvasDimensions(
+                  p,
+                  // TODO:
+                  // drawingManager.
+                  // zoomLevel
+                  1.0,
+                  true);
+              // TODO: set zoom level
+              //double xFactor = panelSize.getWidth() / dim.getWidth();
+              //double yFactor = panelSize.getHeight() / dim.getHeight();
+              //presenter.setZoomLevel(Math.min(xFactor, yFactor));
+              getCanvasPanel().repaint();
             }
-          });
+          }
+        });
       fileList.setSelectedIndex(0);
     }
     return fileList;
@@ -233,7 +228,7 @@ public class TemplateDialog extends JDialog {
       files = new ArrayList<File>();
       String s = Utils.getUserDataDirectory() + "templates";
       File dir = new File(s);
-      if (dir.exists()) {
+      if (dir != null && dir.isDirectory()) {
         for (File f : dir.listFiles()) {
           if (f.isFile() && f.getName().toLowerCase().endsWith(Project.FILE_SUFFIX)) {
             files.add(f);
