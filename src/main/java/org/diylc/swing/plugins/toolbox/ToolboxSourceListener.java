@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.awt.dnd.DragSourceDragEvent;
@@ -47,14 +48,22 @@ class ToolboxSourceListener implements DragSourceListener {
   }
 
   @Override
-  public void dragEnter(DragSourceDragEvent dsde) {}
+  public void dragEnter(DragSourceDragEvent dsde) {
+    //
+  }
 
   @Override
-  public void dragExit(DragSourceEvent dse) {}
+  public void dragExit(DragSourceEvent dse) {
+    //
+  }
 
   @Override
-  public void dragOver(DragSourceDragEvent dsde) {}
+  public void dragOver(DragSourceDragEvent dsde) {
+    //
+  }
 
   @Override
-  public void dropActionChanged(DragSourceDragEvent dsde) {}
+  public void dropActionChanged(DragSourceDragEvent dsde) {
+    //
+  }
 }

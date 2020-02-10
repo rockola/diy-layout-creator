@@ -26,7 +26,6 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-
 import org.diylc.common.IPlugInPort;
 
 /**
@@ -48,10 +47,14 @@ class CanvasTargetListener implements DropTargetListener {
   }
 
   @Override
-  public void dragEnter(DropTargetDragEvent event) {}
+  public void dragEnter(DropTargetDragEvent event) {
+    //
+  }
 
   @Override
-  public void dragExit(DropTargetEvent event) {}
+  public void dragExit(DropTargetEvent event) {
+    //
+  }
 
   @Override
   public void dragOver(DropTargetDragEvent event) {

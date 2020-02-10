@@ -30,7 +30,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -55,7 +54,7 @@ import org.diylc.utils.Constants;
     description = "Panel mount RCA phono jack socket",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "J")
-public class RCAJack extends AbstractMultiPartComponent<String> {
+public class RcaJack extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
@@ -70,11 +69,14 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
   private static Size HOLE_TO_EDGE = Size.in(0.063);
 
   private String value = "";
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
+  private Point[] controlPoints = new Point[] {
+    new Point(0, 0),
+    new Point(0, 0)
+  };
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
-  public RCAJack() {
+  public RcaJack() {
     super();
     updateControlPoints();
   }
@@ -135,27 +137,15 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
       final int holeDiameter = getClosestOdd(HOLE_DIAMETER.convertToPixels());
       final double hexDiameter = HEX_DIAMETER.convertToPixels();
 
-      Area wafer = new Area(new Ellipse2D.Double(
-          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
-      wafer.subtract(new Area(new Ellipse2D.Double(
-          x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
-
-      body[0] = wafer;
+      body[0] = Area.ring(x0, y0, waferDiameter, holeDiameter);
 
       Area tip = new TwoCircleTangent(
           controlPoints[0], controlPoints[1], bodyDiameter / 2, springWidth / 2);
-      tip.subtract(new Area(new Ellipse2D.Double(
-          x1 - holeDiameter / 2, y1 - holeDiameter / 2, holeDiameter, holeDiameter)));
-      tip.subtract(new Area(new Ellipse2D.Double(
-          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
-
+      tip.subtract(Area.circle(x1, y1, holeDiameter));
+      tip.subtract(Area.circle(x0, y0, waferDiameter));
       body[1] = tip;
 
-      Area sleeve = new Area(new Ellipse2D.Double(
-          x0 - springWidth / 2, y0 - springWidth / 2, springWidth, springWidth));
-      sleeve.subtract(new Area(new Ellipse2D.Double(
-          x0 - holeDiameter / 2, y0 - holeDiameter / 2, holeDiameter, holeDiameter)));
-
+      Area sleeve = Area.ring(x0, y0, springWidth, holeDiameter);
       body[2] = sleeve;
 
       Path2D hex = new Path2D.Double();
@@ -170,8 +160,7 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
       }
       hex.closePath();
       Area hexArea = new Area(hex);
-      hexArea.subtract(new Area(new Ellipse2D.Double(
-          x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter)));
+      hexArea.subtract(Area.circle(x0, y0, waferDiameter));
       body[3] = hexArea;
     }
 
@@ -189,8 +178,7 @@ public class RCAJack extends AbstractMultiPartComponent<String> {
 
     // Rotate if needed
     if (orientation != Orientation.DEFAULT) {
-      double theta = orientation.getTheta();
-      AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
+      AffineTransform rotation = orientation.getRotation(x, y);
       rotation.transform(controlPoints[1], controlPoints[1]);
     }
   }

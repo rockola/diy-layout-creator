@@ -28,10 +28,8 @@ import java.util.List;
 import java.util.ListIterator;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
@@ -215,7 +213,9 @@ public class CloudPlugin implements IPlugIn {
   }
 
   @Override
-  public void processMessage(EventType eventType, Object... params) {}
+  public void processMessage(EventType eventType, Object... params) {
+    //
+  }
 
   class LibraryAction extends AbstractAction {
 
@@ -248,10 +248,11 @@ public class CloudPlugin implements IPlugIn {
     public void actionPerformed(ActionEvent e) {
       LoginDialog dialog = DialogFactory.getInstance().createLoginDialog();
       do {
+        // TODO maybe break out of this loop after n unsuccessful tries
         dialog.setVisible(true);
         if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
           try {
-            if (CloudPresenter.Instance.logIn(dialog.getUserName(), dialog.getPassword())) {
+            if (CloudPresenter.Instance.login(dialog.getUserName(), dialog.getPassword())) {
               App.ui().info(getMsg("login-successful"), getMsg("successfully-logged-in"));
               loggedIn();
               break;

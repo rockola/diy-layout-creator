@@ -4,20 +4,20 @@
 
   This file is part of DIYLC.
 
-  DIYLC is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  DIYLC is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
+
 package org.diylc.core;
 
 import java.io.File;
@@ -45,7 +45,6 @@ public interface IView {
   int NO_OPTION = 1;
   int CANCEL_OPTION = 2;
   int OK_OPTION = 0;
-
   String CHECK_BOX_MENU_ITEM = "org.diylc.checkBoxMenuItem";
   String RADIO_BUTTON_GROUP_KEY = "org.diylc.radioButtonGroup";
 

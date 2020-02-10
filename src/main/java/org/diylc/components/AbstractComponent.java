@@ -22,7 +22,6 @@ package org.diylc.components;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -41,10 +40,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.Display;
@@ -474,6 +471,14 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
       return Arrays.equals((Object[]) o1, (Object[]) o2);
     }
     return o1.equals(o2);
+  }
+
+  protected Point[] getFreshControlPoints(int howMany) {
+    Point[] array = new Point[howMany];
+    for (int i = 0; i < howMany; i++) {
+      array[i] = new Point(0, 0);
+    }
+    return array;
   }
 
   @Override

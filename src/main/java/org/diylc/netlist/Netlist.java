@@ -31,7 +31,9 @@ public class Netlist implements Comparable<Netlist> {
   private Set<Group> groups = new HashSet<Group>();
   private List<SwitchSetup> switchSetup = new ArrayList<SwitchSetup>();
 
-  public Netlist() {}
+  public Netlist() {
+    //
+  }
 
   public Set<Group> getGroups() {
     return groups;

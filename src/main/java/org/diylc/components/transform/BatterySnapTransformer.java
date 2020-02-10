@@ -55,17 +55,7 @@ public class BatterySnapTransformer implements IComponentTransformer {
     }
 
     BatterySnap9V snap = (BatterySnap9V) component;
-    Orientation o = snap.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) {
-      oValue = Orientation.values().length - 1;
-    }
-    if (oValue >= Orientation.values().length) {
-      oValue = 0;
-    }
-    o = Orientation.values()[oValue];
-    snap.setOrientation(o);
+    snap.setOrientation(snap.getOrientation().rotate(direction));
   }
 
   @Override

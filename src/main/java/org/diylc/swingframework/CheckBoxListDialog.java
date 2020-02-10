@@ -60,7 +60,9 @@ public class CheckBoxListDialog extends ButtonDialog {
     ListModel model = getList().getModel();
     for (int i = 0; i < model.getSize(); i++) {
       CheckListItem item = (CheckListItem) model.getElementAt(i);
-      if (item.isSelected()) selected.add(item.getValue());
+      if (item.isSelected()) {
+        selected.add(item.getValue());
+      }
     }
     return selected.toArray();
   }

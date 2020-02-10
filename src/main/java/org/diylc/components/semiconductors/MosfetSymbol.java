@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
@@ -42,21 +41,20 @@ import org.diylc.core.annotations.KeywordPolicy;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class MOSFETSymbol extends Abstract3LegSymbol {
+public class MosfetSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
 
-  protected FETPolarity polarity = FETPolarity.NEGATIVE;
+  protected FetPolarity polarity = FetPolarity.NEGATIVE;
 
-  public Shape[] getBody() {
-    Shape[] body = new Shape[3];
+  public Area[] getBody() {
+    Area[] body = new Area[3];
     Point[] controlPoints = getControlPoints();
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
 
     GeneralPath polyline = new GeneralPath();
-
     polyline.moveTo(x + pinSpacing / 2, y - pinSpacing + 1);
     polyline.lineTo(x + pinSpacing / 2, y + pinSpacing - 1);
     polyline.moveTo(x + pinSpacing, y - pinSpacing + 1);
@@ -64,7 +62,6 @@ public class MOSFETSymbol extends Abstract3LegSymbol {
     body[0] = polyline;
 
     polyline = new GeneralPath();
-
     polyline.moveTo(x + pinSpacing, y - pinSpacing);
     polyline.lineTo(x + pinSpacing * 2, y - pinSpacing);
     polyline.moveTo(x + pinSpacing, y + pinSpacing);
@@ -78,18 +75,16 @@ public class MOSFETSymbol extends Abstract3LegSymbol {
     body[1] = polyline;
 
     Polygon arrow;
-    if (polarity == FETPolarity.NEGATIVE) {
-      arrow =
-          new Polygon(
-              new int[] {x + pinSpacing * 8 / 6, x + pinSpacing * 8 / 6, x + pinSpacing * 12 / 6},
-              new int[] {y + pinSpacing * 6 / 5, y + pinSpacing * 4 / 5, y + pinSpacing},
-              3);
+    if (polarity.isNegative()) {
+      arrow = new Polygon(
+          new int[] {x + pinSpacing * 8 / 6, x + pinSpacing * 8 / 6, x + pinSpacing * 12 / 6},
+          new int[] {y + pinSpacing * 6 / 5, y + pinSpacing * 4 / 5, y + pinSpacing},
+          3);
     } else {
-      arrow =
-          new Polygon(
-              new int[] {x + pinSpacing * 7 / 6, x + pinSpacing * 11 / 6, x + pinSpacing * 11 / 6},
-              new int[] {y - pinSpacing, y - pinSpacing * 6 / 5, y - pinSpacing * 4 / 5},
-              3);
+      arrow = new Polygon(
+          new int[] {x + pinSpacing * 7 / 6, x + pinSpacing * 11 / 6, x + pinSpacing * 11 / 6},
+          new int[] {y - pinSpacing, y - pinSpacing * 6 / 5, y - pinSpacing * 4 / 5},
+          3);
     }
     body[2] = arrow;
 
@@ -114,11 +109,11 @@ public class MOSFETSymbol extends Abstract3LegSymbol {
   }
 
   @EditableProperty(name = "Channel")
-  public FETPolarity getPolarity() {
+  public FetPolarity getPolarity() {
     return polarity;
   }
 
-  public void setPolarity(FETPolarity polarity) {
+  public void setPolarity(FetPolarity polarity) {
     this.polarity = polarity;
 
     body = null;

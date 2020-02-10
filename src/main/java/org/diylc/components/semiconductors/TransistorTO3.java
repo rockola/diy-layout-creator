@@ -31,7 +31,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -186,38 +185,29 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
       }
 
       int largeDiameter = getClosestOdd(LARGE_DIAMETER.convertToPixels());
-      int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
       int smallDiameter = getClosestOdd(SMALL_DIAMETER.convertToPixels());
       int holeDistance = getClosestOdd(HOLE_DISTANCE.convertToPixels());
       int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
-
-      TwoCircleTangent left =
-          new TwoCircleTangent(
-              new Point2D.Double(x, y),
-              new Point2D.Double(x - holeDistance / 2, y),
-              largeDiameter / 2,
-              smallDiameter / 2);
-      TwoCircleTangent right =
-          new TwoCircleTangent(
-              new Point2D.Double(x, y),
-              new Point2D.Double(x + holeDistance / 2, y),
-              largeDiameter / 2,
-              smallDiameter / 2);
+      TwoCircleTangent left = new TwoCircleTangent(
+          new Point2D.Double(x, y),
+          new Point2D.Double(x - holeDistance / 2, y),
+          largeDiameter / 2,
+          smallDiameter / 2);
+      TwoCircleTangent right = new TwoCircleTangent(
+          new Point2D.Double(x, y),
+          new Point2D.Double(x + holeDistance / 2, y),
+          largeDiameter / 2,
+          smallDiameter / 2);
 
       body[0] = left;
       body[0].add(right);
-      body[0].subtract(new Area(new Ellipse2D.Double(
-          x - holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
-      body[0].subtract(new Area(new Ellipse2D.Double(
-          x + holeDistance / 2 - holeSize / 2, y - holeSize / 2, holeSize, holeSize)));
+      body[0].subtract(Area.circle(x - holeDistance / 2, y, holeSize));
+      body[0].subtract(Area.circle(x + holeDistance / 2, y, holeSize));
       if (!orientation.isDefault()) {
-        body[0].transform(AffineTransform.getRotateInstance(
-            orientation.getTheta(),
-            x,
-            y));
+        body[0].transform(orientation.getRotation(x, y));
       }
-      body[1] = new Area(new Ellipse2D.Double(
-          x - innerDiameter / 2, y - innerDiameter / 2, innerDiameter, innerDiameter));
+      int innerDiameter = getClosestOdd(INNER_DIAMETER.convertToPixels());
+      body[1] = Area.circle(x, y, innerDiameter);
     }
     return body;
   }
@@ -237,11 +227,9 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
     for (Point point : controlPoints) {
       if (!outlineMode) {
-        g2d.setColor(PIN_COLOR);
-        g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        Area.circle(point, pinSize).fill(g2d, PIN_COLOR);
       }
-      g2d.setColor(tryBorderColor(outlineMode, PIN_BORDER_COLOR));
-      g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+      Area.circle(point, pinSize).draw(g2d, tryBorderColor(outlineMode, PIN_BORDER_COLOR));
     }
 
     Area mainArea = getBody()[0];
@@ -279,33 +267,23 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
     g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     int largeR = getClosestOdd(width * 3d / 8);
     int smallR = getClosestOdd(width / 6d);
-    int innerD = getClosestOdd(width / 2d);
     int hole = 4 * width / 32;
-
-    Area area =
-        new TwoCircleTangent(
-            new Point2D.Double(width * 0.5, height * 0.5),
-            new Point2D.Double(width / 2, height / 8d),
-            largeR,
-            smallR);
-    area.add(
-        (Area)
-            new TwoCircleTangent(
-                new Point2D.Double(width * 0.5, height * 0.5),
-                new Point2D.Double(width / 2, height * 7 / 8d),
-                largeR,
-                smallR));
-
-    area.subtract(
-        new Area(new Ellipse2D.Double((width - hole) / 2, height / 8 - hole / 2, hole, hole)));
-    area.subtract(
-        new Area(new Ellipse2D.Double((width - hole) / 2, height * 7 / 8 - hole / 2, hole, hole)));
+    Area area = new TwoCircleTangent(
+        new Point2D.Double(width * 0.5, height * 0.5),
+        new Point2D.Double(width / 2, height / 8d),
+        largeR,
+        smallR);
+    area.add((Area) new TwoCircleTangent(
+        new Point2D.Double(width * 0.5, height * 0.5),
+        new Point2D.Double(width / 2, height * 7 / 8d),
+        largeR,
+        smallR));
+    area.subtract(Area.circle(width / 2, height / 8, hole));
+    area.subtract(Area.circle(width / 2, height * 7 / 8, hole));
     area.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, height / 2));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(area);
-    g2d.setColor(BORDER_COLOR);
-    g2d.draw(area);
-    g2d.drawOval((width - innerD) / 2, (height - innerD) / 2, innerD, innerD);
+    area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
+    int innerD = getClosestOdd(width / 2d);
+    Area.circle(width / 2, height / 2, innerD).draw(g2d, BORDER_COLOR);
   }
 
   @EditableProperty(name = "Body")

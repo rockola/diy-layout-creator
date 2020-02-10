@@ -48,10 +48,8 @@ import javax.swing.AbstractAction;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
@@ -96,8 +94,8 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   public HashMap<String, ComponentType> getComponentTypeCache() {
     if (componentTypeCache == null) {
       componentTypeCache = new HashMap<String, ComponentType>();
-      for (Entry<String, List<ComponentType>> entry : ComponentType.getComponentTypes().entrySet()) {
-        for (ComponentType type : entry.getValue()) {
+      for (List<ComponentType> componentTypes : ComponentType.getComponentTypes().values()) {
+        for (ComponentType type : componentTypes) {
           componentTypeCache.put(type.getInstanceClass().getCanonicalName(), type);
         }
       }

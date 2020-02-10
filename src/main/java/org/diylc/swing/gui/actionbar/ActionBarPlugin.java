@@ -24,7 +24,6 @@ import java.awt.BorderLayout;
 import java.util.EnumSet;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-
 import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
@@ -34,7 +33,7 @@ import org.diylc.core.Project;
 import org.diylc.swing.action.ActionFactory;
 
 /**
- * Mini toolbar with common actions
+ * Mini toolbar with common actions.
  *
  * @author Branislav Stojkovic
  */
@@ -44,7 +43,9 @@ public class ActionBarPlugin implements IPlugIn {
   private JPanel actionPanel;
   private MiniToolbar miniToolbar;
 
-  public ActionBarPlugin() {}
+  public ActionBarPlugin() {
+    //
+  }
 
   public JPanel getActionPanel() {
     if (actionPanel == null) {

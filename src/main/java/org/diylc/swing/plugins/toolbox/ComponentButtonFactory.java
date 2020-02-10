@@ -42,10 +42,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;

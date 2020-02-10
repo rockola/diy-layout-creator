@@ -25,10 +25,10 @@ import java.text.DecimalFormat;
 import java.text.Format;
 
 /**
- * * Immutable measure class.
+ * Immutable measure class.
  *
  * @author bancika
- * @param <T>
+ * @param <T> Measure unit
  */
 public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializable, Cloneable {
 
@@ -113,7 +113,9 @@ public class AbstractMeasure<T extends Enum<? extends Unit>> implements Serializ
   }
 
   protected static double parse(String value) {
-    if (value.startsWith(".")) value = "0" + value;
+    if (value.startsWith(".")) {
+      value = "0" + value;
+    }
     value = value.replace(",", ".").replace("*", "");
     return Double.parseDouble(value);
   }

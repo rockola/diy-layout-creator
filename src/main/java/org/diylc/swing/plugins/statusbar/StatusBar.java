@@ -47,13 +47,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.styles.EdgedBalloonStyle;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.announcements.AnnouncementProvider;
 import org.diylc.appframework.miscutils.ConfigurationManager;
@@ -126,14 +123,14 @@ public class StatusBar extends JPanel implements IPlugIn {
           if (updates == null) {
             App.ui().info(getMsg("no-version-history"));
           } else {
-            String html = UpdateChecker.createUpdateHTML(updates);
+            String html = UpdateChecker.createUpdateHtml(updates);
             UpdateDialog updateDialog =
                 new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, null);
             updateDialog.setVisible(true);
           }
         }
       });
-    updateLabel = new UpdateLabel(App.getVersionNumber(), Config.getURL("update").toString()) {
+    updateLabel = new UpdateLabel(App.getVersionNumber(), Config.getUrl("update").toString()) {
 
         private static final long serialVersionUID = 1L;
 
@@ -226,7 +223,7 @@ public class StatusBar extends JPanel implements IPlugIn {
           String text = refreshSelectionSize();
           if (text == null) {
             text = getMsg("empty-selection");
-          };
+          }
           JOptionPane.showMessageDialog(
               SwingUtilities.getRootPane(StatusBar.this),
               text,
@@ -263,7 +260,7 @@ public class StatusBar extends JPanel implements IPlugIn {
     setLayout(new GridBagLayout());
 
     try {
-      App.ui().injectGUIComponent(this, SwingUtilities.BOTTOM);
+      App.ui().injectGuiComponent(this, SwingUtilities.BOTTOM);
     } catch (BadPositionException e) {
       LOG.error("Could not install status bar", e);
     }
@@ -274,18 +271,15 @@ public class StatusBar extends JPanel implements IPlugIn {
         public String doInBackground() throws Exception {
           Thread.sleep(1000);
           String announcements = announcementProvider.getCurrentAnnouncements(false);
-
           String update = updateLabel.getUpdateChecker().findNewVersionShort();
 
           if (update != null) {
             String updateHtml =
-                String.format(Message.getHTML("statusbar.new-version.available"),
-                              update);
+                String.format(Message.getHtml("statusbar.new-version.available"), update);
             if (announcements == null || announcements.length() == 0) {
               return "<html>" + updateHtml + "</html>";
             }
-            announcements = announcements.replace("<html>",
-                                                  "<html>" + updateHtml + "<br>");
+            announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
           }
 
           return announcements;
@@ -394,6 +388,10 @@ public class StatusBar extends JPanel implements IPlugIn {
         EventType.MOUSE_MOVED);
   }
 
+  private String blueFont(String string) {
+    return "<font color='blue'>" + string + "</font>";
+  }
+
   @Override
   public void processMessage(EventType eventType, Object... params) {
     switch (eventType) {
@@ -411,16 +409,16 @@ public class StatusBar extends JPanel implements IPlugIn {
         break;
       case SELECTION_CHANGED:
         Collection<IDIYComponent<?>> selection = (Collection<IDIYComponent<?>>) params[0];
-        Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
         Collection<String> componentNames = new HashSet<String>();
         for (IDIYComponent<?> component : selection) {
-          componentNames.add("<font color='blue'>" + component.getName() + "</font>");
+          componentNames.add(blueFont(component.getName()));
         }
         this.selectedComponentNames = new ArrayList<String>(componentNames);
         Collections.sort(this.selectedComponentNames);
         this.stuckComponentNames = new ArrayList<String>();
+        Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
         for (IDIYComponent<?> component : stuckComponents) {
-          this.stuckComponentNames.add("<font color='blue'>" + component.getName() + "</font>");
+          this.stuckComponentNames.add(blueFont(component.getName()));
         }
         this.stuckComponentNames.removeAll(this.selectedComponentNames);
         Collections.sort(this.stuckComponentNames);
@@ -436,7 +434,7 @@ public class StatusBar extends JPanel implements IPlugIn {
       case AVAILABLE_CTRL_POINTS_CHANGED:
         componentNamesUnderCursor = new ArrayList<String>();
         for (IDIYComponent<?> component : ((Map<IDIYComponent<?>, Integer>) params[0]).keySet()) {
-          componentNamesUnderCursor.add("<font color='blue'>" + component.getName() + "</font>");
+          componentNamesUnderCursor.add(blueFont(component.getName()));
         }
         Collections.sort(componentNamesUnderCursor);
         refreshStatusText();
@@ -469,8 +467,8 @@ public class StatusBar extends JPanel implements IPlugIn {
 
   private void refreshStatusText() {
     String statusText = this.statusMessage;
-    final int MAX_COMPONENTS = 15;
-    final int MAX_STUCK = 5;
+    final int maxComponents = 15;
+    final int maxStuck = 5;
     if (componentSlot == null) {
       if (componentNamesUnderCursor != null && !componentNamesUnderCursor.isEmpty()) {
         String formattedNames = Utils.toCommaString(componentNamesUnderCursor);
@@ -479,16 +477,16 @@ public class StatusBar extends JPanel implements IPlugIn {
         StringBuilder builder = new StringBuilder();
         builder.append(Utils.toCommaString(selectedComponentNames.subList(
             0,
-            Math.min(MAX_COMPONENTS, selectedComponentNames.size()))));
-        if (selectedComponentNames.size() > MAX_COMPONENTS) {
-          builder.append(" and " + (selectedComponentNames.size() - MAX_COMPONENTS) + " more");
+            Math.min(maxComponents, selectedComponentNames.size()))));
+        if (selectedComponentNames.size() > maxComponents) {
+          builder.append(" and " + (selectedComponentNames.size() - maxComponents) + " more");
         }
         if (!stuckComponentNames.isEmpty()) {
           builder.append(" (hold <b>Ctrl</b> and drag to detach from ");
           builder.append(Utils.toCommaString(
-              stuckComponentNames.subList(0, Math.min(MAX_STUCK, stuckComponentNames.size()))));
-          if (stuckComponentNames.size() > MAX_STUCK) {
-            builder.append(" and " + (stuckComponentNames.size() - MAX_STUCK) + " more");
+              stuckComponentNames.subList(0, Math.min(maxStuck, stuckComponentNames.size()))));
+          if (stuckComponentNames.size() > maxStuck) {
+            builder.append(" and " + (stuckComponentNames.size() - maxStuck) + " more");
           }
           builder.append(")");
         }
@@ -497,25 +495,23 @@ public class StatusBar extends JPanel implements IPlugIn {
     } else {
       if (forceInstantiate != null && forceInstantiate) {
         statusText =
-            "<html>Drag the mouse over the canvas to place a new <font color='blue'>"
-                + componentSlot.getName()
-                + "</font></html>";
+            "<html>Drag the mouse over the canvas to place a new "
+            + blueFont(componentSlot.getName())
+            + "</html>";
       } else {
         switch (componentSlot.getCreationMethod()) {
           case POINT_BY_POINT:
-            String count = controlPointSlot == null ? "first" : "second";
+            String nth = controlPointSlot == null ? "first" : "second";
             statusText =
-                "<html>Click on the canvas to set the "
-                    + count
-                    + " control point of a new <font color='blue'>"
-                    + componentSlot.getName()
-                    + "</font> or press <b>Esc</b> to cancel</html>";
+                "<html>Click on the canvas to set the " + nth + " control point of a new "
+                + blueFont(componentSlot.getName())
+                + " or press <b>Esc</b> to cancel</html>";
             break;
           case SINGLE_CLICK:
             statusText =
-                "<html>Click on the canvas to create a new <font color='blue'>"
-                    + componentSlot.getName()
-                    + "</font> or press <b>Esc</b> to cancel</html>";
+                "<html>Click on the canvas to create a new "
+                + blueFont(componentSlot.getName())
+                + " or press <b>Esc</b> to cancel</html>";
             break;
           default:
             LOG.error("refreshStatusText(): unknown creation method");

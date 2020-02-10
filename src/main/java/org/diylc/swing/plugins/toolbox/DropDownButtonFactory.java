@@ -1,3 +1,23 @@
+/*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2020 held jointly by the individual authors.
+
+  This file is part of DIYLC.
+
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package org.diylc.swing.plugins.toolbox;
 
 import java.awt.Point;
@@ -15,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +44,9 @@ public final class DropDownButtonFactory {
 
   public static final String PROP_DROP_DOWN_MENU = "dropDownMenu";
 
-  private DropDownButtonFactory() {}
+  private DropDownButtonFactory() {
+    //
+  }
 
   public static JButton createDropDownButton(Icon icon, JPopupMenu dropDownMenu) {
     return new DropDownButton(icon, dropDownMenu);
@@ -51,7 +72,9 @@ public final class DropDownButtonFactory {
     private transient PopupMenuListener menuListener = new PopupMenuListener() {
 
         @Override
-        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+          //
+        }
 
         @Override
         public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
@@ -68,7 +91,9 @@ public final class DropDownButtonFactory {
         }
 
         @Override
-        public void popupMenuCanceled(PopupMenuEvent e) {}
+        public void popupMenuCanceled(PopupMenuEvent e) {
+          //
+        }
       };
 
     public DropDownButton(Icon icon, JPopupMenu popup) {
@@ -217,14 +242,14 @@ public final class DropDownButtonFactory {
     }
 
     private boolean isInArrowArea(Point p) {
-      return (p.getLocation().x >=
-              getWidth() - IconWithArrow.getArrowAreaWidth() - getInsets().right);
+      return (p.getLocation().x
+              >= getWidth() - IconWithArrow.getArrowAreaWidth() - getInsets().right);
     }
 
     @Override
     public void setIcon(Icon icon) {
       assert (icon != null);
-      Icon arrow = updateIcons(icon, ICON_NORMAL);
+      final Icon arrow = updateIcons(icon, ICON_NORMAL);
       arrowIcons.remove(ICON_ROLLOVER_LINE);
       arrowIcons.remove(ICON_ROLLOVER_SELECTED_LINE);
       arrowIcons.remove(ICON_ROLLOVER);
@@ -285,7 +310,9 @@ public final class DropDownButtonFactory {
     }
 
     @Override
-    public void setText(String text) {}
+    public void setText(String text) {
+      //
+    }
 
     @Override
     public String getText() {

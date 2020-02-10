@@ -24,9 +24,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
-
 import org.diylc.common.ObjectCache;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
@@ -67,7 +66,7 @@ public class GroundFill extends AbstractComponent<Void> {
 
   protected Color color = COLOR;
   protected PointCount pointCount = PointCount._4;
-  private PCBLayer layer = PCBLayer._1;
+  private PcbLayer layer = PcbLayer._1;
 
   @Override
   public void draw(
@@ -151,14 +150,14 @@ public class GroundFill extends AbstractComponent<Void> {
   }
 
   @EditableProperty
-  public PCBLayer getLayer() {
+  public PcbLayer getLayer() {
     if (layer == null) {
-      layer = PCBLayer._1;
+      layer = PcbLayer._1;
     }
     return layer;
   }
 
-  public void setLayer(PCBLayer layer) {
+  public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
 

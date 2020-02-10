@@ -31,7 +31,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.List;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -228,9 +227,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     }
 
     if (orientation != Orientation.DEFAULT) {
-      double theta = orientation.getTheta();
-      AffineTransform rotation =
-          AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
+      AffineTransform rotation = orientation.getRotation(firstPoint);
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }
@@ -290,8 +287,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
           break;
         case MiniRound1:
         case MiniRound2:
-          body[0] = new Area(new Ellipse2D.Double(
-              centerX - length / 2, centerY - width / 2, length, width));
+          body[0] = Area.oval(centerX, centerY, length, width);
           break;
         case SquareBR3:
           double margin = (BR3_LENGTH.convertToPixels() - BR3_SPACING.convertToPixels()) / 2;
@@ -329,6 +325,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
           }
 
           break;
+        default:
+          throw new RuntimeException("unknown rectifier type " + rectifierType);
       }
     }
     return body;
@@ -518,6 +516,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
               break;
           }
           break;
+        default:
+          throw new RuntimeException("unknown rectifier type " + rectifierType);
       }
 
       StringUtils.drawCenteredText(
@@ -551,30 +551,22 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         g2d,
         "+",
         x1,
-        height * 2 / 8 + 4 * width / 32,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        height * 2 / 8 + 4 * width / 32);
     StringUtils.drawCenteredText(
         g2d,
         "-",
         x1,
-        y2,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        y2);
     StringUtils.drawCenteredText(
         g2d,
         "~",
         x2,
-        height * 2 / 8 + 5 * width / 32,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        height * 2 / 8 + 5 * width / 32);
     StringUtils.drawCenteredText(
         g2d,
         "~",
         x2,
-        y2,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        y2);
   }
 
   @EditableProperty(name = "Body")

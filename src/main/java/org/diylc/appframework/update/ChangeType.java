@@ -21,7 +21,6 @@
 package org.diylc.appframework.update;
 
 import org.apache.logging.log4j.LogManager;
-
 import org.diylc.App;
 
 public enum ChangeType {

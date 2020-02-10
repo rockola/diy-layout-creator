@@ -44,7 +44,9 @@ public class BomMaker {
     return instance;
   }
 
-  private BomMaker() {}
+  private BomMaker() {
+    //
+  }
 
   public List<BomEntry> createBom(List<IDIYComponent<?>> components) {
     Map<String, BomEntry> entryMap = new LinkedHashMap<String, BomEntry>();

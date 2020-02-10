@@ -23,7 +23,6 @@ package org.diylc.components;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-
 import org.diylc.core.annotations.EditableProperty;
 
 public abstract class AbstractTransparentComponent<T> extends AbstractComponent<T> {

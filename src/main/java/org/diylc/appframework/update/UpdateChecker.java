@@ -25,10 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.Config;
@@ -40,12 +38,12 @@ public class UpdateChecker {
   private static final Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private VersionNumber currentVersion;
-  private String updateFileURL;
+  private String updateFileUrl;
 
-  public UpdateChecker(VersionNumber currentVersion, String updateFileURL) {
+  public UpdateChecker(VersionNumber currentVersion, String updateFileUrl) {
     super();
     this.currentVersion = currentVersion;
-    this.updateFileURL = updateFileURL;
+    this.updateFileUrl = updateFileUrl;
   }
 
   private static String getMsg(String key) {
@@ -53,8 +51,8 @@ public class UpdateChecker {
   }
 
   public List<Version> findNewVersions() throws Exception {
-    LOG.info("Trying to download file {}", updateFileURL);
-    List<Version> allVersions = (List<Version>) Serializer.fromURL(updateFileURL);
+    LOG.info("Trying to download file {}", updateFileUrl);
+    List<Version> allVersions = (List<Version>) Serializer.fromUrl(updateFileUrl);
     List<Version> filteredVersions = new ArrayList<Version>();
     for (Version version : allVersions) {
       if (currentVersion.compareTo(version.getVersionNumber()) < 0) {
@@ -78,7 +76,7 @@ public class UpdateChecker {
     return null;
   }
 
-  public static String createUpdateHTML(List<Version> versions) {
+  public static String createUpdateHtml(List<Version> versions) {
     if (versions == null) {
       return getMsg("versions-not-found");
     }

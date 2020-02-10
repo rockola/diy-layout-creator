@@ -26,11 +26,9 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
-
 import com.orsonpdf.PDFDocument;
 import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -49,17 +47,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.Config;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
  * Export layout images.
  *
- * Export destinations:
+ * <p>Export destinations:
  * <ul>
  *   <li>PDF
  *   <li>PNG
@@ -71,13 +67,14 @@ import org.diylc.swingframework.IDrawingProvider;
 public class DrawingExporter {
 
   private static final Logger LOG = LogManager.getLogger(DrawingExporter.class);
-
   private static final double margin = 0; // 1cm
   private static final int PDF_RESOLUTION = 72;
   private static final int PNG_RESOLUTION = 300;
   private static final int SCREEN_RESOLUTION = Toolkit.getDefaultToolkit().getScreenResolution();
 
-  private DrawingExporter() {}
+  private DrawingExporter() {
+    //
+  }
 
   /**
    * Prints the image and scales it down if needed.
@@ -145,7 +142,7 @@ public class DrawingExporter {
    * @param file // * @throws DocumentException
    * @throws FileNotFoundException
    */
-  public static void exportPDF(IDrawingProvider provider, File file)
+  public static void exportPdf(IDrawingProvider provider, File file)
       throws FileNotFoundException, IOException {
 
     Dimension d = provider.getSize();
@@ -218,8 +215,8 @@ public class DrawingExporter {
       provider.draw(i, g2, factor);
 
       PdfReader r = new PdfReader(new ByteArrayInputStream(graphicPage.getPDFBytes()));
-      PdfDocument gDoc = new PdfDocument(r);
-      PdfFormXObject c = gDoc.getFirstPage().copyAsFormXObject(pdfDoc);
+      PdfDocument pdfDoc = new PdfDocument(r);
+      PdfFormXObject c = pdfDoc.getFirstPage().copyAsFormXObject(pdfDoc);
       Image im = new Image(c);
       document.add(im);
     }
@@ -232,7 +229,7 @@ public class DrawingExporter {
    * @param provider
    * @param file
    */
-  public static void exportPNG(IDrawingProvider provider, File file) {
+  public static void exportPng(IDrawingProvider provider, File file) {
     try {
       int pageCount = provider.getPageCount();
       Dimension d = provider.getSize();

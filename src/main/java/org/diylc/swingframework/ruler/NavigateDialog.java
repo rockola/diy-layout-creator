@@ -75,20 +75,20 @@ public class NavigateDialog extends JDialog {
     GraphicsDevice[] devices = graphicsEnvironment.getScreenDevices();
     screenGraphicsConfiguration = devices[0].getDefaultConfiguration();
 
-    addWindowFocusListener(
-        new WindowFocusListener() {
+    addWindowFocusListener(new WindowFocusListener() {
 
-          @Override
-          public void windowGainedFocus(WindowEvent e) {}
+        @Override
+        public void windowGainedFocus(WindowEvent e) {
+          //
+        }
 
-          @Override
-          public void windowLostFocus(WindowEvent e) {
-            setVisible(false);
-          }
-        });
+        @Override
+        public void windowLostFocus(WindowEvent e) {
+          setVisible(false);
+        }
+      });
 
     DrawComponent drawComponent = new DrawComponent(scrollPane);
-
     add(drawComponent);
     pack();
   }

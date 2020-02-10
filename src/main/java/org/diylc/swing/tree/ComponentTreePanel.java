@@ -31,10 +31,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -54,10 +54,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.core.Template;
@@ -73,6 +71,9 @@ public class ComponentTreePanel extends JPanel {
   private JTextField searchField = new JTextField();
   private JTree tree;
 
+  /**
+     Constructor.
+   */
   public ComponentTreePanel() {
     super();
     setLayout(new GridBagLayout());
@@ -130,14 +131,14 @@ public class ComponentTreePanel extends JPanel {
         }
       });
     tree.addTreeSelectionListener(e -> {
-        if (e.isAddedPath()) {
-          ComponentNode node = (ComponentNode) e.getPath().getLastPathComponent();
-          final ComponentType type = node.getComponentType();
-          if (type != null) {
-            App.ui().getPresenter().setNewComponentTypeSlot(type, node.getVariant(), false);
-          }
+      if (e.isAddedPath()) {
+        ComponentNode node = (ComponentNode) e.getPath().getLastPathComponent();
+        final ComponentType type = node.getComponentType();
+        if (type != null) {
+          App.ui().getPresenter().setNewComponentTypeSlot(type, node.getVariant(), false);
         }
-      });
+      }
+    });
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.gridx = 0;

@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view;
 
 import java.awt.Dimension;
@@ -38,7 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.diylc.plugins.cloud.model.UserEntity;
-import org.diylc.swing.gui.components.HTMLTextArea;
+import org.diylc.swing.gui.components.HtmlTextArea;
 import org.diylc.swingframework.ButtonDialog;
 
 public class UserEditDialog extends ButtonDialog {
@@ -46,7 +45,6 @@ public class UserEditDialog extends ButtonDialog {
   private static final long serialVersionUID = 1L;
 
   private JPanel mainPanel;
-
   private JTextField userNameField;
   private JPasswordField passwordField;
   private JPasswordField confirmPasswordField;
@@ -54,13 +52,11 @@ public class UserEditDialog extends ButtonDialog {
   private JTextField websiteField;
   private JTextArea bioArea;
   private JScrollPane bioPane;
-
   private String userName;
   private String password;
   private String email;
   private String website;
   private String bio;
-
   private UserEntity existingEntity;
 
   public UserEditDialog(JFrame owner, UserEntity existingEntity) {
@@ -320,7 +316,7 @@ public class UserEditDialog extends ButtonDialog {
 
   private JTextArea getBioArea() {
     if (bioArea == null) {
-      bioArea = new HTMLTextArea();
+      bioArea = new HtmlTextArea();
       if (existingEntity != null) {
         bioArea.setText(existingEntity.getBio());
       }

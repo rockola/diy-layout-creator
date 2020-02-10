@@ -25,7 +25,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-
 import org.diylc.common.PropertyWrapper;
 import org.diylc.utils.Constants;
 
@@ -46,15 +45,15 @@ public class PinCountEditor extends JComboBox {
     final PinCountEditor editor = this;
     addItemListener(new ItemListener() {
 
-          @Override
-          public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              property.setChanged(true);
-              setBackground(oldBg);
-              editor.property.setValue(e.getItem());
-            }
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            property.setChanged(true);
+            setBackground(oldBg);
+            editor.property.setValue(e.getItem());
           }
-        });
+        }
+      });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

@@ -42,7 +42,9 @@ public class SearchSession {
   private int currentPage;
   private List<ProjectEntity> currentResults;
 
-  public SearchSession() {}
+  public SearchSession() {
+    //
+  }
 
   public List<ProjectEntity> startSession(String searchFor, String category, String sort)
       throws CloudException {

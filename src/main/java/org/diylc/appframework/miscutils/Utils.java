@@ -63,11 +63,11 @@ public class Utils {
       App.getVersionNumber().getMajor(),
       File.separator);
 
-  public static void openURL(URL url) throws Exception {
-    openURL(url.toString());
+  public static void openUrl(URL url) throws Exception {
+    openUrl(url.toString());
   }
 
-  public static void openURL(String url) throws Exception {
+  public static void openUrl(String url) throws Exception {
     try { // attempt to use Desktop library from JDK 1.6+
       Class<?> d = Class.forName("java.awt.Desktop");
       d.getDeclaredMethod("browse", new Class[] {java.net.URI.class}).invoke(

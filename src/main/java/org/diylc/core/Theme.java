@@ -26,16 +26,13 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.beryx.awt.color.ColorFactory;
-
 import org.diylc.App;
+import org.diylc.appframework.miscutils.Utils;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
-import org.diylc.appframework.miscutils.Utils;
 
 public class Theme implements Serializable {
 
@@ -59,17 +56,17 @@ public class Theme implements Serializable {
     URL themesUrl = Theme.class.getResource("/themes/themes.xml");
     XmlNode themesXml = XmlReader.read(themesUrl);
     themesXml.children.asMap().entrySet().stream().forEach((e) -> {
-        String tag = e.getKey();
-        if (tag.toLowerCase().equals("theme")) {
-          for (XmlNode node : e.getValue()) {
-            Theme theme = new Theme(node);
-            LOG.trace("Found theme {}", theme.getName());
-            themes.put(theme.getName(), theme);
-          }
-        } else {
-          LOG.error("unknown element {} in themes.xml", tag);
+      String tag = e.getKey();
+      if (tag.toLowerCase().equals("theme")) {
+        for (XmlNode node : e.getValue()) {
+          Theme theme = new Theme(node);
+          LOG.trace("Found theme {}", theme.getName());
+          themes.put(theme.getName(), theme);
         }
-      });
+      } else {
+        LOG.error("unknown element {} in themes.xml", tag);
+      }
+    });
 
     File themeDir = new File(Utils.getUserDataDirectory("themes"));
     if (themeDir.exists()) {
@@ -111,20 +108,20 @@ public class Theme implements Serializable {
     this();
     this.name = xml.attributes.get("name");
     xml.children.entries().stream().forEach((e) -> {
-        XmlNode node = e.getValue();
-        switch (node.tagName) {
-          case "background-color":
-            this.bgColor = getColor(node);
-            break;
-          case "grid-color":
-            this.gridColor = getColor(node);
-            break;
-          case "outline-color":
-            this.outlineColor = getColor(node);
-            break;
-          default:
-        }
-      });
+      XmlNode node = e.getValue();
+      switch (node.tagName) {
+        case "background-color":
+          this.bgColor = getColor(node);
+          break;
+        case "grid-color":
+          this.gridColor = getColor(node);
+          break;
+        case "outline-color":
+          this.outlineColor = getColor(node);
+          break;
+        default:
+      }
+    });
   }
 
   private Color getColor(XmlNode xml) {

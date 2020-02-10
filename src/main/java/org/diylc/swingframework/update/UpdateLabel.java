@@ -23,13 +23,14 @@ public class UpdateLabel extends JLabel {
     updateChecker = new UpdateChecker(currentVersion, updateFileUrl);
 
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    final UpdateLabel thisLabel = this;
     addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
           if (updatedVersions != null && updatedVersions.size() > 0) {
             UpdateDialog updateDialog = new UpdateDialog(
-                UpdateLabel.this,
-                UpdateChecker.createUpdateHTML(updatedVersions),
+                thisLabel,
+                UpdateChecker.createUpdateHtml(updatedVersions),
                 updatedVersions.get(0).getUrl());
             updateDialog.setVisible(true);
           } else {
@@ -50,20 +51,23 @@ public class UpdateLabel extends JLabel {
 
         @Override
         protected void done() {
+          Icon icon = Icon.LightBulbOff;
+          String tooltipText = null;
           try {
             updatedVersions = get();
             if (updatedVersions.size() == 0) {
-              setIcon(Icon.LightBulbOff.icon());
-              setToolTipText("No updates available, click to check again");
+              // TODO get these strings from strings-<lang>.xml
+              tooltipText = "No updates available, click to check again";
             } else {
-              setIcon(Icon.LightBulbOn.icon());
-              setToolTipText("Updates are available, click to see details");
+              icon = Icon.LightBulbOn;
+              tooltipText = "Updates are available, click to see details";
             }
           } catch (Exception e) {
-            setIcon(Icon.LightBulbOff.icon());
-            setToolTipText("Error occurred while searching for updates: " + e.getMessage());
+            tooltipText = "Error occurred while searching for updates: " + e.getMessage();
             setCursor(Cursor.getDefaultCursor());
           }
+          setIcon(icon.icon());
+          setToolTipText(tooltipText);
         }
       };
     worker.execute();

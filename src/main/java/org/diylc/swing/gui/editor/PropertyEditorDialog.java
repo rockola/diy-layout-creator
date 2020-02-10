@@ -39,10 +39,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.Message;
 import org.diylc.common.PropertyWrapper;
@@ -51,12 +49,10 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class PropertyEditorDialog extends ButtonDialog {
 
-  private static final Logger LOG = LogManager.getLogger(PropertyEditorDialog.class);
-
   private static final long serialVersionUID = 1L;
-
+  private static final Logger LOG = LogManager.getLogger(PropertyEditorDialog.class);
   private static final String DEFAULT_BOX_TOOLTIP =
-      Message.getHTML("propertyEditor.default-box-tooltip");
+      Message.getHtml("propertyEditor.default-box-tooltip");
 
   private List<PropertyWrapper> properties;
   private Set<PropertyWrapper> defaultedProperties;
@@ -166,12 +162,12 @@ public class PropertyEditorDialog extends ButtonDialog {
     final JCheckBox checkBox = new JCheckBox();
     checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);
     checkBox.addActionListener((e) -> {
-        if (checkBox.isSelected()) {
-          defaultedProperties.add(property);
-        } else {
-          defaultedProperties.remove(property);
-        }
-      });
+      if (checkBox.isSelected()) {
+        defaultedProperties.add(property);
+      } else {
+        defaultedProperties.remove(property);
+      }
+    });
     return checkBox;
   }
 

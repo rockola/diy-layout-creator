@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core.measures;
 
 //import java.io.Serializable;
@@ -27,7 +28,7 @@ import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public enum SIUnit {
+public enum SiUnit {
   AMPERE("A"), // current
   FARAD("F"), // capacitance
   HENRY("H"), // inductance
@@ -38,11 +39,11 @@ public enum SIUnit {
 
   public final String symbol;
 
-  SIUnit(String symbol) {
+  SiUnit(String symbol) {
     this.symbol = symbol;
   }
 
-  private static final Logger LOG = LogManager.getLogger(SIUnit.class);
+  private static final Logger LOG = LogManager.getLogger(SiUnit.class);
 
   public String toString() {
     return this.name().toLowerCase();
@@ -88,7 +89,7 @@ public enum SIUnit {
       double value,
       int decimals,
       boolean withSymbol,
-      SIUnit unit) {
+      SiUnit unit) {
 
     int exponent = (int) Math.floor(Math.log10(value) / 3) * 3;
     double v = value / Math.pow(10, exponent);
@@ -113,7 +114,7 @@ public enum SIUnit {
   }
 
   /* default is to use unit symbol */
-  public static String measureToString(double value, int decimals, SIUnit unit) {
+  public static String measureToString(double value, int decimals, SiUnit unit) {
     return measureToString(value, decimals, true, unit);
   }
 

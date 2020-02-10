@@ -30,7 +30,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -61,6 +62,7 @@ import org.diylc.utils.Constants;
 public class LeverSwitch extends AbstractTransparentComponent<String> implements ISwitch {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(LeverSwitch.class);
 
   private static Color BASE_COLOR = Color.lightGray;
   private static Color WAFER_COLOR = Color.decode("#CD8500");
@@ -152,55 +154,51 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
       int baseX = x - terminalLength / 2 - waferSpacing;
       int baseY = y - (baseLength - terminalSpacing * offsetY) / 2;
-      Area baseArea = new Area(new Rectangle2D.Double(baseX, baseY, baseWidth, baseLength));
-      baseArea.subtract(Area.circle(
-          baseX + baseWidth / 2,
-          baseY + (baseLength - holeSpacing) / 2,
-          holeSize)));
-      baseArea.subtract(Area.circle(
-          baseX + baseWidth / 2,
-          baseY + (baseLength - holeSpacing) / 2 + holeSpacing,
-          holeSize)));
+      Area baseArea = Area.rect(
+          baseX,
+          baseY,
+          baseWidth,
+          baseLength).subtract(Area.circle(
+              baseX + baseWidth / 2,
+              baseY + (baseLength - holeSpacing) / 2,
+              holeSize)).subtract(Area.circle(
+                  baseX + baseWidth / 2,
+                  baseY + (baseLength - holeSpacing) / 2 + holeSpacing,
+                  holeSize));
       body[0] = baseArea;
 
-      Area waferArea = new Area(new Rectangle2D.Double(
+      Area waferArea = Area.rect(
           x - terminalLength / 2 - waferThickness / 2,
           y - (waferLength - terminalSpacing * offsetY) / 2,
           waferThickness,
-          waferLength));
+          waferLength);
 
       if (type == LeverSwitchType._4P5T) {
-        waferArea.add(new Area(new Rectangle2D.Double(
+        waferArea.add(Area.rect(
             x - terminalLength / 2 - waferThickness / 2 + waferSpacing,
             y - (waferLength - terminalSpacing * 12) / 2,
             waferThickness,
-            waferLength)));
+            waferLength));
       }
       body[1] = waferArea;
 
-      double theta = orientation.getTheta();
       Area terminalArea = new Area();
       Area commonTerminalArea = new Area();
+      final double theta = orientation.getTheta();
       for (int i = 0; i < controlPoints.length; i++) {
         Point point = controlPoints[i];
-        Area terminal = new Area(new RoundRectangle2D.Double(
-            point.x - terminalLength / 2,
-            point.y - terminalWidth / 2,
+        Area terminal = Area.centeredRoundRect(
+            point,
             terminalLength,
             terminalWidth,
-            terminalWidth / 2,
-            terminalWidth / 2));
-        terminal.subtract(new Area(new RoundRectangle2D.Double(
-            point.x - terminalLength / 4,
-            point.y - terminalWidth / 4,
-            terminalLength / 2,
-            terminalWidth / 2,
-            terminalWidth / 2,
-            terminalWidth / 2)));
+            terminalWidth / 2).subtract(Area.centeredRoundRect(
+                point,
+                terminalLength / 2,
+                terminalWidth / 2,
+                terminalWidth / 2));
         // Rotate the terminal if needed
         if (theta != 0) {
-          AffineTransform rotation = AffineTransform.getRotateInstance(theta, point.x, point.y);
-          terminal.transform(rotation);
+          terminal.transform(orientation.getRotation(point));
         }
         terminalArea.add(terminal);
         if (getHighlightCommon()
@@ -219,8 +217,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
       // Rotate if needed
       if (theta != 0) {
-        AffineTransform rotation =
-            AffineTransform.getRotateInstance(theta, controlPoints[0].x, controlPoints[0].y);
+        AffineTransform rotation = orientation.getRotation(controlPoints[0]);
         // Skip the last two because terminals are already rotated
         for (int i = 0; i < body.length - 2; i++) {
           Shape shape = body[i];

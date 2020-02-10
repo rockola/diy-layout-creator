@@ -23,9 +23,7 @@ package org.diylc.components.boards;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-
 import org.apache.commons.text.WordUtils;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;

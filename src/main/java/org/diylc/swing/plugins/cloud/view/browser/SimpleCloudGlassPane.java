@@ -66,26 +66,42 @@ public class SimpleCloudGlassPane extends JPanel implements MouseListener, KeyLi
   }
 
   @Override
-  public void mouseClicked(final MouseEvent e) {}
+  public void mouseClicked(final MouseEvent e) {
+    //
+  }
 
   @Override
-  public void mouseEntered(final MouseEvent e) {}
+  public void mouseEntered(final MouseEvent e) {
+    //
+  }
 
   @Override
-  public void mouseExited(final MouseEvent e) {}
+  public void mouseExited(final MouseEvent e) {
+    //
+  }
 
   @Override
-  public void mousePressed(final MouseEvent e) {}
+  public void mousePressed(final MouseEvent e) {
+    //
+  }
 
   @Override
-  public void mouseReleased(final MouseEvent e) {}
+  public void mouseReleased(final MouseEvent e) {
+    //
+  }
 
   @Override
-  public void keyPressed(KeyEvent e) {}
+  public void keyPressed(KeyEvent e) {
+    //
+  }
 
   @Override
-  public void keyReleased(KeyEvent e) {}
+  public void keyReleased(KeyEvent e) {
+    //
+  }
 
   @Override
-  public void keyTyped(KeyEvent e) {}
+  public void keyTyped(KeyEvent e) {
+    //
+  }
 }

@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-
 import org.diylc.core.IDIYComponent;
 
 public class Tree {
@@ -142,9 +141,9 @@ public class Tree {
     return sj.toString();
   }
 
-  public String toHTML(int depth) {
+  public String toHtml(int depth) {
     if (leaf != null) {
-      return leaf.toHTML();
+      return leaf.toHtml();
     }
     List<Tree> children = getOrderedChildren();
     StringBuilder sb = new StringBuilder();
@@ -154,13 +153,13 @@ public class Tree {
     boolean first = true;
     for (Tree child : children) {
       if (!first) {
-        sb.append("&nbsp;").append(connectionType.toHTML()).append("&nbsp;");
+        sb.append("&nbsp;").append(connectionType.toHtml()).append("&nbsp;");
         if (depth == 0) {
           sb.append("<br>");
         }
       }
       first = false;
-      sb.append(child.toHTML(depth + children.size() > 1 ? 1 : 0));
+      sb.append(child.toHtml(depth + children.size() > 1 ? 1 : 0));
     }
     if (depth > 0 && children.size() > 1) {
       sb.append(")");

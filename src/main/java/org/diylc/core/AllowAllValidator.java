@@ -28,5 +28,7 @@ package org.diylc.core;
 public class AllowAllValidator implements IPropertyValidator {
 
   @Override
-  public void validate(Object value) throws ValidationException {}
+  public void validate(Object value) throws ValidationException {
+    //
+  }
 }

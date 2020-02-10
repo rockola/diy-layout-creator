@@ -25,10 +25,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.apache.commons.text.WordUtils;
-
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
@@ -70,7 +68,7 @@ public class SolderPad extends AbstractComponent<Void> {
   private Point point = new Point(0, 0);
   private Type type = Type.ROUND;
   private Size holeSize = HOLE_SIZE;
-  private PCBLayer layer = PCBLayer._1;
+  private PcbLayer layer = PcbLayer._1;
 
   @Override
   public void draw(
@@ -136,14 +134,14 @@ public class SolderPad extends AbstractComponent<Void> {
   }
 
   @EditableProperty
-  public PCBLayer getLayer() {
+  public PcbLayer getLayer() {
     if (layer == null) {
-      layer = PCBLayer._1;
+      layer = PcbLayer._1;
     }
     return layer;
   }
 
-  public void setLayer(PCBLayer layer) {
+  public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
 

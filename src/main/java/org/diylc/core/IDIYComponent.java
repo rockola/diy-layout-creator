@@ -24,7 +24,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
 import javax.swing.Icon;
-
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.presenter.ComponentArea;
@@ -92,7 +91,9 @@ public interface IDIYComponent<T> extends Serializable {
    */
   void setName(String name);
 
-  /** @return component value. */
+  /**
+     @return component value.
+  */
   T getValue();
 
   /**

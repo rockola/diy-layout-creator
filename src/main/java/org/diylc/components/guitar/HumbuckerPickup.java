@@ -32,7 +32,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -403,8 +402,7 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
 
       // Rotate if needed
       if (orientation != Orientation.DEFAULT) {
-        double theta = orientation.getTheta();
-        AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
+        AffineTransform rotation = orientation.getRotation(x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
           if (area != null) {

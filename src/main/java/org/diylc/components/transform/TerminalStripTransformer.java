@@ -22,7 +22,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.boards.TerminalStrip;
@@ -56,13 +55,7 @@ public class TerminalStripTransformer implements IComponentTransformer {
     }
 
     TerminalStrip strip = (TerminalStrip) component;
-    Orientation o = strip.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length) oValue = 0;
-    o = Orientation.values()[oValue];
-    strip.setOrientation(o);
+    strip.setOrientation(strip.getOrientation().rotate(direction));
   }
 
   @Override
@@ -74,11 +67,6 @@ public class TerminalStripTransformer implements IComponentTransformer {
       int dy = 0;
       Orientation o = strip.getOrientation();
       switch (o) {
-        case DEFAULT:
-          dx +=
-              strip.getControlPoint(0).x
-                  - strip.getControlPoint(strip.getControlPointCount() - 1).x;
-          break;
         case _90:
           o = Orientation._270;
           dx -= 2 * (strip.getControlPoint(0).x - strip.getControlPoint(1).x);
@@ -98,6 +86,11 @@ public class TerminalStripTransformer implements IComponentTransformer {
                   - strip.getControlPoint(strip.getControlPointCount() - 1).y;
           o = Orientation._90;
           break;
+        case DEFAULT:
+        default:
+          dx +=
+              strip.getControlPoint(0).x
+                  - strip.getControlPoint(strip.getControlPointCount() - 1).x;
       }
 
       for (int i = 0; i < strip.getControlPointCount(); i++) {
@@ -111,13 +104,6 @@ public class TerminalStripTransformer implements IComponentTransformer {
       int dy = 2 * (center.y - strip.getControlPoint(1).y);
       Orientation o = strip.getOrientation();
       switch (o) {
-        case DEFAULT:
-          dx -=
-              strip.getControlPoint(0).x
-                  - strip.getControlPoint(strip.getControlPointCount() - 1).x;
-          dy -= 2 * (strip.getControlPoint(0).y - strip.getControlPoint(1).y);
-          o = Orientation._180;
-          break;
         case _90:
           dy +=
               strip.getControlPoint(0).y
@@ -135,6 +121,13 @@ public class TerminalStripTransformer implements IComponentTransformer {
               strip.getControlPoint(0).y
                   - strip.getControlPoint(strip.getControlPointCount() - 1).y;
           break;
+        case DEFAULT:
+        default:
+          dx -=
+              strip.getControlPoint(0).x
+                  - strip.getControlPoint(strip.getControlPointCount() - 1).x;
+          dy -= 2 * (strip.getControlPoint(0).y - strip.getControlPoint(1).y);
+          o = Orientation._180;
       }
 
       for (int i = 0; i < strip.getControlPointCount(); i++) {

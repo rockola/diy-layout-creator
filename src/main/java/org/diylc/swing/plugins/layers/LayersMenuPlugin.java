@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-
 import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;

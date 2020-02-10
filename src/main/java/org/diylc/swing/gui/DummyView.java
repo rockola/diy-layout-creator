@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.io.File;
@@ -33,7 +34,9 @@ public class DummyView implements IView {
   }
 
   @Override
-  public void showMessage(String message, String title, int messageType) {}
+  public void showMessage(String message, String title, int messageType) {
+    //
+  }
 
   @Override
   public File promptFileSave() {

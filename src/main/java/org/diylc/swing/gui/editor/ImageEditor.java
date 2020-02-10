@@ -26,11 +26,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JButton;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.util.IOUtils;
-
 import org.diylc.common.PropertyWrapper;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.plugins.file.FileFilterEnum;
@@ -44,22 +42,22 @@ public class ImageEditor extends JButton {
   public ImageEditor(final PropertyWrapper property) {
     super(property.isUnique() ? title : "(multi value) " + title);
     addActionListener((e) -> {
-        File file = DialogFactory.getInstance().showOpenDialog(
-            FileFilterEnum.IMAGES.getFilter(),
-            null,
-            FileFilterEnum.IMAGES.getExtensions()[0],
-            null);
-        if (file != null) {
-          try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] byteArray = IOUtils.toByteArray(fis);
-            property.setValue(byteArray);
-            property.setChanged(true);
-          } catch (FileNotFoundException e1) {
-            LOG.error("File not found, path is " + file.getAbsolutePath(), e1);
-          } catch (IOException e1) {
-            LOG.error("IO exception for " + file.getAbsolutePath(), e1);
-          }
+      File file = DialogFactory.getInstance().showOpenDialog(
+          FileFilterEnum.IMAGES.getFilter(),
+          null,
+          FileFilterEnum.IMAGES.getExtensions()[0],
+          null);
+      if (file != null) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+          byte[] byteArray = IOUtils.toByteArray(fis);
+          property.setValue(byteArray);
+          property.setChanged(true);
+        } catch (FileNotFoundException e1) {
+          LOG.error("File not found, path is " + file.getAbsolutePath(), e1);
+        } catch (IOException e1) {
+          LOG.error("IO exception for " + file.getAbsolutePath(), e1);
         }
-      });
+      }
+    });
   }
 }

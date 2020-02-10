@@ -62,15 +62,14 @@ public @interface EditableProperty {
   String name() default "";
 
   /**
-   * If true, application may set default value for this property. <br>
-   * Default value is true.
+   * If true, application may set default value for this property.
    *
    * @return
    */
   boolean defaultable() default true;
 
   /**
-   * Class of validator to use to
+   * Class of validator to use.
    *
    * @return
    */

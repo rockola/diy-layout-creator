@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-
 import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
@@ -33,7 +32,9 @@ import org.diylc.swing.action.ActionFactory;
 public class ConfigActions {
   private final List<ConfigAction> actions = new ArrayList<ConfigAction>();
 
-  public ConfigActions() {}
+  public ConfigActions() {
+    //
+  }
 
   public void add(String name, Config.Flag action, boolean defaultValue) {
     actions.add(new ConfigAction(Config.getString("menu.config." + name), action, defaultValue));

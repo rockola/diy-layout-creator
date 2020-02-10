@@ -21,12 +21,10 @@
 package org.diylc.plugins.cloud.model;
 
 import com.diyfever.httpproxy.ParamName;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.diylc.App;
 
 /**
@@ -38,7 +36,7 @@ import org.diylc.App;
  *
  * <p>Original server located at <code>www.diy-fever.com/diylc/api/v1</code>
 */
-public class ServiceAPI {
+public class ServiceApi {
 
   private com.diyfever.httpproxy.IFlatProxy proxy;
   private static final String apiUrl = App.getUrl("api.base").toString();
@@ -47,7 +45,7 @@ public class ServiceAPI {
     return (Object) proxy.invokeAndDeserialize(apiUrl, requestName, params);
   }
 
-  public ServiceAPI(com.diyfever.httpproxy.IFlatProxy proxy) {
+  public ServiceApi(com.diyfever.httpproxy.IFlatProxy proxy) {
     this.proxy = proxy;
   }
 

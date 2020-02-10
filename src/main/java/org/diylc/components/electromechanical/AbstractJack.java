@@ -21,15 +21,12 @@
 package org.diylc.components.electromechanical;
 
 import com.google.common.collect.ListMultimap;
-
 import java.awt.Point;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.ComponentType;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractComponent;
@@ -41,7 +38,6 @@ import org.diylc.core.annotations.Unmarshaller;
 import org.diylc.core.measures.Size;
 import org.diylc.parsing.XmlNode;
 import org.diylc.utils.Constants;
-
 import org.reflections.Reflections;
 
 @Unmarshaller("jack")

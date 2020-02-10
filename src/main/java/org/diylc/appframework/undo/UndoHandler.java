@@ -24,10 +24,8 @@ import java.awt.event.ActionEvent;
 import java.util.Stack;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.images.Icon;
 

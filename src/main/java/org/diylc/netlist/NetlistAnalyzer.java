@@ -31,7 +31,9 @@ import org.diylc.core.IDIYComponent;
 
 public abstract class NetlistAnalyzer {
 
-  public NetlistAnalyzer() {}
+  public NetlistAnalyzer() {
+    //
+  }
 
   public List<Summary> summarize(List<Netlist> netlists, Node preferredOutput)
       throws TreeException {

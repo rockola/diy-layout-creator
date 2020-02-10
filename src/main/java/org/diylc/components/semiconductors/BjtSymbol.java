@@ -26,7 +26,6 @@ import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.components.Area;

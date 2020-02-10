@@ -42,11 +42,9 @@ import java.awt.geom.GeneralPath;
 public class RoundedPath {
 
   private GeneralPath path;
-
-  boolean isFirst = true;
+  private boolean isFirst = true;
   private double x = Double.NaN;
   private double y = Double.NaN;
-
   private double radius;
 
   public RoundedPath(double radius) {

@@ -28,7 +28,6 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
-
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
@@ -51,7 +50,7 @@ import org.diylc.utils.BomMaker;
     zOrder = IDIYComponent.TEXT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false)
-public class BOM extends AbstractComponent<Void> {
+public class BillOfMaterials extends AbstractComponent<Void> {
 
   private static final long serialVersionUID = 1L;
 
@@ -231,5 +230,6 @@ public class BOM extends AbstractComponent<Void> {
   }
 
   @Override
-  public void setValue(Void value) {}
+  public void setValue(Void value) {
+  }
 }

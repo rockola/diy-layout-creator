@@ -1,10 +1,8 @@
 package org.diylc.components;
 
 import java.awt.Graphics2D;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;

@@ -32,6 +32,11 @@ import org.diylc.common.Config;
 import org.diylc.images.FontLoader;
 import org.diylc.images.Icon;
 
+/**
+   Application splash screen. Displayed briefly in the beginning of
+   application execution. Disappears by itself when application is
+   ready for user input.
+ */
 public class Splash {
 
   private Thread thread;
@@ -44,6 +49,12 @@ public class Splash {
   private Font font = null;
   private String appVersion = null;
 
+  /**
+     Create a Splash instance. This object is instantiated once, in
+     the initialization section of App class. start() is called right
+     after instantiation. This results in the splash animation
+     starting as soon as possible.
+   */
   public Splash() {
     final SplashScreen splashScreen = SplashScreen.getSplashScreen();
     final Graphics2D g = splashScreen.createGraphics();

@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -19,10 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 
 public class UpdateDialog extends JDialog {
@@ -83,31 +80,29 @@ public class UpdateDialog extends JDialog {
       JButton downloadButton = new JButton("Download");
       final UpdateDialog thisDialog = this;
       downloadButton.addActionListener((e) -> {
-            try {
-              App.openURL(new URL(latestVersionUrl));
-              thisDialog.setVisible(false);
-            } catch (Exception e1) {
-              JOptionPane.showMessageDialog(
-                  thisDialog,
-                  "Could not launch default browser. To download the latest version visit "
-                  + latestVersionUrl);
-              LOG.error("Could not launch default browser", e1);
-            }
-          });
+        try {
+          App.openUrl(new URL(latestVersionUrl));
+          thisDialog.setVisible(false);
+        } catch (Exception e1) {
+          JOptionPane.showMessageDialog(
+              thisDialog,
+              "Could not launch default browser. To download the latest version visit "
+              + latestVersionUrl);
+          LOG.error("Could not launch default browser", e1);
+        }
+      });
       buttonPanel.add(downloadButton);
-
       buttonPanel.add(Box.createHorizontalStrut(4));
     }
 
     JButton cancelButton = new JButton("Close");
-    cancelButton.addActionListener(
-        new ActionListener() {
+    cancelButton.addActionListener(new ActionListener() {
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            UpdateDialog.this.setVisible(false);
-          }
-        });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          UpdateDialog.this.setVisible(false);
+        }
+      });
     buttonPanel.add(cancelButton);
 
     return buttonPanel;

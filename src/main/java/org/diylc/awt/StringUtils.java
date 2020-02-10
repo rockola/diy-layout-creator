@@ -29,7 +29,6 @@ import java.awt.font.GlyphVector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.VerticalAlignment;
 

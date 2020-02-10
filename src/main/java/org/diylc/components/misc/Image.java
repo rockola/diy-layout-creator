@@ -21,7 +21,6 @@
 package org.diylc.components.misc;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -29,9 +28,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import javax.swing.ImageIcon;
-
 import org.apache.poi.util.IOUtils;
-
 import org.diylc.appframework.miscutils.IconImageConverter;
 import org.diylc.common.Config;
 import org.diylc.common.ObjectCache;
@@ -228,5 +225,7 @@ public class Image extends AbstractTransparentComponent<Void> {
   }
 
   @Override
-  public void setValue(Void value) {}
+  public void setValue(Void value) {
+    //
+  }
 }

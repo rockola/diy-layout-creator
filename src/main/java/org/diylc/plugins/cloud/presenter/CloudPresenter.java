@@ -22,7 +22,6 @@ package org.diylc.plugins.cloud.presenter;
 
 import com.diyfever.httpproxy.IFlatProxy;
 import com.diyfever.httpproxy.PhpFlatProxy;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,16 +35,13 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.plugins.cloud.model.CommentEntity;
-import org.diylc.plugins.cloud.model.IServiceAPI;
 import org.diylc.plugins.cloud.model.ProjectEntity;
-import org.diylc.plugins.cloud.model.ServiceAPI;
+import org.diylc.plugins.cloud.model.ServiceApi;
 import org.diylc.plugins.cloud.model.UserEntity;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
@@ -58,28 +54,29 @@ import org.diylc.presenter.ComponentProcessor;
  */
 public class CloudPresenter {
 
-  public static final CloudPresenter Instance = new CloudPresenter();
   private static final Logger LOG = LogManager.getLogger(CloudPresenter.class);
   private static final Object SUCCESS = App.getString("message.success");
+
+  public static final CloudPresenter Instance = new CloudPresenter();
 
   private static String USERNAME_KEY = "cloud.Username";
   private static String TOKEN_KEY = "cloud.token";
   private static String ERROR = "Error";
 
-  private final IFlatProxy proxy = new PhpFlatProxy();
-  private final IServiceAPI service = new ServiceAPI(proxy);
+  private final ServiceApi service = new ServiceApi(new PhpFlatProxy());
   private String machineId;
   private String[] categories;
-
   private boolean loggedIn = false;
 
-  private CloudPresenter() {}
+  private CloudPresenter() {
+    //
+  }
 
   private static String getMsg(String key) {
     return App.getString("message.cloud." + key);
   }
 
-  private IServiceAPI getService() {
+  private ServiceApi getService() {
     return service;
   }
 
@@ -89,7 +86,7 @@ public class CloudPresenter {
     }
   }
 
-  public boolean logIn(String username, String password) throws CloudException {
+  public boolean login(String username, String password) throws CloudException {
     LOG.info("Trying to login to cloud as {}", username);
 
     String res;
@@ -329,7 +326,9 @@ public class CloudPresenter {
     } catch (Exception e) {
       throw new CloudException(e);
     }
-    if (!res.equals(SUCCESS)) throw new CloudException(res);
+    if (!res.equals(SUCCESS)) {
+      throw new CloudException(res);
+    }
   }
 
   public List<ProjectEntity> search(

@@ -25,7 +25,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 import org.diylc.common.DefaultTransformer;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.core.CreationMethod;
@@ -33,9 +32,10 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.parsing.XmlNode;
 
 /**
- * Annotation that needs to be used for each {@link IDIYComponent}
- * implementation. Describes component properties and how component
- * should be represented and interact with the rest of the system.
+ * Annotation to use for each {@link IDIYComponent}
+ * implementation. Describes component properties, how the component
+ * should be represented, and how it interacts with the rest of the
+ * system.
  *
  * @author Branislav Stojkovic
  */
@@ -84,7 +84,7 @@ public @interface ComponentDescriptor {
      to tag name or tag name and value of 'type' attribute
      respectively.
 
-     @return tag string
+     @return tag string.
    */
   String xmlTag() default XmlNode.NO_TAG;
 
@@ -100,19 +100,19 @@ public @interface ComponentDescriptor {
   boolean flexibleZOrder() default false;
 
   /**
-   * @return controls what should be shown the BOM
+   * @return controls what should be shown in the Bill of Materials.
    */
   BomPolicy bomPolicy() default BomPolicy.SHOW_ALL_NAMES;
 
   /**
    * @return true if component editor dialog should be shown in
-   * Auto-Edit mode, false otherwise
+   *     Auto-Edit mode, false otherwise.
    */
   boolean autoEdit() default true;
 
   /**
    * @return the transformer class that can rotate and/or mirror
-   * objects of this class, if one exists
+   *     objects of this class, if one exists
    *
    */
   Class<? extends IComponentTransformer> transformer() default DefaultTransformer.class;
@@ -121,14 +121,14 @@ public @interface ComponentDescriptor {
    * Defines if and how a component should appear in auto-generated
    * project keywords. See {@link KeywordPolicy} for more info.
    *
-   * @return
+   * @return keyword policy.
    */
   KeywordPolicy keywordPolicy() default KeywordPolicy.NEVER_SHOW;
 
   /**
    * Only used if {@link KeywordPolicy} is set to {@link KeywordPolicy#SHOW_TAG}.
    *
-   * @return
+   * @return keyword tag.
    */
   String keywordTag() default "";
 }

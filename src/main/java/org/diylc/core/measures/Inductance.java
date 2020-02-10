@@ -19,6 +19,7 @@
     along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 
 */
+
 package org.diylc.core.measures;
 
 public class Inductance extends AbstractMeasure<InductanceUnit> {

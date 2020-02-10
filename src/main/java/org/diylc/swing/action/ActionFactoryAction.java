@@ -22,7 +22,6 @@ package org.diylc.swing.action;
 
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
-
 import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 

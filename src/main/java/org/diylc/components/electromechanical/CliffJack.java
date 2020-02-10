@@ -29,7 +29,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
@@ -102,7 +101,7 @@ public class CliffJack extends AbstractJack {
     // Apply rotation if necessary
     double angle = orientation.getTheta();
     if (angle != 0) {
-      AffineTransform rotation = AffineTransform.getRotateInstance(angle, x, y);
+      AffineTransform rotation = orientation.getRotation(x, y);
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }

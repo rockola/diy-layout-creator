@@ -104,7 +104,9 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       pickupTree.walk(new ITreeWalker() {
 
           @Override
-          public void visit(Tree t) {}
+          public void visit(Tree t) {
+            //
+          }
 
           @Override
           public void visit(TreeLeaf l) {
@@ -190,7 +192,7 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       boolean humCancelling = noiseCount == 0;
       notes.add(String.format(
           "This configuration is%s hum-cancelling",
-          humCancelling ? "": " NOT"));
+          humCancelling ? "" : " NOT"));
 
       if (positiveCount > 1 || negativeCount > 1 || (positiveCount == 1 && negativeCount == 1)) {
         boolean inPhase =
@@ -346,7 +348,7 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
 
     StringBuilder sb = new StringBuilder();
 
-    sb.append("Parallel/Series connectivity tree:<br><br>").append(tree.toHTML(0));
+    sb.append("Parallel/Series connectivity tree:<br><br>").append(tree.toHtml(0));
     if (!notes.isEmpty()) {
       sb.append("<br><br>Notes:<br>");
     }

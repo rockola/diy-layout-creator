@@ -20,7 +20,7 @@
 
 package org.diylc.common;
 
-public enum PCBLayer {
+public enum PcbLayer {
   _1,
   _2,
   _3,

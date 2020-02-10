@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.presenter;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -28,8 +29,9 @@ import java.awt.Point;
 import org.diylc.utils.Constants;
 
 /**
- * Serializes {@link Point} objects by converting coordinates from pixels to inches, thus avoiding
- * the resolution to affect point placement.
+ * Serializes {@link Point} objects by converting coordinates from
+ * pixels to inches, thus avoiding the resolution to affect point
+ * placement.
  *
  * @author Branislav Stojkovic
  */

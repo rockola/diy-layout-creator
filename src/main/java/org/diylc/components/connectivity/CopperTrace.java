@@ -23,9 +23,8 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-
 import org.diylc.common.ObjectCache;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.core.ComponentState;
@@ -59,7 +58,7 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   public static final Color COLOR = Color.black;
 
   private Size thickness = THICKNESS;
-  private PCBLayer layer = PCBLayer._1;
+  private PcbLayer layer = PcbLayer._1;
 
   public CopperTrace() {
     super();
@@ -94,14 +93,14 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   }
 
   @EditableProperty
-  public PCBLayer getLayer() {
+  public PcbLayer getLayer() {
     if (layer == null) {
-      layer = PCBLayer._1;
+      layer = PcbLayer._1;
     }
     return layer;
   }
 
-  public void setLayer(PCBLayer layer) {
+  public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
 

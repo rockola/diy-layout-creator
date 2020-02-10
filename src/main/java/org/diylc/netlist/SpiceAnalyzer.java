@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.diylc.common.INetlistAnalyzer;
 import org.diylc.core.IDIYComponent;
 
 public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
 
-  public SpiceAnalyzer() {}
+  public SpiceAnalyzer() {
+    //
+  }
 
   @Override
   public String getName() {

@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-
 import org.diylc.core.IDIYComponent;
 
 /**
@@ -38,7 +37,9 @@ public class Group implements Cloneable, Comparable<Group> {
 
   private Set<Node> nodes = new HashSet<Node>();
 
-  public Group() {}
+  public Group() {
+    //
+  }
 
   public Group(Node node1, Node node2) {
     nodes.add(node1);

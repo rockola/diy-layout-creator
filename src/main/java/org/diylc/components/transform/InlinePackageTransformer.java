@@ -22,15 +22,14 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.electromechanical.DipSwitch;
 import org.diylc.components.passive.AudioTransformer;
 import org.diylc.components.semiconductors.BridgeRectifier;
+import org.diylc.components.semiconductors.DualInlineIc;
 import org.diylc.components.semiconductors.InlinePackage;
-import org.diylc.components.semiconductors.DIL_IC;
-import org.diylc.components.semiconductors.SIL_IC;
+import org.diylc.components.semiconductors.SingleInlineIc;
 import org.diylc.core.IDIYComponent;
 
 public class InlinePackageTransformer implements IComponentTransformer {
@@ -42,7 +41,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
 
   @Override
   public boolean mirroringChangesCircuit(IDIYComponent<?> component) {
-    return component instanceof DIL_IC
+    return component instanceof DualInlineIc
         || component instanceof DipSwitch
         || component instanceof AudioTransformer
         || component instanceof BridgeRectifier;
@@ -64,11 +63,11 @@ public class InlinePackageTransformer implements IComponentTransformer {
 
   @Override
   public void mirror(IDIYComponent<?> component, Point center, int direction) {
-    // TODO: combine common code in mirrorDIL() and mirrorSIL()
-    if (component instanceof DIL_IC) {
-      mirrorDIL(component, center, direction);
-    } else if (component instanceof SIL_IC) {
-      mirrorSIL(component, center, direction);
+    // TODO: combine common code in mirrorDil() and mirrorSil()
+    if (component instanceof DualInlineIc) {
+      mirrorDil(component, center, direction);
+    } else if (component instanceof SingleInlineIc) {
+      mirrorSil(component, center, direction);
     } else {
       throw new RuntimeException(String.format(
           "InlinePackageTransformer: don't know how to mirror %s",
@@ -76,8 +75,8 @@ public class InlinePackageTransformer implements IComponentTransformer {
     }
   }
 
-  private void mirrorSIL(IDIYComponent<?> component, Point center, int direction) {
-    SIL_IC ic = (SIL_IC) component;
+  private void mirrorSil(IDIYComponent<?> component, Point center, int direction) {
+    SingleInlineIc ic = (SingleInlineIc) component;
     int dx = center.x - ic.getControlPoint(0).x;
     int dy = center.y - ic.getControlPoint(0).y;
     if (direction == IComponentTransformer.HORIZONTAL) {
@@ -119,17 +118,14 @@ public class InlinePackageTransformer implements IComponentTransformer {
     }
   }
 
-  private void mirrorDIL(IDIYComponent<?> component, Point center, int direction) {
-    DIL_IC ic = (DIL_IC) component;
+  private void mirrorDil(IDIYComponent<?> component, Point center, int direction) {
+    DualInlineIc ic = (DualInlineIc) component;
 
     if (direction == IComponentTransformer.HORIZONTAL) {
       int dx = 2 * (center.x - ic.getControlPoint(1).x);
       int dy = 0;
       Orientation o = ic.getOrientation();
       switch (o) {
-        case DEFAULT:
-          dx += ic.getControlPoint(0).x - ic.getControlPoint(ic.getControlPointCount() - 1).x;
-          break;
         case _90:
           o = Orientation._270;
           dx -= 2 * (ic.getControlPoint(0).x - ic.getControlPoint(1).x);
@@ -143,6 +139,9 @@ public class InlinePackageTransformer implements IComponentTransformer {
           dy -= ic.getControlPoint(0).y - ic.getControlPoint(ic.getControlPointCount() - 1).y;
           o = Orientation._90;
           break;
+        case DEFAULT:
+        default:
+          dx += ic.getControlPoint(0).x - ic.getControlPoint(ic.getControlPointCount() - 1).x;
       }
 
       for (int i = 0; i < ic.getControlPointCount(); i++) {
@@ -156,11 +155,6 @@ public class InlinePackageTransformer implements IComponentTransformer {
       int dy = 2 * (center.y - ic.getControlPoint(1).y);
       Orientation o = ic.getOrientation();
       switch (o) {
-        case DEFAULT:
-          dx -= ic.getControlPoint(0).x - ic.getControlPoint(ic.getControlPointCount() - 1).x;
-          dy -= 2 * (ic.getControlPoint(0).y - ic.getControlPoint(1).y);
-          o = Orientation._180;
-          break;
         case _90:
           dy += ic.getControlPoint(0).y - ic.getControlPoint(ic.getControlPointCount() - 1).y;
           break;
@@ -172,6 +166,11 @@ public class InlinePackageTransformer implements IComponentTransformer {
         case _270:
           dy += ic.getControlPoint(0).y - ic.getControlPoint(ic.getControlPointCount() - 1).y;
           break;
+        case DEFAULT:
+        default:
+          dx -= ic.getControlPoint(0).x - ic.getControlPoint(ic.getControlPointCount() - 1).x;
+          dy -= 2 * (ic.getControlPoint(0).y - ic.getControlPoint(1).y);
+          o = Orientation._180;
       }
 
       for (int i = 0; i < ic.getControlPointCount(); i++) {

@@ -40,10 +40,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.common.BuildingBlockPackage;
@@ -98,7 +96,9 @@ public class ActionFactory {
   }
   */
 
-  private ActionFactory() {}
+  private ActionFactory() {
+    //
+  }
 
   private static String getMsg(String key) {
     return Config.getString("message.actionFactory." + key);
@@ -130,14 +130,14 @@ public class ActionFactory {
     return new CreateBomAction(plugInPort);
   }
 
-  public static ExportPDFAction createExportPDFAction(
+  public static ExportPdfAction createExportPdfAction(
       IPlugInPort plugInPort, IDrawingProvider drawingProvider, String defaultSuffix) {
-    return new ExportPDFAction(plugInPort, drawingProvider, defaultSuffix);
+    return new ExportPdfAction(plugInPort, drawingProvider, defaultSuffix);
   }
 
-  public static ExportPNGAction createExportPNGAction(
+  public static ExportPngAction createExportPngAction(
       IPlugInPort plugInPort, IDrawingProvider drawingProvider, String defaultSuffix) {
-    return new ExportPNGAction(plugInPort, drawingProvider, defaultSuffix);
+    return new ExportPngAction(plugInPort, drawingProvider, defaultSuffix);
   }
 
   public static PrintAction createPrintAction(
@@ -372,25 +372,26 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Opening from " + file.getAbsolutePath());
-                plugInPort.loadProject(file.getAbsolutePath());
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Opening from " + file.getAbsolutePath());
+              plugInPort.loadProject(file.getAbsolutePath());
+              return null;
+            }
 
-              @Override
-              public void complete(Void result) {}
+            @Override
+            public void complete(Void result) {
+              //
+            }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not open file. " + e.getMessage());
-              }
-            },
-            true);
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not open file. " + e.getMessage());
+            }
+          },
+          true);
       }
     }
   }
@@ -411,25 +412,25 @@ public class ActionFactory {
 
           @Override
           public int showConfirmDialog(String message, String title,
-      				 int optionType, int messageType) {
-      	return JOptionPane.showConfirmDialog(null, message, title,
-      					     optionType, messageType);
+                                 int optionType, int messageType) {
+        return JOptionPane.showConfirmDialog(null, message, title,
+                                             optionType, messageType);
           }
 
           @Override
           public void showMessage(String message, String title, int messageType) {
-      	JOptionPane.showMessageDialog(null, message, title, messageType);
+        JOptionPane.showMessageDialog(null, message, title, messageType);
           }
 
           @Override
           public File promptFileSave() {
-      	return null;
+        return null;
           }
 
           @Override
           public boolean editProperties(List<PropertyWrapper> properties,
-      				  Set<PropertyWrapper> defaultedProperties) {
-      	return false;
+                                  Set<PropertyWrapper> defaultedProperties) {
+        return false;
           }
       });
          */
@@ -443,29 +444,30 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Opening from " + file.getAbsolutePath());
-                // Get project BUT do not load
-                Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
-                // Grab all components and paste them into
-                // the main presenter (i.e. current project)
-                plugInPort.pasteComponents(p.getComponents(), false);
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Opening from " + file.getAbsolutePath());
+              // Get project BUT do not load
+              Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+              // Grab all components and paste them into
+              // the main presenter (i.e. current project)
+              plugInPort.pasteComponents(p.getComponents(), false);
+              return null;
+            }
 
-              @Override
-              public void complete(Void result) {}
+            @Override
+            public void complete(Void result) {
+              //
+            }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not open file. " + e.getMessage());
-              }
-            },
-            true);
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not open file. " + e.getMessage());
+            }
+          },
+          true);
       }
     }
   }
@@ -489,39 +491,19 @@ public class ActionFactory {
             FileFilterEnum.DIY.getFilter(),
             FileFilterEnum.DIY.getExtensions()[0]);
         if (file != null) {
-          App.ui().executeBackgroundTask(
-              new ITask<Void>() {
-
-                @Override
-                public Void doInBackground() throws Exception {
-                  LOG.debug("Saving to " + file.getAbsolutePath());
-                  plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-                  return null;
-                }
-
-                @Override
-                public void complete(Void result) {}
-
-                @Override
-                public void failed(Exception e) {
-                  App.ui().error("Could not save to file. " + e.getMessage());
-                }
-              },
-              true);
-        }
-      } else {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+          App.ui().executeBackgroundTask(new ITask<Void>() {
 
               @Override
               public Void doInBackground() throws Exception {
-                LOG.debug("Saving to " + plugInPort.getCurrentFileName());
-                plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
+                LOG.debug("Saving to " + file.getAbsolutePath());
+                plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
                 return null;
               }
 
               @Override
-              public void complete(Void result) {}
+              public void complete(Void result) {
+                //
+              }
 
               @Override
               public void failed(Exception e) {
@@ -529,6 +511,28 @@ public class ActionFactory {
               }
             },
             true);
+        }
+      } else {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
+
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Saving to " + plugInPort.getCurrentFileName());
+              plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
+              return null;
+            }
+
+            @Override
+            public void complete(Void result) {
+              //
+            }
+
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not save to file. " + e.getMessage());
+            }
+          },
+          true);
       }
     }
   }
@@ -551,25 +555,26 @@ public class ActionFactory {
           FileFilterEnum.DIY.getFilter(),
           FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Saving to " + file.getAbsolutePath());
-                plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Saving to " + file.getAbsolutePath());
+              plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
+              return null;
+            }
 
-              @Override
-              public void complete(Void result) {}
+            @Override
+            public void complete(Void result) {
+              //
+            }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not save to file. " + e.getMessage());
-              }
-            },
-            true);
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not save to file. " + e.getMessage());
+            }
+          },
+          true);
       }
     }
   }
@@ -594,8 +599,8 @@ public class ActionFactory {
       String initialFileName = null;
       String currentFile = plugInPort.getCurrentFileName();
       if (currentFile != null) {
-        File cFile = new File(currentFile);
-        initialFileName = cFile.getName().replaceAll("(?i)\\.diy", "") + " BOM";
+        File file = new File(currentFile);
+        initialFileName = file.getName().replaceAll("(?i)\\.diy", "") + " BOM";
       }
 
       BomDialog dialog = DialogFactory.getInstance().createBomDialog(bom, initialFileName);
@@ -606,14 +611,14 @@ public class ActionFactory {
   /**
      Export project to PDF. Not undoable.
    */
-  public static class ExportPDFAction extends ActionFactoryAction {
+  public static class ExportPdfAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
 
     private IDrawingProvider drawingProvider;
     private String defaultSuffix;
 
-    public ExportPDFAction(
+    public ExportPdfAction(
         IPlugInPort plugInPort, IDrawingProvider drawingProvider, String defaultSuffix) {
       super(plugInPort, "Export to PDF", Icon.PDF.icon());
       this.drawingProvider = drawingProvider;
@@ -627,9 +632,9 @@ public class ActionFactory {
       File initialFile = null;
       String currentFile = plugInPort.getCurrentFileName();
       if (currentFile != null) {
-        File cFile = new File(currentFile);
+        File file = new File(currentFile);
         initialFile = new File(
-            cFile.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
+            file.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
       }
 
       final File file = DialogFactory.getInstance().showSaveDialog(
@@ -638,25 +643,24 @@ public class ActionFactory {
           FileFilterEnum.PDF.getExtensions()[0],
           null);
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Exporting to " + file.getAbsolutePath());
-                DrawingExporter.exportPDF(ExportPDFAction.this.drawingProvider, file);
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Exporting to " + file.getAbsolutePath());
+              DrawingExporter.exportPdf(ExportPdfAction.this.drawingProvider, file);
+              return null;
+            }
 
-              @Override
-              public void complete(Void result) {}
+            @Override
+            public void complete(Void result) {}
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not export to PDF.", e);
-              }
-            },
-            true);
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not export to PDF.", e);
+            }
+          },
+          true);
       }
     }
   }
@@ -664,14 +668,14 @@ public class ActionFactory {
   /**
      Export to PNG. Not undoable.
   */
-  public static class ExportPNGAction extends ActionFactoryAction {
+  public static class ExportPngAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
 
     private IDrawingProvider drawingProvider;
     private String defaultSuffix;
 
-    public ExportPNGAction(
+    public ExportPngAction(
         IPlugInPort plugInPort, IDrawingProvider drawingProvider, String defaultSuffix) {
       super(plugInPort, "Export to PNG", Icon.Image.icon());
       this.drawingProvider = drawingProvider;
@@ -680,43 +684,40 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      LOG.info("ExportPNGAction triggered");
+      LOG.info("ExportPngAction triggered");
 
       File initialFile = null;
       String currentFile = plugInPort.getCurrentFileName();
       if (currentFile != null) {
-        File cFile = new File(currentFile);
+        File file = new File(currentFile);
         initialFile =
-            new File(cFile.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".png");
+            new File(file.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".png");
       }
 
-      final File file =
-          DialogFactory.getInstance()
-              .showSaveDialog(
-                  FileFilterEnum.PNG.getFilter(),
-                  initialFile,
-                  FileFilterEnum.PNG.getExtensions()[0],
-                  null);
+      final File file = DialogFactory.getInstance().showSaveDialog(
+          FileFilterEnum.PNG.getFilter(),
+          initialFile,
+          FileFilterEnum.PNG.getExtensions()[0],
+          null);
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui().executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Exporting to " + file.getAbsolutePath());
-                DrawingExporter.exportPNG(ExportPNGAction.this.drawingProvider, file);
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              LOG.debug("Exporting to " + file.getAbsolutePath());
+              DrawingExporter.exportPng(ExportPngAction.this.drawingProvider, file);
+              return null;
+            }
 
-              @Override
-              public void complete(Void result) {}
+            @Override
+            public void complete(Void result) {}
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not export to PNG.", e);
-              }
-            },
-            true);
+            @Override
+            public void failed(Exception e) {
+              App.ui().error("Could not export to PNG.", e);
+            }
+          },
+          true);
       }
     }
   }
@@ -1779,60 +1780,59 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-      App.ui().executeBackgroundTask(
-          new ITask<List<Summary>>() {
+      App.ui().executeBackgroundTask(new ITask<List<Summary>>() {
 
-            @Override
-            public List<Summary> doInBackground() throws Exception {
-              List<Netlist> netlists = plugInPort.currentProject().extractNetlists(true);
-              if (netlists == null || netlists.isEmpty()) {
-                throw new Exception(getMsg("empty-netlist"));
-              }
-
-              return summarizer.summarize(netlists, null);
+          @Override
+          public List<Summary> doInBackground() throws Exception {
+            List<Netlist> netlists = plugInPort.currentProject().extractNetlists(true);
+            if (netlists == null || netlists.isEmpty()) {
+              throw new Exception(getMsg("empty-netlist"));
             }
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().info(summarizer.getName(), e);
+            return summarizer.summarize(netlists, null);
+          }
+
+          @Override
+          public void failed(Exception e) {
+            App.ui().info(summarizer.getName(), e);
+          }
+
+          @Override
+          public void complete(List<Summary> res) {
+            if (res == null) {
+              App.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
+              return;
             }
+            StringBuilder sb = new StringBuilder("<html>");
 
-            @Override
-            public void complete(List<Summary> res) {
-              if (res == null) {
-                App.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
-                return;
+            for (Summary summary : res) {
+              sb.append("<p style=\"font-family: ")
+                  .append(summarizer.getFontName())
+                  .append("; font-size: 9px\">");
+
+              if (res.size() > 1) {
+                sb.append("<b>Switch configuration: ")
+                    .append(summary.getNetlist().getSwitchSetup())
+                    .append("</b><br><br>");
               }
-              StringBuilder sb = new StringBuilder("<html>");
 
-              for (Summary summary : res) {
-                sb.append("<p style=\"font-family: ")
-                    .append(summarizer.getFontName())
-                    .append("; font-size: 9px\">");
+              sb.append(summary.getSummary());
 
-                if (res.size() > 1) {
-                  sb.append("<b>Switch configuration: ")
-                      .append(summary.getNetlist().getSwitchSetup())
-                      .append("</b><br><br>");
-                }
+              sb.append("</p><br>");
 
-                sb.append(summary.getSummary());
-
-                sb.append("</p><br>");
-
-                if (res.size() > 1) {
-                  sb.append("<hr>");
-                }
+              if (res.size() > 1) {
+                sb.append("<hr>");
               }
-              sb.append("</html>");
-              new TextDialog(
-                  App.ui().getOwnerFrame().getRootPane(),
-                  sb.toString(),
-                  summarizer.getName(),
-                  new Dimension(600, 480)).setVisible(true);
             }
-          },
-          true);
+            sb.append("</html>");
+            new TextDialog(
+                App.ui().getOwnerFrame().getRootPane(),
+                sb.toString(),
+                summarizer.getName(),
+                new Dimension(600, 480)).setVisible(true);
+          }
+        },
+        true);
     }
   }
 }

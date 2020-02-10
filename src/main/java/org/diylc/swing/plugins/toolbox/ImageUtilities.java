@@ -45,7 +45,9 @@ import org.diylc.appframework.miscutils.Utils;
 public final class ImageUtilities {
   static final String TOOLTIP_SEPAR = "<br>";
 
-  private ImageUtilities() {}
+  private ImageUtilities() {
+    //
+  }
 
   public static Icon image2Icon(Image image) {
     if (image instanceof ToolTipImage) {

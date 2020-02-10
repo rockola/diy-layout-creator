@@ -30,10 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.Icon;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
@@ -49,7 +47,8 @@ import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
 
 /**
- * Entity class used to describe a component type.
+ * Entity class used to describe a component type. In other words,
+ * component metadata.
  *
  * @author Branislav Stojkovic
  * @see IDIYComponent
@@ -97,6 +96,26 @@ public class ComponentType {
   private List<Template> variants = new ArrayList<>();
   private String searchKey;
 
+  /**
+     ComponentType constructor.
+
+     @param name Component type name.
+     @param description Component type description.
+     @param creationMethod Component creation method: Single-click, or point-by-point.
+     @param category Component category name.
+     @param namePrefix Prefix used for naming individual components, e.g. "R" for resistors.
+     @param author Author of this component class.
+     @param icon Icon to use for these components.
+     @param instanceClass Class for instances of this component.
+     @param zOrder Z-order for stacking.
+     @param flexibleZOrder
+     @param bomPolicy
+     @param autoEdit
+     @param xmlTag XML tag corresponding to this component type.
+     @param transformer Transformer class for rotating/mirroring components of this type.
+     @param keywordPolicy
+     @param keywordTag
+   */
   public ComponentType(
       String name,
       String description,
@@ -153,6 +172,13 @@ public class ComponentType {
     LOG.trace("ComponentType({}, ...) is {}th type", name, getTypeOrdinal());
   }
 
+  /**
+     ComponentType constructor. Used for pseudo-components which have empty defaults.
+
+     @param name Component type name.
+     @param description Component type description.
+     @param creationMethod Component creation method: Single-click, or point-by-point.
+  */
   public ComponentType(
       String name,
       String description,
@@ -176,10 +202,20 @@ public class ComponentType {
         null);
   }
 
+  /**
+     Ordinal of this type. Used for debugging.
+
+     @return type ordinal.
+   */
   private static int getTypeOrdinal() {
     return typeOrdinal++;
   }
 
+  /**
+     Name of this type.
+
+     @return type name.
+  */
   public String getName() {
     return name;
   }
@@ -240,6 +276,11 @@ public class ComponentType {
     return keywordTag;
   }
 
+  /**
+     Get variants associated with this type.
+
+     @return list of variants.
+  */
   public List<Template> getVariants() {
     if (variants.isEmpty()) {
       LOG.trace("getVariants() {} Getting variant map from {}",
@@ -286,17 +327,22 @@ public class ComponentType {
     return variants;
   }
 
+  /**
+     Number of existing variants for this type.
+
+     @return number of variants (0 if none).
+   */
   public int howManyVariants() {
     return getVariants().size();
   }
 
   /**
-     True if this component type matches given key.
-
-     <p>Type matches key if name, description, or category contains
-     key. Key must already be in lowercase.
-
-     @param key Search string
+   * True if this component type matches given key.
+   *
+   * <p>Type matches key if name, description, or category contains
+   * key. Key must already be in lowercase.
+   *
+   * @param key Search string
    */
   public boolean isOfInterest(String key) {
     return searchKey.contains(key);
@@ -397,14 +443,14 @@ public class ComponentType {
   }
 
   private static void loadVariants() throws IOException {
-      XmlNode variantsXml = XmlReader.read(ComponentType.class.getResource(
-          "/org/diylc/variants4.xml"));
-      // TODO handle variants
-      /*
+    XmlNode variantsXml = XmlReader.read(ComponentType.class.getResource(
+        "/org/diylc/variants4.xml"));
+    // TODO handle variants
+    /*
       Map<String, List<Template>> map =
-          (Map<String, List<Template>>) Serializer.fromResource("/org/diylc/variants.xml");
+      (Map<String, List<Template>>) Serializer.fromResource("/org/diylc/variants.xml");
       defaultVariantMap.putAll(map);
-      */
+    */
   }
 
   private static IComponentTransformer getComponentTransformer(
@@ -438,10 +484,13 @@ public class ComponentType {
   }
 
   /**
-     Extract component type from class.
+     Extract component type from component instance.
+
+     @param component Component instance.
+     @return ComponentType instance corresponding to component.
   */
-  public static ComponentType extractFrom(IDIYComponent<?> c) {
-    return extractFrom((Class<? extends IDIYComponent<?>>) c.getClass());
+  public static ComponentType extractFrom(IDIYComponent<?> component) {
+    return extractFrom((Class<? extends IDIYComponent<?>>) component.getClass());
   }
 
   /**

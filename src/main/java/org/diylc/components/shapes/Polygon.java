@@ -56,13 +56,12 @@ public class Polygon extends AbstractShape {
 
   public Polygon() {
     super();
-    this.controlPoints =
-        new Point[] {
-          new Point(0, 0),
-          new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-          new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
-        };
+    this.controlPoints = new Point[] {
+      new Point(0, 0),
+      new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+      new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+      new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+    };
   }
 
   @Override
@@ -75,22 +74,22 @@ public class Polygon extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     g2d.setColor(color);
-    int[] xPoints = new int[controlPoints.length];
-    int[] yPoints = new int[controlPoints.length];
+    int[] pointsX = new int[controlPoints.length];
+    int[] pointsY = new int[controlPoints.length];
     for (int i = 0; i < controlPoints.length; i++) {
-      xPoints[i] = controlPoints[i].x;
-      yPoints[i] = controlPoints[i].y;
+      pointsX[i] = controlPoints[i].x;
+      pointsY[i] = controlPoints[i].y;
     }
 
     Composite oldComposite = setTransparency(g2d);
-    g2d.fillPolygon(xPoints, yPoints, controlPoints.length);
+    g2d.fillPolygon(pointsX, pointsY, controlPoints.length);
     g2d.setComposite(oldComposite);
 
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
     g2d.setColor(tryBorderColor(false, borderColor));
-    g2d.drawPolygon(xPoints, yPoints, controlPoints.length);
+    g2d.drawPolygon(pointsX, pointsY, controlPoints.length);
   }
 
   @EditableProperty(name = "Edges")

@@ -21,7 +21,6 @@
 package org.diylc.core;
 
 import java.awt.Point;
-
 import org.diylc.core.measures.Size;
 
 public class Grid {
@@ -44,16 +43,21 @@ public class Grid {
   }
 
   /**
-   * Rounds the number to the closest grid line.
+   * Rounds the coordinate to the closest grid line.
    *
-   * @param x
-   * @return
+   * @param coordinate Coordinate before rounding.
+   * @return Coordinate rounded to the closest grid line as pixels.
    */
-  public int roundToGrid(double x) {
+  public int roundToGrid(double coordinate) {
     double grid = gridSpacing.convertToPixels();
     return (int) (Math.round(1f * x / grid) * grid);
   }
 
+  /**
+     Align point with grid.
+
+     @return Grid point closest to given point.
+   */
   public Point snapToGrid(Point point) {
     int x = roundToGrid(point.x);
     int y = roundToGrid(point.y);

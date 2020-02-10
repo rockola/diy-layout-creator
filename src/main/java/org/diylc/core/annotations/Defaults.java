@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Defaults {
-  private Defaults() {}
+  private Defaults() {
+    //
+  }
 
   private static final Map<Class<?>, Object> DEFAULTS;
 

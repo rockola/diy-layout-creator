@@ -37,10 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.undo.UndoManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.action.ComponentEdit;
 import org.diylc.action.ProjectEdit;
@@ -61,14 +59,12 @@ import org.diylc.netlist.Position;
 import org.diylc.netlist.SwitchSetup;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
-
 import org.diylc.presenter.ComponentArea; // needed for findComponentsAt
 import org.diylc.presenter.ComponentProcessor; // needed by createUniqueName
 import org.diylc.presenter.Connection; // needed by continuity area methods
 import org.diylc.presenter.DrawingManager; // needed for CONTROL_POINT_SIZE only
 import org.diylc.presenter.InstantiationManager; // needed by createUniqueName
 import org.diylc.presenter.Presenter; // needed for dispatchMessage
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -92,7 +88,6 @@ public class Project implements Serializable, Cloneable {
   public static final String DEFAULT_TITLE = Config.getString("project.new-title");
   public static final Size DEFAULT_WIDTH = Size.A4_HEIGHT;
   public static final Size DEFAULT_HEIGHT = Size.A4_WIDTH;
-  public static final Size DEFAULT_GRID_SPACING = Size.in(0.1);
   public static final Font DEFAULT_FONT = new Font(Config.getString("font.label"), Font.PLAIN, 14);
 
   private VersionNumber fileVersion;
@@ -101,7 +96,7 @@ public class Project implements Serializable, Cloneable {
   private String description;
   private Size width = DEFAULT_WIDTH;
   private Size height = DEFAULT_HEIGHT;
-  private Size gridSpacing = DEFAULT_GRID_SPACING;
+  private Grid grid = new Grid();
   private List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
   private Set<Set<IDIYComponent<?>>> groups = new HashSet<Set<IDIYComponent<?>>>();
   private Set<Integer> lockedLayers = new HashSet<Integer>();
@@ -113,49 +108,51 @@ public class Project implements Serializable, Cloneable {
   private transient Date created = new Date(); // should really be called "instantiated"
   private transient int sequenceNumber = nextSequenceNumber();
 
-  public Project() {}
+  public Project() {
+    //
+  }
 
   public Project(XmlNode projectTree) {
     projectTree.children.entries().stream().forEach((e) -> {
-        XmlNode node = e.getValue();
-        switch (node.tagName) {
-          case "fileVersion":
-            fileVersion = new VersionNumber(node);
-            break;
-          case "title":
-            title = node.value;
-            break;
-          case "author":
-            author = node.value;
-            break;
-          case "description":
-            description = node.value;
-            break;
-          case "width":
-            width = new Size(node);
-            break;
-          case "height":
-            height = new Size(node);
-            break;
-          case "gridSpacing":
-            gridSpacing = new Size(node);
-            break;
-          case "components":
-            components.addAll(ComponentFactory.makeComponents(node.children.asMap()));
-            break;
-          case "groups":
-            break;
-          case "lockedLayers":
-            break;
-          case "hiddenLayers":
-            break;
-          case "font":
-            // TODO!
-            break;
-          default:
-            LOG.error("Unknown Project toplevel child {}", node.tagName);
-        }
-      });
+      XmlNode node = e.getValue();
+      switch (node.tagName) {
+        case "fileVersion":
+          fileVersion = new VersionNumber(node);
+          break;
+        case "title":
+          title = node.value;
+          break;
+        case "author":
+          author = node.value;
+          break;
+        case "description":
+          description = node.value;
+          break;
+        case "width":
+          width = new Size(node);
+          break;
+        case "height":
+          height = new Size(node);
+          break;
+        case "gridSpacing":
+          grid = new Grid(new Size(node));
+          break;
+        case "components":
+          components.addAll(ComponentFactory.makeComponents(node.children.asMap()));
+          break;
+        case "groups":
+          break;
+        case "lockedLayers":
+          break;
+        case "hiddenLayers":
+          break;
+        case "font":
+          // TODO!
+          break;
+        default:
+          LOG.error("Unknown Project toplevel child {}", node.tagName);
+      }
+    });
   }
 
   /**
@@ -407,10 +404,10 @@ public class Project implements Serializable, Cloneable {
           break;
         default:
           /* PathIterator.SEG_CLOSE will bring us here */
+          // TODO: maybe throw new RuntimeException("Unhandled segment type");
           LOG.error(
               "Unhandled segment type {}",
               type == PathIterator.SEG_CLOSE ? "SEG_CLOSE" : type);
-          // TODO: maybe throw new RuntimeException("Unhandled segment type");
       }
       pathIterator.next();
     }
@@ -619,11 +616,19 @@ public class Project implements Serializable, Cloneable {
 
   @EditableProperty(name = "Grid Spacing", validatorClass = SpacingValidator.class, sortOrder = 6)
   public Size getGridSpacing() {
-    return gridSpacing;
+    return grid.getSpacing();
   }
 
   public void setGridSpacing(Size gridSpacing) {
-    this.gridSpacing = gridSpacing;
+    grid = new Grid(gridSpacing);
+  }
+
+  public Grid getGrid() {
+    return grid;
+  }
+
+  public void setGrid(Grid grid) {
+    this.grid = grid;
   }
 
   /**
@@ -834,11 +839,11 @@ public class Project implements Serializable, Cloneable {
     } else if (!width.equals(other.width)) {
       return false;
     }
-    if (gridSpacing == null) {
-      if (other.gridSpacing != null) {
+    if (grid == null) {
+      if (other.grid != null) {
         return false;
       }
-    } else if (!gridSpacing.equals(other.gridSpacing)) {
+    } else if (!grid.equals(other.grid)) {
       return false;
     }
     if (font == null) {
@@ -1037,8 +1042,9 @@ public class Project implements Serializable, Cloneable {
       }
 
       // extract switches
-      if (includeSwitches && ISwitch.class.isAssignableFrom(type.getInstanceClass()))
+      if (includeSwitches && ISwitch.class.isAssignableFrom(type.getInstanceClass())) {
         switches.add((ISwitch) c);
+      }
     }
 
     // save us the trouble

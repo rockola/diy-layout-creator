@@ -18,17 +18,24 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.diylc.core;
+package org.diylc.components.semiconductors;
 
-public enum CreationMethod {
-  SINGLE_CLICK,
-  POINT_BY_POINT;
+import org.apache.commons.text.WordUtils;
 
-  public boolean isSingleClick() {
-    return this == SINGLE_CLICK;
+public enum FETPolarity {
+  NEGATIVE,
+  POSITIVE;
+
+  @Override
+  public String toString() {
+    return WordUtils.capitalize(name());
   }
 
-  public boolean isPointByPoint() {
-    return this == POINT_BY_POINT;
+  public boolean isNegative() {
+    return this == NEGATIVE;
+  }
+
+  public boolean isPositive() {
+    return this == POSITIVE;
   }
 }

@@ -34,7 +34,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.App;
 import org.diylc.awt.ShadedPaint;
 import org.diylc.awt.StringUtils;
@@ -196,7 +195,6 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
           int endY = (int) (getPoint(0).y + Math.sin(theta) * leadLength);
           Line2D line = new Line2D.Double(getPoint(0).x, getPoint(0).y, endX, endY);
           Area leadArea = new Area(leadStroke.createStrokedShape(line));
-
           endX = (int) (getPoint(1).x + Math.cos(theta - Math.PI) * leadLength);
           endY = (int) (getPoint(1).y + Math.sin(theta - Math.PI) * leadLength);
           line = new Line2D.Double(getPoint(1).x, getPoint(1).y, endX, endY);
@@ -204,10 +202,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
           g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
           Color leadColor = getLeadColorForPainting();
-          g2d.setColor(leadColor);
-          g2d.fill(leadArea);
-          g2d.setColor(leadColor.darker());
-          g2d.draw(leadArea);
+          leadArea.fillDraw(g2d, leadColor, leadColor.darker());
         } else {
           g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
           Color leadColor = getLeadColorForPainting();

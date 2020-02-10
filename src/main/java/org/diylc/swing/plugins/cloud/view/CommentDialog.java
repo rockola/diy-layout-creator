@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.cloud.view;
 
 import java.awt.Color;
@@ -39,7 +40,7 @@ import org.diylc.plugins.cloud.model.CommentEntity;
 import org.diylc.plugins.cloud.model.ProjectEntity;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.swing.ISimpleView;
-import org.diylc.swing.gui.components.HTMLTextArea;
+import org.diylc.swing.gui.components.HtmlTextArea;
 
 /**
  * {@link JDialog} that shows a list of comments posted to a cloud
@@ -137,7 +138,7 @@ public class CommentDialog extends JDialog {
 
   private JTextArea getReplyArea() {
     if (replyArea == null) {
-      replyArea = new HTMLTextArea();
+      replyArea = new HtmlTextArea();
       replyArea.setFont(getSendButton().getFont());
     }
     return replyArea;
@@ -147,36 +148,36 @@ public class CommentDialog extends JDialog {
     if (sendButton == null) {
       sendButton = new JButton("Send Reply");
       sendButton.addActionListener((e) -> {
-          final String comment = getReplyArea().getText();
-          if (comment.trim().length() == 0) {
-            cloudUI.error("Cannot post an empty comment.");
-          }
+        final String comment = getReplyArea().getText();
+        if (comment.trim().length() == 0) {
+          cloudUI.error("Cannot post an empty comment.");
+        }
 
-          cloudUI.executeBackgroundTask(new ITask<Void>() {
+        cloudUI.executeBackgroundTask(new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                CloudPresenter.Instance.postComment(project.getId(), comment);
-                return null;
-              }
+            @Override
+            public Void doInBackground() throws Exception {
+              CloudPresenter.Instance.postComment(project.getId(), comment);
+              return null;
+            }
 
-              @Override
-              public void failed(Exception e) {
-                cloudUI.error("Error posting comment.");
-              }
+            @Override
+            public void failed(Exception e) {
+              cloudUI.error("Error posting comment.");
+            }
 
-              @Override
-              public void complete(Void result) {
-                getReplyArea().setText("");
-                CommentEntity newComment = new CommentEntity();
-                newComment.setPostedAt(JUST_NOW);
-                newComment.setUsername(CloudPresenter.Instance.currentUsername());
-                newComment.setComment(comment);
-                addComment(newComment).requestFocusInWindow();
-                getListPanel().revalidate();
-              }
-              });
-        });
+            @Override
+            public void complete(Void result) {
+              getReplyArea().setText("");
+              CommentEntity newComment = new CommentEntity();
+              newComment.setPostedAt(JUST_NOW);
+              newComment.setUsername(CloudPresenter.Instance.currentUsername());
+              newComment.setComment(comment);
+              addComment(newComment).requestFocusInWindow();
+              getListPanel().revalidate();
+            }
+          });
+      });
     }
     return sendButton;
   }
@@ -199,7 +200,7 @@ public class CommentDialog extends JDialog {
                        gbc);
     gbc.gridy = lastPosition++;
 
-    JTextArea commentArea = new HTMLTextArea(c.getComment());
+    JTextArea commentArea = new HtmlTextArea(c.getComment());
     commentArea.setEditable(false);
     commentArea.setFont(getSendButton().getFont());
     commentArea.setLineWrap(true);

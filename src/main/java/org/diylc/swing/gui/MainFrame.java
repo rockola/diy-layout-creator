@@ -52,10 +52,8 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.Config;
@@ -303,9 +301,9 @@ public class MainFrame extends JFrame {
 
   /**
    * Injects a custom GUI panels provided by the plug-in and desired position in the window.
-   * Application will layout plug-in panels accordingly. <br>
-   * Valid positions are:
+   * Application will layout plug-in panels accordingly.
    *
+   * <p>Valid positions are:
    * <ul>
    *   <li>{@link SwingConstants#TOP}
    *   <li>{@link SwingConstants#BOTTOM}
@@ -313,15 +311,15 @@ public class MainFrame extends JFrame {
    *   <li>{@link SwingConstants#RIGHT}
    * </ul>
    *
-   * Center position is reserved for the main canvas panel and cannot be used.
+   * <p>Center position is reserved for the main canvas panel and cannot be used.
    *
    * @param component
    * @param position
    * @throws BadPositionException in case invalid position is specified
    */
-  public void injectGUIComponent(JComponent component, int position) throws BadPositionException {
+  public void injectGuiComponent(JComponent component, int position) throws BadPositionException {
 
-    LOG.trace("injectGUIComponent(%s, %s)", component.getClass().getName(), position);
+    LOG.trace("injectGuiComponent(%s, %s)", component.getClass().getName(), position);
     switch (position) {
       case SwingConstants.TOP:
         topPanel.add(component);
@@ -499,7 +497,9 @@ public class MainFrame extends JFrame {
     worker.execute();
   }
 
-  /** @return {@link JFrame} that can be used to reference secondary dialogs and frames */
+  /**
+     @return {@link JFrame} that can be used to reference secondary dialogs and frames
+  */
   public JFrame getOwnerFrame() {
     return this;
   }

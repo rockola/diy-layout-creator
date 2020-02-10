@@ -30,8 +30,6 @@ import org.apache.logging.log4j.Logger;
 public class KeyCodeAdapter extends XmlAdapter<String, Integer> {
   private static final Logger LOG = LogManager.getLogger(KeyCodeAdapter.class);
 
-  public KeyCodeAdapter() {}
-
   private static Map<String, Integer> keyCodes =
       new HashMap<String, Integer>() {
         {
@@ -226,6 +224,10 @@ public class KeyCodeAdapter extends XmlAdapter<String, Integer> {
           put("UNDEFINED", KeyEvent.VK_UNDEFINED);
         }
       };
+
+  public KeyCodeAdapter() {
+    //
+  }
 
   public static Map<String, Integer> getAllKeycodes() {
     return keyCodes;

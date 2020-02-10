@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.KeyStroke;
-
 import org.apache.commons.configuration2.CompositeConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.SystemConfiguration;
@@ -45,7 +44,6 @@ import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.swing.gui.Keymap;
 
 public final class Config {
@@ -119,7 +117,7 @@ public final class Config {
      @param key Resource key
      @return URI if found, or null
    */
-  public static URI getURI(String key) {
+  public static URI getUri(String key) {
     URI uri = null;
     String u = getString("url." + key);
     try {
@@ -133,14 +131,14 @@ public final class Config {
   /**
      Find URL corresponding to given key from String resources.
 
-     @see getURI
+     @see getUri
      @param key Resource key
      @return URL if found, or null
    */
-  public static URL getURL(String key) {
+  public static URL getUrl(String key) {
     URL url = null;
     try {
-      url = getURI(key).toURL();
+      url = getUri(key).toURL();
     } catch (MalformedURLException e) {
       LOG.error(key + " does not have URL syntax", e);
     }
@@ -152,15 +150,15 @@ public final class Config {
   }
 
   /**
-     Fetch _key_ contents from defaults as String.
-
-     <p>If contents is the empty string, return key in title
-     case. <code>&lt;Key&gt;&lt;/key&gt;</code> can be stored simply
-     as <code>&lt;key/&gt;</code>. Hyphens in _key_ are changed to
-     spaces. Only the last part after any dot ('.') is used.
-
-     @param key Resource key
-     @return String found in defaults, or null
+   * Fetch _key_ contents from defaults as String.
+   *
+   * <p>If contents is the empty string, return key in title
+   * case. <code>&lt;Key&gt;&lt;/key&gt;</code> can be stored simply
+   * as <code>&lt;key/&gt;</code>. Hyphens in _key_ are changed to
+   * spaces. Only the last part after any dot ('.') is used.
+   *
+   * @param key Resource key
+   * @return String found in defaults, or null
    */
   public static String getString(String key) {
     String s = config.getString(key);

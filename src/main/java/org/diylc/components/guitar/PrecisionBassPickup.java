@@ -28,7 +28,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -55,7 +54,7 @@ import org.diylc.utils.Constants;
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Guitar Wiring Diagram")
-public class PBassPickup extends AbstractBassPickup {
+public class PrecisionBassPickup extends AbstractBassPickup {
 
   private static final long serialVersionUID = 1L;
 

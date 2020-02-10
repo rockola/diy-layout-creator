@@ -42,7 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-
 import org.diylc.images.Icon;
 import org.diylc.swingframework.IDrawingProvider;
 
@@ -50,18 +49,20 @@ import org.diylc.swingframework.IDrawingProvider;
  * Improved version of {@link JScrollPane} that features:
  *
  * <ul>
- *   <li>horizontal and vertical rulers with cursor position indicators
+ *   <li>horizontal and vertical rulers with cursor position
+ *   indicators
  *   <li>button in the top-left corner to choose ruler units
- *   <li>button in the bottom-right corner to navigate through the viewport
+ *   <li>button in the bottom-right corner to navigate through the
+ *   viewport
  * </ul>
  *
- * Note: when doing drag'n'drop in the viewport component, sometimes
+ * <p>Note: when doing drag'n'drop in the viewport component, sometimes
  * Java doesn't fire <code> mouseDragged</code> events. To overcome
  * this, component can notify about drag movements by firing property
  * change events. Property name is "dragPoint" and x, y coordinates
- * are stored as oldValue and newValue respectively. <br> <br>
+ * are stored as oldValue and newValue respectively.
  *
- * Note to self: try to come up with something more elegant.
+ * <p>TODO: something more elegant.
  *
  * @author Branislav Stojkovic
  */
@@ -69,19 +70,18 @@ public class RulerScrollPane extends JScrollPane {
 
   private static final long serialVersionUID = 1L;
 
+  private static double MOUSE_SCROLL_SPEED = 0.8;
+
   private Ruler horizontalRuler;
   private Ruler verticalRuler;
   private JButton unitButton;
   private JButton navigateButton;
   private Corner topRightCorner;
   private Corner bottomLeftCorner;
-
   private List<IRulerListener> listeners;
-
-  // mouse scroll mode
   private boolean mouseScrollMode = false;
   private Point mouseScrollPrevLocation = null;
-  private static double MOUSE_SCROLL_SPEED = 0.8;
+
 
   public RulerScrollPane(Component view) {
     this(view, new ComponentThumbnailProvider(view));
@@ -173,14 +173,14 @@ public class RulerScrollPane extends JScrollPane {
     unitButton.setFont(unitButton.getFont().deriveFont(9f));
     unitButton.setFocusable(false);
     unitButton.addActionListener((e) -> {
-        boolean flip = !horizontalRuler.isMetric();
-        horizontalRuler.setMetric(flip);
-        verticalRuler.setMetric(flip);
-        unitButton.setText(flip ? "in" : "cm");
-        for (IRulerListener listener : listeners) {
-          listener.unitsChanged(horizontalRuler.isMetric());
-        }
-      });
+      boolean flip = !horizontalRuler.isMetric();
+      horizontalRuler.setMetric(flip);
+      verticalRuler.setMetric(flip);
+      unitButton.setText(flip ? "in" : "cm");
+      for (IRulerListener listener : listeners) {
+        listener.unitsChanged(horizontalRuler.isMetric());
+      }
+    });
 
     navigateButton = new JButton(Icon.MoveSmall.icon());
     navigateButton.setToolTipText("Auto-scroll");
@@ -188,10 +188,10 @@ public class RulerScrollPane extends JScrollPane {
     navigateButton.setMargin(new Insets(0, 0, 0, 0));
     final RulerScrollPane thisPane = this;
     navigateButton.addActionListener((e) -> {
-        NavigateDialog navigateDialog = new NavigateDialog(thisPane, provider);
-        navigateDialog.setVisible(true);
-        navigateDialog.setLocationRelativeTo(navigateButton);
-      });
+      NavigateDialog navigateDialog = new NavigateDialog(thisPane, provider);
+      navigateDialog.setVisible(true);
+      navigateDialog.setLocationRelativeTo(navigateButton);
+    });
 
     topRightCorner = new Corner(Ruler.HORIZONTAL);
     bottomLeftCorner = new Corner(Ruler.VERTICAL);
@@ -202,17 +202,17 @@ public class RulerScrollPane extends JScrollPane {
     setCorner(ScrollPaneConstants.LOWER_RIGHT_CORNER, navigateButton);
 
     view.addPropertyChangeListener((evt) -> {
-        if (evt.getPropertyName().equals("dragPoint")) {
-          horizontalRuler.setIndicatorValue(((Long) evt.getOldValue()).intValue());
-          horizontalRuler.repaint();
-          verticalRuler.setIndicatorValue(((Long) evt.getNewValue()).intValue());
-          verticalRuler.repaint();
-        }
-      });
+      if (evt.getPropertyName().equals("dragPoint")) {
+        horizontalRuler.setIndicatorValue(((Long) evt.getOldValue()).intValue());
+        horizontalRuler.repaint();
+        verticalRuler.setIndicatorValue(((Long) evt.getNewValue()).intValue());
+        verticalRuler.repaint();
+      }
+    });
 
     view.addMouseMotionListener(new MouseAdapter() {
 
-        private execute(int horizontalValue, int verticalValue) {
+        private void execute(int horizontalValue, int verticalValue) {
           horizontalRuler.setIndicatorValue(horizontalValue);
           horizontalRuler.repaint();
           verticalRuler.setIndicatorValue(verticalValue);

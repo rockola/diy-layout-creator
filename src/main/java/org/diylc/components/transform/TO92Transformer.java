@@ -56,13 +56,7 @@ public class TO92Transformer implements IComponentTransformer {
     }
 
     TransistorTO92 transistor = (TransistorTO92) component;
-    Orientation o = transistor.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length) oValue = 0;
-    o = Orientation.values()[oValue];
-    transistor.setOrientation(o);
+    transistor.setOrientation(transistor.getOrientation().rotate(direction));
   }
 
   @Override
@@ -70,8 +64,8 @@ public class TO92Transformer implements IComponentTransformer {
     TransistorTO92 transistor = (TransistorTO92) component;
     int dx = center.x - transistor.getControlPoint(1).x;
     int dy = center.y - transistor.getControlPoint(1).y;
+    Orientation o = transistor.getOrientation();
     if (direction == IComponentTransformer.HORIZONTAL) {
-      Orientation o = transistor.getOrientation();
       switch (o) {
         case DEFAULT:
           o = Orientation._180;
@@ -93,7 +87,6 @@ public class TO92Transformer implements IComponentTransformer {
 
       transistor.setOrientation(o);
     } else {
-      Orientation o = transistor.getOrientation();
       switch (o) {
         case _90:
           o = Orientation._270;

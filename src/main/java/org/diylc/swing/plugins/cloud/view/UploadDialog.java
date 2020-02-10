@@ -44,15 +44,13 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Message;
 import org.diylc.common.PropertyWrapper;
-import org.diylc.swing.gui.components.HTMLTextArea;
+import org.diylc.swing.gui.components.HtmlTextArea;
 import org.diylc.swingframework.ButtonDialog;
 import org.diylc.utils.KeywordExtractor;
 
@@ -179,7 +177,7 @@ public class UploadDialog extends ButtonDialog {
       termsLabel.setBorder(
           BorderFactory.createCompoundBorder(
               BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-      termsLabel.setText(Message.getHTML("cloud-terms"));
+      termsLabel.setText(Message.getHtml("cloud-terms"));
     }
     return termsLabel;
   }
@@ -259,7 +257,7 @@ public class UploadDialog extends ButtonDialog {
 
   private JTextArea getDescriptionArea() {
     if (descriptionArea == null) {
-      descriptionArea = new HTMLTextArea();
+      descriptionArea = new HtmlTextArea();
 
       List<PropertyWrapper> props = plugInPort.getProperties(plugInPort.currentProject());
 

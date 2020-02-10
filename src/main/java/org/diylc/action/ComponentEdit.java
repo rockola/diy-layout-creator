@@ -24,7 +24,6 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-
 import org.diylc.core.IDIYComponent;
 
 public class ComponentEdit extends AbstractUndoableEdit {

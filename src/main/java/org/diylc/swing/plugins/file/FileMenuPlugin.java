@@ -22,16 +22,14 @@ package org.diylc.swing.plugins.file;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractAction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.Config;

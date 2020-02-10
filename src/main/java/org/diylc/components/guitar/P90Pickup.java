@@ -31,7 +31,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -61,7 +60,6 @@ import org.diylc.utils.Constants;
 public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
 
   private static final long serialVersionUID = 1L;
-
   private static Color BODY_COLOR = Color.decode("#D8C989");
   //  private static Color POINT_COLOR = Color.darkGray;
 
@@ -70,12 +68,11 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
   private static Size DOG_EAR_LENGTH = Size.mm(86.9);
   private static Size TOTAL_LENGTH = Size.mm(118.7);
   private static Size DOG_EAR_EDGE_RADIUS = Size.mm(4);
-
   // soap bar
   private static Size SOAP_BAR_WIDTH = Size.mm(35.3);
   private static Size SOAP_BAR_LENGTH = Size.mm(85.6);
   private static Size SOAP_BAR_EDGE_RADIUS = Size.mm(8);
-
+  //
   private static Size LIP_RADIUS = Size.mm(10);
   private static Size POINT_MARGIN = Size.mm(3.5);
   private static Size POINT_SIZE = Size.mm(2);

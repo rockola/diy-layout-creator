@@ -51,10 +51,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -102,7 +100,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
   public void connect(IPlugInPort pluginPort) {
     this.pluginPort = pluginPort;
     try {
-      App.ui().injectGUIComponent(getScrollPane(), SwingConstants.CENTER);
+      App.ui().injectGuiComponent(getScrollPane(), SwingConstants.CENTER);
     } catch (BadPositionException e) {
       LOG.error("Could not install canvas plugin", e);
     }
@@ -216,49 +214,48 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
             // Invoke the rest of the code later so we get the chance to
             // process selection messages.
             SwingUtilities.invokeLater(() -> {
-                if (pluginPort.getNewComponentTypeSlot() == null
-                    && (e.isPopupTrigger()
-                        || (pressedEvent != null && pressedEvent.isPopupTrigger()))) {
-                  Project project = pluginPort.currentProject();
-                  // Enable actions.
-                  List<AbstractAction> selectionActions = Arrays.asList(
-                      actions.get("cut"),
-                      actions.get("copy"),
-                      actions.get("duplicate"),
-                      actions.get("edit-selection"),
-                      actions.get("delete-selection"),
-                      actions.get("expand-all"),
-                      actions.get("expand-immediate"),
-                      actions.get("expand-same-type"),
-                      actions.get("group"),
-                      actions.get("ungroup"),
-                      actions.get("nudge"),
-                      actions.get("send-to-back"),
-                      actions.get("bring-to-front"),
-                      actions.get("rotate-clockwise"),
-                      actions.get("rotate-counterclockwise"),
-                      actions.get("mirror-horizontally"),
-                      actions.get("mirror-vertically"));
-                  boolean enabled = !project.emptySelection();
-                  for (AbstractAction a : selectionActions) {
-                    a.setEnabled(enabled);
-                  }
-                  enabled = false;
-                  try {
-                    enabled =
-                        clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor);
-                  } catch (NullPointerException ex) {
-                    LOG.error("mouseReleased() flavor is null?", ex);
-                  } catch (IllegalStateException ie) {
-                    // clipboard is currently unavailable
-                    LOG.debug("mouseReleased() clipboard unavailable", ie);
-                  }
-                  actions.get("paste").setEnabled(enabled);
-                  actions.get("save-as-template").setEnabled(project.getSelection().size() == 1);
-                  actions.get("save-as-block").setEnabled(project.getSelection().size() > 1);
-                  showPopupAt(e.getX(), e.getY());
+              if (pluginPort.getNewComponentTypeSlot() == null
+                  && (e.isPopupTrigger()
+                      || (pressedEvent != null && pressedEvent.isPopupTrigger()))) {
+                Project project = pluginPort.currentProject();
+                // Enable actions.
+                List<AbstractAction> selectionActions = Arrays.asList(
+                    actions.get("cut"),
+                    actions.get("copy"),
+                    actions.get("duplicate"),
+                    actions.get("edit-selection"),
+                    actions.get("delete-selection"),
+                    actions.get("expand-all"),
+                    actions.get("expand-immediate"),
+                    actions.get("expand-same-type"),
+                    actions.get("group"),
+                    actions.get("ungroup"),
+                    actions.get("nudge"),
+                    actions.get("send-to-back"),
+                    actions.get("bring-to-front"),
+                    actions.get("rotate-clockwise"),
+                    actions.get("rotate-counterclockwise"),
+                    actions.get("mirror-horizontally"),
+                    actions.get("mirror-vertically"));
+                boolean enabled = !project.emptySelection();
+                for (AbstractAction a : selectionActions) {
+                  a.setEnabled(enabled);
                 }
-              });
+                enabled = false;
+                try {
+                  enabled = clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor);
+                } catch (NullPointerException ex) {
+                  LOG.error("mouseReleased() flavor is null?", ex);
+                } catch (IllegalStateException ie) {
+                  // clipboard is currently unavailable
+                  LOG.debug("mouseReleased() clipboard unavailable", ie);
+                }
+                actions.get("paste").setEnabled(enabled);
+                actions.get("save-as-template").setEnabled(project.getSelection().size() == 1);
+                actions.get("save-as-block").setEnabled(project.getSelection().size() > 1);
+                showPopupAt(e.getX(), e.getY());
+              }
+            });
           }
         });
 
@@ -328,7 +325,6 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
             if (App.wheelZoom() || (Utils.isMac() ? e.isMetaDown() : e.isControlDown())) {
 
               Point mousePos = getCanvasPanel().getMousePosition(true);
-
               // change zoom level
               double oldZoom = pluginPort.getZoomLevel();
               double newZoom;
@@ -350,9 +346,6 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
               Rectangle2D selectionBounds = pluginPort.getSelectionBounds(true);
               Rectangle visibleRect = scrollPane.getVisibleRect();
 
-              JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
-              JScrollBar vertical = scrollPane.getVerticalScrollBar();
-
               if (selectionBounds == null) {
                 // center to cursor
                 Point desiredPos =
@@ -361,42 +354,26 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
                         (int) (1d * mousePos.y / oldZoom * newZoom));
                 int dx = desiredPos.x - mousePos.x;
                 int dy = desiredPos.y - mousePos.y;
-                horizontal.setValue(horizontal.getValue() + dx);
-                vertical.setValue(vertical.getValue() + dy);
+                horizontalScrollBar.setValue(horizontalScrollBar.getValue() + dx);
+                verticalScrollBar.setValue(verticalScrollBar.getValue() + dy);
               } else {
                 // center to selection
-                horizontal.setValue(
-                    (int)
-                    (selectionBounds.getX()
-                     + selectionBounds.getWidth() / 2
-                     - visibleRect.getWidth() / 2));
-                vertical.setValue(
-                    (int)
-                    (selectionBounds.getY()
-                     + selectionBounds.getHeight() / 2
-                     - visibleRect.getHeight() / 2));
+                horizontalScrollBar.setValue(
+                    (int) (selectionBounds.getX()
+                           + (selectionBounds.getWidth() - visibleRect.getWidth()) / 2));
+                verticalScrollBar.setValue(
+                    (int) (selectionBounds.getY()
+                           + (selectionBounds.getHeight() - visibleRect.getHeight()) / 2));
               }
             }
-            if (e.isShiftDown()) {
-              int iScrollAmount = e.getScrollAmount();
-              int iNewValue =
-                  horizontalScrollBar.getValue()
-                  + horizontalScrollBar.getBlockIncrement()
-                  * iScrollAmount
+            JScrollBar theScrollBar = e.isShiftDown() ? horizontalScrollBar : verticalScrollBar;
+            int newValue =
+                theScrollBar.getValue()
+                  + theScrollBar.getBlockIncrement()
+                  * e.getScrollAmount()
                   * e.getWheelRotation();
-              if (iNewValue <= horizontalScrollBar.getMaximum()) {
-                horizontalScrollBar.setValue(iNewValue);
-              }
-            } else {
-              int iScrollAmount = e.getScrollAmount();
-              int iNewValue =
-                  verticalScrollBar.getValue()
-                  + verticalScrollBar.getBlockIncrement()
-                  * iScrollAmount
-                  * e.getWheelRotation();
-              if (iNewValue <= verticalScrollBar.getMaximum()) {
-                verticalScrollBar.setValue(iNewValue);
-              }
+            if (newValue <= theScrollBar.getMaximum()) {
+              theScrollBar.setValue(newValue);
             }
           }
         });
@@ -487,11 +464,11 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
       JMenuItem item = new JMenuItem(component.getName());
       final IDIYComponent<?> finalComponent = component;
       item.addActionListener((e) -> {
-          Project project = pluginPort.currentProject();
-          project.clearSelection();
-          project.addToSelection(finalComponent);
-          pluginPort.refresh();
-        });
+        Project project = pluginPort.currentProject();
+        project.clearSelection();
+        project.addToSelection(finalComponent);
+        pluginPort.refresh();
+      });
       getSelectionMenu().add(item);
     }
   }
@@ -539,9 +516,9 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
               (canvasPanel.getWidth() - visibleRect.width) / 2,
               (canvasPanel.getHeight() - visibleRect.height) / 2);
           SwingUtilities.invokeLater(() -> {
-              canvasPanel.scrollRectToVisible(visibleRect);
-              canvasPanel.revalidate();
-            });
+            canvasPanel.scrollRectToVisible(visibleRect);
+            canvasPanel.revalidate();
+          });
         }
         break;
       case ZOOM_CHANGED:
@@ -568,8 +545,8 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
         // Refresh selection bounds after we're done with painting to ensure we have traced the
         // component areas
         SwingUtilities.invokeLater(() -> {
-            scrollPane.setSelectionRectangle(pluginPort.getSelectionBounds(true));
-          });
+          scrollPane.setSelectionRectangle(pluginPort.getSelectionBounds(true));
+        });
         break;
       default:
         LOG.debug("{} event not handled", eventType);

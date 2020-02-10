@@ -34,10 +34,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.swing.JComboBox;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.measures.AbstractMeasure;
 import org.diylc.swingframework.DoubleArrayTextField;
@@ -101,28 +99,28 @@ public class MeasureArrayEditor extends Container {
                               ? null
                               : measure[0].getUnit());
       unitBox.addActionListener((e) -> {
-          try {
-            Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
-            AbstractMeasure<?>[] newMeasure = null;
-            Double[] newValues = valueField.getValue();
-            if (newValues != null) {
-              newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
-                  property.getType().getComponentType(),
-                  newValues.length);
-              for (int i = 0; i < newValues.length; i++) {
-                newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
-                    newValues[i],
-                    unitBox.getSelectedItem());
-              }
+        try {
+          Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
+          AbstractMeasure<?>[] newMeasure = null;
+          Double[] newValues = valueField.getValue();
+          if (newValues != null) {
+            newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
+                property.getType().getComponentType(),
+                newValues.length);
+            for (int i = 0; i < newValues.length; i++) {
+              newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
+                  newValues[i],
+                  unitBox.getSelectedItem());
             }
-            property.setValue(newMeasure);
-            property.setChanged(true);
-            valueField.setBackground(oldBg);
-            unitBox.setBackground(oldBg);
-          } catch (Exception ex) {
-            LOG.error("Error while updating property units", ex);
           }
-        });
+          property.setValue(newMeasure);
+          property.setChanged(true);
+          valueField.setBackground(oldBg);
+          unitBox.setBackground(oldBg);
+        } catch (Exception ex) {
+          LOG.error("Error while updating property units", ex);
+        }
+      });
       add(unitBox, BorderLayout.EAST);
 
       if (!property.isUnique()) {

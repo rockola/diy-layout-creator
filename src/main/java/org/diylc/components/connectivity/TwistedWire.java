@@ -33,7 +33,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
@@ -62,6 +63,7 @@ import org.diylc.utils.Constants;
 public class TwistedWire extends AbstractCurvedComponent<Void> implements IContinuity {
 
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(TwistedWire.class);
 
   public static final Color COLOR = Color.green;
   public static final Color COLOR2 = Color.blue;
@@ -81,7 +83,7 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
   private transient Area firstLeadStripeArea = null;
   private transient Area secondLeadStripeArea = null;
 
-  protected AWG gauge = AWG._22;
+  protected AmericanWireGauge gauge = AmericanWireGauge._22;
 
   @Override
   protected Color getDefaultColor() {
@@ -168,11 +170,11 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
   }
 
   @EditableProperty(name = "AWG")
-  public AWG getGauge() {
+  public AmericanWireGauge getGauge() {
     return gauge;
   }
 
-  public void setGauge(AWG gauge) {
+  public void setGauge(AmericanWireGauge gauge) {
     this.gauge = gauge;
 
     // invalidate cached areas

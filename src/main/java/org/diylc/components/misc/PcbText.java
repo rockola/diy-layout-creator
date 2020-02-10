@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.Config;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -54,7 +53,7 @@ import org.diylc.core.annotations.EditableProperty;
     flexibleZOrder = false,
     bomPolicy = BomPolicy.NEVER_SHOW,
     transformer = TextTransformer.class)
-public class PCBText extends Misc<Void> {
+public class PcbText extends Misc<Void> {
 
   private static final long serialVersionUID = 1L;
 
@@ -120,5 +119,7 @@ public class PCBText extends Misc<Void> {
   }
 
   @Override
-  public void setValue(Void value) {}
+  public void setValue(Void value) {
+    //
+  }
 }

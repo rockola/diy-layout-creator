@@ -28,10 +28,8 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.action.UndoManager;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
@@ -66,20 +64,46 @@ public class App {
   }
 
   // ----------------------------------------------------------------
+  /**
+     Get boolean value for configuration item, or use given default if
+     not set.
+
+     @param key Name of configuration item.
+     @param defaultValue Value to use if not set.
+   */
   public static boolean getBoolean(String key, boolean defaultValue) {
     // First look in Config, then in ConfigurationManager
     Boolean b = Config.getBoolean(key);
     return b != null ? b.booleanValue() : ConfigurationManager.getBoolean(key, defaultValue);
   }
 
+  /**
+     Get boolean value for configuration item, defaulting to false if
+     not set.
+
+     @param key Name of configuration item.
+   */
   public static boolean getBoolean(String key) {
     return getBoolean(key, false);
   }
 
+  /**
+     Get boolean value for configuration item specified by
+     Config.Flag, or use given default if not set.
+
+     @param flag Name of configuration item.
+     @param defaultValue Value to use if not set.
+   */
   public static boolean getBoolean(Config.Flag flag, boolean defaultValue) {
     return ConfigurationManager.getBoolean(flag, defaultValue);
   }
 
+  /**
+     Get boolean value for configuration item specified by
+     Config.Flag, defaulting to false if not set.
+
+     @param flag Name of configuration item.
+   */
   public static boolean getBoolean(Config.Flag flag) {
     return ConfigurationManager.getBoolean(flag, false);
   }
@@ -95,8 +119,13 @@ public class App {
   public static double getDouble(String key, double defaultValue) {
     return ConfigurationManager.getDouble(key, defaultValue);
   }
-  // public static double getDouble(String key) { return getDouble(key, (double) 0.0); }
 
+  /**
+     Get string from configuration, or given default if not found.
+
+     @param key Name of configuration parameter.
+     @param defaultValue Default value if key not found in configuration.
+   */
   public static String getString(String key, String defaultValue) {
     String s = Config.getString(key);
     if (s == null) {
@@ -139,16 +168,16 @@ public class App {
     ConfigurationManager.putValue(flag, value);
   }
 
-  public static String getHTML(String key) {
-    return Message.getHTML(key);
+  public static String getHtml(String key) {
+    return Message.getHtml(key);
   }
 
-  public static URI getURI(String key) {
-    return Config.getURI(key);
+  public static URI getUri(String key) {
+    return Config.getUri(key);
   }
 
-  public static URL getURL(String key) {
-    return Config.getURL(key);
+  public static URL getUrl(String key) {
+    return Config.getUrl(key);
   }
 
   public static KeyStroke getKeyStroke(String key) {
@@ -225,7 +254,7 @@ public class App {
   }
 
   /**
-     @return previous value of 'metric'
+     @return previous value of 'metric'.
    */
   public static boolean setMetric(boolean isMetric) {
     boolean previous = metric();
@@ -233,6 +262,9 @@ public class App {
     return previous;
   }
 
+  /**
+     @return true if outline mode is selected, otherwise false.
+   */
   public static boolean outlineMode() {
     boolean outline = getBoolean(Config.Flag.OUTLINE, false);
     LOG.trace("outlineMode() is {}", outline);
@@ -240,7 +272,7 @@ public class App {
   }
 
   /**
-     @return previous value of 'outline mode'
+     @return previous value of 'outline mode'.
    */
   public static boolean setOutlineMode(boolean isOutline) {
     boolean previous = outlineMode();
@@ -305,11 +337,11 @@ public class App {
 
   // ****************************************************************
 
-  public static void openURL(URL url) {
+  public static void openUrl(URL url) {
     try {
-      Utils.openURL(url);
+      Utils.openUrl(url);
     } catch (Exception e) {
-      LOG.error("openURL(" + url + ") failed", e);
+      LOG.error("openUrl(" + url + ") failed", e);
     }
   }
 
@@ -365,7 +397,7 @@ public class App {
     if (!scriptRun.equals("true")) {
       int response = JOptionPane.showConfirmDialog(
           null,
-          Message.getHTML("startup-warning"),
+          Message.getHtml("startup-warning"),
           Config.getString("app.title"),
           JOptionPane.YES_NO_OPTION,
           JOptionPane.WARNING_MESSAGE);
@@ -377,7 +409,7 @@ public class App {
     mainFrame = new MainFrame();
     mainFrame.activate();
     if (ConfigurationManager.isFileWithErrors()) {
-      mainFrame.warn(Message.getHTML("configuration-file-errors"));
+      mainFrame.warn(Message.getHtml("configuration-file-errors"));
     }
 
     if (!commandLine.filenames().isEmpty()) {

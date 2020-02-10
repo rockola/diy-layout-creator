@@ -57,7 +57,7 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
   public static final Color STRIPE_COLOR = Color.yellow;
   public static final double INSULATION_THICKNESS_PCT = 0.3;
 
-  protected AWG gauge = AWG._22;
+  protected AmericanWireGauge gauge = AmericanWireGauge._22;
   protected boolean striped = false;
   protected Color stripeColor = STRIPE_COLOR;
 
@@ -128,11 +128,11 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
   }
 
   @EditableProperty(name = "AWG")
-  public AWG getGauge() {
+  public AmericanWireGauge getGauge() {
     return gauge;
   }
 
-  public void setGauge(AWG gauge) {
+  public void setGauge(AmericanWireGauge gauge) {
     this.gauge = gauge;
   }
 

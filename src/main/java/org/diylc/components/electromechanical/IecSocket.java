@@ -31,10 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractMultiPartComponent;
@@ -66,9 +64,9 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   private static Map<String, Iec60320> subtypes = new HashMap<>();
 
   static {
-    subtypes.put("C1", Iec60320.C1());
-    subtypes.put("C2", Iec60320.C2());
-    subtypes.put("C13", Iec60320.C14());
+    subtypes.put("C1", Iec60320.getC1());
+    subtypes.put("C2", Iec60320.getC2());
+    subtypes.put("C14", Iec60320.getC14());
   }
 
   private static Size HORIZONTAL_SPACING = Size.in(0.3);
@@ -90,7 +88,7 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
 
   public IecSocket() {
     super();
-    iec = Iec60320.C14();
+    iec = Iec60320.getC14();
     controlPoints = iec.getControlPoints();
     updateControlPoints();
   }

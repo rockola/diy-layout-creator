@@ -36,7 +36,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.VolatileImage;
 import javax.swing.JComponent;
-
 import org.diylc.App;
 import org.diylc.components.AbstractComponent;
 
@@ -162,10 +161,10 @@ public class Ruler extends JComponent {
     // also, ticksPerUnit for imperial was 10 (not 12)
     ticksPerUnit = isMetric() ? 4 : 12;
     unitSize =
-        zoomLevel *
-        (isMetric()
-         ? (cmSpacing == 0 ? PIXELS_PER_INCH / 2.54f : cmSpacing)
-         : (inSpacing == 0 ? PIXELS_PER_INCH : inSpacing));
+        zoomLevel
+        * (isMetric()
+           ? (cmSpacing == 0 ? PIXELS_PER_INCH / 2.54f : cmSpacing)
+           : (inSpacing == 0 ? PIXELS_PER_INCH : inSpacing));
   }
 
   public boolean isMetric() {

@@ -25,9 +25,7 @@ import java.net.URL;
 import java.util.EnumSet;
 import java.util.List;
 import javax.swing.AbstractAction;
-
 import org.apache.logging.log4j.LogManager;
-
 import org.diylc.App;
 import org.diylc.Splash;
 import org.diylc.appframework.miscutils.Utils;
@@ -53,9 +51,9 @@ public class HelpMenuPlugin implements IPlugIn {
 
   private AboutDialog aboutDialog;
 
-  private void navigateURL(String menuEntry, Icon icon, String key) {
-    App.ui().injectMenuAction(new NavigateURLAction(
-        Config.getString("menu.help." + menuEntry), icon, Config.getURL(key).toString()),
+  private void navigateUrl(String menuEntry, Icon icon, String key) {
+    App.ui().injectMenuAction(new NavigateUrlAction(
+        Config.getString("menu.help." + menuEntry), icon, Config.getUrl(key).toString()),
                                 HELP_TITLE);
   }
 
@@ -64,15 +62,15 @@ public class HelpMenuPlugin implements IPlugIn {
   }
 
   public HelpMenuPlugin() {
-    navigateURL("user-manual", Icon.Manual, "manual");
-    navigateURL("faq", Icon.Faq, "faq");
-    navigateURL("component-api", Icon.CoffeebeanEdit, "component");
-    // navigateURL("plugin-api", Icon.ApplicationEdit, "plugin");
-    navigateURL("bug-report", Icon.Bug, "bug");
+    navigateUrl("user-manual", Icon.Manual, "manual");
+    navigateUrl("faq", Icon.Faq, "faq");
+    navigateUrl("component-api", Icon.CoffeebeanEdit, "component");
+    // navigateUrl("plugin-api", Icon.ApplicationEdit, "plugin");
+    navigateUrl("bug-report", Icon.Bug, "bug");
     separator();
     App.ui().injectMenuAction(new RecentUpdatesAction(), HELP_TITLE);
     separator();
-    navigateURL("donate", Icon.Donate, "donate");
+    navigateUrl("donate", Icon.Donate, "donate");
     App.ui().injectMenuAction(new AboutAction(), HELP_TITLE);
   }
 
@@ -100,12 +98,12 @@ public class HelpMenuPlugin implements IPlugIn {
     }
 
     public void actionPerformed(ActionEvent e) {
-      about.setEditorText(App.getHTML(this.textKey));
+      about.setEditorText(App.getHtml(this.textKey));
     }
   }
 
   private String defaultAboutText() {
-    return App.getHTML("interactive-license");
+    return App.getHtml("interactive-license");
   }
 
   private AboutDialog getAboutDialog() {
@@ -115,7 +113,7 @@ public class HelpMenuPlugin implements IPlugIn {
           Icon.App.icon(),
           Config.getString("app.version"),
           Config.getString("app.author"),
-          Config.getURL("website"),
+          Config.getUrl("website"),
           defaultAboutText());
 
       aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
@@ -159,7 +157,7 @@ public class HelpMenuPlugin implements IPlugIn {
       if (updates == null) {
         App.ui().info("Version history is not available.");
       } else {
-        String html = UpdateChecker.createUpdateHTML(updates);
+        String html = UpdateChecker.createUpdateHtml(updates);
         UpdateDialog updateDialog =
             new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, (String) null);
         updateDialog.setVisible(true);
@@ -167,13 +165,13 @@ public class HelpMenuPlugin implements IPlugIn {
     }
   }
 
-  public static class NavigateURLAction extends AbstractAction {
+  public static class NavigateUrlAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
     private String url;
 
-    public NavigateURLAction(String name, Icon icon, String url) {
+    public NavigateUrlAction(String name, Icon icon, String url) {
       super();
       this.url = url;
       putValue(AbstractAction.NAME, name);
@@ -183,7 +181,7 @@ public class HelpMenuPlugin implements IPlugIn {
     @Override
     public void actionPerformed(ActionEvent e) {
       try {
-        App.openURL(new URL(url));
+        App.openUrl(new URL(url));
       } catch (Exception e1) {
         LogManager.getLogger(HelpMenuPlugin.class).error("Could not launch default browser", e1);
       }

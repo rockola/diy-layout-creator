@@ -25,10 +25,8 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -50,33 +48,31 @@ import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "IC",
+    name = "Op-amp",
     author = "Branislav Stojkovic",
     category = "Schematic Symbols",
     instanceNamePrefix = "IC",
-    description = "IC symbol with 3 or 5 contacts",
+    description = "Operational amplifier symbol with 3 or 5 contacts",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class ICSymbol extends AbstractTransparentComponent<String> {
+public class OperationalAmplifierSymbol extends AbstractTransparentComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color BODY_COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.black;
+  public static final int DEFAULT_POINT_COUNT;
 
-  protected ICPointCount icPointCount = ICPointCount._5;
+  protected int pointCount = DEFAULT_POINT_COUNT;
   protected String value = "";
-  protected Point[] controlPoints =
-      new Point[] {
-        new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)
-      };
+  protected Point[] controlPoints = getFreshControlPoints(DEFAULT_POINT_COUNT);
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
   private Boolean flip;
-  private transient Shape[] body;
+  private transient Area[] body;
 
   public ICSymbol() {
     super();
@@ -94,8 +90,7 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
@@ -116,28 +111,23 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     g2d.setColor(finalLabelColor);
     int x = (controlPoints[0].x + controlPoints[2].x) / 2;
     String label = getLabelForDisplay();
+    int pinSpacing = (int) PIN_SPACING.convertToPixels();
     StringUtils.drawCenteredText(
         g2d,
         label,
         x,
-        controlPoints[0].y + pinSpacing,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        controlPoints[0].y + pinSpacing);
     // Draw +/- markers
     StringUtils.drawCenteredText(
         g2d,
         getFlip() ? "+" : "-",
         controlPoints[0].x + pinSpacing,
-        controlPoints[0].y,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        controlPoints[0].y);
     StringUtils.drawCenteredText(
         g2d,
         getFlip() ? "-" : "+",
         controlPoints[1].x + pinSpacing,
-        controlPoints[1].y,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        controlPoints[1].y);
   }
 
   @Override
@@ -199,17 +189,16 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     controlPoints[4].y = y + pinSpacing * 3;
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[2];
+      body = new Area[2];
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      Shape triangle =
-          new Polygon(
-              new int[] {x + pinSpacing / 2, x + pinSpacing * 11 / 2, x + pinSpacing / 2},
-              new int[] {y - pinSpacing * 3 / 2, y + pinSpacing, y + pinSpacing * 7 / 2},
-              3);
+      Area triangle = new Polygon(
+          new int[] {x + pinSpacing / 2, x + pinSpacing * 11 / 2, x + pinSpacing / 2},
+          new int[] {y - pinSpacing * 3 / 2, y + pinSpacing, y + pinSpacing * 7 / 2},
+          3);
       body[0] = triangle;
 
       GeneralPath polyline = new GeneralPath();
@@ -257,15 +246,17 @@ public class ICSymbol extends AbstractTransparentComponent<String> {
     body = null;
   }
 
-  @EditableProperty(name = "Contacts")
-  public ICPointCount getIcPointCount() {
-    return icPointCount;
+  @EditableProperty(name = "Contacts (3 or 5)")
+  public int getPointCount() {
+    return pointCount;
   }
 
-  public void setIcPointCount(ICPointCount icPointCount) {
-    this.icPointCount = icPointCount;
-    updateControlPoints();
-    body = null;
+  public void setPointCount(int pointCount) {
+    if (pointCount == 3 || pointCount == 5) {
+      this.pointCount = pointCount;
+      updateControlPoints();
+      body = null;
+    }
   }
 
   @EditableProperty(name = "Body")

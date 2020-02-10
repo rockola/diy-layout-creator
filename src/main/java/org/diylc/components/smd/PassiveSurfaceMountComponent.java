@@ -28,7 +28,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -44,7 +43,7 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
-public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparentComponent<T> {
 
   private static final long serialVersionUID = 1L;
 
@@ -59,12 +58,12 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   protected Color borderColor;
 
   private Orientation orientation = Orientation.DEFAULT;
-  private SMDSize size = SMDSize._1206;
+  private PassiveSurfaceMountPackage size = PassiveSurfaceMountPackage._1206;
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   private Color labelColor = LABEL_COLOR;
   private transient Area[] body;
 
-  public PassiveSMDComponent() {
+  public PassiveSurfaceMountComponent() {
     super();
     updateControlPoints();
     display = Display.NAME;
@@ -95,11 +94,11 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   }
 
   @EditableProperty
-  public SMDSize getSize() {
+  public PassiveSurfaceMountPackage getSize() {
     return size;
   }
 
-  public void setSize(SMDSize size) {
+  public void setSize(PassiveSurfaceMountPackage size) {
     this.size = size;
     updateControlPoints();
     // Reset body shape.
@@ -295,33 +294,23 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int radius = 4 * width / 32;
-    int contactSize = 4 * width / 32;
     int thickness = getClosestOdd(width / 2);
     g2d.rotate(Math.PI / 4, width / 2, height / 2);
-    RoundRectangle2D rect =
-        new RoundRectangle2D.Double(
-            (width - thickness) / 2,
-            4 * width / 32,
-            thickness,
-            height - 8 * width / 32,
-            radius,
-            radius);
-    g2d.setColor(getBodyColor());
-    g2d.fill(rect);
-    g2d.setColor(getBorderColor());
-    g2d.draw(rect);
+    Area rect = Area.roundRect(
+        (width - thickness) / 2,
+        4 * width / 32,
+        thickness,
+        height - 8 * width / 32,
+        radius);
+    rect.fillDraw(g2d, getBodyColor(), getBorderColor());
     Area contactArea = new Area();
-    contactArea.add(
-        new Area(
-            new Rectangle2D.Double(
-                (width - thickness) / 2, 4 * width / 32, thickness, contactSize)));
-    contactArea.add(
-        new Area(
-            new Rectangle2D.Double(
-                (width - thickness) / 2, height - 8 * width / 32, thickness, contactSize)));
+    int contactSize = 4 * width / 32;
+    contactArea.add(Area.rect(
+        (width - thickness) / 2, 4 * width / 32, thickness, contactSize));
+    contactArea.add(Area.rect(
+        (width - thickness) / 2, height - 8 * width / 32, thickness, contactSize));
     contactArea.intersect(new Area(rect));
-    g2d.setColor(PIN_COLOR);
-    g2d.fill(contactArea);
+    contactArea.fill(g2d, PIN_COLOR);
   }
 
   @EditableProperty(name = "Body")
@@ -359,7 +348,10 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
     return false;
   }
 
-  public enum SMDSize {
+  public enum PassiveSurfaceMountPackage {
+    _0201(Size.in(0.01), Size.in(0.02)),
+    _0402(Size.in(0.02), Size.in(0.04)),
+    _0603(Size.in(0.03), Size.in(0.06)),
     _0805(Size.in(0.05), Size.in(0.08)),
     _1206(Size.mm(1.6), Size.mm(3.2)),
     _1210(Size.mm(2.5), Size.mm(3.2)),
@@ -369,7 +361,7 @@ public abstract class PassiveSMDComponent<T> extends AbstractTransparentComponen
     private Size width;
     private Size length;
 
-    SMDSize(Size width, Size length) {
+    PassiveSurfaceMountPackage(Size width, Size length) {
       this.width = width;
       this.length = length;
     }

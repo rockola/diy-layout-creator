@@ -25,7 +25,6 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
-
 import org.diylc.core.ExpansionMode;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.measures.Size;

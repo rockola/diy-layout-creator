@@ -21,10 +21,8 @@
 package org.diylc.swing.plugins.toolbox;
 
 import java.util.EnumSet;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -37,7 +35,9 @@ public class Toolbox implements IPlugIn {
 
   private static final Logger LOG = LogManager.getLogger(Toolbox.class);
 
-  public Toolbox() {}
+  public Toolbox() {
+    //
+  }
 
   @Override
   public void connect(IPlugInPort ignore) {

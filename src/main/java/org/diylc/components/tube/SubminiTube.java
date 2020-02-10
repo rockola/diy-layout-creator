@@ -26,10 +26,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -76,7 +74,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     new Point(0, 0),
     new Point(0, 0)
   };
-  private transient Shape[] body;
+  private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private boolean folded = false;
@@ -204,9 +202,9 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     }
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[2];
+      body = new Area[2];
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
@@ -222,142 +220,104 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
       switch (orientation) {
         case DEFAULT:
           if (folded) {
-            body[0] =
-                new Rectangle2D.Double(
-                    x + leadLength, y + pinSpacing - bodyWidth / 2, bodyHeight, bodyWidth);
-            body[1] =
-                new Area(
-                    new Rectangle2D.Double(
-                        x + leadLength + bodyHeight,
-                        y + pinSpacing - bodyWidth / 2,
-                        tabHeight,
-                        bodyWidth));
-            ((Area) body[1])
-                .subtract(
-                    new Area(
-                        new Ellipse2D.Double(
-                            x + leadLength + bodyHeight + tabHeight / 2 - tabHoleDiameter / 2,
-                            y + pinSpacing - tabHoleDiameter / 2,
-                            tabHoleDiameter,
-                            tabHoleDiameter)));
+            body[0] = Area.rect(
+                x + leadLength, y + pinSpacing - bodyWidth / 2, bodyHeight, bodyWidth);
+            body[1] = Area.rect(
+                x + leadLength + bodyHeight,
+                y + pinSpacing - bodyWidth / 2,
+                tabHeight,
+                bodyWidth).subtract(Area.circle(
+                    x + leadLength + bodyHeight + tabHeight / 2,
+                    y + pinSpacing,
+                    tabHoleDiameter));
           } else {
-            body[0] =
-                new Rectangle2D.Double(
-                    x - bodyThickness / 2,
-                    y + pinSpacing - bodyWidth / 2,
-                    bodyThickness,
-                    bodyWidth);
-            body[1] =
-                new Rectangle2D.Double(
-                    x + bodyThickness / 2 - tabThickness,
-                    y + pinSpacing - bodyWidth / 2,
-                    tabThickness,
-                    bodyWidth);
+            body[0] = Area.centeredRect(x, y, bodyThickness, bodyWidth);
+            body[1] = Area.rect(
+                x + bodyThickness / 2 - tabThickness,
+                y + pinSpacing - bodyWidth / 2,
+                tabThickness,
+                bodyWidth);
           }
           break;
         case _90:
           if (folded) {
-            body[0] =
-                new Rectangle2D.Double(
-                    x - pinSpacing - bodyWidth / 2, y + leadLength, bodyWidth, bodyHeight);
-            body[1] =
-                new Area(
-                    new Rectangle2D.Double(
-                        x - pinSpacing - bodyWidth / 2,
-                        y + leadLength + bodyHeight,
-                        bodyWidth,
-                        tabHeight));
-            ((Area) body[1])
-                .subtract(
-                    new Area(
-                        new Ellipse2D.Double(
-                            x - pinSpacing - tabHoleDiameter / 2,
-                            y + leadLength + bodyHeight + tabHeight / 2 - tabHoleDiameter / 2,
-                            tabHoleDiameter,
-                            tabHoleDiameter)));
+            body[0] = Area.rect(
+                x - pinSpacing - bodyWidth / 2, y + leadLength, bodyWidth, bodyHeight);
+            body[1] = Area.rect(
+                x - pinSpacing - bodyWidth / 2,
+                y + leadLength + bodyHeight,
+                bodyWidth,
+                tabHeight).subtract(Area.circle(
+                    x - pinSpacing,
+                    y + leadLength + bodyHeight + tabHeight / 2,
+                    tabHoleDiameter));
           } else {
-            body[0] =
-                new Rectangle2D.Double(
-                    x - pinSpacing - bodyWidth / 2,
-                    y - bodyThickness / 2,
-                    bodyWidth,
-                    bodyThickness);
-            body[1] =
-                new Rectangle2D.Double(
-                    x - pinSpacing - bodyWidth / 2,
-                    y + bodyThickness / 2 - tabThickness,
-                    bodyWidth,
-                    tabThickness);
+            body[0] = Area.rect(
+                x - pinSpacing - bodyWidth / 2,
+                y - bodyThickness / 2,
+                bodyWidth,
+                bodyThickness);
+            body[1] = Area.rect(
+                x - pinSpacing - bodyWidth / 2,
+                y + bodyThickness / 2 - tabThickness,
+                bodyWidth,
+                tabThickness);
           }
           break;
         case _180:
           if (folded) {
-            body[0] =
-                new Rectangle2D.Double(
-                    x - leadLength - bodyHeight,
-                    y - pinSpacing - bodyWidth / 2,
-                    bodyHeight,
-                    bodyWidth);
-            body[1] =
-                new Area(
-                    new Rectangle2D.Double(
-                        x - leadLength - bodyHeight - tabHeight,
-                        y - pinSpacing - bodyWidth / 2,
-                        tabHeight,
-                        bodyWidth));
-            ((Area) body[1])
-                .subtract(
-                    new Area(
-                        new Ellipse2D.Double(
-                            x - leadLength - bodyHeight - tabHeight / 2 - tabHoleDiameter / 2,
-                            y - pinSpacing - tabHoleDiameter / 2,
-                            tabHoleDiameter,
-                            tabHoleDiameter)));
+            body[0] = Area.rect(
+                x - leadLength - bodyHeight,
+                y - pinSpacing - bodyWidth / 2,
+                bodyHeight,
+                bodyWidth);
+            body[1] = Area.rect(
+                x - leadLength - bodyHeight - tabHeight,
+                y - pinSpacing - bodyWidth / 2,
+                tabHeight,
+                bodyWidth).subtract(Area.circle(
+                    x - leadLength - bodyHeight - tabHeight / 2,
+                    y - pinSpacing,
+                    tabHoleDiameter));
           } else {
-            body[0] =
-                new Rectangle2D.Double(
-                    x - bodyThickness / 2,
-                    y - pinSpacing - bodyWidth / 2,
-                    bodyThickness,
-                    bodyWidth);
-            body[1] =
-                new Rectangle2D.Double(
-                    x - bodyThickness / 2, y - pinSpacing - bodyWidth / 2, tabThickness, bodyWidth);
+            body[0] = Area.centeredRect(
+                x,
+                y - pinSpacing,
+                bodyThickness,
+                bodyWidth);
+            body[1] = Area.rect(
+                x - bodyThickness / 2,
+                y - pinSpacing - bodyWidth / 2,
+                tabThickness,
+                bodyWidth);
           }
           break;
         case _270:
           if (folded) {
-            body[0] =
-                new Rectangle2D.Double(
-                    x + pinSpacing - bodyWidth / 2,
-                    y - leadLength - bodyHeight,
-                    bodyWidth,
-                    bodyHeight);
-            body[1] =
-                new Area(
-                    new Rectangle2D.Double(
+            body[0] = Area.rect(
+                x + pinSpacing - bodyWidth / 2,
+                y - leadLength - bodyHeight,
+                bodyWidth,
+                bodyHeight);
+            body[1] = Area.rect(
                         x + pinSpacing - bodyWidth / 2,
                         y - leadLength - bodyHeight - tabHeight,
                         bodyWidth,
-                        tabHeight));
-            ((Area) body[1])
-                .subtract(
-                    new Area(
-                        new Ellipse2D.Double(
-                            x + pinSpacing - tabHoleDiameter / 2,
-                            y - leadLength - bodyHeight - tabHeight / 2 - tabHoleDiameter / 2,
-                            tabHoleDiameter,
-                            tabHoleDiameter)));
+                        tabHeight).subtract(Area.circle(
+                            x + pinSpacing,
+                            y - leadLength - bodyHeight - tabHeight / 2,
+                            tabHoleDiameter));
           } else {
-            body[0] =
-                new Rectangle2D.Double(
-                    x + pinSpacing - bodyWidth / 2,
-                    y - bodyThickness / 2,
-                    bodyWidth,
-                    bodyThickness);
-            body[1] =
-                new Rectangle2D.Double(
-                    x + pinSpacing - bodyWidth / 2, y - bodyThickness / 2, bodyWidth, tabThickness);
+            body[0] = Area.centeredRect(
+                x + pinSpacing,
+                y,
+                bodyWidth,
+                bodyThickness);
+            body[1] = Area.centeredRect(
+                x + pinSpacing,
+                y,
+                bodyWidth,
+                tabThickness);
           }
           break;
         default:
@@ -378,9 +338,9 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
       return;
     }
     int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
-    Shape mainArea = getBody()[0];
+    Area mainArea = getBody()[0];
 
-    Composite oldComposite = setTransparency(g2d);
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
     g2d.fill(mainArea);
 
@@ -392,14 +352,6 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
       Color finalPinBorderColor = tryBorderColor(outlineMode, METAL_COLOR.darker());
       for (Point point : controlPoints) {
         switch (orientation) {
-          case DEFAULT:
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
-            g2d.setColor(finalPinBorderColor);
-            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
-            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
-            g2d.setColor(finalPinColor);
-            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
-            break;
           case _90:
             g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
             g2d.setColor(finalPinBorderColor);
@@ -423,6 +375,15 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
             g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
             g2d.setColor(finalPinColor);
             g2d.drawLine(point.x, point.y, point.x, point.y - leadLength);
+            break;
+          case DEFAULT:
+          default:
+            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness));
+            g2d.setColor(finalPinBorderColor);
+            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
+            g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(leadThickness - 2));
+            g2d.setColor(finalPinColor);
+            g2d.drawLine(point.x, point.y, point.x + leadLength - leadThickness / 2, point.y);
             break;
         }
       }
@@ -462,20 +423,10 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     int bodySize = width * 5 / 10;
     int tabSize = bodySize * 6 / 10;
     int holeSize = 5 * width / 32;
-    Area a = new Area(new Rectangle2D.Double((width - bodySize) / 2, margin, bodySize, tabSize));
-    a.subtract(
-        new Area(
-            new Ellipse2D.Double(
-                width / 2 - holeSize / 2,
-                margin + tabSize / 2 - holeSize / 2,
-                holeSize,
-                holeSize)));
-    g2d.setColor(BORDER_COLOR);
-    g2d.draw(a);
-    g2d.setColor(BODY_COLOR);
-    g2d.fillRect((width - bodySize) / 2, margin + tabSize, bodySize, bodySize);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect((width - bodySize) / 2, margin + tabSize, bodySize, bodySize);
+    Area a = Area.rect((width - bodySize) / 2, margin, bodySize, tabSize);
+    a.subtract(Area.circle(width / 2, margin + tabSize / 2, holeSize)).draw(g2d, BORDER_COLOR);
+    Area.rect((width - bodySize) / 2, margin + tabSize, bodySize, bodySize)
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     g2d.setColor(METAL_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
     g2d.drawLine(width / 2, margin + tabSize + bodySize, width / 2, height - margin);

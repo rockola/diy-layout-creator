@@ -28,7 +28,6 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
-
 import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PropertyWrapper;
@@ -61,7 +60,9 @@ public class DialogFactory {
   private JFrame mainFrame;
   private File lastDirectory;
 
-  private DialogFactory() {}
+  private DialogFactory() {
+    //
+  }
 
   /**
    * Sets the frame to be used as dialog parent. This should be called

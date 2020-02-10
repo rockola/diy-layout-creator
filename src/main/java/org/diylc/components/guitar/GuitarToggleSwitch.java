@@ -29,7 +29,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -48,13 +47,13 @@ import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "LP Toggle Switch",
+    name = "Guitar Toggle Switch",
     category = "Guitar",
     author = "Branislav Stojkovic",
-    description = "Les Paul style 3 position toggle switch",
+    description = "3-position toggle switch, like the pickup switch on a Les Paul",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "SW")
-public class LPSwitch extends AbstractTransparentComponent<String> implements ISwitch {
+public class GuitarToggleSwitch extends AbstractTransparentComponent<String> implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -72,7 +71,7 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
   transient Shape[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
-  public LPSwitch() {
+  public GuitarToggleSwitch() {
     super();
     updateControlPoints();
   }
@@ -160,7 +159,7 @@ public class LPSwitch extends AbstractTransparentComponent<String> implements IS
       // Rotate if needed
       double theta = orientation.getTheta();
       if (theta != 0) {
-        AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
+        AffineTransform rotation = orientation.getRotation(x, y);
         // Skip the last one because it's already rotated
         for (int i = 0; i < body.length; i++) {
           Shape shape = body[i];

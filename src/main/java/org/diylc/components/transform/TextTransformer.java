@@ -22,18 +22,40 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.misc.Label;
-import org.diylc.components.misc.PCBText;
+import org.diylc.components.misc.Misc;
+import org.diylc.components.misc.PcbText;
 import org.diylc.core.IDIYComponent;
 
 public class TextTransformer implements IComponentTransformer {
 
+  private static final Logger LOG = LogManager.getLogger(TextTransformer.class);
+
   @Override
   public boolean canRotate(IDIYComponent<?> component) {
-    return component instanceof Label || component instanceof PCBText;
+    return component instanceof Label || component instanceof PcbText;
+  }
+
+  @Override
+  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+    AffineTransform rotate =
+        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
+    for (int index = 0; index < component.getControlPointCount(); index++) {
+      Point p = new Point(component.getControlPoint(index));
+      rotate.transform(p, p);
+      component.setControlPoint(p, index);
+    }
+
+    if (component instanceof Misc) {
+      Misc snap = (Misc) component;
+      snap.setOrientation(snap.getOrientation().rotate(direction));
+    } else {
+      LOG.error("rotate() trying to rotate {} but don't know how", component.getClass().getName());
+    }
   }
 
   @Override
@@ -47,46 +69,7 @@ public class TextTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
-    AffineTransform rotate =
-        AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
-    for (int index = 0; index < component.getControlPointCount(); index++) {
-      Point p = new Point(component.getControlPoint(index));
-      rotate.transform(p, p);
-      component.setControlPoint(p, index);
-    }
-
-    if (component instanceof Label) {
-      Label snap = (Label) component;
-      Orientation o = snap.getOrientation();
-      int oValue = o.ordinal();
-      oValue += direction;
-      if (oValue < 0) {
-        oValue = Orientation.values().length - 1;
-      }
-      if (oValue >= Orientation.values().length) {
-        oValue = 0;
-      }
-      o = Orientation.values()[oValue];
-      snap.setOrientation(o);
-    } else if (component instanceof PCBText) {
-      PCBText snap = (PCBText) component;
-      Orientation o = snap.getOrientation();
-      int oValue = o.ordinal();
-      oValue += direction;
-      if (oValue < 0) {
-        oValue = Orientation.values().length - 1;
-      }
-      if (oValue >= Orientation.values().length) {
-        oValue = 0;
-      }
-      o = Orientation.values()[oValue];
-      snap.setOrientation(o);
-    }
-  }
-
-  @Override
   public void mirror(IDIYComponent<?> component, Point center, int direction) {
-    throw new RuntimeException("Unexpected call to mirror() in LabelTransformer");
+    throw new RuntimeException("Unexpected call to mirror() in TextTransformer");
   }
 }

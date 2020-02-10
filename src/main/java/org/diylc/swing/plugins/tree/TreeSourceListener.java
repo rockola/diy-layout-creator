@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.tree;
 
 import java.awt.Point;
@@ -42,25 +43,31 @@ class TreeSourceListener implements DragSourceListener {
   }
 
   @Override
-  public void dragDropEnd(DragSourceDropEvent dsde) {
-    //    if (!dsde.getDropSuccess())
+  public void dragDropEnd(DragSourceDropEvent event) {
+    //    if (!event.getDropSuccess())
     //      presenter.setNewComponentTypeSlot(null, null, false);
   }
 
   @Override
-  public void dragEnter(DragSourceDragEvent dsde) {}
+  public void dragEnter(DragSourceDragEvent event) {
+    //
+  }
 
   @Override
-  public void dragExit(DragSourceEvent dse) {}
+  public void dragExit(DragSourceEvent event) {
+    //
+  }
 
   @Override
-  public void dragOver(DragSourceDragEvent dsde) {
-    Point p = dsde.getDragSourceContext().getComponent().getMousePosition();
+  public void dragOver(DragSourceDragEvent event) {
+    Point p = event.getDragSourceContext().getComponent().getMousePosition();
     if (p != null) {
-      dsde.getDragSourceContext().getComponent().firePropertyChange("dragPoint", p.x, p.y);
+      event.getDragSourceContext().getComponent().firePropertyChange("dragPoint", p.x, p.y);
     }
   }
 
   @Override
-  public void dropActionChanged(DragSourceDragEvent dsde) {}
+  public void dropActionChanged(DragSourceDragEvent event) {
+    //
+  }
 }

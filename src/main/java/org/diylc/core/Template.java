@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core;
 
 import java.awt.Point;
@@ -32,7 +33,9 @@ public class Template {
   @Deprecated
   private boolean defaultFlag;
 
-  public Template() {}
+  public Template() {
+    //
+  }
 
   public Template(String name, Map<String, Object> values, List<Point> points) {
     this.name = name;

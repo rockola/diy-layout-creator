@@ -21,40 +21,39 @@
 package org.diylc.components.smd;
 
 import java.awt.Color;
-
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.Resistance;
 
 @ComponentDescriptor(
-    name = "SMD Capacitor",
+    name = "SMD Resistor",
     author = "Branislav Stojkovic",
     category = "SMD",
     instanceNamePrefix = "C",
-    description = "Surface mount capacitor",
+    description = "Surface mount resistor",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class SMDCapacitor extends PassiveSMDComponent<Capacitance> {
+public class SurfaceMountResistor extends PassiveSurfaceMountComponent<Resistance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Color BODY_COLOR = Color.decode("#BD9347");
-  public static final Color BORDER_COLOR = BODY_COLOR.darker();
+  public static final Color BODY_COLOR = Color.gray;
+  public static final Color BORDER_COLOR = Color.gray.darker();
 
-  public SMDCapacitor() {
+  public SurfaceMountResistor() {
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
   }
 
   @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
+  public Resistance getValue() {
     return value;
   }
 
-  public void setValue(Capacitance value) {
+  public void setValue(Resistance value) {
     this.value = value;
   }
 }

@@ -25,7 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractCurvedComponent;
 import org.diylc.core.ComponentState;
@@ -57,7 +57,7 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
   public static final Size SIZE = Size.mm(1);
 
   protected Size size = SIZE;
-  private PCBLayer layer = PCBLayer._1;
+  private PcbLayer layer = PcbLayer._1;
 
   @Override
   protected Color getDefaultColor() {
@@ -89,14 +89,14 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
   }
 
   @EditableProperty
-  public PCBLayer getLayer() {
+  public PcbLayer getLayer() {
     if (layer == null) {
-      layer = PCBLayer._1;
+      layer = PcbLayer._1;
     }
     return layer;
   }
 
-  public void setLayer(PCBLayer layer) {
+  public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
 

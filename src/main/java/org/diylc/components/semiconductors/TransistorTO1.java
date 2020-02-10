@@ -29,13 +29,12 @@ import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Area;
-import org.diylc.components.transform.TO1Transformer;
+import org.diylc.components.transform.TransistorTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -54,7 +53,7 @@ import org.diylc.utils.Constants;
     description = "Transistor with small metal body",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
-    transformer = TO1Transformer.class)
+    transformer = TransistorTransformer.class)
 public class TransistorTO1 extends AbstractTransistorPackage {
 
   private static final long serialVersionUID = 1L;

@@ -21,7 +21,6 @@
 package org.diylc.components.transform;
 
 import java.awt.Point;
-
 import java.awt.geom.AffineTransform;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
@@ -56,17 +55,7 @@ public class JackTransformer implements IComponentTransformer {
     }
 
     AbstractJack jack = (AbstractJack) component;
-    Orientation o = jack.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) {
-      oValue = Orientation.values().length - 1;
-    }
-    if (oValue >= Orientation.values().length) {
-      oValue = 0;
-    }
-    o = Orientation.values()[oValue];
-    jack.setOrientation(o);
+    jack.setOrientation(jack.getOrientation().rotate(direction));
   }
 
   @Override
@@ -79,9 +68,6 @@ public class JackTransformer implements IComponentTransformer {
 
       Orientation o = jack.getOrientation();
       switch (o) {
-        case DEFAULT:
-          o = Orientation._180;
-          break;
         case _90:
           break;
         case _180:
@@ -89,6 +75,9 @@ public class JackTransformer implements IComponentTransformer {
           break;
         case _270:
           break;
+        case DEFAULT:
+        default:
+          o = Orientation._180;
       }
 
       for (int i = 0; i < jack.getControlPointCount(); i++) {
@@ -103,8 +92,6 @@ public class JackTransformer implements IComponentTransformer {
 
       Orientation o = jack.getOrientation();
       switch (o) {
-        case DEFAULT:
-          break;
         case _90:
           o = Orientation._270;
           break;
@@ -113,6 +100,8 @@ public class JackTransformer implements IComponentTransformer {
         case _270:
           o = Orientation._90;
           break;
+        case DEFAULT:
+        default:
       }
 
       for (int i = 0; i < jack.getControlPointCount(); i++) {

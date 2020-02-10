@@ -21,7 +21,6 @@
 package org.diylc.common;
 
 import java.util.List;
-
 import org.diylc.netlist.Netlist;
 import org.diylc.netlist.Node;
 import org.diylc.netlist.Summary;

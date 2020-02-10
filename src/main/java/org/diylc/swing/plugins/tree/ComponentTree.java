@@ -26,10 +26,8 @@ import java.awt.event.KeyEvent;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -57,7 +55,7 @@ public class ComponentTree implements IPlugIn {
   public void connect(IPlugInPort plugInPort) {
     this.plugInPort = plugInPort;
     try {
-      App.ui().injectGUIComponent(getTreePanel(), SwingConstants.LEFT);
+      App.ui().injectGuiComponent(getTreePanel(), SwingConstants.LEFT);
     } catch (BadPositionException e) {
       LOG.error("Could not install the component tree", e);
     }
@@ -71,16 +69,16 @@ public class ComponentTree implements IPlugIn {
         ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE));
 
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((e) -> {
-        if ((canvasPanel.hasFocus() || treePanel.hasFocus())
-            && e.getKeyChar() == 'q'
-            && App.getString(
-                ConfigPlugin.COMPONENT_BROWSER,
-                ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
-          getTreePanel().getSearchField().requestFocusInWindow();
-          return true;
-        }
-        return false;
-      });
+      if ((canvasPanel.hasFocus() || treePanel.hasFocus())
+          && e.getKeyChar() == 'q'
+          && App.getString(
+              ConfigPlugin.COMPONENT_BROWSER,
+              ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
+        getTreePanel().getSearchField().requestFocusInWindow();
+        return true;
+      }
+      return false;
+    });
   }
 
   public ComponentTreePanel getTreePanel() {

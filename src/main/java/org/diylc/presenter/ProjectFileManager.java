@@ -23,7 +23,6 @@ package org.diylc.presenter;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,10 +42,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.simplemq.MessageDispatcher;
@@ -54,7 +51,6 @@ import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.EventType;
 import org.diylc.core.Project;
 import org.diylc.parsing.IOldFileParser;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -294,10 +290,9 @@ public class ProjectFileManager {
   }
 
   private static VersionNumber readV3Version(String fileName) throws Exception {
-    File fXmlFile = new File(fileName);
     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
-    Document doc = docBuilder.parse(fXmlFile);
+    Document doc = docBuilder.parse(new File(fileName));
     doc.getDocumentElement().normalize();
 
     NodeList nList = doc.getElementsByTagName("fileVersion");

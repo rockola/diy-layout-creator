@@ -29,15 +29,13 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.core.IDIYComponent;
-import org.diylc.presenter.PCBLayerFilter;
+import org.diylc.presenter.PcbLayerFilter;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
@@ -67,7 +65,7 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
     plugInPort.draw(
         (Graphics2D) g,
         EnumSet.of(DrawOption.ANTIALIASING),
-        new PCBLayerFilter(getUsedLayers()[page]),
+        new PcbLayerFilter(getUsedLayers()[page]),
         zoomFactor);
   }
 
@@ -76,20 +74,20 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
     return getUsedLayers().length;
   }
 
-  private PCBLayer[] getUsedLayers() {
-    Set<PCBLayer> layers = EnumSet.noneOf(PCBLayer.class);
+  private PcbLayer[] getUsedLayers() {
+    Set<PcbLayer> layers = EnumSet.noneOf(PcbLayer.class);
     for (IDIYComponent<?> c : plugInPort.currentProject().getComponents()) {
       Class<?> clazz = c.getClass();
       try {
         Method m = clazz.getMethod("getLayer");
-        PCBLayer l = (PCBLayer) m.invoke(c);
+        PcbLayer l = (PcbLayer) m.invoke(c);
         layers.add(l);
       } catch (Exception e) {
         LOG.error("getUsedLayers() failed", e);
       }
     }
-    List<PCBLayer> sorted = new ArrayList<PCBLayer>(layers);
+    List<PcbLayer> sorted = new ArrayList<PcbLayer>(layers);
     Collections.sort(sorted);
-    return sorted.toArray(new PCBLayer[] {});
+    return sorted.toArray(new PcbLayer[] {});
   }
 }

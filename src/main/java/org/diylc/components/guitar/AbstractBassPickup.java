@@ -21,7 +21,6 @@
 package org.diylc.components.guitar;
 
 import java.awt.Color;
-
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 

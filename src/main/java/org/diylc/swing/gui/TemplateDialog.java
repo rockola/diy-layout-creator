@@ -49,10 +49,8 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.DrawOption;
@@ -142,9 +140,9 @@ public class TemplateDialog extends JDialog {
     if (loadButton == null) {
       loadButton = new JButton("Load Template");
       loadButton.addActionListener((e) -> {
-          App.ui().getPresenter().loadProject(templateProject, true, null);
-          dispose();
-        });
+        App.ui().getPresenter().loadProject(templateProject, true, null);
+        dispose();
+      });
     }
     return loadButton;
   }
@@ -154,11 +152,11 @@ public class TemplateDialog extends JDialog {
       infoPanel = new JPanel();
       infoPanel.setBackground(Color.decode("#FFFFCC"));
       infoPanel.setBorder(new JTextField().getBorder());
-      // JLabel infoLabel = new JLabel(App.getHTML("message.templateDialog.info"));
+      // JLabel infoLabel = new JLabel(App.getHtml("message.templateDialog.info"));
       // infoLabel.setOpaque(false);
       JTextPane infoLabel = new JTextPane();
       infoLabel.setContentType("text/html");
-      infoLabel.setText(Message.getHTML("message.templateDialog.info", true, "<br>"));
+      infoLabel.setText(Message.getHtml("message.templateDialog.info", true, "<br>"));
       infoLabel.setEditable(false);
       // infoLabel.setLineWrap(true);
       // infoLabel.setWrapStyleWord(true);

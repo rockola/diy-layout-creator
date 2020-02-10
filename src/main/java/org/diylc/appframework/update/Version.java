@@ -30,15 +30,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-
 import org.diylc.parsing.XmlNode;
-
 import org.w3c.dom.Element;
 
 public class Version implements Serializable, Comparable<Version> {

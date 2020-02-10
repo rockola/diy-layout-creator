@@ -45,10 +45,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.Serializer;
 import org.diylc.appframework.miscutils.ConfigurationManager;
@@ -69,6 +67,7 @@ import org.diylc.common.PropertyWrapper;
 import org.diylc.common.VariantPackage;
 import org.diylc.components.Area;
 import org.diylc.core.ExpansionMode;
+import org.diylc.core.Grid;
 import org.diylc.core.IContinuity;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.ISwitch;
@@ -561,7 +560,7 @@ public class Presenter implements IPlugInPort {
             LOG.trace("mouseClicked() creation method is Single Click");
             try {
               if (isSnapToGrid()) {
-                CalcUtils.snapPointToGrid(scaledPoint, currentProject().getGridSpacing());
+                scaledPoint = currentProject().getGrid().snapToGrid(scaledPoint);
               }
               List<IDIYComponent<?>> componentSlot = InstantiationManager.getComponentSlot();
               List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
@@ -599,7 +598,7 @@ public class Presenter implements IPlugInPort {
             // First click is just to set the controlPointSlot and
             // componentSlot.
             if (isSnapToGrid()) {
-              CalcUtils.snapPointToGrid(scaledPoint, currentProject().getGridSpacing());
+              scaledPoint = currentProject().getGrid().snapToGrid(scaledPoint);
             }
             if (InstantiationManager.getComponentSlot() == null) {
               try {
@@ -783,7 +782,7 @@ public class Presenter implements IPlugInPort {
       includeStuckComponents(controlPointMap);
     }
 
-    int d = snapToGrid ? (int) currentProject().getGridSpacing().convertToPixels() : 1;
+    int d = snapToGrid ? (int) currentProject().getGrid().getSpacing().convertToPixels() : 1;
     int dx = 0;
     int dy = 0;
     switch (key) {
@@ -844,10 +843,10 @@ public class Presenter implements IPlugInPort {
     dragAction = shiftDown ? IPlugInPort.DND_TOGGLE_SNAP : 0;
 
     Map<IDIYComponent<?>, Set<Integer>> components = new HashMap<IDIYComponent<?>, Set<Integer>>();
-    this.previousScaledPoint = scalePoint(point);
+    previousScaledPoint = scalePoint(point);
     if (InstantiationManager.getComponentTypeSlot() != null) {
       if (isSnapToGrid()) {
-        CalcUtils.snapPointToGrid(previousScaledPoint, currentProject().getGridSpacing());
+        previousScaledPoint = currentProject().getGrid().snapToGrid(previousScaledPoint);
       }
       boolean refresh = false;
       switch (InstantiationManager.getComponentTypeSlot().getCreationMethod()) {
@@ -856,8 +855,9 @@ public class Presenter implements IPlugInPort {
           break;
         case SINGLE_CLICK:
           refresh = InstantiationManager.updateSingleClick(
-              previousScaledPoint, isSnapToGrid(), currentProject().getGridSpacing());
+              previousScaledPoint, isSnapToGrid(), currentProject().getGrid());
           break;
+        default:
       }
       if (refresh) {
         dispatchMessage(EventType.REPAINT);
@@ -979,9 +979,9 @@ public class Presenter implements IPlugInPort {
   }
 
   @Override
-  public void nudgeSelection(Size xOffset, Size yOffset, boolean includeStuckComponents) {
+  public void nudgeSelection(Size offsetX, Size offsetY, boolean includeStuckComponents) {
     LOG.trace("nudgeSelection({}, {}, {}){}",
-              xOffset, yOffset, includeStuckComponents,
+              offsetX, offsetY, includeStuckComponents,
               currentProject().emptySelection() ? " selection is empty" : "");
     if (!currentProject().emptySelection()) {
       Map<IDIYComponent<?>, Set<Integer>> controlPointMap =
@@ -1006,11 +1006,10 @@ public class Presenter implements IPlugInPort {
         includeStuckComponents(controlPointMap);
       }
 
-      int dx = (int) xOffset.convertToPixels();
-      int dy = (int) yOffset.convertToPixels();
-
-      Project oldProject = currentProject().clone();
+      int dx = (int) offsetX.convertToPixels();
+      int dy = (int) offsetY.convertToPixels();
       moveComponents(controlPointMap, dx, dy, false);
+      Project oldProject = currentProject().clone();
       dispatchMessage(
           EventType.PROJECT_MODIFIED, oldProject, currentProject().clone(), "Move Selection");
       dispatchMessage(EventType.REPAINT);
@@ -1211,7 +1210,7 @@ public class Presenter implements IPlugInPort {
     } else if (InstantiationManager.getComponentSlot() != null) {
       this.previousScaledPoint = scalePoint(point);
       InstantiationManager.updateSingleClick(
-          previousScaledPoint, isSnapToGrid(), currentProject().getGridSpacing());
+          previousScaledPoint, isSnapToGrid(), currentProject().getGrid());
     }
     dispatchMessage(EventType.REPAINT);
     return true;
@@ -1229,6 +1228,7 @@ public class Presenter implements IPlugInPort {
     boolean useExtraSpace = App.extraSpace();
     Dimension d = drawingManager.getCanvasDimensions(currentProject(), 1d, useExtraSpace);
     double extraSpace = useExtraSpace ? drawingManager.getExtraSpace(currentProject()) : 0;
+    Grid grid = currentProject().getGrid();
 
     if (controlPointMap.size() == 1) {
       Map.Entry<IDIYComponent<?>, Set<Integer>> entry =
@@ -1239,14 +1239,13 @@ public class Presenter implements IPlugInPort {
       Point testPoint = new Point(firstPoint);
       testPoint.translate(dx, dy);
       if (snapToGrid) {
-        CalcUtils.snapPointToGrid(testPoint, currentProject().getGridSpacing());
+        testPoint = grid.snapToGrid(testPoint);
       }
-
       actualDx = testPoint.x - firstPoint.x;
       actualDy = testPoint.y - firstPoint.y;
     } else if (snapToGrid) {
-      actualDx = CalcUtils.roundToGrid(dx, currentProject().getGridSpacing());
-      actualDy = CalcUtils.roundToGrid(dy, currentProject().getGridSpacing());
+      actualDx = grid.roundToGrid(dx);
+      actualDy = grid.roundToGrid(dy);
     } else {
       actualDx = dx;
       actualDy = dy;
@@ -1374,8 +1373,7 @@ public class Presenter implements IPlugInPort {
     boolean changesCircuit = false;
     for (IDIYComponent<?> component : components) {
       ComponentType type = ComponentType.extractFrom(component);
-      if (type.getTransformer() == null ||
-          !type.getTransformer().canMirror(component)) {
+      if (type.getTransformer() == null || !type.getTransformer().canMirror(component)) {
         canMirror = false;
         break;
       }
@@ -1416,12 +1414,12 @@ public class Presenter implements IPlugInPort {
         maxY = Integer.max(maxY, p.y);
       }
     }
+
     int centerX = (maxX + minX) / 2;
     int centerY = (maxY + minY) / 2;
-
     if (snapToGrid) {
-      centerX = CalcUtils.roundToGrid(centerX, currentProject().getGridSpacing());
-      centerY = CalcUtils.roundToGrid(centerY, currentProject().getGridSpacing());
+      centerX = currentProject().getGrid().roundToGrid(centerX);
+      centerY = currentProject().getGrid().roundToGrid(centerY);
     }
 
     return new Point(centerX, centerY);
@@ -1482,7 +1480,6 @@ public class Presenter implements IPlugInPort {
         components,
         previousScaledPoint,
         isSnapToGrid(),
-        currentProject().getGridSpacing(),
         autoGroup,
         currentProject());
     dispatchMessage(EventType.REPAINT);
@@ -1929,7 +1926,7 @@ public class Presenter implements IPlugInPort {
       // other components.
       boolean matches = false;
 
-   outer:
+    outer:
       for (IDIYComponent<?> selectedComponent : currentProject().getSelection()) {
         // try to find the selectedComponent in one of the groups
         for (Set<IDIYComponent<?>> s : componentGroups) {
@@ -1952,6 +1949,7 @@ public class Presenter implements IPlugInPort {
               newSelection.add(component);
             }
             break;
+          default:
         }
       }
     }
@@ -2359,12 +2357,12 @@ public class Presenter implements IPlugInPort {
     LOG.trace("setTemplateDefault({}, {})", type, templateName);
     Map<String, String> defaultTemplateMap =
         (Map<String, String>) App.getObject(Config.Flag.DEFAULT_TEMPLATES);
-    if (defaultTemplateMap == null) defaultTemplateMap = new HashMap<String, String>();
-
+    if (defaultTemplateMap == null) {
+      defaultTemplateMap = new HashMap<String, String>();
+    }
     // try by class name and then by old category.type format
     String key1 = type.getInstanceClass().getCanonicalName();
     String key2 = type.getCategory() + "." + type.getName();
-
     if (templateName.equals(defaultTemplateMap.get(key1))
         || templateName.equals(defaultTemplateMap.get(key2))) {
       defaultTemplateMap.remove(key1);

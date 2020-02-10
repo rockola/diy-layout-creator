@@ -29,7 +29,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
@@ -60,7 +59,6 @@ import org.diylc.utils.Constants;
 public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
   private static final long serialVersionUID = 1L;
-
   private static final Color BODY_COLOR = Color.white;
   private static final Color BASE_COLOR = Color.gray;
   public static final Color LUG_COLOR = Color.decode("#E0C04C");
@@ -69,23 +67,21 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
   private static final Size LENGTH = Size.mm(83);
   private static final Size BASE_RADIUS = Size.in(0.15);
   private static final Size LUG_DIAMETER = Size.in(0.06);
-
   // strat-specific
   private static final Size STRAT_LIP_WIDTH = Size.mm(5);
   private static final Size STRAT_LIP_LENGTH = Size.mm(20);
   private static final Size STRAT_INNER_LENGTH = Size.mm(70);
-
   // tele-specific
   private static final Size TELE_BASE_WIDTH = Size.in(1.5);
   private static final Size TELE_LIP_LENGTH = Size.in(1.735);
   private static final Size TELE_LENGTH = Size.in(2.87);
   private static final Size TELE_HOLE_SPACING = Size.in(1.135);
-
+  //
   private static final Size HOLE_SIZE = Size.mm(2);
   private static final Size HOLE_MARGIN = Size.mm(4);
   private static final Size POLE_SIZE = Size.mm(4);
   private static final Size POLE_SPACING = Size.mm(11.68);
-
+  //
   private static final Size RAIL_WIDTH = Size.mm(1.5);
   private static final Size RAIL_LENGTH = Size.mm(60);
   private static final Size COIL_SPACING = Size.mm(7.5);

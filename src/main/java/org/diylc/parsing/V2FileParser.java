@@ -24,10 +24,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -38,7 +36,7 @@ import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.BlankBoard;
 import org.diylc.components.boards.PerfBoard;
 import org.diylc.components.boards.VeroBoard;
-import org.diylc.components.connectivity.AWG;
+import org.diylc.components.connectivity.AmericanWireGauge;
 import org.diylc.components.connectivity.CopperTrace;
 import org.diylc.components.connectivity.CurvedTrace;
 import org.diylc.components.connectivity.Eyelet;
@@ -59,13 +57,12 @@ import org.diylc.components.passive.RadialElectrolytic;
 import org.diylc.components.passive.RadialFilmCapacitor;
 import org.diylc.components.passive.Resistor;
 import org.diylc.components.passive.ResistorSymbol;
-import org.diylc.components.semiconductors.BJTSymbol;
-import org.diylc.components.semiconductors.DIL_IC;
+import org.diylc.components.semiconductors.BjtSymbol;
+import org.diylc.components.semiconductors.DualInlineIc;
 import org.diylc.components.semiconductors.DiodePlastic;
 import org.diylc.components.semiconductors.DiodeSymbol;
-import org.diylc.components.semiconductors.ICPointCount;
-import org.diylc.components.semiconductors.ICSymbol;
-import org.diylc.components.semiconductors.LEDSymbol;
+import org.diylc.components.semiconductors.OperationalAmplifierSymbol;
+import org.diylc.components.semiconductors.LedSymbol;
 import org.diylc.components.semiconductors.TransistorTO92;
 import org.diylc.components.shapes.Ellipse;
 import org.diylc.components.shapes.Rectangle;
@@ -80,9 +77,7 @@ import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.ResistanceUnit;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
-
 import org.nfunk.jep.JEP;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -453,7 +448,7 @@ public class V2FileParser implements IOldFileParser {
                 }
               }
               num = num * 2 + 8;
-              AWG gauge = AWG.getGauge(num);
+              AmericanWireGauge gauge = AmericanWireGauge.getGauge(num);
               if (gauge == null) {
                 LOG.error("Unknown gauge {}", num);
               } else {
@@ -663,7 +658,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(gs);
               break;
             case "led symbol":
-              LEDSymbol ls = new LEDSymbol();
+              LedSymbol ls = new LedSymbol();
               if (comName != "") {
                 ls.setName(comName);
               } else {
@@ -714,7 +709,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(cs);
               break;
             case "opamp symbol":
-              ICSymbol ic = new ICSymbol();
+              OperationalAmplifierSymbol ic = new OperationalAmplifierSymbol();
               if (comName != "") {
                 ic.setName(comName);
               } else {
@@ -728,7 +723,7 @@ public class V2FileParser implements IOldFileParser {
               y = (int) tacke.get(0).getY() - 20;
               point = new Point(x, y);
               ic.setControlPoint(point, 0);
-              ic.setIcPointCount(ICPointCount._3);
+              ic.setPointCount(3);
               project.getComponents().add(ic);
               break;
             case "potentiometer symbol":
@@ -934,7 +929,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(ts);
               break;
             case "bjt transistor":
-              BJTSymbol bjt = new BJTSymbol();
+              BjtSymbol bjt = new BjtSymbol();
               if (comName != "") {
                 bjt.setName(comName);
               } else {

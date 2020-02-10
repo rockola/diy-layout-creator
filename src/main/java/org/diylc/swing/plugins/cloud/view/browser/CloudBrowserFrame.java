@@ -39,10 +39,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
@@ -53,7 +51,6 @@ import org.diylc.plugins.cloud.model.ProjectEntity;
 import org.diylc.plugins.cloud.presenter.CloudPresenter;
 import org.diylc.plugins.cloud.presenter.SearchSession;
 import org.diylc.swing.ISimpleView;
-import org.diylc.utils.Pair;
 
 /**
  * {@link JFrame} for searching the projects on the cloud.
@@ -62,20 +59,16 @@ import org.diylc.utils.Pair;
  */
 public class CloudBrowserFrame extends JFrame implements ISimpleView {
 
-  private static final String TITLE = "Search the Cloud";
-
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LogManager.getLogger(CloudBrowserFrame.class);
+  private static final String TITLE = "Search the Cloud";
 
   private JPanel mainPanel;
   private JTabbedPane tabbedPane;
   private JPanel dashboardPanel;
   private JPanel searchPanel;
-
   private SearchHeaderPanel searchHeaderPanel;
   private ResultsScrollPanel resultsScrollPane;
-
   private IPlugInPort plugInPort;
   private SearchSession searchSession;
 
@@ -297,5 +290,25 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
   @Override
   public JFrame getOwnerFrame() {
     return this;
+  }
+
+  public class Pair<A, B> {
+
+    private A first;
+    private B second;
+
+    public Pair(A first, B second) {
+      super();
+      this.first = first;
+      this.second = second;
+    }
+
+    public A getFirst() {
+      return first;
+    }
+
+    public B getSecond() {
+      return second;
+    }
   }
 }

@@ -33,7 +33,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import org.diylc.App;
 import org.diylc.images.Icon;
 import org.diylc.swing.gui.DialogFactory;
@@ -92,9 +91,9 @@ public class BomDialog extends JDialog {
     if (toolbar == null) {
       toolbar = new JPanel();
       toolbar.add(new JButton(new SaveToExcelAction()));
-      toolbar.add(new JButton(new SaveToCSVAction()));
-      toolbar.add(new JButton(new SaveToPNGAction()));
-      toolbar.add(new JButton(new SaveToHTMLAction()));
+      toolbar.add(new JButton(new SaveToCsvAction()));
+      toolbar.add(new JButton(new SaveToPngAction()));
+      toolbar.add(new JButton(new SaveToHtmlAction()));
     }
     return toolbar;
   }
@@ -124,7 +123,7 @@ public class BomDialog extends JDialog {
           null);
       if (file != null) {
         try {
-          TableExporter.getInstance().exportToExcel(getTable(), file);
+          TableExporter.exportToExcel(getTable(), file);
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -133,11 +132,11 @@ public class BomDialog extends JDialog {
     }
   }
 
-  class SaveToCSVAction extends AbstractAction {
+  class SaveToCsvAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-    public SaveToCSVAction() {
+    public SaveToCsvAction() {
       super();
       putValue(Action.NAME, "Save to CSV");
       putValue(Action.SMALL_ICON, Icon.CSV.icon());
@@ -158,7 +157,7 @@ public class BomDialog extends JDialog {
           null);
       if (file != null) {
         try {
-          TableExporter.getInstance().exportToCSV(getTable(), file);
+          TableExporter.exportToCsv(getTable(), file);
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -167,11 +166,11 @@ public class BomDialog extends JDialog {
     }
   }
 
-  class SaveToHTMLAction extends AbstractAction {
+  class SaveToHtmlAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-    public SaveToHTMLAction() {
+    public SaveToHtmlAction() {
       super();
       putValue(Action.NAME, "Save to HTML");
       putValue(Action.SMALL_ICON, Icon.HTML.icon());
@@ -192,7 +191,7 @@ public class BomDialog extends JDialog {
           null);
       if (file != null) {
         try {
-          TableExporter.getInstance().exportToHTML(getTable(), file);
+          TableExporter.exportToHtml(getTable(), file);
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -201,11 +200,11 @@ public class BomDialog extends JDialog {
     }
   }
 
-  class SaveToPNGAction extends AbstractAction {
+  class SaveToPngAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-    public SaveToPNGAction() {
+    public SaveToPngAction() {
       super();
       putValue(Action.NAME, "Save to PNG");
       putValue(Action.SMALL_ICON, Icon.Image.icon());
@@ -226,7 +225,7 @@ public class BomDialog extends JDialog {
           null);
       if (file != null) {
         try {
-          TableExporter.getInstance().exportToPNG(getTable(), file);
+          TableExporter.exportToPng(getTable(), file);
         } catch (IOException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();

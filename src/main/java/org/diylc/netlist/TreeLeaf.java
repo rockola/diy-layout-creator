@@ -113,7 +113,7 @@ public class TreeLeaf implements ITree {
     return component.getName() + "." + linkName;
   }
 
-  public String toHTML() {
+  public String toHtml() {
     return toString().replace("<", "&lt;").replace(">", "&gt");
   }
 }

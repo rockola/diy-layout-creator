@@ -46,8 +46,9 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.diylc.common.Config;
 
 /**
- * Utility class that exports {@link JTable} to:
+ * Export {@link JTable} to a file.
  *
+ * <p>Supported formats:
  * <ul>
  *   <li>CSV
  *   <li>PNG
@@ -60,7 +61,6 @@ import org.diylc.common.Config;
 public class TableExporter {
 
   private static final Logger LOG = LogManager.getLogger(TableExporter.class);
-
   private static TableExporter instance;
 
   public static TableExporter getInstance() {
@@ -70,9 +70,15 @@ public class TableExporter {
     return instance;
   }
 
-  private TableExporter() {}
+  private TableExporter() {
+    //
+  }
 
-  public void exportToExcel(JTable table, File file) throws IOException {
+  public static void exportToExcel(JTable table, File file) throws IOException {
+    getInstance().excelExport(table, file);
+  }
+
+  public void excelExport(JTable table, File file) throws IOException {
     LOG.info("Exporting table to Excel file {}", file.getAbsolutePath());
 
     LOG.debug("Creating workbook");
@@ -160,7 +166,11 @@ public class TableExporter {
     LOG.debug("Done");
   }
 
-  public void exportToHTML(JTable table, File file) throws IOException {
+  public static void exportToHtml(JTable table, File file) throws IOException {
+    getInstance().htmlExport(table, file);
+  }
+
+  public void htmlExport(JTable table, File file) throws IOException {
     LOG.info("Exporting table to HTML file: " + file.getAbsolutePath());
     FileWriter fstream = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fstream);
@@ -202,7 +212,11 @@ public class TableExporter {
     out.close();
   }
 
-  public void exportToCSV(JTable table, File file) throws IOException {
+  public static void exportToCsv(JTable table, File file) throws IOException {
+    getInstance().csvExport(table, file);
+  }
+
+  public void csvExport(JTable table, File file) throws IOException {
 
     LOG.info("Exporting table to CSV file: " + file.getAbsolutePath());
     FileWriter fstream = new FileWriter(file);
@@ -236,7 +250,7 @@ public class TableExporter {
             out.write(method.invoke(rendererComponent).toString());
           } catch (Exception e) {
             LOG.error(
-                "exportToCSV({" + table.toString() + ", " + file.toString() + ") failed",
+                "exportToCsv({" + table.toString() + ", " + file.toString() + ") failed",
                 e);
           }
         }
@@ -246,7 +260,11 @@ public class TableExporter {
     out.close();
   }
 
-  public void exportToPNG(JTable table, File file) throws IOException {
+  public static void exportToPng(JTable table, File file) throws IOException {
+    getInstance().pngExport(table, file);
+  }
+
+  public void pngExport(JTable table, File file) throws IOException {
     LOG.info("Exporting table to PNG file: " + file.getAbsolutePath());
     table.clearSelection();
     LOG.debug("Creating image");

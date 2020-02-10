@@ -91,9 +91,10 @@ public class Position implements Comparable<Position> {
 
   @Override
   public int compareTo(Position o) {
-    if (theSwitch instanceof IDIYComponent<?> && o.theSwitch instanceof IDIYComponent<?>)
+    if (theSwitch instanceof IDIYComponent<?> && o.theSwitch instanceof IDIYComponent<?>) {
       return ((IDIYComponent<?>) theSwitch).getName()
           .compareToIgnoreCase(((IDIYComponent<?>) o.theSwitch).getName());
+    }
     return 0;
   }
 }

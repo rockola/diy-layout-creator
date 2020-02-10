@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
@@ -106,21 +105,21 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
 
     if (getCoordinateDisplay() != CoordinateDisplay.None) {
       int range;
-      int yOffset;
+      int offsetY;
       CoordinateType yType = getyType();
       Point drawPoint = new Point(firstPoint);
 
       if (origin == CoordinateOrigin.Top_Left || origin == CoordinateOrigin.Top_Right) {
         range = (int) ((secondPoint.y - firstPoint.y + halfSpace) / spacing);
-        yOffset = spacing;
+        offsetY = spacing;
       } else {
         range = (int) ((secondPoint.y - firstPoint.y + halfSpace) / spacing);
-        yOffset = -spacing;
+        offsetY = -spacing;
         drawPoint.y = secondPoint.y;
       }
 
       for (int c = 1; c < range; c++) {
-        int xOffset =
+        int offsetX =
             (yType == CoordinateType.Numbers && c >= 10)
                     || (yType == CoordinateType.Letters && c >= 27)
                 ? 0
@@ -128,11 +127,11 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
         String label =
             yType == CoordinateType.Letters ? getCoordinateLabel(c) : Integer.toString(c);
 
-        drawPoint.y += yOffset;
+        drawPoint.y += offsetY;
         StringUtils.drawCenteredText(
             g2d,
             label,
-            firstPoint.x + xOffset,
+            firstPoint.x + offsetX,
             drawPoint.y,
             HorizontalAlignment.LEFT,
             VerticalAlignment.CENTER);
@@ -140,7 +139,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
           StringUtils.drawCenteredText(
               g2d,
               label,
-              secondPoint.x - xOffset,
+              secondPoint.x - offsetX,
               drawPoint.y,
               HorizontalAlignment.RIGHT,
               VerticalAlignment.CENTER);
@@ -149,25 +148,20 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     }
 
     if (getCoordinateDisplay() != CoordinateDisplay.None) {
-      int range;
-      int xOffset;
+      int offsetX = spacing;
       CoordinateType xType = getxType();
       Point drawPoint = new Point(firstPoint);
+      int range = (int) ((secondPoint.x - firstPoint.x + halfSpace) / spacing);
 
-      if (origin == CoordinateOrigin.Top_Left || origin == CoordinateOrigin.Bottom_Left) {
-        range = (int) ((secondPoint.x - firstPoint.x + halfSpace) / spacing);
-        xOffset = spacing;
-      } else {
-        range = (int) ((secondPoint.x - firstPoint.x + halfSpace) / spacing);
-        xOffset = -spacing;
+      if (!(origin == CoordinateOrigin.Top_Left || origin == CoordinateOrigin.Bottom_Left)) {
+        offsetX = -spacing;
         drawPoint.x = secondPoint.x;
       }
-
       for (int c = 1; c < range; c++) {
         String label =
             xType == CoordinateType.Letters ? getCoordinateLabel(c) : Integer.toString(c);
 
-        drawPoint.x += xOffset;
+        drawPoint.x += offsetX;
         StringUtils.drawCenteredText(
             g2d,
             label,

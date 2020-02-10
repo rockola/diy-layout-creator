@@ -23,7 +23,6 @@ package org.diylc.utils;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
-
 import org.diylc.common.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
@@ -41,7 +40,9 @@ public class KeywordExtractor {
     return instance;
   }
 
-  private KeywordExtractor() {}
+  private KeywordExtractor() {
+    //
+  }
 
   public String extractKeywords(Project project) {
     Set<String> words = new HashSet<String>();

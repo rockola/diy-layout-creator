@@ -25,10 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.components.Area;
 import org.diylc.core.measures.Size;
 
@@ -45,14 +43,14 @@ public class Iec60320 {
   }
 
   static {
-    couplers.put("C1", C1());
-    couplers.put("C2", C2());
+    couplers.put("C1", getC1());
+    couplers.put("C2", getC2());
     //couplers.put("C13", C13());
-    couplers.put("C14", C14());
+    couplers.put("C14", getC14());
   }
 
   /**
-     Type of coupler (male connector/plug or female inlet/socket)
+     Type of coupler (male connector/plug or female inlet/socket).
   */
   private final CouplerType couplerType;
   /**
@@ -60,7 +58,7 @@ public class Iec60320 {
   */
   private final List<Pin> pins;
   /**
-     Coupler main area (plug for connectors, opening for inlets);
+     Coupler main area (plug for connectors, opening for inlets).
   */
   private final Area coupler;
   /**
@@ -120,7 +118,7 @@ public class Iec60320 {
    *
    * @return Instance of Iec60320 as per IEC60320-C1.
    */
-  public static Iec60320 C1() {
+  public static Iec60320 getC1() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(6.6);
     final Size pinWidth = Size.mm(2.9);
@@ -153,7 +151,7 @@ public class Iec60320 {
    *
    * @return Instance of Iec60320 as per IEC60320-C2.
    */
-  public static Iec60320 C2() {
+  public static Iec60320 getC2() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(6.6);
     final Size pinWidth = Size.mm(2.36);
@@ -187,7 +185,7 @@ public class Iec60320 {
    *
    * @return Instance of Iec60320 as per IEC60320-C14.
    */
-  public static Iec60320 C14() {
+  public static Iec60320 getC14() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(7);
     final Size pinVerticalSpacing = Size.mm(4);
@@ -236,55 +234,59 @@ public class Iec60320 {
         CouplerType.INLET,
         pins,
         // inlet
-        Area.roundedPolygon(new Point[] {
-            Area.point(
-                reference.x,
-                reference.y - halfInletHeight),
-            Area.point(
-                reference.x + pinHorizontalSpacing.asPixels(),
-                reference.y - halfInletHeight),
-            Area.point(
-                reference.x + halfInletWidth,
-                reference.y - inletUpperCornerVerticalOffset.asPixels()),
-            Area.point(
-                reference.x + halfInletWidth,
-                reference.y + halfInletHeight),
-            Area.point(
-                reference.x - halfInletWidth,
-                reference.y + halfInletHeight),
-            Area.point(
-                reference.x - halfInletWidth,
-                reference.y - inletUpperCornerVerticalOffset.asPixels()),
-            Area.point(
-                reference.x - pinHorizontalSpacing.asPixels(),
-                reference.y - halfInletHeight)
-          }, new double[] {
-            inletUpperRadius,
-            inletUpperRadius,
-            inletLowerRadius,
-            inletLowerRadius,
-            inletUpperRadius,
-            inletUpperRadius
-          }),
+        Area.roundedPolygon(
+            new Point[] {
+              Area.point(
+                  reference.x,
+                  reference.y - halfInletHeight),
+              Area.point(
+                  reference.x + pinHorizontalSpacing.asPixels(),
+                  reference.y - halfInletHeight),
+              Area.point(
+                  reference.x + halfInletWidth,
+                  reference.y - inletUpperCornerVerticalOffset.asPixels()),
+              Area.point(
+                  reference.x + halfInletWidth,
+                  reference.y + halfInletHeight),
+              Area.point(
+                  reference.x - halfInletWidth,
+                  reference.y + halfInletHeight),
+              Area.point(
+                  reference.x - halfInletWidth,
+                  reference.y - inletUpperCornerVerticalOffset.asPixels()),
+              Area.point(
+                  reference.x - pinHorizontalSpacing.asPixels(),
+                  reference.y - halfInletHeight)
+            },
+            new double[] {
+              inletUpperRadius,
+              inletUpperRadius,
+              inletLowerRadius,
+              inletLowerRadius,
+              inletUpperRadius,
+              inletUpperRadius
+            }),
         // courtyard
         Area.centeredRoundRect(reference, courtyardWidth, courtyardHeight, courtyardRadius),
         // mount
-        Area.roundedPolygon(new Point[] {
-            Area.point(reference.x, reference.y - halfMountHeight),
-            Area.point(reference.x + halfMountWidth, reference.y - halfMountHeight),
-            Area.point(reference.x + lugWidth, reference.y),
-            Area.point(reference.x + halfMountWidth, reference.y + halfMountHeight),
-            Area.point(reference.x - halfMountWidth, reference.y + halfMountHeight),
-            Area.point(reference.x - lugWidth, reference.y),
-            Area.point(reference.x - halfMountWidth, reference.y - halfMountHeight),
-          }, new double[] {
-            inletUpperRadius,
-            lugRadius,
-            inletUpperRadius,
-            inletUpperRadius,
-            lugRadius,
-            inletUpperRadius
-          })
+        Area.roundedPolygon(
+            new Point[] {
+              Area.point(reference.x, reference.y - halfMountHeight),
+              Area.point(reference.x + halfMountWidth, reference.y - halfMountHeight),
+              Area.point(reference.x + lugWidth, reference.y),
+              Area.point(reference.x + halfMountWidth, reference.y + halfMountHeight),
+              Area.point(reference.x - halfMountWidth, reference.y + halfMountHeight),
+              Area.point(reference.x - lugWidth, reference.y),
+              Area.point(reference.x - halfMountWidth, reference.y - halfMountHeight),
+            },
+            new double[] {
+              inletUpperRadius,
+              lugRadius,
+              inletUpperRadius,
+              inletUpperRadius,
+              lugRadius,
+              inletUpperRadius
+            })
         .subtract(Area.circle(reference.x + holeOffset, reference.y, mountHoleDiameter))
         .subtract(Area.circle(reference.x - holeOffset, reference.y, mountHoleDiameter)));
   }

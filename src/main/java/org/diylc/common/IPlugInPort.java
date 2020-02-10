@@ -29,7 +29,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.core.ExpansionMode;
@@ -64,8 +63,8 @@ public interface IPlugInPort
    * unit. If <code>useZoom</code> is set to true, the result is
    * scaled by zoom factor.
    *
-   * @param useZoom
-   * @param includeExtraSpace
+   * @param useZoom If true, scale result by zoom factor.
+   * @param includeExtraSpace If true, extend canvas dimensions by extra space.
    * @return canvas dimensions
    */
   Dimension getCanvasDimensions(boolean useZoom, boolean includeExtraSpace);
@@ -76,8 +75,8 @@ public interface IPlugInPort
    *
    * <p>Note: point coordinates are scaled for zoom factor.
    *
-   * @param point
-   * @return cursor
+   * @param point Specified location.
+   * @return cursor to use.
    */
   Cursor getCursorAt(Point point);
 
@@ -100,7 +99,7 @@ public interface IPlugInPort
   /**
    * Loads a project from the specified file.
    *
-   * @param fileName
+   * @param fileName Name of project file.
    */
   void loadProject(String fileName);
 
@@ -110,13 +109,15 @@ public interface IPlugInPort
   /**
    * Saves the current project into the specified file.
    *
-   * @param fileName
-   * @param isBackup
+   * @param fileName Name of file for saving current project.
+   * @param isBackup If true, this is a backup file.
    */
   void saveProjectToFile(String fileName, boolean isBackup);
 
   /**
-     @return the current file name.
+     File name for current project.
+
+   @return the current file name.
   */
   String getCurrentFileName();
 
@@ -137,10 +138,11 @@ public interface IPlugInPort
    * filter is not null, it will be used to filter the components that
    * are shown.
    *
-   * @param g2d
-   * @param drawOptions specific drawing options
-   * @param filter
-   * @param externalZoom
+   * @param g2d Graphics context.
+   * @param drawOptions Specific drawing options.
+   * @param filter Component filter for ignoring components not to be
+   * drawn at this time.
+   * @param externalZoom Zoom factor.
    */
   void draw(
       Graphics2D g2d,
@@ -148,6 +150,11 @@ public interface IPlugInPort
       IComponentFilter filter,
       Double externalZoom);
 
+  /**
+   * Get available zoom levels.
+   *
+   * @return An array of zoom factors.
+   */
   Double[] getAvailableZoomLevels();
 
   /**
@@ -167,7 +174,7 @@ public interface IPlugInPort
   /**
    * Adds a list of components to the project.
    *
-   * @param components
+   * @param components Components to add.
    * @param autoGroup
    */
   void pasteComponents(Collection<IDIYComponent<?>> components, boolean autoGroup);
@@ -175,20 +182,24 @@ public interface IPlugInPort
   /**
    * Selects all components in the project.
    *
-   * @param layer If > 0, designates layer to select. If <= 0, select all regardless of layer.
+   * @param layer If positive, designates layer to select. If negative
+   *     or zero, select all regardless of layer.
    */
   void selectAll(int layer);
 
-  /** Duplicates selected components and places them nearby. */
-  // void duplicateSelection(); // now in Project
-
-  /** Deletes all the selected components from the project. */
+  /**
+     Deletes all the selected components from the project.
+  */
   void deleteSelectedComponents();
 
-  /** Groups all selected components. */
+  /**
+     Groups all selected components.
+  */
   void groupSelectedComponents();
 
-  /** Ungroups all selected components. */
+  /**
+     Ungroups all selected components.
+  */
   void ungroupSelectedComponents();
 
   /**
@@ -204,13 +215,13 @@ public interface IPlugInPort
    * Finds all components at the specified location, sorted by z-index
    * from top to bottom. Location depends on the current zoom level.
    *
-   * @param point
-   * @return
+   * @param point Location of interest.
+   * @return Found components.
    */
   List<IDIYComponent<?>> findComponentsAt(Point point);
 
   /**
-   * Rotates selection for 90 degrees.
+   * Rotates selection 90 degrees.
    *
    * @param direction 1 for clockwise, -1 for counter-clockwise
    */

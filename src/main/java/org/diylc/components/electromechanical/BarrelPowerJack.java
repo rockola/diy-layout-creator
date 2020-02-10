@@ -28,7 +28,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
@@ -138,36 +137,23 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
-    Composite oldComposite = setTransparency(g2d);
+    final Composite oldComposite = setTransparency(g2d);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
-    g2d.fill(body[0]);
+    body[0].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
     if (!outlineMode) {
-      g2d.setColor(PHENOLIC_COLOR);
-      g2d.fill(body[1]);
+      body[1].fill(g2d, PHENOLIC_COLOR);
     }
     g2d.setComposite(oldComposite);
 
-    final Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
-    g2d.setColor(finalBorderColor);
-    g2d.draw(body[0]);
+    body[0].draw(g2d, tryBorderColor(outlineMode, BORDER_COLOR));
     if (!outlineMode) {
-      g2d.setColor(PHENOLIC_COLOR.darker());
-      g2d.draw(body[1]);
-
-      g2d.setColor(METAL_COLOR);
-      g2d.fill(body[2]);
-      g2d.setColor(METAL_COLOR.darker());
-      g2d.draw(body[2]);
-
-      g2d.setColor(METAL_COLOR);
-      g2d.fill(body[3]);
+      body[1].draw(g2d, PHENOLIC_COLOR.darker());
+      body[2].fillDraw(g2d, METAL_COLOR, METAL_COLOR.darker());
+      body[3].fill(g2d, METAL_COLOR);
     }
-
-    g2d.setColor(tryColor(outlineMode, METAL_COLOR.darker()));
-    g2d.draw(body[3]);
+    body[3].draw(g2d, tryColor(outlineMode, METAL_COLOR.darker()));
 
     if (!outlineMode && !getPolarity().isNone()) {
       int spacing = (int) SPACING.convertToPixels();
@@ -200,22 +186,13 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
     g2d.setColor(METAL_COLOR);
     g2d.drawLine((width - lugWidth) / 2, height / 3, (width + lugWidth) / 2, height / 3);
     g2d.drawLine(width * 2 / 3, (height - lugWidth) / 2, width * 2 / 3, (height + lugWidth) / 2);
-    g2d.fillOval(
-        (width - lugWidth) / 2,
-        height * 2 / 3 - lugWidth / 2,
-        lugWidth,
-        lugWidth);
+    Area.circle(width / 2, height * 2 / 3, lugWidth).fill(g2d, METAL_COLOR);
     g2d.fillRect(
         width / 2 - lugWidth * 3 / 2,
         height * 2 / 3 - lugWidth / 2,
         lugWidth * 3 / 2,
         lugWidth);
-    g2d.setColor(PHENOLIC_COLOR);
-    g2d.fillOval(
-        (width - margin) / 2,
-        height * 2 / 3 - margin / 2,
-        margin,
-        margin);
+    Area.circle(width / 2, height * 2 / 3, margin).fill(g2d, PHENOLIC_COLOR);
   }
 
   @Override

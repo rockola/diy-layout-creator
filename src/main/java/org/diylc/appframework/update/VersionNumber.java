@@ -21,7 +21,6 @@
 package org.diylc.appframework.update;
 
 import java.io.Serializable;
-
 import org.diylc.parsing.XmlNode;
 
 public class VersionNumber implements Serializable, Comparable<VersionNumber> {

@@ -26,9 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Path2D;
-
 import org.apache.commons.text.WordUtils;
-
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.core.ComponentState;

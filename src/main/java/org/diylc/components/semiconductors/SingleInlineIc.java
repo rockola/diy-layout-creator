@@ -32,7 +32,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -261,20 +260,17 @@ public class SingleInlineIc extends InlinePackage {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    Area mainArea = getBody()[0];
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
     if (!outlineMode) {
       int pinSize = (int) PIN_SIZE.convertToPixels() / 2 * 2;
       for (Point point : controlPoints) {
-        g2d.setColor(PIN_COLOR);
-        g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);
-        g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        Area.circle(point, pinSize).fillDraw(g2d, PIN_COLOR, PIN_BORDER_COLOR);
       }
     }
 
     Composite oldComposite = setTransparency(g2d);
+    Area mainArea = getBody()[0];
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
     g2d.fill(mainArea);
     g2d.setComposite(oldComposite);

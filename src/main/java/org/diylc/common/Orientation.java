@@ -20,7 +20,9 @@
 
 package org.diylc.common;
 
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
+
 
 public enum Orientation {
   DEFAULT(0, 0),
@@ -117,5 +119,24 @@ public enum Orientation {
       default:
         throw new RuntimeException("Unknown direction " + hv);
     }
+  }
+
+  /**
+     Rotate this orientation.
+
+     @param direction 1 clockwise, -1 counterclockwise
+     @return new orientation
+  */
+  public Orientation rotate(int direction) {
+    // TODO maybe limit direction to be one of {-1, 1} - this is
+    // probably how it's always called, but we can't be sure here
+    int ordinal = ordinal() + direction;
+    // TODO maybe use modulo arithmetic for this
+    if (ordinal < 0) {
+      ordinal = values().length - 1;
+    } else if (ordinal >= values().length) {
+      ordinal = 0;
+    }
+    return values()[ordinal];
   }
 }

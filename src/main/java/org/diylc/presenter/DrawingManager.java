@@ -36,10 +36,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.simplemq.MessageDispatcher;
 import org.diylc.common.Config;
@@ -51,6 +49,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
+import org.diylc.core.Grid;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
@@ -97,11 +96,12 @@ public class DrawingManager {
   }
 
   /**
-   * Paints the project onto the canvas and returns the list of components that failed to draw.
+   * Paints the project onto the canvas and returns a list of
+   * components that couldn't be drawn.
    *
-   * @param g2d
-   * @param project
-   * @param drawOptions
+   * @param g2d The canvas.
+   * @param project The project.
+   * @param drawOptions Options for drawing.
    * @param filter
    * @param selectionRect
    * @param lockedComponents
@@ -150,7 +150,6 @@ public class DrawingManager {
     final Graphics2D g2d = (Graphics2D) graphicsContext.create();
     try {
       G2DWrapper g2dWrapper = new G2DWrapper(g2d, zoom);
-
       boolean antiAliasing = drawOptions.contains(DrawOption.ANTIALIASING);
       boolean hiQuality = App.highQualityRendering();
 
@@ -242,7 +241,6 @@ public class DrawingManager {
       // manage extra space
       double extraSpace = 0;
       if (drawOptions.contains(DrawOption.EXTRA_SPACE)) {
-        Dimension dInner = getCanvasDimensions(project, zoom, false);
         extraSpace = getExtraSpace(project) * zoom;
         float borderThickness = (float) (3f * (zoom > 1 ? 1 : zoom));
         g2d.setStroke(ObjectCache.getInstance().fetchStroke(
@@ -254,8 +252,8 @@ public class DrawingManager {
             0,
             BasicStroke.CAP_BUTT));
         g2dWrapper.setColor(theme().getOutlineColor());
-        extraSpaceRect = new Rectangle2D.Double(
-            extraSpace, extraSpace, dInner.getWidth(), dInner.getHeight());
+        Dimension inner = getCanvasDimensions(project, zoom, false);
+        extraSpaceRect = Area.rect(extraSpace, extraSpace, inner.getWidth(), inner.getHeight());
         g2d.draw(extraSpaceRect);
         extraSpaceTx = g2d.getTransform();
 
@@ -545,7 +543,7 @@ public class DrawingManager {
     double width = project.getWidth().convertToPixels();
     double height = project.getHeight().convertToPixels();
     double targetExtraSpace = EXTRA_SPACE * Math.max(width, height);
-    return CalcUtils.roundToGrid(targetExtraSpace, project.getGridSpacing());
+    return project.getGrid().roundToGrid(targetExtraSpace);
   }
 
   public static Dimension getCanvasDimensions(

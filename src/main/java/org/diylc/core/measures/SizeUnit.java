@@ -22,7 +22,6 @@ package org.diylc.core.measures;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.diylc.utils.Constants;
 
 public enum SizeUnit implements Unit {

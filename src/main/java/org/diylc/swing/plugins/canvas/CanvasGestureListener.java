@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.plugins.canvas;
 
 import java.awt.dnd.DragGestureEvent;
@@ -40,16 +41,16 @@ class CanvasGestureListener implements DragGestureListener {
   }
 
   @Override
-  public void dragGestureRecognized(DragGestureEvent dge) {
+  public void dragGestureRecognized(DragGestureEvent event) {
     boolean forceReSelection = false;
-    InputEvent e = dge.getTriggerEvent();
+    InputEvent e = event.getTriggerEvent();
     if (e instanceof MouseEvent) {
       MouseEvent me = (MouseEvent) e;
       forceReSelection = me.getButton() != MouseEvent.BUTTON1;
     }
-    presenter.dragStarted(dge.getDragOrigin(), dge.getDragAction(), forceReSelection);
-    dge.startDrag(
-        presenter.getCursorAt(dge.getDragOrigin()),
+    presenter.dragStarted(event.getDragOrigin(), event.getDragAction(), forceReSelection);
+    event.startDrag(
+        presenter.getCursorAt(event.getDragOrigin()),
         new EmptyTransferable(),
         new CanvasSourceListener(presenter));
   }

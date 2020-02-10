@@ -35,26 +35,30 @@ public class CheckBoxList extends JList {
 
   protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
+  /**
+     Construct a CheckBoxList from an array of CheckListItem instances.
+
+     @param items Array of CheckListItems.
+   */
   public CheckBoxList(CheckListItem[] items) {
     super(items);
 
     setCellRenderer(new CheckListRenderer());
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent event) {
-            JList list = (JList) event.getSource();
-            int index = list.locationToIndex(event.getPoint());
-            if (index >= 0) {
-              CheckListItem item = (CheckListItem) list.getModel().getElementAt(index);
-              // Toggle selected state
-              item.setSelected(!item.isSelected());
-              // Repaint cell
-              list.repaint(list.getCellBounds(index, index));
-            }
-          }
-        });
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent event) {
+        JList list = (JList) event.getSource();
+        int index = list.locationToIndex(event.getPoint());
+        if (index >= 0) {
+          CheckListItem item = (CheckListItem) list.getModel().getElementAt(index);
+          // Toggle selected state
+          item.setSelected(!item.isSelected());
+          // Repaint cell
+          list.repaint(list.getCellBounds(index, index));
+        }
+      }
+    });
   }
 
   public static class CheckListItem {

@@ -16,7 +16,6 @@
 
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 package org.diylc.swing.plugins.edit;
@@ -37,10 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import javax.swing.AbstractAction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.undo.IUndoListener;
 //import org.diylc.appframework.undo.UndoHandler;

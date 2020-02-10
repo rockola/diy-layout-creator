@@ -26,7 +26,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.Config;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -58,8 +57,8 @@ public abstract class Misc<T> extends AbstractComponent<T> {
 
   protected transient int textHeight;
   protected transient int textWidth;
-  protected transient int x;
-  protected transient int y;
+  protected transient int positionX;
+  protected transient int positionY;
 
   @Override
   public void draw(
@@ -72,31 +71,31 @@ public abstract class Misc<T> extends AbstractComponent<T> {
     Rectangle2D rect = fontMetrics.getStringBounds(text, g2d);
     textHeight = (int) rect.getHeight();
     textWidth = (int) rect.getWidth();
-    x = point.x;
-    y = point.y;
+    positionX = point.x;
+    positionY = point.y;
 
     switch (getVerticalAlignment()) {
       case CENTER:
-        y = point.y - textHeight / 2 + fontMetrics.getAscent();
+        positionY = point.y - textHeight / 2 + fontMetrics.getAscent();
         break;
       case TOP:
-        y = point.y - textHeight + fontMetrics.getAscent();
+        positionY = point.y - textHeight + fontMetrics.getAscent();
         break;
       case BOTTOM:
-        y = point.y + fontMetrics.getAscent();
+        positionY = point.y + fontMetrics.getAscent();
         break;
       default:
         throw new RuntimeException("Unexpected alignment: " + getVerticalAlignment());
     }
     switch (getHorizontalAlignment()) {
       case CENTER:
-        x = point.x - textWidth / 2;
+        positionX = point.x - textWidth / 2;
         break;
       case LEFT:
-        x = point.x;
+        positionX = point.x;
         break;
       case RIGHT:
-        x = point.x - textWidth;
+        positionX = point.x - textWidth;
         break;
       default:
         throw new RuntimeException("Unexpected alignment: " + getHorizontalAlignment());
@@ -111,7 +110,6 @@ public abstract class Misc<T> extends AbstractComponent<T> {
   public void drawIcon(Graphics2D g2d, int width, int height) {
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D rect = fontMetrics.getStringBounds("Abc", g2d);
-
     int textHeight = (int) (rect.getHeight());
     int textWidth = (int) (rect.getWidth());
 
@@ -124,7 +122,9 @@ public abstract class Misc<T> extends AbstractComponent<T> {
     g2d.drawString("Abc", x, y);
   }
 
-  protected void flipText(Graphics2D g2d, int width) {}
+  protected void flipText(Graphics2D g2d, int width) {
+    //
+  }
 
   /*
   @Override
@@ -150,19 +150,9 @@ public abstract class Misc<T> extends AbstractComponent<T> {
   }
 
   public void setBold(boolean bold) {
-    if (bold) {
-      if (font.isItalic()) {
-        font = font.deriveFont(Font.BOLD + Font.ITALIC);
-      } else {
-        font = font.deriveFont(Font.BOLD);
-      }
-    } else {
-      if (font.isItalic()) {
-        font = font.deriveFont(Font.ITALIC);
-      } else {
-        font = font.deriveFont(Font.PLAIN);
-      }
-    }
+    font = font.deriveFont(
+        (bold ? Font.BOLD : Font.PLAIN)
+        + (font.isItalic() ? Font.ITALIC : Font.PLAIN));
   }
 
   @EditableProperty(name = "Font Italic")
@@ -171,19 +161,9 @@ public abstract class Misc<T> extends AbstractComponent<T> {
   }
 
   public void setItalic(boolean italic) {
-    if (italic) {
-      if (font.isBold()) {
-        font = font.deriveFont(Font.BOLD + Font.ITALIC);
-      } else {
-        font = font.deriveFont(Font.ITALIC);
-      }
-    } else {
-      if (font.isBold()) {
-        font = font.deriveFont(Font.BOLD);
-      } else {
-        font = font.deriveFont(Font.PLAIN);
-      }
-    }
+    font = font.deriveFont(
+        (italic ? Font.ITALIC : Font.PLAIN)
+        + (font.isBold() ? Font.BOLD : Font.PLAIN));
   }
 
   @EditableProperty

@@ -31,12 +31,12 @@ public class TubeSymbolTransformer implements IComponentTransformer {
 
   @Override
   public boolean canRotate(IDIYComponent<?> component) {
-    return AbstractTubeSymbol.class.isAssignableFrom(component.getClass());
+    return component instanceof AbstractTubeSymbol;
   }
 
   @Override
   public boolean canMirror(IDIYComponent<?> component) {
-    return AbstractTubeSymbol.class.isAssignableFrom(component.getClass());
+    return component instanceof AbstractTubeSymbol;
   }
 
   @Override
@@ -55,17 +55,7 @@ public class TubeSymbolTransformer implements IComponentTransformer {
     }
 
     AbstractTubeSymbol tube = (AbstractTubeSymbol) component;
-    Orientation o = tube.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) {
-      oValue = Orientation.values().length - 1;
-    }
-    if (oValue >= Orientation.values().length) {
-      oValue = 0;
-    }
-    o = Orientation.values()[oValue];
-    tube.setOrientation(o);
+    tube.setOrientation(tube.getOrientation().rotate(direction));
   }
 
   @Override
@@ -78,9 +68,6 @@ public class TubeSymbolTransformer implements IComponentTransformer {
 
       Orientation o = tube.getOrientation();
       switch (o) {
-        case DEFAULT:
-          o = Orientation._180;
-          break;
         case _90:
           break;
         case _180:
@@ -88,6 +75,9 @@ public class TubeSymbolTransformer implements IComponentTransformer {
           break;
         case _270:
           break;
+        case DEFAULT:
+        default:
+          o = Orientation._180;
       }
 
       for (int i = 0; i < tube.getControlPointCount(); i++) {
@@ -102,8 +92,6 @@ public class TubeSymbolTransformer implements IComponentTransformer {
 
       Orientation o = tube.getOrientation();
       switch (o) {
-        case DEFAULT:
-          break;
         case _90:
           o = Orientation._270;
           break;
@@ -112,6 +100,8 @@ public class TubeSymbolTransformer implements IComponentTransformer {
         case _270:
           o = Orientation._90;
           break;
+        case DEFAULT:
+        default:
       }
 
       for (int i = 0; i < tube.getControlPointCount(); i++) {

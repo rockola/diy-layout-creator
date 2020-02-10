@@ -27,10 +27,8 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 
 /**
@@ -53,18 +51,17 @@ public class LinkLabel extends JLabel {
     super("<html><u>" + url.toString() + "</u></html>");
     setForeground(Color.blue);
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    addMouseListener(
-        new MouseAdapter() {
+    addMouseListener(new MouseAdapter() {
 
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            try {
-              App.openURL(url);
-            } catch (Exception e1) {
-              LOG.error("Could not launch default browser", e1);
-            }
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          try {
+            App.openUrl(url);
+          } catch (Exception e1) {
+            LOG.error("Could not launch default browser", e1);
           }
-        });
+        }
+      });
   }
 
   @Deprecated

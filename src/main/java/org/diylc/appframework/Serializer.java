@@ -23,7 +23,6 @@ package org.diylc.appframework;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -32,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import org.diylc.appframework.miscutils.IconImageConverter;
 
 public class Serializer {
@@ -65,7 +63,7 @@ public class Serializer {
      @param url String specifying the URL
      @return deserialized object
   */
-  public static Object fromURL(String url) throws IOException {
+  public static Object fromUrl(String url) throws IOException {
     Object o = null;
     try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
       o = xsd.fromXML(in);

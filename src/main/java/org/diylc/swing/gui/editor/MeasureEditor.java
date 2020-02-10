@@ -1,24 +1,23 @@
 /*
+  DIY Layout Creator (DIYLC).
+  Copyright (c) 2009-2018 held jointly by the individual authors.
 
-    DIY Layout Creator (DIYLC).
-    Copyright (c) 2009-2018 held jointly by the individual authors.
+  This file is part of DIYLC.
 
-    This file is part of DIYLC.
+  DIYLC is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    DIYLC is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  DIYLC is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+  License for more details.
 
-    DIYLC is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
-
+  You should have received a copy of the GNU General Public License
+  along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui.editor;
 
 import java.awt.BorderLayout;
@@ -45,10 +44,9 @@ import org.diylc.utils.Constants;
 public class MeasureEditor extends Container {
 
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LogManager.getLogger(MeasureEditor.class);
 
-  private Color oldBg;
+  private Color oldBackground;
   private DoubleTextField valueField;
   private JComboBox unitBox;
 
@@ -56,25 +54,14 @@ public class MeasureEditor extends Container {
     setLayout(new BorderLayout());
     final AbstractMeasure<?> measure = (AbstractMeasure<?>) property.getValue();
     valueField = new DoubleTextField(measure == null ? null : measure.getValue());
-    oldBg = valueField.getBackground();
+    oldBackground = valueField.getBackground();
     valueField.addPropertyChangeListener(
         DoubleTextField.VALUE_PROPERTY,
         new PropertyChangeListener() {
 
           @Override
           public void propertyChange(PropertyChangeEvent evt) {
-            try {
-              Constructor<?> ctor = property.getType().getConstructors()[0];
-              AbstractMeasure<?> newMeasure = (AbstractMeasure<?>) ctor.newInstance(
-                  (Double) evt.getNewValue(),
-                  unitBox.getSelectedItem());
-              property.setValue(newMeasure);
-              property.setChanged(true);
-              valueField.setBackground(oldBg);
-              unitBox.setBackground(oldBg);
-            } catch (Exception e) {
-              LOG.error("Error while updating property value", e);
-            }
+            actOnChange(property);
           }
         });
     add(valueField, BorderLayout.CENTER);
@@ -84,20 +71,7 @@ public class MeasureEditor extends Container {
       Method method = ((Class<?>) type).getMethod("values");
       unitBox = new JComboBox((Object[]) method.invoke(null));
       unitBox.setSelectedItem(measure == null ? null : measure.getUnit());
-      unitBox.addActionListener((evt) -> {
-          try {
-            Constructor<?> ctor = property.getType().getConstructors()[0];
-            AbstractMeasure<?> newMeasure = (AbstractMeasure<?>) ctor.newInstance(
-                valueField.getValue(),
-                (Enum<? extends Unit>) unitBox.getSelectedItem());
-            property.setValue(newMeasure);
-            property.setChanged(true);
-            valueField.setBackground(oldBg);
-            unitBox.setBackground(oldBg);
-          } catch (Exception e) {
-            LOG.error("Error while updating property units", e);
-          }
-        });
+      unitBox.addActionListener((evt) -> actOnChange(property));
       add(unitBox, BorderLayout.EAST);
 
       if (!property.isUnique()) {
@@ -106,6 +80,21 @@ public class MeasureEditor extends Container {
       }
     } catch (Exception e) {
       LOG.error("Error while creating the editor", e);
+    }
+  }
+
+  private void actOnChange(PropertyWrapper property) {
+    try {
+      Constructor<?> ctor = property.getType().getConstructors()[0];
+      AbstractMeasure<?> newMeasure = (AbstractMeasure<?>) ctor.newInstance(
+          valueField.getValue(),
+          (Enum<? extends Unit>) unitBox.getSelectedItem());
+      property.setValue(newMeasure);
+      property.setChanged(true);
+      valueField.setBackground(oldBackground);
+      unitBox.setBackground(oldBackground);
+    } catch (Exception e) {
+      LOG.error("Error while updating property units", e);
     }
   }
 

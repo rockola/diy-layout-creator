@@ -17,43 +17,43 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.components.smd;
 
 import java.awt.Color;
-
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.Capacitance;
 
 @ComponentDescriptor(
-    name = "SMD Resistor",
+    name = "SMD Capacitor",
     author = "Branislav Stojkovic",
     category = "SMD",
     instanceNamePrefix = "C",
-    description = "Surface mount resistor",
+    description = "Surface mount capacitor",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class SMDResistor extends PassiveSMDComponent<Resistance> {
+public class SurfaceMountCapacitor extends PassiveSurfaceMountComponent<Capacitance> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Color BODY_COLOR = Color.gray;
-  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color BODY_COLOR = Color.decode("#BD9347");
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
-  public SMDResistor() {
+  public SurfaceMountCapacitor() {
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
   }
 
   @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Resistance getValue() {
+  public Capacitance getValue() {
     return value;
   }
 
-  public void setValue(Resistance value) {
+  public void setValue(Capacitance value) {
     this.value = value;
   }
 }

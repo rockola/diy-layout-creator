@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swing.gui;
 
 import java.awt.Toolkit;
@@ -45,7 +46,9 @@ public class Binding implements Serializable {
   @XmlElement(name = "action")
   private String action;
 
-  public Binding() {}
+  public Binding() {
+    //
+  }
 
   public Binding(Integer keycode, Integer modifier, String action) {
     this.keycode = keycode;

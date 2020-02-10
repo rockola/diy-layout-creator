@@ -27,7 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
 import org.diylc.App;
 import org.diylc.common.IPlugInPort;
 import org.diylc.images.Icon;

@@ -29,7 +29,6 @@ import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.StringJoiner;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;

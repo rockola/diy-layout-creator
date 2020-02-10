@@ -22,7 +22,6 @@ package org.diylc.components.shapes;
 
 import java.awt.Color;
 import java.awt.Point;
-
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
@@ -121,5 +120,7 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
 
   @Deprecated
   @Override
-  public void setValue(Void value) {}
+  public void setValue(Void value) {
+    //
+  }
 }

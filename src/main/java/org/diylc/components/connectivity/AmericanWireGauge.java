@@ -26,7 +26,10 @@ import java.util.Map;
 
 import org.diylc.utils.Constants;
 
-public enum AWG {
+/**
+   American Wire Gauge, aka AWG.
+ */
+public enum AmericanWireGauge {
   _8(8),
   _10(10),
   _12(12),
@@ -47,17 +50,18 @@ public enum AWG {
   _42(42),
   _44(44);
 
-  private final int gauge;
-
-  private static final Map<Integer, AWG> gauges = new HashMap<Integer, AWG>();
+  private static final Map<Integer, AmericanWireGauge> gauges;
 
   static {
-    for (AWG awg : EnumSet.allOf(AWG.class)) {
+    gauges = new HashMap<Integer, AmericanWireGauge>();
+    for (AmericanWireGauge awg : EnumSet.allOf(AmericanWireGauge.class)) {
       gauges.put(awg.getGauge(), awg);
     }
   }
 
-  AWG(int i) {
+  private final int gauge;
+
+  AmericanWireGauge(int i) {
     this.gauge = i;
   }
 
@@ -89,7 +93,7 @@ public enum AWG {
     return gauge;
   }
 
-  public static AWG getGauge(int value) {
+  public static AmericanWireGauge getGauge(int value) {
     return gauges.get(value);
   }
 }

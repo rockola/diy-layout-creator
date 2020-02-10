@@ -30,7 +30,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -112,7 +111,9 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     // Draw triangle
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
     g2d.draw(body[0]);
-    if (body[2] != null) g2d.draw(body[2]);
+    if (body[2] != null) {
+      g2d.draw(body[2]);
+    }
     // Draw label
     g2d.setFont(project.getFont());
     Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);

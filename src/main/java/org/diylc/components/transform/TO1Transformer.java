@@ -22,7 +22,6 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
 import org.diylc.components.semiconductors.TransistorTO1;
@@ -56,13 +55,7 @@ public class TO1Transformer implements IComponentTransformer {
     }
 
     TransistorTO1 transistor = (TransistorTO1) component;
-    Orientation o = transistor.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) oValue = Orientation.values().length - 1;
-    if (oValue >= Orientation.values().length) oValue = 0;
-    o = Orientation.values()[oValue];
-    transistor.setOrientation(o);
+    transistor.setOrientation(transistor.getOrientation().rotate(direction));
   }
 
   @Override
@@ -73,9 +66,6 @@ public class TO1Transformer implements IComponentTransformer {
     if (direction == IComponentTransformer.HORIZONTAL) {
       Orientation o = transistor.getOrientation();
       switch (o) {
-        case DEFAULT:
-          o = Orientation._180;
-          break;
         case _90:
           dx -= transistor.getControlPoint(1).x - transistor.getControlPoint(0).x;
           break;
@@ -85,6 +75,9 @@ public class TO1Transformer implements IComponentTransformer {
         case _270:
           dx -= transistor.getControlPoint(1).x - transistor.getControlPoint(0).x;
           break;
+        case DEFAULT:
+        default:
+          o = Orientation._180;
       }
 
       for (int i = 0; i < transistor.getControlPointCount(); i++) {
@@ -100,9 +93,6 @@ public class TO1Transformer implements IComponentTransformer {
     } else {
       Orientation o = transistor.getOrientation();
       switch (o) {
-        case DEFAULT:
-          dy -= transistor.getControlPoint(1).y - transistor.getControlPoint(0).y;
-          break;
         case _90:
           o = Orientation._270;
           break;
@@ -112,6 +102,9 @@ public class TO1Transformer implements IComponentTransformer {
         case _270:
           o = Orientation._90;
           break;
+        case DEFAULT:
+        default:
+          dy -= transistor.getControlPoint(1).y - transistor.getControlPoint(0).y;
       }
 
       for (int i = 0; i < transistor.getControlPointCount(); i++) {

@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -169,6 +168,7 @@ public enum Icon {
   ZoomSmall;
 
   private static final Logger LOG = LogManager.getLogger(Icon.class);
+  private static final String PNG_SUFFIX = ".png";
 
   private static List<String> iconDirectories = new ArrayList<>();
 
@@ -180,13 +180,12 @@ public enum Icon {
 
   private ImageIcon imageIcon;
 
-  private URL resourcePNG() {
+  private URL resourcePng() {
     String resourceID = "icon." + this.toString();
-    //String r = org.diylc.App.getString(resourceID) + ".png";
     URL resource = null;
     String r = null;
     for (String iconDirectory: iconDirectories) {
-      r = iconDirectory + org.diylc.App.getString(resourceID) + ".png";
+      r = iconDirectory + org.diylc.App.getString(resourceID) + PNG_SUFFIX;
       resource = Icon.class.getResource(r);
       if (resource != null) {
         break;
@@ -206,7 +205,7 @@ public enum Icon {
       // this icon hasn't been requested yet, let's load it from
       // resources
       try {
-        ImageIcon i = new ImageIcon(resourcePNG());
+        ImageIcon i = new ImageIcon(resourcePng());
         // let's store the icon for future reference
         LOG.debug("storing ImageIcon for {}", this.toString());
         imageIcon = i;

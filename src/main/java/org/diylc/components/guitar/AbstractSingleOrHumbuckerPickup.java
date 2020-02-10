@@ -23,7 +23,6 @@ package org.diylc.components.guitar;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.OrientationHV;

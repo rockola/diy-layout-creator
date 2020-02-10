@@ -22,7 +22,6 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Color;
 import java.awt.Point;
-
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;

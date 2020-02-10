@@ -22,17 +22,14 @@ package org.diylc.parsing;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -50,7 +47,9 @@ public class XmlNode {
       MultimapBuilder.hashKeys().arrayListValues().build();
   public String value;
 
-  public XmlNode() { };
+  public XmlNode() {
+    //
+  }
 
   public XmlNode(Element element) {
     tagName = element.getTagName();
@@ -62,7 +61,7 @@ public class XmlNode {
         addAttribute(attribute.getNodeName(), attribute.getNodeValue());
       }
     }
-  };
+  }
 
   public void addAttribute(String key, String value) {
     LOG.debug("addAttribute({}, {})", key, value);

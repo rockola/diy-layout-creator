@@ -32,10 +32,8 @@ import java.text.Format;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.Message;
 
 /**
@@ -72,37 +70,37 @@ public class MemoryBar extends JComponent {
 
   public void start() {
     final MemoryBar bar = this;
-
-    thread = new Thread("DIYLC Free Memory"){
-        @Override
-        public void run() {
-          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-          final String tooltipPattern =
-              Message.getHTML("message.memorybar.tooltip", true, "<br>");
-          while (true) {
-            totalMemory = Runtime.getRuntime().totalMemory();
-            freeMemory = Runtime.getRuntime().freeMemory();
-            maxMemory = Runtime.getRuntime().maxMemory();
-            percentFree = (double) freeMemory / totalMemory;
-            final String tooltipText = String.format(
-                tooltipPattern,
-                format.format(convertToMb(freeMemory)),
-                format.format(convertToMb(totalMemory)),
-                format.format(convertToMb(maxMemory)));
-            if (percentFree < THRESHOLD) {
-              LOG.debug("memory: {}", tooltipText);
-            }
-            SwingUtilities.invokeLater(() -> {
-                bar.setToolTipText(tooltipText);
-                bar.repaint();
-              });
-            try {
-              Thread.sleep(DELAY);
-            } catch (InterruptedException e) {
-            }
+    thread = new Thread("DIYLC Free Memory") {
+      @Override
+      public void run() {
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        final String tooltipPattern =
+            Message.getHtml("message.memorybar.tooltip", true, "<br>");
+        while (true) {
+          totalMemory = Runtime.getRuntime().totalMemory();
+          freeMemory = Runtime.getRuntime().freeMemory();
+          maxMemory = Runtime.getRuntime().maxMemory();
+          percentFree = (double) freeMemory / totalMemory;
+          final String tooltipText = String.format(
+              tooltipPattern,
+              format.format(convertToMb(freeMemory)),
+              format.format(convertToMb(totalMemory)),
+              format.format(convertToMb(maxMemory)));
+          if (percentFree < THRESHOLD) {
+            LOG.debug("memory: {}", tooltipText);
+          }
+          SwingUtilities.invokeLater(() -> {
+            bar.setToolTipText(tooltipText);
+            bar.repaint();
+          });
+          try {
+            Thread.sleep(DELAY);
+          } catch (InterruptedException e) {
+            // ignore
           }
         }
-      };
+      }
+    };
     thread.start();
   }
 

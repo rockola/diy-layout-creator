@@ -36,10 +36,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.IConfigListener;
@@ -60,7 +58,6 @@ import org.diylc.presenter.Presenter;
 public class ComponentTabbedPane extends JTabbedPane {
 
   private static final long serialVersionUID = 1L;
-
   private static final Logger LOG = LogManager.getLogger(ComponentTabbedPane.class);
 
   public static int SCROLL_STEP = Presenter.ICON_SIZE + ComponentButtonFactory.MARGIN * 2 + 2;
@@ -82,14 +79,14 @@ public class ComponentTabbedPane extends JTabbedPane {
       addTab(category, panel);
     }
     addChangeListener(e -> {
-        App.ui().getPresenter().setNewComponentTypeSlot(null, null, false);
-        // Refresh recent components if needed
-        if (pendingRecentComponents != null) {
-          refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
-          getRecentToolbar().invalidate();
-          pendingRecentComponents = null;
-        }
-      });
+      App.ui().getPresenter().setNewComponentTypeSlot(null, null, false);
+      // Refresh recent components if needed
+      if (pendingRecentComponents != null) {
+        refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
+        getRecentToolbar().invalidate();
+        pendingRecentComponents = null;
+      }
+    });
   }
 
   private JPanel createTab(List<ComponentType> componentTypes) {
@@ -254,10 +251,14 @@ public class ComponentTabbedPane extends JTabbedPane {
         }
 
         @Override
-        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+          //
+        }
 
         @Override
-        public void popupMenuCanceled(PopupMenuEvent e) {}
+        public void popupMenuCanceled(PopupMenuEvent e) {
+          //
+        }
       });
     return variantPopup;
   }

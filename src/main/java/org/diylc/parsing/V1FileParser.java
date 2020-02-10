@@ -28,10 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
@@ -50,7 +48,7 @@ import org.diylc.components.connectivity.SolderPad;
 import org.diylc.components.connectivity.TraceCut;
 import org.diylc.components.electromechanical.MiniToggleSwitch;
 import org.diylc.components.electromechanical.ToggleSwitchType;
-import org.diylc.components.misc.BOM;
+import org.diylc.components.misc.BillOfMaterials;
 import org.diylc.components.misc.Label;
 import org.diylc.components.passive.PotentiometerPanel;
 import org.diylc.components.passive.RadialElectrolytic;
@@ -59,20 +57,19 @@ import org.diylc.components.passive.Resistor;
 import org.diylc.components.passive.Taper;
 import org.diylc.components.passive.TrimmerPotentiometer;
 import org.diylc.components.passive.TrimmerPotentiometer.TrimmerType;
-import org.diylc.components.semiconductors.DIL_IC;
 import org.diylc.components.semiconductors.DiodePlastic;
-import org.diylc.components.semiconductors.LED;
-import org.diylc.components.semiconductors.SIL_IC;
+import org.diylc.components.semiconductors.DualInlineIc;
+import org.diylc.components.semiconductors.Led;
+import org.diylc.components.semiconductors.SingleInlineIc;
 import org.diylc.components.semiconductors.TransistorTO92;
+import org.diylc.core.Grid;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
-import org.diylc.presenter.CalcUtils;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.utils.Constants;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -128,14 +125,10 @@ public class V1FileParser implements IOldFileParser {
       throw new IllegalArgumentException("Unrecognized board type: " + type);
     }
     board.setName("Main board");
-    Point referencePoint =
-        new Point(
-            CalcUtils.roundToGrid(x, V1_GRID_SPACING), CalcUtils.roundToGrid(y, V1_GRID_SPACING));
+    Point referencePoint = project.getGrid().snapToGrid(new Point(x, y));
     board.setControlPoint(referencePoint, 0);
     board.setControlPoint(
-        new Point(
-            CalcUtils.roundToGrid(x + boardWidth, V1_GRID_SPACING),
-            CalcUtils.roundToGrid(y + boardHeight, V1_GRID_SPACING)),
+        project.getGrid().snapToGrid(new Point(x + boardWidth, y + boardHeight)),
         1);
     project.getComponents().add(board);
 
@@ -301,7 +294,7 @@ public class V1FileParser implements IOldFileParser {
           component = capacitor;
         } else if (nodeName.equalsIgnoreCase("led")) {
           LOG.debug("Recognized " + nodeName);
-          LED led = new LED();
+          Led led = new Led();
           led.setName(nameAttr);
           led.setValue(valueAttr);
           led.setBodyColor(Color.red);
@@ -333,7 +326,7 @@ public class V1FileParser implements IOldFileParser {
           component = transistor;
         } else if (nodeName.equalsIgnoreCase("ic")) {
           LOG.debug("Recognized " + nodeName);
-          DIL_IC ic = new DIL_IC();
+          DualInlineIc ic = new DualInlineIc();
           int pinCount = 8;
           int rowSpace = 3;
           if (x1Attr < x2Attr && y1Attr < y2Attr) {
@@ -354,7 +347,7 @@ public class V1FileParser implements IOldFileParser {
             ic.setOrientation(Orientation._270);
           }
           ic.setRowSpacing(Size.mm(0.1 * rowSpace));
-          ic.setPinCount(DIL_IC.defaultPinCount().setPins(pinCount));
+          ic.setPinCount(DualInlineIc.defaultPinCount().setPins(pinCount));
           ic.setName(nameAttr);
           // Translate control points.
           for (int j = 0; j < ic.getControlPointCount(); j++) {
@@ -430,7 +423,7 @@ public class V1FileParser implements IOldFileParser {
           }
         } else if (nodeName.equalsIgnoreCase("lineic")) {
           LOG.debug("Recognized " + nodeName);
-          SIL_IC ic = new SIL_IC();
+          SingleInlineIc ic = new SingleInlineIc();
           int pinCount = 8;
           if (x1Attr == x2Attr && y1Attr < y2Attr) {
             pinCount = y2Attr - y1Attr + 1;
@@ -445,7 +438,7 @@ public class V1FileParser implements IOldFileParser {
             pinCount = x2Attr - x1Attr + 1;
             ic.setOrientation(Orientation._270);
           }
-          ic.setPinCount(SIL_IC.defaultPinCount().setPins(pinCount));
+          ic.setPinCount(SingleInlineIc.defaultPinCount().setPins(pinCount));
           ic.setName(nameAttr);
           // Translate control points.
           for (int j = 0; j < ic.getControlPointCount(); j++) {
@@ -704,11 +697,9 @@ public class V1FileParser implements IOldFileParser {
     titleLabel.setValue(project.getTitle());
     titleLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     titleLabel.setControlPoint(
-        new Point(
-            CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING),
-            CalcUtils.roundToGrid(
-                (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5),
-                V1_GRID_SPACING)),
+        project.getGrid().snapToGrid(new Point(
+            x + boardWidth / 2,
+            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5))),
         0);
     project.getComponents().add(titleLabel);
 
@@ -717,22 +708,19 @@ public class V1FileParser implements IOldFileParser {
     creditsLabel.setValue(project.getAuthor());
     creditsLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     creditsLabel.setControlPoint(
-        new Point(
-            CalcUtils.roundToGrid(x + boardWidth / 2, V1_GRID_SPACING),
-            CalcUtils.roundToGrid(
-                (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4),
-                V1_GRID_SPACING)),
+        project.getGrid().snapToGrid(new Point(
+            x + boardWidth / 2,
+            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4))),
         0);
     project.getComponents().add(creditsLabel);
 
     // Add BOM at the bottom
-    BOM bom = new BOM();
+    BillOfMaterials bom = new BillOfMaterials();
     int bomSize = (int) bom.getSize().convertToPixels();
     bom.setControlPoint(
-        new Point(
-            CalcUtils.roundToGrid(x + (boardWidth - bomSize) / 2, V1_GRID_SPACING),
-            CalcUtils.roundToGrid(
-                (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()), V1_GRID_SPACING)),
+        project.getGrid().snapToGrid(new Point(
+            x + (boardWidth - bomSize) / 2,
+            (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()))),
         0);
     project.getComponents().add(bom);
 

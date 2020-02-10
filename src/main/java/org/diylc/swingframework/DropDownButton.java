@@ -189,7 +189,9 @@ public class DropDownButton extends Box {
       pressHidPopup = !menu.isPopupMenuVisible();
     }
 
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+      //
+    }
   }
 
   /**
@@ -212,28 +214,28 @@ public class DropDownButton extends Box {
    * pixels off the right hand side of the border.
    */
   private static class RightChoppedBorder implements Border {
-    private Border b;
-    private int w;
+    private Border border;
+    private int width;
 
-    public RightChoppedBorder(Border b, int width) {
-      this.b = b;
-      this.w = width;
+    public RightChoppedBorder(Border border, int width) {
+      this.border = border;
+      this.width = width;
     }
 
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
       Shape clipping = g.getClip();
       g.setClip(x, y, width, height);
-      b.paintBorder(c, g, x, y, width + w, height);
+      border.paintBorder(c, g, x, y, width + this.width, height);
       g.setClip(clipping);
     }
 
-    public Insets getBorderInsets(Component c) {
-      Insets i = b.getBorderInsets(c);
-      return new Insets(i.top, i.left, i.bottom, i.right - w);
+    public Insets getBorderInsets(Component component) {
+      Insets insets = border.getBorderInsets(component);
+      return new Insets(insets.top, insets.left, insets.bottom, insets.right - this.width);
     }
 
     public boolean isBorderOpaque() {
-      return b.isBorderOpaque();
+      return border.isBorderOpaque();
     }
   }
 

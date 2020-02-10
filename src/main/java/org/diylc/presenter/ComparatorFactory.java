@@ -44,70 +44,67 @@ public class ComparatorFactory {
 
   public Comparator<IDIYComponent<?>> getComponentNameComparator() {
     if (componentNameComparator == null) {
-      componentNameComparator =
-          new Comparator<IDIYComponent<?>>() {
+      componentNameComparator = new Comparator<IDIYComponent<?>>() {
 
-            @Override
-            public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
-              String name1 = o1.getName();
-              String name2 = o2.getName();
-              if (name1 == null || name2 == null) {
-                return 0;
-              }
-              return name1.compareToIgnoreCase(name2);
+          @Override
+          public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+            String name1 = o1.getName();
+            String name2 = o2.getName();
+            if (name1 == null || name2 == null) {
+              return 0;
             }
-          };
+            return name1.compareToIgnoreCase(name2);
+          }
+        };
     }
     return componentNameComparator;
   }
 
   public Comparator<ComponentType> getComponentTypeComparator() {
     if (componentTypeComparator == null) {
-      componentTypeComparator =
-          new Comparator<ComponentType>() {
+      componentTypeComparator = new Comparator<ComponentType>() {
 
-            @Override
-            public int compare(ComponentType o1, ComponentType o2) {
-              return o1.getName().compareToIgnoreCase(o2.getName());
-            }
-          };
+          @Override
+          public int compare(ComponentType o1, ComponentType o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+          }
+        };
     }
     return componentTypeComparator;
   }
 
   public Comparator<PropertyWrapper> getPropertyNameComparator() {
     if (propertyNameComparator == null) {
-      propertyNameComparator =
-          new Comparator<PropertyWrapper>() {
+      propertyNameComparator = new Comparator<PropertyWrapper>() {
 
-            @Override
-            public int compare(PropertyWrapper o1, PropertyWrapper o2) {
-              return o1.getName().compareToIgnoreCase(o2.getName());
-            }
-          };
+          @Override
+          public int compare(PropertyWrapper o1, PropertyWrapper o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+          }
+        };
     }
     return propertyNameComparator;
   }
 
   /**
-   * Creates a comparator that compares properties by sort order and then by name
+   * Creates a comparator that compares properties by sort order and
+   * then by name.
    *
-   * @return
+   * @return the comparator.
    */
   public Comparator<PropertyWrapper> getDefaultPropertyComparator() {
     if (propertyNameComparator == null) {
-      propertyNameComparator =
-          new Comparator<PropertyWrapper>() {
+      propertyNameComparator = new Comparator<PropertyWrapper>() {
 
-            @Override
-            public int compare(PropertyWrapper o1, PropertyWrapper o2) {
-              int comp = Integer.compare(o1.getSortOrder(), o2.getSortOrder());
-              if (comp != 0) {
-                return comp;
-              }
-              return o1.getName().compareToIgnoreCase(o2.getName());
+          @Override
+          public int compare(PropertyWrapper o1, PropertyWrapper o2) {
+            int comp = Integer.compare(o1.getSortOrder(), o2.getSortOrder());
+            if (comp != 0) {
+              return comp;
             }
-          };
+            return o1.getName().compareToIgnoreCase(o2.getName());
+          }
+        };
     }
     return propertyNameComparator;
   }

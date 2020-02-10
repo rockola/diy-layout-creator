@@ -55,10 +55,8 @@ import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ZoomableStroke;
 import org.diylc.components.Area;
@@ -91,10 +89,10 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   private Stroke originalStroke;
   private Color originalColor;
   private Composite originalComposite;
-  private AffineTransform originalTx;
+  private AffineTransform originalTransform;
   private Font originalFont;
-  private AffineTransform currentTx;
-  private AffineTransform initialTx;
+  private AffineTransform currentTransform;
+  private AffineTransform initialTransform;
   private Area currentArea;
   private List<Area> continuityPositiveAreas;
   private List<Area> continuityNegativeAreas;
@@ -114,7 +112,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     currentArea = new Area();
     continuityPositiveAreas = new ArrayList<Area>();
     continuityNegativeAreas = new ArrayList<Area>();
-    currentTx = new AffineTransform();
+    currentTransform = new AffineTransform();
   }
 
   /** Clears out the current area and caches canvas settings. */
@@ -125,11 +123,11 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     continuityNegativeAreas = new ArrayList<Area>();
     originalStroke = canvasGraphics.getStroke();
     originalColor = canvasGraphics.getColor();
-    originalTx = canvasGraphics.getTransform();
+    originalTransform = canvasGraphics.getTransform();
     originalComposite = canvasGraphics.getComposite();
     originalFont = canvasGraphics.getFont();
-    currentTx = new AffineTransform();
-    initialTx = canvasGraphics.getTransform();
+    currentTransform = new AffineTransform();
+    initialTransform = canvasGraphics.getTransform();
     lastShape = null;
     startTracking();
   }
@@ -144,7 +142,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     drawingComponent = false;
     canvasGraphics.setStroke(originalStroke);
     canvasGraphics.setColor(originalColor);
-    canvasGraphics.setTransform(originalTx);
+    canvasGraphics.setTransform(originalTransform);
     canvasGraphics.setComposite(originalComposite);
     canvasGraphics.setFont(originalFont);
     ComponentArea area = new ComponentArea(
@@ -192,7 +190,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       // Only cache the shape if it's not 1D.
       if (bounds.getWidth() > 1 && bounds.getHeight() > 1) {
         Area area = new Area(s);
-        area.transform(currentTx);
+        area.transform(currentTransform);
         if (trackingAllowed) {
           currentArea.add(area);
         }
@@ -364,7 +362,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       FontMetrics fontMetrics = canvasGraphics.getFontMetrics();
       Rectangle2D rect = fontMetrics.getStringBounds(str, canvasGraphics);
       Point2D point = new Point2D.Double(x, y);
-      // currentTx.transform(point, point);
+      // currentTransform.transform(point, point);
       Rectangle2D finalRec =
           new Rectangle2D.Double(
               rect.getX() + point.getX(),
@@ -458,19 +456,19 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   @Override
   public void rotate(double theta) {
     canvasGraphics.rotate(theta);
-    currentTx.rotate(theta);
+    currentTransform.rotate(theta);
   }
 
   @Override
   public void rotate(double theta, double x, double y) {
     canvasGraphics.rotate(theta, x, y);
-    currentTx.rotate(theta, x, y);
+    currentTransform.rotate(theta, x, y);
   }
 
   @Override
   public void scale(double sx, double sy) {
     canvasGraphics.scale(sx, sy);
-    currentTx.scale(sx, sy);
+    currentTransform.scale(sx, sy);
   }
 
   @Override
@@ -520,19 +518,21 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public void setTransform(AffineTransform Tx) {
-    canvasGraphics.setTransform(Tx);
-    currentTx = new AffineTransform(Tx);
+  public void setTransform(AffineTransform transform) {
+    canvasGraphics.setTransform(transform);
+    currentTransform = new AffineTransform(transform);
     try {
-      // Invert the tx that was set before we started drawing the component.
-      // We're left only component tx.
-      AffineTransform inverseInitialTx = initialTx.createInverse();
-      Point2D p = new Point2D.Double(currentTx.getTranslateX(), currentTx.getTranslateY());
-      inverseInitialTx.transform(p, p);
-      currentTx.concatenate(inverseInitialTx);
+      // Invert the transform that was set before we started drawing
+      // the component.  We're left with only component transform.
+      AffineTransform inverseInitialTransform = initialTransform.createInverse();
+      Point2D p = new Point2D.Double(
+          currentTransform.getTranslateX(),
+          currentTransform.getTranslateY());
+      inverseInitialTransform.transform(p, p);
+      currentTransform.concatenate(inverseInitialTransform);
       double[] matrix = new double[6];
-      currentTx.getMatrix(matrix);
-      currentTx.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], p.getX(), p.getY());
+      currentTransform.getMatrix(matrix);
+      currentTransform.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], p.getX(), p.getY());
     } catch (NoninvertibleTransformException e) {
       LOG.debug("setTransform(): noninvertible transform", e);
     }
@@ -541,25 +541,25 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   @Override
   public void shear(double shx, double shy) {
     canvasGraphics.shear(shx, shy);
-    currentTx.shear(shx, shy);
+    currentTransform.shear(shx, shy);
   }
 
   @Override
-  public void transform(AffineTransform Tx) {
-    canvasGraphics.transform(Tx);
-    currentTx.concatenate(Tx);
+  public void transform(AffineTransform transform) {
+    canvasGraphics.transform(transform);
+    currentTransform.concatenate(transform);
   }
 
   @Override
   public void translate(int x, int y) {
     canvasGraphics.translate(x, y);
-    currentTx.translate(x, y);
+    currentTransform.translate(x, y);
   }
 
   @Override
   public void translate(double tx, double ty) {
     canvasGraphics.translate(tx, ty);
-    currentTx.translate(tx, ty);
+    currentTransform.translate(tx, ty);
   }
 
   @Override

@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.core;
 
 /**
@@ -26,11 +27,17 @@ package org.diylc.core;
  */
 public enum VisibilityPolicy {
 
-  /** Control point should be rendered all the time. */
+  /**
+     Control point should be rendered all the time.
+  */
   ALWAYS,
-  /** Control point should be rendered only when the component is selected. */
+  /**
+     Control point should be rendered only when the component is selected.
+  */
   WHEN_SELECTED,
-  /** Control point should not be rendered regardless of component selection. */
+  /**
+     Control point should not be rendered regardless of component selection.
+  */
   NEVER;
 
   public boolean isAlways() {

@@ -29,7 +29,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.Display;
 import org.diylc.common.IPlugInPort;
@@ -144,26 +143,20 @@ public class TransistorTO92 extends AbstractTransistorPackage {
       if (folded) {
         switch (orientation) {
           case DEFAULT:
-            newBody =
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody = Area.rect(
+                x - bodyDiameter, y - bodyDiameter / 2, bodyDiameter, bodyDiameter);
             break;
           case _90:
-            newBody =
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter / 2, y - bodyDiameter, bodyDiameter, bodyDiameter));
+            newBody = Area.rect(
+                x - bodyDiameter / 2, y - bodyDiameter, bodyDiameter, bodyDiameter);
             break;
           case _180:
-            newBody =
-                new Area(
-                    new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+            newBody = Area.rect(
+                x, y - bodyDiameter / 2, bodyDiameter, bodyDiameter);
             break;
           case _270:
-            newBody =
-                new Area(
-                    new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyDiameter));
+            newBody = Area.rect(
+                x - bodyDiameter / 2, y, bodyDiameter, bodyDiameter);
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
@@ -171,56 +164,32 @@ public class TransistorTO92 extends AbstractTransistorPackage {
       } else {
         switch (orientation) {
           case DEFAULT:
-            newBody =
-                new Area(
-                    new Ellipse2D.Double(
-                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter,
-                        y - bodyDiameter / 2,
-                        3 * bodyDiameter / 4,
-                        bodyDiameter)));
+            newBody = Area.circle(x, y, bodyDiameter).subtract(Area.rect(
+                x - bodyDiameter,
+                y - bodyDiameter / 2,
+                3 * bodyDiameter / 4,
+                bodyDiameter));
             break;
           case _90:
-            newBody =
-                new Area(
-                    new Ellipse2D.Double(
-                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter / 2,
-                        y - bodyDiameter,
-                        bodyDiameter,
-                        3 * bodyDiameter / 4)));
+            newBody = Area.circle(x, y, bodyDiameter).subtract(Area.rect(
+                x - bodyDiameter / 2,
+                y - bodyDiameter,
+                bodyDiameter,
+                3 * bodyDiameter / 4));
             break;
           case _180:
-            newBody =
-                new Area(
-                    new Ellipse2D.Double(
-                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(
-                new Area(
-                    new Rectangle2D.Double(
-                        x + bodyDiameter / 4,
-                        y - bodyDiameter / 2,
-                        3 * bodyDiameter / 4,
-                        bodyDiameter)));
+            newBody = Area.circle(x, y, bodyDiameter).subtract(Area.rect(
+                x + bodyDiameter / 4,
+                y - bodyDiameter / 2,
+                3 * bodyDiameter / 4,
+                bodyDiameter));
             break;
           case _270:
-            newBody =
-                new Area(
-                    new Ellipse2D.Double(
-                        x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
-            newBody.subtract(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter / 2,
-                        y + bodyDiameter / 4,
-                        bodyDiameter,
-                        3 * bodyDiameter / 4)));
+            newBody = Area.circle(x, y, bodyDiameter).subtract(Area.rect(
+                x - bodyDiameter / 2,
+                y + bodyDiameter / 4,
+                bodyDiameter,
+                3 * bodyDiameter / 4));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
@@ -247,10 +216,7 @@ public class TransistorTO92 extends AbstractTransistorPackage {
 
     if (!outlineMode) {
       for (Point point : controlPoints) {
-        g2d.setColor(PIN_COLOR);
-        g2d.fillOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
-        g2d.setColor(PIN_BORDER_COLOR);
-        g2d.drawOval(point.x - pinSize / 2, point.y - pinSize / 2, pinSize, pinSize);
+        Area.circle(point, pinSize).fillDraw(g2d, PIN_COLOR, PIN_BORDER_COLOR);
       }
     }
 
@@ -286,15 +252,12 @@ public class TransistorTO92 extends AbstractTransistorPackage {
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
     int margin = 3 * width / 32;
-    Area area =
-        new Area(new Ellipse2D.Double(margin / 2, margin, width - 2 * margin, width - 2 * margin));
+    Area area = new Area(new Ellipse2D.Double(
+        margin / 2, margin, width - 2 * margin, width - 2 * margin));
     // area.subtract(new Area(new Rectangle2D.Double(0, 0, 2 * margin,
     // height)));
-    area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(area);
-    g2d.setColor(BORDER_COLOR);
-    g2d.draw(area);
+    area.intersect(Area.rect(2 * margin, 0, width, height));
+    area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     g2d.setColor(PIN_COLOR);
     int pinSize = 2 * width / 32;
     for (int i = 0; i < 3; i++) {

@@ -29,7 +29,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
@@ -67,10 +66,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   private static final Color BORDER_COLOR = BODY_COLOR.darker();
   private static final Color LABEL_COLOR = Color.white;
 
-  protected Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  protected Point[] controlPoints = getFreshControlPoints(2);
   protected transient Area[] body;
   protected String value = "";
   private OrientationHV orientation = OrientationHV.VERTICAL;

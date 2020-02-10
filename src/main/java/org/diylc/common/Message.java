@@ -37,7 +37,7 @@ public final class Message {
 
   private Message() {}
 
-  public static String getHTML(String name, boolean wrapInHtmlTags, String softbreak) {
+  public static String getHtml(String name, boolean wrapInHtmlTags, String softbreak) {
     ClassLoader loader = Message.class.getClassLoader();
     try {
       // look for 'name' in configuration first
@@ -73,8 +73,8 @@ public final class Message {
     return "";
   }
 
-  public static String getHTML(String name) {
+  public static String getHtml(String name) {
     // wrap result in <html>...</html> by default
-    return getHTML(name, true, null);
+    return getHtml(name, true, null);
   }
 }

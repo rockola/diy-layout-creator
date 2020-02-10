@@ -25,7 +25,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.core.IDIYComponent;
@@ -42,28 +41,25 @@ import org.diylc.core.annotations.KeywordPolicy;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class JFETSymbol extends Abstract3LegSymbol {
+public class JfetSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
 
-  protected FETPolarity polarity = FETPolarity.NEGATIVE;
+  protected FetPolarity polarity = FetPolarity.NEGATIVE;
 
-  public Shape[] getBody() {
-    Shape[] body = new Shape[3];
+  public Area[] getBody() {
+    Area[] body = new Area[3];
     Point[] controlPoints = getControlPoints();
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-
     GeneralPath polyline = new GeneralPath();
 
     polyline.moveTo(x + pinSpacing, y - pinSpacing);
     polyline.lineTo(x + pinSpacing, y + pinSpacing);
-
     body[0] = polyline;
 
     polyline = new GeneralPath();
-
     polyline.moveTo(x, y);
     polyline.lineTo(x + pinSpacing, y);
     polyline.moveTo(x + pinSpacing, y - pinSpacing * 7 / 8);
@@ -75,7 +71,7 @@ public class JFETSymbol extends Abstract3LegSymbol {
     body[1] = polyline;
 
     Polygon arrow;
-    if (polarity == FETPolarity.NEGATIVE) {
+    if (polarity.isNegative()) {
       arrow = new Polygon(
           new int[] {x + pinSpacing * 2 / 6, x + pinSpacing * 2 / 6, x + pinSpacing * 6 / 6},
           new int[] {y - pinSpacing / 5, y + pinSpacing / 5, y},
@@ -115,11 +111,11 @@ public class JFETSymbol extends Abstract3LegSymbol {
   }
 
   @EditableProperty(name = "Channel")
-  public FETPolarity getPolarity() {
+  public FetPolarity getPolarity() {
     return polarity;
   }
 
-  public void setPolarity(FETPolarity polarity) {
+  public void setPolarity(FetPolarity polarity) {
     this.polarity = polarity;
 
     body = null;

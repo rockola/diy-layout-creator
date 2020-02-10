@@ -17,6 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package org.diylc.swingframework.ruler;
 
 import java.awt.Component;
@@ -26,8 +27,8 @@ import java.awt.Graphics2D;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
- * {@link IDrawingProvider} implementation that draws the specified {@link Component} onto the
- * canvas.
+ * {@link IDrawingProvider} implementation that draws the specified
+ * {@link Component} onto the canvas.
  *
  * @author Branislav Stojkovic
  */

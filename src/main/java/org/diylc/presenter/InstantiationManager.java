@@ -30,18 +30,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.App;
-import org.diylc.common.Config;
 import org.diylc.common.ComponentType;
+import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.core.CreationMethod;
+import org.diylc.core.Grid;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
@@ -76,7 +75,9 @@ public class InstantiationManager {
   private static Point firstControlPoint;
   private static Point potentialControlPoint;
 
-  private InstantiationManager() {}
+  private InstantiationManager() {
+    //
+  }
 
   public static ComponentType getComponentTypeSlot() {
     return componentTypeSlot;
@@ -105,38 +106,25 @@ public class InstantiationManager {
   public static void setComponentTypeSlot(
       ComponentType typeSlot,
       Template theTemplate,
-      Project currentProject,
+      Project project,
       boolean forceInstantiate)
       throws Exception {
     componentTypeSlot = typeSlot;
     template = theTemplate;
-    if (componentTypeSlot == null) {
-      componentSlot = null;
+    if (componentTypeSlot != null
+        && (forceInstantiate || componentTypeSlot.getCreationMethod().isSingleClick())) {
+      componentSlot = instantiateComponent(componentTypeSlot, template, project);
     } else {
-      switch (componentTypeSlot.getCreationMethod()) {
-        case POINT_BY_POINT:
-          componentSlot = forceInstantiate
-                          ? instantiateComponent(
-                              componentTypeSlot, template, new Point(0, 0), currentProject)
-                          : null;
-          break;
-        case SINGLE_CLICK:
-          componentSlot = instantiateComponent(
-              componentTypeSlot, template, new Point(0, 0), currentProject);
-          break;
-      }
+      componentSlot = null;
     }
     firstControlPoint = null;
     potentialControlPoint = null;
   }
 
-  public static void instantiatePointByPoint(Point scaledPoint, Project currentProject)
+  public static void instantiatePointByPoint(Point scaledPoint, Project project)
       throws Exception {
-
     firstControlPoint = scaledPoint;
-    componentSlot = instantiateComponent(
-        componentTypeSlot, template, firstControlPoint, currentProject);
-
+    componentSlot = instantiateComponent(componentTypeSlot, template, firstControlPoint, project);
     // Set the other control point to the same location, we'll
     // move it later when mouse moves.
     componentSlot.get(0).setControlPoint(firstControlPoint, 0);
@@ -162,16 +150,15 @@ public class InstantiationManager {
       Collection<IDIYComponent<?>> components,
       Point scaledPoint,
       boolean snapToGrid,
-      Size gridSpacing,
       boolean autoGroup,
-      Project currentProject) {
+      Project project) {
 
     Set<String> existingNames = new HashSet<String>();
-    for (IDIYComponent<?> c : currentProject.getComponents()) {
+    for (IDIYComponent<?> c : project.getComponents()) {
       existingNames.add(c.getName());
     }
     List<IDIYComponent<?>> allComponents =
-        new ArrayList<IDIYComponent<?>>(currentProject.getComponents());
+        new ArrayList<IDIYComponent<?>>(project.getComponents());
 
     // Adjust location of components so they are centered under the mouse
     // cursor
@@ -213,8 +200,8 @@ public class InstantiationManager {
     int x = minX;
     int y = minY;
     if (snapToGrid) {
-      x = CalcUtils.roundToGrid(x, gridSpacing);
-      x = CalcUtils.roundToGrid(x, gridSpacing);
+      x = project.getGrid().roundToGrid(x);
+      y = project.getGrid().roundToGrid(y);
     }
     for (IDIYComponent<?> component : components) {
       for (int i = 0; i < component.getControlPointCount(); i++) {
@@ -232,11 +219,10 @@ public class InstantiationManager {
     componentTypeSlot = autoGroup ? blockType : clipboardType;
 
     if (snapToGrid) {
-      scaledPoint = new Point(scaledPoint);
-      CalcUtils.snapPointToGrid(scaledPoint, gridSpacing);
+      scaledPoint = project.getGrid().snapToGrid(scaledPoint);
     }
     // Update the location according to mouse location
-    updateSingleClick(scaledPoint, snapToGrid, gridSpacing);
+    updateSingleClick(scaledPoint, snapToGrid, project.getGrid());
   }
 
   /**
@@ -244,11 +230,11 @@ public class InstantiationManager {
    *
    * @param scaledPoint
    * @param snapToGrid
-   * @param gridSpacing
+   * @param grid
    * @return true if we need to refresh the canvas
    */
-  public static boolean updateSingleClick(Point scaledPoint, boolean snapToGrid, Size gridSpacing) {
-    LOG.trace("updateSingleClick({}, {}, {})", scaledPoint, snapToGrid, gridSpacing);
+  public static boolean updateSingleClick(Point scaledPoint, boolean snapToGrid, Grid grid) {
+    LOG.trace("updateSingleClick({}, {}, {})", scaledPoint, snapToGrid, grid);
     if (potentialControlPoint == null) {
       potentialControlPoint = new Point(0, 0);
     }
@@ -258,8 +244,8 @@ public class InstantiationManager {
     int dx = scaledPoint.x - potentialControlPoint.x;
     int dy = scaledPoint.y - potentialControlPoint.y;
     if (snapToGrid) {
-      dx = CalcUtils.roundToGrid(dx, gridSpacing);
-      dy = CalcUtils.roundToGrid(dy, gridSpacing);
+      dx = grid.roundToGrid(dx);
+      dy = grid.roundToGrid(dy);
     }
     // Only repaint if there's an actual change.
     if (dx == 0 && dy == 0) {
@@ -282,7 +268,14 @@ public class InstantiationManager {
   }
 
   public static List<IDIYComponent<?>> instantiateComponent(
-      ComponentType componentType, Template template, Point point, Project currentProject)
+      ComponentType componentType, Template template, Project project)
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NoSuchMethodException {
+    return instantiateComponent(componentType, template, new Point(0, 0), project);
+  }
+
+  public static List<IDIYComponent<?>> instantiateComponent(
+      ComponentType componentType, Template template, Point point, Project project)
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException {
     LOG.info("Instantiating component of type {}", componentType.getInstanceClass().getName());
@@ -291,7 +284,7 @@ public class InstantiationManager {
     IDIYComponent<?> component =
         componentType.getInstanceClass().getDeclaredConstructor().newInstance();
 
-    component.setName(createUniqueName(componentType, currentProject.getComponents()));
+    component.setName(createUniqueName(componentType, project.getComponents()));
 
     // Translate them to the desired location.
     if (point != null) {
