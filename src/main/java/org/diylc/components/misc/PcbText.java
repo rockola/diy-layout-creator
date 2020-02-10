@@ -31,7 +31,7 @@ import java.awt.geom.Rectangle2D;
 import org.diylc.common.Config;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.transform.TextTransformer;
@@ -61,7 +61,7 @@ public class PCBText extends Misc<Void> {
   public static final Font DEFAULT_FONT =
       new Font(Config.getString("font.monospace"), Font.BOLD, 15);
 
-  private PCBLayer layer = PCBLayer._1;
+  private PcbLayer layer = PcbLayer._1;
 
   {
     font = DEFAULT_FONT;
@@ -103,14 +103,14 @@ public class PCBText extends Misc<Void> {
   }
 
   @EditableProperty
-  public PCBLayer getLayer() {
+  public PcbLayer getLayer() {
     if (layer == null) {
-      layer = PCBLayer._1;
+      layer = PcbLayer._1;
     }
     return layer;
   }
 
-  public void setLayer(PCBLayer layer) {
+  public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
 
