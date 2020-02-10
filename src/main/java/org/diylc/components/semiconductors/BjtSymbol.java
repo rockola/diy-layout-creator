@@ -99,8 +99,10 @@ public class BJTSymbol extends Abstract3LegSymbol {
             y + pinSpacing / 5 - halfPinSpacing
           },
           3));
-      arrow.transform(
-          AffineTransform.getRotateInstance(theta, x + halfPinSpacing, y - halfPinSpacing));
+      arrow.transform(AffineTransform.getRotateInstance(
+          theta,
+          x + halfPinSpacing,
+          y - halfPinSpacing));
     }
     body[2] = arrow;
 
