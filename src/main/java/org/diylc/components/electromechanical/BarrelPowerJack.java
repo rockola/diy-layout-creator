@@ -48,14 +48,14 @@ import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "Plastic DC Jack",
+    name = "Barrel Power Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Panel mount plastic DC jack",
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "J",
     autoEdit = false)
-public class PlasticDCJack extends AbstractMultiPartComponent<String> {
+public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
 
@@ -74,10 +74,10 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
     new Point(0, 0)
   };
   private String value = "";
-  private DCPolarity polarity = DCPolarity.CENTER_NEGATIVE;
+  private DcPolarity polarity = DcPolarity.CENTER_NEGATIVE;
   private transient Area[] body;
 
-  public PlasticDCJack() {
+  public BarrelPowerJack() {
     updateControlPoints();
   }
 
@@ -256,14 +256,14 @@ public class PlasticDCJack extends AbstractMultiPartComponent<String> {
   }
 
   @EditableProperty
-  public DCPolarity getPolarity() {
+  public DcPolarity getPolarity() {
     if (polarity == null) {
-      polarity = DCPolarity.CENTER_NEGATIVE;
+      polarity = DcPolarity.CENTER_NEGATIVE;
     }
     return polarity;
   }
 
-  public void setPolarity(DCPolarity polarity) {
+  public void setPolarity(DcPolarity polarity) {
     this.polarity = polarity;
   }
 
