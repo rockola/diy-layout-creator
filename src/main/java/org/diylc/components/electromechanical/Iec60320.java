@@ -32,11 +32,11 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.components.Area;
 import org.diylc.core.measures.Size;
 
-public class IEC60320 {
+public class Iec60320 {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger LOG = LogManager.getLogger(IEC60320.class);
-  private static final Map<String, IEC60320> couplers = new HashMap<>();
+  private static final Logger LOG = LogManager.getLogger(Iec60320.class);
+  private static final Map<String, Iec60320> couplers = new HashMap<>();
   private static final Point reference = new Point(0,0);
 
   enum CouplerType {
@@ -74,7 +74,7 @@ public class IEC60320 {
 
   private Area[] body;
 
-  private IEC60320(CouplerType type, List<Pin> pins, Area coupler, Area courtyard, Area mount) {
+  private Iec60320(CouplerType type, List<Pin> pins, Area coupler, Area courtyard, Area mount) {
     super();
     this.couplerType = type;
     this.pins = pins;
@@ -83,7 +83,7 @@ public class IEC60320 {
     this.mount = mount;
   }
 
-  private IEC60320(CouplerType type, List<Pin> pins, Area coupler, Area courtyard) {
+  private Iec60320(CouplerType type, List<Pin> pins, Area coupler, Area courtyard) {
     this(type, pins, coupler, courtyard, null);
   }
 
@@ -118,9 +118,9 @@ public class IEC60320 {
    *
    * <p>0.2A 250V connector for class II equipment and cold conditions.
    *
-   * @return Instance of IEC60320 as per IEC60320-C1.
+   * @return Instance of Iec60320 as per IEC60320-C1.
    */
-  public static IEC60320 C1() {
+  public static Iec60320 C1() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(6.6);
     final Size pinWidth = Size.mm(2.9);
@@ -131,7 +131,7 @@ public class IEC60320 {
     final Size courtyardWidth = Size.mm(18.5);
     final Size courtyardHeight = Size.mm(13);
     final Size courtyardCornerRadius = Size.mm(0.5);
-    return new IEC60320(
+    return new Iec60320(
         CouplerType.CONNECTOR,
         pins,
         Area.centeredRoundRect(
@@ -151,9 +151,9 @@ public class IEC60320 {
    *
    * <p>0.2A 250V inlet for class II equipment and cold conditions.
    *
-   * @return Instance of IEC60320 as per IEC60320-C2.
+   * @return Instance of Iec60320 as per IEC60320-C2.
    */
-  public static IEC60320 C2() {
+  public static Iec60320 C2() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(6.6);
     final Size pinWidth = Size.mm(2.36);
@@ -164,7 +164,7 @@ public class IEC60320 {
     final Size courtyardWidth = Size.mm(19);
     final Size courtyardHeight = Size.mm(13.5);
     final Size courtyardCornerRadius = Size.mm(2.5);
-    return new IEC60320(
+    return new Iec60320(
         CouplerType.INLET,
         pins,
         Area.centeredRoundRect(
@@ -185,9 +185,9 @@ public class IEC60320 {
    * <p>10 A 250 V appliance coupler for class I equipment and cold
    * conditions, inlet.
    *
-   * @return Instance of IEC60320 as per IEC60320-C14.
+   * @return Instance of Iec60320 as per IEC60320-C14.
    */
-  public static IEC60320 C14() {
+  public static Iec60320 C14() {
     List<Pin> pins = new ArrayList<>();
     final Size pinHorizontalSpacing = Size.mm(7);
     final Size pinVerticalSpacing = Size.mm(4);
@@ -232,7 +232,7 @@ public class IEC60320 {
     final double lugRadius = inletLowerRadius * 3.5;
     final double mountHoleDiameter = Size.mm(3.5).asPixels();
     final double holeOffset = lugWidth - 1.5 * mountHoleDiameter;
-    return new IEC60320(
+    return new Iec60320(
         CouplerType.INLET,
         pins,
         // inlet

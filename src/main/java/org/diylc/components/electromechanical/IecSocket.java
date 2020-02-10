@@ -58,17 +58,17 @@ import org.diylc.utils.Constants;
     zOrder = IDIYComponent.COMPONENT,
     instanceNamePrefix = "IEC",
     autoEdit = false)
-public class IECSocket extends AbstractMultiPartComponent<String> {
+public class IecSocket extends AbstractMultiPartComponent<String> {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger LOG = LogManager.getLogger(IECSocket.class);
+  private static final Logger LOG = LogManager.getLogger(IecSocket.class);
 
-  private static Map<String, IEC60320> subtypes = new HashMap<>();
+  private static Map<String, Iec60320> subtypes = new HashMap<>();
 
   static {
-    subtypes.put("C1", IEC60320.C1());
-    subtypes.put("C2", IEC60320.C2());
-    subtypes.put("C13", IEC60320.C14());
+    subtypes.put("C1", Iec60320.C1());
+    subtypes.put("C2", Iec60320.C2());
+    subtypes.put("C13", Iec60320.C14());
   }
 
   private static Size HORIZONTAL_SPACING = Size.in(0.3);
@@ -84,13 +84,13 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
   protected String value;
 
   private Orientation orientation = Orientation.DEFAULT;
-  private IEC60320 iec;
+  private Iec60320 iec;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
 
-  public IECSocket() {
+  public IecSocket() {
     super();
-    iec = IEC60320.C14();
+    iec = Iec60320.C14();
     controlPoints = iec.getControlPoints();
     updateControlPoints();
   }
@@ -104,10 +104,7 @@ public class IECSocket extends AbstractMultiPartComponent<String> {
     controlPoints[2].setLocation(firstPoint.x + horizontalSpacing, firstPoint.y + verticalSpacing);
 
     if (orientation != Orientation.DEFAULT) {
-      double theta = orientation.getTheta();
-      AffineTransform rotation =
-          AffineTransform.getRotateInstance(theta, firstPoint.x, firstPoint.y);
-
+      AffineTransform rotation = orientation.getRotation(firstPoint);
       for (int i = 1; i < controlPoints.length; i++) {
         rotation.transform(controlPoints[i], controlPoints[i]);
       }
