@@ -417,7 +417,7 @@ public class Breadboard extends AbstractComponent<Void> {
         (int) (point.y + (holeCount + 1) * spacing));
     double theta = getOrientation().getTheta();
     if (theta != 0) {
-      AffineTransform tx = AffineTransform.getRotateInstance(theta, point.x, point.y);
+      AffineTransform tx = getOrientation().getRotation(point);
       tx.transform(secondPoint, secondPoint);
     }
     return secondPoint;
