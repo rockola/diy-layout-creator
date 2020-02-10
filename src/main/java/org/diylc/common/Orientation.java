@@ -20,6 +20,8 @@
 
 package org.diylc.common;
 
+import java.awt.geom.AffineTransform;
+
 public enum Orientation {
   DEFAULT(0, 0),
   _90(90, Math.PI / 2),
@@ -68,6 +70,20 @@ public enum Orientation {
   */
   public double getTheta() {
     return this.theta;
+  }
+
+  /**
+     Get rotation corresponding to angle.
+
+     @param point Reference point of rotation.
+     @return AffineTransform implementing the rotation.
+  */
+  public AffineTransform getRotation(Point point) {
+    return getRotation(point.x, point.y);
+  }
+
+  public AffineTransform getRotation(int x, int y) {
+    return AffineTransform.getRotateInstance(getTheta(), x, y);
   }
 
   public Orientation mirrorHorizontal() {
