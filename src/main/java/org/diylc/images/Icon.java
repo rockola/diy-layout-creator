@@ -226,7 +226,8 @@ public enum Icon {
     if (r == null) {
       LOG.error(this.toString() + ".image() not found");
       // TODO throw exception?
+      return null;
     }
-    return r == null ? null : r.getImage();
+    return r.getImage();
   }
 }
