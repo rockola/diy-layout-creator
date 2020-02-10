@@ -386,7 +386,7 @@ public class V1FileParser implements IOldFileParser {
           }
           if (Math.min(sizeX, sizeY) == 2 && Math.max(sizeX, sizeY) == 4) {
             switchType = ToggleSwitchType._5PDT;
-            orientation = sizeX < sizeY ? OrientationHV.HORIZONTAL : OrientationHV.HORIZONTAL;
+            orientation = sizeX < sizeY ? OrientationHV.HORIZONTAL : OrientationHV.VERTICAL;
           }
 
           if (switchType == null || orientation == null) {
