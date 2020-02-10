@@ -44,11 +44,11 @@ import org.diylc.core.annotations.KeywordPolicy;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class BJTSymbol extends Abstract3LegSymbol {
+public class BjtSymbol extends Abstract3LegSymbol {
 
   private static final long serialVersionUID = 1L;
 
-  protected BJTPolarity polarity = BJTPolarity.NPN;
+  protected BjtPolarity polarity = BjtPolarity.NPN;
 
   public Shape[] getBody() {
     Shape[] body = new Shape[3];
@@ -78,7 +78,7 @@ public class BJTSymbol extends Abstract3LegSymbol {
 
     Area arrow;
     double theta = Math.atan(1.0 / 3);
-    if (polarity == BJTPolarity.NPN) {
+    if (polarity == BjtPolarity.NPN) {
       arrow = new Area(new Polygon(
           new int[] {x + pinSpacing, x + pinSpacing, x + pinSpacing * 10 / 6},
           new int[] {
@@ -135,11 +135,11 @@ public class BJTSymbol extends Abstract3LegSymbol {
   }
 
   @EditableProperty(name = "Polarity")
-  public BJTPolarity getPolarity() {
+  public BjtPolarity getPolarity() {
     return polarity;
   }
 
-  public void setPolarity(BJTPolarity polarity) {
+  public void setPolarity(BjtPolarity polarity) {
     this.polarity = polarity;
 
     body = null;

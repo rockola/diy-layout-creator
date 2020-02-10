@@ -20,7 +20,7 @@
 
 package org.diylc.components.semiconductors;
 
-public enum BJTPolarity {
+public enum BjtPolarity {
   NPN,
   PNP;
 
