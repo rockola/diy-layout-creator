@@ -92,26 +92,25 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
   public void setVisible(boolean b) {
     super.setVisible(b);
     if (b && !getSearchHeaderPanel().isInitialized()) {
-      executeBackgroundTask(
-          new ITask<Pair<String[], String[]>>() {
+      executeBackgroundTask(new ITask<Pair<String[], String[]>>() {
 
-            @Override
-            public Pair<String[], String[]> doInBackground() throws Exception {
-              return new Pair<String[], String[]>(
-                  CloudPresenter.Instance.getCategories(), CloudPresenter.Instance.getSortings());
-            }
+          @Override
+          public Pair<String[], String[]> doInBackground() throws Exception {
+            return new Pair<String[], String[]>(
+                CloudPresenter.Instance.getCategories(), CloudPresenter.Instance.getSortings());
+          }
 
-            @Override
-            public void failed(Exception e) {
-              LOG.error("Could not fetch categories and sortings from the cloud", e);
-              error(App.getString("cloud.category-setup-failed"));
-            }
+          @Override
+          public void failed(Exception e) {
+            LOG.error("Could not fetch categories and sortings from the cloud", e);
+            error(App.getString("cloud.category-setup-failed"));
+          }
 
-            @Override
-            public void complete(Pair<String[], String[]> result) {
-              getSearchHeaderPanel().initializeLists(result.getFirst(), result.getSecond());
-            }
-          });
+          @Override
+          public void complete(Pair<String[], String[]> result) {
+            getSearchHeaderPanel().initializeLists(result.getFirst(), result.getSecond());
+          }
+        });
     }
   }
 
@@ -292,7 +291,7 @@ public class CloudBrowserFrame extends JFrame implements ISimpleView {
     return this;
   }
 
-  public class Pair<A, B> {
+  public static class Pair<A, B> {
 
     private A first;
     private B second;
