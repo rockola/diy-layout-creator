@@ -152,7 +152,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       // Rotate if needed
       if (orientation != Orientation.DEFAULT) {
         double theta = orientation.getTheta();
-        AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
+        AffineTransform rotation = orientation.getRotation(x, y);
         for (Shape shape : body) {
           Area area = (Area) shape;
           area.transform(rotation);
