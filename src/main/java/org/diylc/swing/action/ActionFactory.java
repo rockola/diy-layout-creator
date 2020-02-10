@@ -1693,7 +1693,7 @@ public class ActionFactory {
 
     public RenumberAction(IPlugInPort plugInPort, boolean topToBottom) {
       super(plugInPort, getMsg(topToBottom ? "renumber-x-axis-first" : "renumber-y-axis-first"));
-      this.xAxisFirst = xAxisFirst;
+      this.xAxisFirst = topToBottom;
     }
 
     @Override
