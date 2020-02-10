@@ -194,10 +194,29 @@ public class App {
     App.putValue(Theme.THEME_KEY, theme);
   }
 
+  /**
+     Get full version string.
+
+     <p>The format for the version string is "x.y.z{-specifier}",
+     where x = major version, y = minor version, z = build number, and
+     specifier is an optional string specifying, for example, an
+     alpha build.
+
+     @return Application version string.
+  */
   public static String getFullVersionString() {
     return getString("app.version");
   }
 
+  /**
+     Get version string.
+
+     <p>If full version string contains a hyphen (example:
+     "4.0.0-testing"), the hyphen and the substring following it are
+     stripped.
+
+     @return String representing the current version.
+  */
   public static String getVersionString() {
     String v = getFullVersionString();
     int hyphen = v.indexOf("-");
