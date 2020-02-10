@@ -45,15 +45,13 @@ import org.diylc.core.Project;
 
 public class AutoSavePlugin implements IPlugIn {
 
+  private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
   private static final String AUTO_SAVE_PATH = Utils.getUserDataDirectory() + "backup";
 
-  private static final Logger LOG = LogManager.getLogger(AutoSavePlugin.class);
-
-  public static long BACKUP_FREQ_MS = 60 * 1000;
-  public static int MAX_TOTAL_SIZE_MB = 64;
+  public static final long BACKUP_FREQ_MS = 60 * 1000;
+  public static final int MAX_TOTAL_SIZE_MB = 64;
 
   private ExecutorService executor;
-
   private IPlugInPort plugInPort;
   private long lastSave = 0;
 
@@ -128,8 +126,16 @@ public class AutoSavePlugin implements IPlugIn {
         os.write(buffer, 0, length);
       }
     } finally {
-      is.close();
-      os.close();
+      try {
+        is.close();
+      } catch (NullPointerException e) {
+        LOG.error("copyFileUsingStream: Tried to close input stream but it was already null", e);
+      }
+      try {
+        os.close();
+      } catch (NullPointerException e) {
+        LOG.error("copyFileUsingStream: Tried to close output stream but it was already null", e);
+      }
     }
   }
 
@@ -186,6 +192,9 @@ public class AutoSavePlugin implements IPlugIn {
 
   private void cleanupExtra() {
     File[] files = new File(AUTO_SAVE_PATH).listFiles();
+    if (files == null) {
+      return;
+    }
     // sort files by date
     Arrays.sort(
         files,

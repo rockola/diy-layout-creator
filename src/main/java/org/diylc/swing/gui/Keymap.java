@@ -121,7 +121,11 @@ public class Keymap {
       LOG.error("Could not load default keymap", e);
       throw e;
     } finally {
-      resourceStream.close();
+      try {
+        resourceStream.close();
+      } catch (NullPointerException e) {
+        LOG.error("readDefaultKeymap() tried to close resourceStream but it was already NULL");
+      }
     }
     return defaultKeymap;
   }
