@@ -147,8 +147,9 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
       String menuTitle,
       Map<String, AbstractAction> actionMap,
       Queue<String> separatorsAfter) {
-    for (String key : actionMap.keySet()) {
-      AbstractAction action = actionMap.get(key);
+    for (Map.Entry<String, AbstractAction> entry : actionMap.entrySet()) {
+      String key = entry.getKey();
+      AbstractAction action = entry.getValue();
       // add this action to map of all edit actions
       actions.put(key, action);
       App.ui().injectMenuAction(action, menuTitle);
