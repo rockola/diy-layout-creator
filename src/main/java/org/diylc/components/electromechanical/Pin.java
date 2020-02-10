@@ -30,7 +30,7 @@ import org.diylc.core.measures.Size;
 public class Pin {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger LOG = LogManager.getLogger(IEC60320.class);
+  private static final Logger LOG = LogManager.getLogger(Pin.class);
   private static final Point reference = new Point(0,0);
 
   private Area shape;
