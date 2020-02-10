@@ -541,6 +541,9 @@ public class Presenter implements IPlugInPort {
       int clickCount) {
     LOG.trace("mouseClicked({}, {}, {}, {}, {})", point, button, ctrlDown, shiftDown, altDown);
     Point scaledPoint = scalePoint(point);
+    if (isSnapToGrid()) {
+      scaledPoint = currentProject().getGrid().snapToGrid(scaledPoint);
+    }
     if (clickCount >= 2) {
       editSelection();
     } else {
@@ -559,9 +562,6 @@ public class Presenter implements IPlugInPort {
           case SINGLE_CLICK:
             LOG.trace("mouseClicked() creation method is Single Click");
             try {
-              if (isSnapToGrid()) {
-                scaledPoint = currentProject().getGrid().snapToGrid(scaledPoint);
-              }
               List<IDIYComponent<?>> componentSlot = InstantiationManager.getComponentSlot();
               List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
               for (IDIYComponent<?> component : componentSlot) {
@@ -597,9 +597,6 @@ public class Presenter implements IPlugInPort {
             LOG.trace("mouseClicked() creation method is Point-by-point");
             // First click is just to set the controlPointSlot and
             // componentSlot.
-            if (isSnapToGrid()) {
-              scaledPoint = currentProject().getGrid().snapToGrid(scaledPoint);
-            }
             if (InstantiationManager.getComponentSlot() == null) {
               try {
                 InstantiationManager.instantiatePointByPoint(scaledPoint, currentProject());
