@@ -27,7 +27,7 @@ public enum DcPolarity {
 
   private String title;
 
-  DCPolarity(String title) {
+  DcPolarity(String title) {
     this.title = title;
   }
 
