@@ -207,6 +207,18 @@
     <finalName>diy-layout-creator</finalName>
     <plugins>
       <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-checkstyle-plugin</artifactId>
+	<version>3.1.0</version>
+	<dependencies>
+	  <dependency>
+	    <groupId>com.puppycrawl.tools</groupId>
+	    <artifactId>checkstyle</artifactId>
+	    <version>8.29</version>
+	  </dependency>
+	</dependencies>
+      </plugin>
+      <plugin>
 	<!-- clean lifecycle, see
 	     https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <artifactId>maven-clean-plugin</artifactId>
@@ -399,6 +411,16 @@
 	<artifactId>maven-checkstyle-plugin</artifactId>
 	<version>3.1.0</version>
 	<configuration>
+	  <!-- ignore Javadoc for now -->
+	  <module name="JavadocType">
+	    <property name="severity" value="ignore"/>
+	  </module>
+	  <module name="JavadocMethod">
+	    <property name="severity" value="ignore"/>
+	  </module>
+	  <module name="JavadocVariable">
+	    <property name="severity" value="ignore"/>
+	  </module>
 	  <!-- this is only read used checkstyle:check -->
 	  <!-- checkstyle:checkstyle uses checkstyle.config.location set in properties -->
 	  <configLocation>google_checks.xml</configLocation>
