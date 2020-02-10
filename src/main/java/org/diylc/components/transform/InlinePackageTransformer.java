@@ -25,7 +25,7 @@ import java.awt.geom.AffineTransform;
 
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
-import org.diylc.components.electromechanical.DIPSwitch;
+import org.diylc.components.electromechanical.DipSwitch;
 import org.diylc.components.passive.AudioTransformer;
 import org.diylc.components.semiconductors.BridgeRectifier;
 import org.diylc.components.semiconductors.InlinePackage;
@@ -43,7 +43,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
   @Override
   public boolean mirroringChangesCircuit(IDIYComponent<?> component) {
     return component instanceof DIL_IC
-        || component instanceof DIPSwitch
+        || component instanceof DipSwitch
         || component instanceof AudioTransformer
         || component instanceof BridgeRectifier;
   }
@@ -59,17 +59,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
     }
 
     InlinePackage ic = (InlinePackage) component;
-    Orientation o = ic.getOrientation();
-    int oValue = o.ordinal();
-    oValue += direction;
-    if (oValue < 0) {
-      oValue = Orientation.values().length - 1;
-    }
-    if (oValue >= Orientation.values().length) {
-      oValue = 0;
-    }
-    o = Orientation.values()[oValue];
-    ic.setOrientation(o);
+    ic.setOrientation(ic.getOrientation().rotate(direction));
   }
 
   @Override

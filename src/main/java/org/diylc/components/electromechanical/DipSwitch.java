@@ -59,7 +59,7 @@ import org.diylc.utils.Constants;
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class DIPSwitch extends AbstractTransparentComponent<String> implements ISwitch {
+public class DipSwitch extends AbstractTransparentComponent<String> implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -97,7 +97,7 @@ public class DIPSwitch extends AbstractTransparentComponent<String> implements I
   // pinSpacing.convertToPixels()) };
   private transient Area[] body;
 
-  public DIPSwitch() {
+  public DipSwitch() {
     super();
     updateControlPoints();
     alpha = 100;
