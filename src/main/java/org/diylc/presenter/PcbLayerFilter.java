@@ -21,14 +21,14 @@ package org.diylc.presenter;
 
 import java.lang.reflect.Method;
 import org.diylc.common.IComponentFilter;
-import org.diylc.common.PCBLayer;
+import org.diylc.common.PcbLayer;
 import org.diylc.core.IDIYComponent;
 
-public class PCBLayerFilter implements IComponentFilter {
+public class PcbLayerFilter implements IComponentFilter {
 
-  private PCBLayer layer;
+  private PcbLayer layer;
 
-  public PCBLayerFilter(PCBLayer layer) {
+  public PcbLayerFilter(PcbLayer layer) {
     super();
     this.layer = layer;
   }
@@ -38,7 +38,7 @@ public class PCBLayerFilter implements IComponentFilter {
     Class<?> clazz = component.getClass();
     try {
       Method m = clazz.getMethod("getLayer");
-      PCBLayer l = (PCBLayer) m.invoke(component);
+      PcbLayer l = (PcbLayer) m.invoke(component);
       return layer == l;
     } catch (Exception e) {
       return false;
