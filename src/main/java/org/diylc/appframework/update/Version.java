@@ -53,7 +53,7 @@ public class Version implements Serializable, Comparable<Version> {
   public Version(VersionNumber versionNumber, Date releaseDate, String name, String url) {
     super();
     this.versionNumber = versionNumber;
-    this.releaseDate = new Date(releaseDate.getTime());
+    this.releaseDate = releaseDate == null ? null : new Date(releaseDate.getTime());
     this.name = name;
     this.url = url;
     this.changes = new ArrayList<Change>();
@@ -206,7 +206,7 @@ public class Version implements Serializable, Comparable<Version> {
     } finally {
       try {
         reader.close();
-      } catch (IOException e) {
+      } catch (NullPointerException | IOException e) {
         LOG.error("getRecentUpdates() couldn't close reader", e);
       }
     }

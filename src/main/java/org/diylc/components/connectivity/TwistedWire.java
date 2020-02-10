@@ -416,7 +416,7 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
               new Rectangle2D.Double(
                   line.getX1() - rectSize / 2, line.getY1() - rectSize / 2, rectSize, rectSize));
 
-      if (i % 2 == 1) {
+      if (i % 2 != 0) {
         pointRect1.intersect(firstLeadArea);
         secondLeadArea.subtract(pointRect1);
       } else {

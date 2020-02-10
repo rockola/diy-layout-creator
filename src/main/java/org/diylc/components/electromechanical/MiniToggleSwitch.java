@@ -238,79 +238,66 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       int spacing = (int) getSpacing().convertToPixels();
       switch (switchType) {
         case SPST:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin,
-                  2 * margin + spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin,
+              2 * margin + spacing,
+              margin);
           break;
         case SPDT:
         case SPDT_off:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin,
-                  2 * margin + 2 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin,
+              2 * margin + 2 * spacing,
+              margin);
           break;
         case DPDT:
         case DPDT_off:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin + spacing,
-                  2 * margin + 2 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin + spacing,
+              2 * margin + 2 * spacing,
+              margin);
           break;
         case _DP3T_mustang:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin + spacing,
-                  2 * margin + 3 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin + spacing,
+              2 * margin + 3 * spacing,
+              margin);
           break;
         case _3PDT:
         case _3PDT_off:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin + 2 * spacing,
-                  2 * margin + 2 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin + 2 * spacing,
+              2 * margin + 2 * spacing,
+              margin);
           break;
         case _4PDT:
         case _4PDT_off:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin + 3 * spacing,
-                  2 * margin + 2 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin + 3 * spacing,
+              2 * margin + 2 * spacing,
+              margin);
           break;
         case _5PDT:
         case _5PDT_off:
-          body =
-              new RoundRectangle2D.Double(
-                  firstPoint.x - margin,
-                  firstPoint.y - margin,
-                  2 * margin + 4 * spacing,
-                  2 * margin + 2 * spacing,
-                  margin,
-                  margin);
+          body = Area.roundRect(
+              firstPoint.x - margin,
+              firstPoint.y - margin,
+              2 * margin + 4 * spacing,
+              2 * margin + 2 * spacing,
+              margin,
+              margin);
           break;
         default:
           throw new RuntimeException("unknown type " + switchType);
@@ -328,10 +315,8 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int circleSize = 5 * width / 32;
-    g2d.setColor(BODY_COLOR);
-    g2d.fillRoundRect(width / 4, 1, width / 2, height - 2, circleSize, circleSize);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(width / 4, 1, width / 2, height - 2, circleSize, circleSize);
+    Area.roundRect(width / 4, 1, width / 2, height - 2, circleSize)
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     for (int i = 1; i <= 3; i++) {
       g2d.setColor(CIRCLE_COLOR);
       g2d.fillOval(width / 2 - circleSize / 2, i * height / 4 - 3, circleSize, circleSize);

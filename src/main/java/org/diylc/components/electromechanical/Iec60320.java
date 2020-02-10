@@ -21,6 +21,7 @@
 package org.diylc.components.electromechanical;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.components.Area;
 import org.diylc.core.measures.Size;
 
-public class Iec60320 {
+public class Iec60320 implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(Iec60320.class);

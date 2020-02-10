@@ -21,9 +21,11 @@
 package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -54,16 +56,14 @@ public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
     g2d.setColor(LEAD_COLOR);
     g2d.drawLine(0, height / 2, (width - size) / 2, height / 2);
     g2d.drawLine((int) (width + size / SQRT_TWO + bandSize) / 2, height / 2, width, height / 2);
+    Path2D polygon = new Path2D.Double();
+    polygon.moveTo((width - size) / 2, (height - size) / 2);
+    polygon.lineTo((width - size) / 2, (height + size) / 2);
+    polygon.lineTo((width - size) / 2 + size / SQRT_TWO, height / 2);
+    polygon.closePath();
+    Area area = new Area(polygon);
+    area.draw(g2d, COLOR);
     g2d.setColor(COLOR);
-    g2d.fill(
-        new Polygon(
-            new int[] {
-              (width - size) / 2,
-              (width - size) / 2,
-              (int) ((width - size) / 2 + size / SQRT_TWO)
-            },
-            new int[] {(height - size) / 2, (height + size) / 2, height / 2},
-            3));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
     g2d.drawLine(
         (int) ((width - size) / 2 + size / SQRT_TWO),

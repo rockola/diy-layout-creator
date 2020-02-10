@@ -258,17 +258,21 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     String s = "";
     switch (display) {
       case NAME:
-        return getName();
+        s = getName();
+        break;
       case NONE:
-        return "";
+        break;
       case BOTH:
         s = getName() + " ";
         // fallthrough intentional
       case VALUE:
         // fallthrough intentional
       default:
-        return getValue() == null ? s : s + getValue().toString();
+        if (getValue() != null) {
+          s = s + getValue().toString();
+        }
     }
+    return s;
   }
 
   protected List<String> getLabelListForDisplay() {

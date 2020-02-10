@@ -228,18 +228,17 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
       body[0] = main;
 
-      GeneralPath connections = new GeneralPath();
+      Path2D connections = new Path2D.Double();
       for (int i = 0; i <= getControlPointCount(); i++) {
         connections.moveTo(controlPoints[i].x, controlPoints[i].y);
         connections.lineTo(
-            controlPoints[i].x + pinSpacing * (i == getControlPointCount()
-                                               ? 3 / 2
-                                               : (getGateType().needsCircle()
-                                                  ? -1
-                                                  : -3 / 2)),
+            controlPoints[i].x
+            + pinSpacing * (i == getControlPointCount() || !getGateType().needsCircle()
+                            ? 3 / 2
+                            : 1),
             controlPoints[i].y);
       }
-      body[1] = connections;
+      body[1] = new Area(connections);
 
       if (getGateType().toString().startsWith("X")) {
         Path2D path = new Path2D.Double();
