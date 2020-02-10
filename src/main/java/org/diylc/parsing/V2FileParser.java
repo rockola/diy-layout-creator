@@ -806,7 +806,7 @@ public class V2FileParser implements IOldFileParser {
               project.getComponents().add(dp);
               break;
             case "ic dil":
-              DIL_IC dil = new DIL_IC();
+              DualInlineIc dil = new DualInlineIc();
               dil.setName(comName != "" ? comName : "dil");
               PinCount pinCount = dil.getPinCount().setPins(pins);
               if (pinCount == null) {

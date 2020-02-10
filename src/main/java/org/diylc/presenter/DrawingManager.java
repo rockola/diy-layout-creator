@@ -236,7 +236,7 @@ public class DrawingManager {
         }
       }
 
-      Rectangle2D extraSpaceRect = null;
+      Area extraSpaceRect = null;
       AffineTransform extraSpaceTx = null;
       // manage extra space
       double extraSpace = 0;
@@ -501,12 +501,10 @@ public class DrawingManager {
 
       // shade extra space
       if (SHADE_EXTRA_SPACE && extraSpaceRect != null) {
-        Area extraSpaceArea = new Area(new Rectangle2D.Double(0, 0, d.getWidth(), d.getHeight()));
-        extraSpaceArea.subtract(new Area(extraSpaceRect));
+        Area extraSpaceArea = Area.rect(0, 0, d.getWidth(), d.getHeight()).subtract(extraSpaceRect);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05f));
         g2d.setTransform(extraSpaceTx);
-        g2d.setColor(theme().getOutlineColor());
-        g2d.fill(extraSpaceArea);
+        extraSpaceArea.fill(g2d, theme().getOutlineColor());
       }
     } finally {
       g2d.dispose();

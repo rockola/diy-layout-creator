@@ -64,7 +64,7 @@ public class Label extends Misc<String> {
       Project project,
       IDrawingObserver drawingObserver) {
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    g2d.drawString(text, x, y);
+    g2d.drawString(text, positionX, positionY);
   }
 
   @Override

@@ -75,14 +75,13 @@ public class PcbText extends Misc<Void> {
       IDrawingObserver drawingObserver) {
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
 
-    final AffineTransform oldTx = g2d.getTransform();
+    final AffineTransform oldTransform = g2d.getTransform();
     // Flip horizontally
     AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-    tx.translate(-2 * x - textWidth, 0);
+    tx.translate(-2 * positionX - textWidth, 0);
     g2d.transform(tx);
-    g2d.drawString(text, x, y);
-
-    g2d.setTransform(oldTx);
+    g2d.drawString(text, positionX, positionY);
+    g2d.setTransform(oldTransform);
   }
 
   @Override

@@ -50,7 +50,7 @@ public class Grid {
    */
   public int roundToGrid(double coordinate) {
     double grid = gridSpacing.convertToPixels();
-    return (int) (Math.round(1f * x / grid) * grid);
+    return (int) (Math.round(1f * coordinate / grid) * grid);
   }
 
   /**

@@ -66,7 +66,7 @@ import org.diylc.plugins.cloud.presenter.SearchSession;
 import org.diylc.presenter.Presenter;
 import org.diylc.swing.ISimpleView;
 import org.diylc.swing.gui.DialogFactory;
-import org.diylc.swing.gui.components.HTMLTextArea;
+import org.diylc.swing.gui.components.HtmlTextArea;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;
 import org.diylc.swing.plugins.cloud.view.CommentDialog;
 import org.diylc.swing.plugins.cloud.view.UploadDialog;
@@ -217,7 +217,7 @@ public class ResultsScrollPanel extends JScrollPane {
     final JLabel nameLabel = new JLabel("<html><b>" + project.getName() + "</b></html>");
     nameLabel.setFont(nameLabel.getFont().deriveFont(12f));
 
-    final JTextArea descriptionArea = new HTMLTextArea(project.getDescription());
+    final JTextArea descriptionArea = new HtmlTextArea(project.getDescription());
     descriptionArea.setEditable(false);
     descriptionArea.setFont(thumbnailLabel.getFont());
     descriptionArea.setLineWrap(true);

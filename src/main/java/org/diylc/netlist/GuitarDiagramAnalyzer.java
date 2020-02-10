@@ -34,7 +34,7 @@ import org.diylc.components.guitar.AbstractGuitarPickup;
 import org.diylc.components.guitar.HumbuckerPickup;
 import org.diylc.components.guitar.JazzBassPickup;
 import org.diylc.components.guitar.P90Pickup;
-import org.diylc.components.guitar.PBassPickup;
+import org.diylc.components.guitar.PrecisionBassPickup;
 import org.diylc.components.guitar.SingleCoilPickup;
 import org.diylc.components.passive.AxialFilmCapacitor;
 import org.diylc.components.passive.PotentiometerPanel;
@@ -60,7 +60,7 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
     PICKUP_TYPES.add(HumbuckerPickup.class.getCanonicalName());
     PICKUP_TYPES.add(P90Pickup.class.getCanonicalName());
     PICKUP_TYPES.add(JazzBassPickup.class.getCanonicalName());
-    PICKUP_TYPES.add(PBassPickup.class.getCanonicalName());
+    PICKUP_TYPES.add(PrecisionBassPickup.class.getCanonicalName());
 
     CAP_TYPES.add(RadialCeramicDiskCapacitor.class.getCanonicalName());
     CAP_TYPES.add(RadialFilmCapacitor.class.getCanonicalName());

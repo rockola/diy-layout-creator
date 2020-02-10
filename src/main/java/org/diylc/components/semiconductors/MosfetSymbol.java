@@ -22,11 +22,12 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -54,14 +55,14 @@ public class MosfetSymbol extends Abstract3LegSymbol {
     int y = controlPoints[0].y;
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
 
-    GeneralPath polyline = new GeneralPath();
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(x + pinSpacing / 2, y - pinSpacing + 1);
     polyline.lineTo(x + pinSpacing / 2, y + pinSpacing - 1);
     polyline.moveTo(x + pinSpacing, y - pinSpacing + 1);
     polyline.lineTo(x + pinSpacing, y + pinSpacing - 1);
-    body[0] = polyline;
+    body[0] = new Area(polyline);
 
-    polyline = new GeneralPath();
+    polyline = new Path2D.Double();
     polyline.moveTo(x + pinSpacing, y - pinSpacing);
     polyline.lineTo(x + pinSpacing * 2, y - pinSpacing);
     polyline.moveTo(x + pinSpacing, y + pinSpacing);
@@ -72,21 +73,21 @@ public class MosfetSymbol extends Abstract3LegSymbol {
     polyline.lineTo(x + pinSpacing * 2, y - pinSpacing);
     polyline.moveTo(x + pinSpacing * 2, y + pinSpacing * 2);
     polyline.lineTo(x + pinSpacing * 2, y + pinSpacing);
-    body[1] = polyline;
+    body[1] = new Area(polyline);
 
-    Polygon arrow;
+    Path2D arrow = new Path2D.Double();
     if (polarity.isNegative()) {
-      arrow = new Polygon(
-          new int[] {x + pinSpacing * 8 / 6, x + pinSpacing * 8 / 6, x + pinSpacing * 12 / 6},
-          new int[] {y + pinSpacing * 6 / 5, y + pinSpacing * 4 / 5, y + pinSpacing},
-          3);
+      arrow.moveTo(x + pinSpacing * 8 / 6, y + pinSpacing * 6 / 5);
+      arrow.lineTo(x + pinSpacing * 8 / 6, y + pinSpacing * 4 / 5);
+      arrow.lineTo(x + pinSpacing * 12 / 6, y + pinSpacing);
+      arrow.closePath();
     } else {
-      arrow = new Polygon(
-          new int[] {x + pinSpacing * 7 / 6, x + pinSpacing * 11 / 6, x + pinSpacing * 11 / 6},
-          new int[] {y - pinSpacing, y - pinSpacing * 6 / 5, y - pinSpacing * 4 / 5},
-          3);
+      arrow.moveTo(x + pinSpacing * 7 / 6, y - pinSpacing);
+      arrow.lineTo(x + pinSpacing * 11 / 6, y - pinSpacing * 6 / 5);
+      arrow.lineTo(x + pinSpacing * 11 / 6, y - pinSpacing * 4 / 5);
+      arrow.closePath();
     }
-    body[2] = arrow;
+    body[2] = new Area(arrow);
 
     return body;
   }
@@ -100,10 +101,8 @@ public class MosfetSymbol extends Abstract3LegSymbol {
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.drawLine(width / 5, height / 2, width * 2 / 5, height / 2);
-
     g2d.drawLine(width * 4 / 5, 1, width * 4 / 5, height / 4);
     g2d.drawLine(width * 4 / 5, height / 4, width * 3 / 5, height / 4);
-
     g2d.drawLine(width * 4 / 5, height - 1, width * 4 / 5, height * 3 / 4);
     g2d.drawLine(width * 4 / 5, height * 3 / 4, width * 3 / 5, height * 3 / 4);
   }

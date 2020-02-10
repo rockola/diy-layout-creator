@@ -86,17 +86,17 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
     addAction(null);
 
     // Export / Print
-    addAction(ActionFactory.createExportPDFAction(plugInPort, drawingProvider, ""));
-    addAction(ActionFactory.createExportPNGAction(plugInPort, drawingProvider, ""));
+    addAction(ActionFactory.createExportPdfAction(plugInPort, drawingProvider, ""));
+    addAction(ActionFactory.createExportPngAction(plugInPort, drawingProvider, ""));
     addAction(ActionFactory.createPrintAction(drawingProvider, App.getKeyStroke("Print")));
 
     // Trace mask
     App.ui().injectSubmenu(TRACE_MASK_TITLE, Icon.TraceMask, FILE_TITLE);
     addAction(
-        ActionFactory.createExportPDFAction(plugInPort, traceMaskDrawingProvider, " (mask)"),
+        ActionFactory.createExportPdfAction(plugInPort, traceMaskDrawingProvider, " (mask)"),
         TRACE_MASK_TITLE);
     addAction(
-        ActionFactory.createExportPNGAction(plugInPort, traceMaskDrawingProvider, " (mask)"),
+        ActionFactory.createExportPngAction(plugInPort, traceMaskDrawingProvider, " (mask)"),
         TRACE_MASK_TITLE);
     addAction(
         ActionFactory.createPrintAction(

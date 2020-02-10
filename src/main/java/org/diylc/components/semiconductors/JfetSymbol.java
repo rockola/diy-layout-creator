@@ -22,11 +22,12 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -53,13 +54,13 @@ public class JfetSymbol extends Abstract3LegSymbol {
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    GeneralPath polyline = new GeneralPath();
 
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(x + pinSpacing, y - pinSpacing);
     polyline.lineTo(x + pinSpacing, y + pinSpacing);
-    body[0] = polyline;
+    body[0] = new Area(polyline);
 
-    polyline = new GeneralPath();
+    polyline = new Path2D.Double();
     polyline.moveTo(x, y);
     polyline.lineTo(x + pinSpacing, y);
     polyline.moveTo(x + pinSpacing, y - pinSpacing * 7 / 8);
@@ -68,21 +69,21 @@ public class JfetSymbol extends Abstract3LegSymbol {
     polyline.moveTo(x + pinSpacing, y + pinSpacing * 7 / 8);
     polyline.lineTo(x + pinSpacing * 2, y + pinSpacing * 7 / 8);
     polyline.lineTo(x + pinSpacing * 2, y + pinSpacing * 2);
-    body[1] = polyline;
+    body[1] = new Area(polyline);
 
-    Polygon arrow;
+    Path2D arrow = new Path2D.Double();
     if (polarity.isNegative()) {
-      arrow = new Polygon(
-          new int[] {x + pinSpacing * 2 / 6, x + pinSpacing * 2 / 6, x + pinSpacing * 6 / 6},
-          new int[] {y - pinSpacing / 5, y + pinSpacing / 5, y},
-          3);
+      arrow.moveTo(x + pinSpacing * 2 / 6, y - pinSpacing / 5);
+      arrow.lineTo(x + pinSpacing * 2 / 6, y + pinSpacing / 5);
+      arrow.lineTo(x + pinSpacing * 6 / 6, y);
+      arrow.closePath();
     } else {
-      arrow = new Polygon(
-          new int[] {x + pinSpacing / 6, x + pinSpacing * 5 / 6, x + pinSpacing * 5 / 6},
-          new int[] {y, y + pinSpacing / 5, y - pinSpacing / 5},
-          3);
+      arrow.moveTo(x + pinSpacing / 6, y);
+      arrow.lineTo(x + pinSpacing * 5 / 6, y + pinSpacing / 5);
+      arrow.lineTo(x + pinSpacing * 5 / 6, y - pinSpacing / 5);
+      arrow.closePath();
     }
-    body[2] = arrow;
+    body[2] = new Area(arrow);
 
     return body;
   }

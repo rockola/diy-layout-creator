@@ -215,8 +215,8 @@ public class DrawingExporter {
       provider.draw(i, g2, factor);
 
       PdfReader r = new PdfReader(new ByteArrayInputStream(graphicPage.getPDFBytes()));
-      PdfDocument pdfDoc = new PdfDocument(r);
-      PdfFormXObject c = pdfDoc.getFirstPage().copyAsFormXObject(pdfDoc);
+      PdfDocument pageDoc = new PdfDocument(r);
+      PdfFormXObject c = pageDoc.getFirstPage().copyAsFormXObject(pdfDoc);
       Image im = new Image(c);
       document.add(im);
     }

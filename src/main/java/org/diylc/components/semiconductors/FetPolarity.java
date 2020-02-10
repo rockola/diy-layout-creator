@@ -22,7 +22,7 @@ package org.diylc.components.semiconductors;
 
 import org.apache.commons.text.WordUtils;
 
-public enum FETPolarity {
+public enum FetPolarity {
   NEGATIVE,
   POSITIVE;
 

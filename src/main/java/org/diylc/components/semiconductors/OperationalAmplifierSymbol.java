@@ -24,8 +24,9 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import java.awt.geom.Rectangle2D;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
@@ -63,7 +64,7 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
   public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color BODY_COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.black;
-  public static final int DEFAULT_POINT_COUNT;
+  public static final int DEFAULT_POINT_COUNT = 5;
 
   protected int pointCount = DEFAULT_POINT_COUNT;
   protected String value = "";
@@ -74,7 +75,7 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
   private Boolean flip;
   private transient Area[] body;
 
-  public ICSymbol() {
+  public OperationalAmplifierSymbol() {
     super();
     updateControlPoints();
     display = Display.NAME;
@@ -133,28 +134,20 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = 3 * width / 32;
-    Area area =
-        new Area(
-            new Polygon(
-                new int[] {margin, margin, width - margin},
-                new int[] {margin, height - margin, height / 2},
-                3));
+    Path2D polygon = new Path2D.Double();
+    polygon.moveTo(margin, margin);
+    polygon.lineTo(margin, height - margin);
+    polygon.lineTo(width - margin, height / 2);
+    polygon.closePath();
+    Area area = new Area(polygon);
     // area.subtract(new Area(new Rectangle2D.Double(0, 0, 2 * margin,
     // height)));
-    area.intersect(new Area(new Rectangle2D.Double(2 * margin, 0, width, height)));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(area);
+    area.intersect(Area.rect(2 * margin, 0, width, height));
+    area.fill(g2d, BODY_COLOR);
     g2d.setColor(BORDER_COLOR);
     g2d.setFont(LABEL_FONT.deriveFont(8f));
-    StringUtils.drawCenteredText(
-        g2d, "-", 3 * margin, height / 3, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    StringUtils.drawCenteredText(
-        g2d,
-        "+",
-        3 * margin + 1,
-        height * 2 / 3,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+    StringUtils.drawCenteredText(g2d, "-", 3 * margin, height / 3);
+    StringUtils.drawCenteredText(g2d, "+", 3 * margin + 1, height * 2 / 3);
     // g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND,
     // BasicStroke.JOIN_ROUND));
     g2d.draw(area);
@@ -167,7 +160,7 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
 
   @Override
   public int getControlPointCount() {
-    return icPointCount.getValue();
+    return pointCount;
   }
 
   private void updateControlPoints() {
@@ -195,26 +188,27 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
-      Area triangle = new Polygon(
-          new int[] {x + pinSpacing / 2, x + pinSpacing * 11 / 2, x + pinSpacing / 2},
-          new int[] {y - pinSpacing * 3 / 2, y + pinSpacing, y + pinSpacing * 7 / 2},
-          3);
-      body[0] = triangle;
+      Path2D triangle = new Path2D.Double();
+      triangle.moveTo(x + pinSpacing / 2, y - pinSpacing * 3 / 2);
+      triangle.lineTo(x + pinSpacing * 11 / 2, y + pinSpacing);
+      triangle.lineTo(x + pinSpacing / 2, y + pinSpacing * 7 / 2);
+      triangle.closePath();
+      body[0] = new Area(triangle);
 
-      GeneralPath polyline = new GeneralPath();
+      Path2D polyline = new Path2D.Double();
       polyline.moveTo(controlPoints[0].x, controlPoints[0].y);
       polyline.lineTo(controlPoints[0].x + pinSpacing / 2, controlPoints[0].y);
       polyline.moveTo(controlPoints[1].x, controlPoints[1].y);
       polyline.lineTo(controlPoints[1].x + pinSpacing / 2, controlPoints[1].y);
       polyline.moveTo(controlPoints[2].x, controlPoints[2].y);
       polyline.lineTo(controlPoints[2].x - pinSpacing / 2, controlPoints[2].y);
-      if (icPointCount == ICPointCount._5) {
+      if (pointCount == 5) {
         polyline.moveTo(controlPoints[3].x, controlPoints[3].y);
         polyline.lineTo(controlPoints[3].x, controlPoints[3].y + pinSpacing * 3 / 4);
         polyline.moveTo(controlPoints[4].x, controlPoints[4].y);
         polyline.lineTo(controlPoints[4].x, controlPoints[4].y - pinSpacing * 3 / 4);
       }
-      body[1] = polyline;
+      body[1] = new Area(polyline);
     }
     return body;
   }
