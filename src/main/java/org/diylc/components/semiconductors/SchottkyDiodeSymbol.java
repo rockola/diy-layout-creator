@@ -31,7 +31,7 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.measures.Size;
 
 @ComponentDescriptor(
-    name = "Schottky Siode",
+    name = "Schottky Diode",
     author = "Branislav Stojkovic",
     category = "Schematic Symbols",
     creationMethod = CreationMethod.POINT_BY_POINT,
