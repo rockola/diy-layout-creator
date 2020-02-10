@@ -20,7 +20,7 @@
 
 package org.diylc.components.electromechanical;
 
-public enum DCPolarity {
+public enum DcPolarity {
   NONE("None"),
   CENTER_POSITIVE("Center Positive"),
   CENTER_NEGATIVE("Center Negative");
