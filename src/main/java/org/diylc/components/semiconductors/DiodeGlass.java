@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -44,7 +44,7 @@ import org.diylc.utils.Constants;
     description = "Glass diode, like most small signal diodes.",
     zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class DiodeGlass extends AbstractLeadedComponent<String> {
+public class DiodeGlass extends AbstractDiode {
 
   private static final long serialVersionUID = 1L;
 
@@ -57,39 +57,13 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
   public static final Color LABEL_COLOR = Color.white;
   public static final Color BORDER_COLOR = Color.gray;
 
-  private String value = "";
-  private Color markerColor = MARKER_COLOR;
   private Color insideColor = INSIDE_COLOR;
 
   public DiodeGlass() {
-    super();
+    super(MARKER_COLOR);
     this.labelColor = LABEL_COLOR;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
-  }
-
-  @Override
-  protected boolean supportsStandingMode() {
-    return true;
-  }
-
-  @Override
-  public Color getStandingBodyColor() {
-    return getFlipStanding() ? getBodyColor() : getMarkerColor();
-  }
-
-  @EditableProperty(name = "Reverse (standing)")
-  public boolean getFlipStanding() {
-    return super.getFlipStanding();
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -118,12 +92,6 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
   }
 
   @Override
-  protected Shape getBodyShape() {
-    return new Rectangle2D.Double(
-        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
-  }
-
-  @Override
   protected void decorateComponentBody(Graphics2D g2d, boolean outlineMode) {
     int length = getClosestOdd(getLength().convertToPixels());
     // draw the inside
@@ -144,15 +112,6 @@ public class DiodeGlass extends AbstractLeadedComponent<String> {
     g2d.setColor(finalMarkerColor);
     g2d.fillRect(
         (int) (length - markerWidth), 0, markerWidth, getClosestOdd(getWidth().convertToPixels()));
-  }
-
-  @EditableProperty(name = "Marker")
-  public Color getMarkerColor() {
-    return markerColor;
-  }
-
-  public void setMarkerColor(Color markerColor) {
-    this.markerColor = markerColor;
   }
 
   @EditableProperty(name = "Inside color")

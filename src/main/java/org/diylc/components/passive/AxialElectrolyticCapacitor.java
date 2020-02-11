@@ -162,7 +162,7 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double length = getLength().convertToPixels();
     double width = getWidth().convertToPixels();
     RoundRectangle2D rect =

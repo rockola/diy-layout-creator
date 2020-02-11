@@ -25,7 +25,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import org.diylc.awt.StringUtils;
@@ -50,11 +49,10 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
   public static final Color COLOR = Color.black;
 
   protected String value = "";
-  protected Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = getFreshControlPoints(4);
   protected Color color = COLOR;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
-  protected transient Shape[] body;
+  protected transient Area[] body;
   protected Orientation orientation = Orientation.DEFAULT;
   protected boolean moveLabel = false;
 
@@ -91,7 +89,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    if (checkPointsClipped(g2d.getClip())) {
+    if (checkPointsClipped(new Area(g2d.getClip()))) {
       return;
     }
 
@@ -308,19 +306,12 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     body = null;
   }
 
-  protected void applyOrientation(Shape[] body) {
-    if (getOrientation() == Orientation.DEFAULT) {
-      return;
-    }
-
-    Point first = getControlPoints()[0];
-    double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-    AffineTransform rotate =
-        AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
-
-    if (body != null) {
+  protected void applyOrientation(Area[] body) {
+    if (getOrientation() != Orientation.DEFAULT
+        && body != null) {
+      Point first = getControlPoints()[0];
       for (int i = 0; i < body.length; i++) {
-        body[i] = rotate.createTransformedShape(body[i]);
+        body[i].rotate(getOrientation(), first);
       }
     }
   }
@@ -339,5 +330,5 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
    *
    * @return
    */
-  protected abstract Shape[] getBody();
+  protected abstract Area[] getBody();
 }

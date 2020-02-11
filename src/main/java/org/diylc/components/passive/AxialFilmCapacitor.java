@@ -26,6 +26,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -122,8 +123,8 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
-    return new Rectangle2D.Double(
+  protected Area getBodyShape() {
+    return Area.rect(
         0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
   }
 

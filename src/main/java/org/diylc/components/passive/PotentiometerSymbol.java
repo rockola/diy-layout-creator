@@ -26,9 +26,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import java.awt.geom.Rectangle2D;
 import org.diylc.components.Abstract3LegSymbol;
+import org.diylc.components.Area;
 import org.diylc.components.semiconductors.SymbolFlipping;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -51,16 +53,17 @@ public class PotentiometerSymbol extends Abstract3LegSymbol {
     this.color = Color.blue;
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     Point[] controlPoints = getControlPoints();
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
 
-    Shape[] body = new Shape[3];
-    body[0] = new GeneralPath();
+    Area[] body = new Area[3];
+    // TODO was body[0] = new GeneralPath() but the path never gets added to?
+    body[0] = new Area(new Path2D.Double());
 
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    GeneralPath polyline = new GeneralPath();
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(x + pinSpacing * 2, y - pinSpacing * 2);
     polyline.lineTo(x + pinSpacing * 2, y - pinSpacing * 2 + pinSpacing / 2);
     polyline.lineTo(
@@ -89,14 +92,14 @@ public class PotentiometerSymbol extends Abstract3LegSymbol {
     polyline.lineTo(x + pinSpacing * 2, y + pinSpacing * 2);
     polyline.moveTo(x, y);
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 2, y);
-    body[1] = polyline;
+    body[1] = new Area(polyline);
 
-    polyline = new GeneralPath();
+    polyline = new Path2D.Double();
     polyline.moveTo(x + pinSpacing * 2 - pinSpacing / 3, y);
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing * 2 / 3, y - pinSpacing / 3);
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing * 2 / 3, y + pinSpacing / 3);
     polyline.lineTo(x + pinSpacing * 2 - pinSpacing / 3, y);
-    body[2] = polyline;
+    body[2] = new Area(polyline);
 
     return body;
   }

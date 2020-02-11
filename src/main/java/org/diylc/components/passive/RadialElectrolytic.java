@@ -210,17 +210,21 @@ public class RadialElectrolytic extends RadialCapacitor {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double height = (int) getHeight().convertToPixels();
     double diameter = (int) getLength().convertToPixels();
+    Area body = null;
     if (folded) {
-      return Area.roundRect(
+      body = Area.roundRect(
           0f,
           -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
           getClosestOdd(diameter),
           getClosestOdd(height),
           EDGE_RADIUS.convertToPixels());
+    } else {
+      body = new Area(new Ellipse2D.Double(
+        0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
     }
-    return new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter));
+    return body;
   }
 }

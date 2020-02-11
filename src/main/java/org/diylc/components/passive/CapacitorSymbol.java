@@ -22,9 +22,11 @@ package org.diylc.components.passive;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -121,15 +123,15 @@ public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> 
   }
 
   @Override
-  protected Shape getBodyShape() {
-    GeneralPath polyline = new GeneralPath();
+  protected Area getBodyShape() {
+    Path2D polyline = new Path2D.Double();
     double length = getLength().convertToPixels();
     double width = getWidth().convertToPixels();
     polyline.moveTo(0, 0);
     polyline.lineTo(0, width);
     polyline.moveTo(length, 0);
     polyline.lineTo(length, width);
-    return polyline;
+    return new Area(polyline);
   }
 
   @Override

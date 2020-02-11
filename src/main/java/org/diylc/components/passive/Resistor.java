@@ -161,7 +161,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double length = getLength().convertToPixels();
     double width = getClosestOdd(getWidth().convertToPixels());
     Area bodyShape = null;

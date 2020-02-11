@@ -26,6 +26,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractRadialComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -99,10 +100,8 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
     g2d.rotate(-Math.PI / 4, width / 2, height / 2);
     g2d.setColor(LEAD_COLOR_ICON);
     g2d.drawLine(0, height / 2, width, height / 2);
-    g2d.setColor(BODY_COLOR);
-    g2d.fillOval(4, height / 2 - 3, width - 8, 6);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawOval(4, height / 2 - 3, width - 8, 6);
+    Area.oval(Area.point(4, height / 2 - 3), Area.point(width - 8, 6))
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
   }
 
   @Override
@@ -116,8 +115,7 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
   }
 
   @Override
-  protected Shape getBodyShape() {
-    return new Ellipse2D.Double(
-        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
+  protected Area getBodyShape() {
+    return Area.oval(Area.point(0, 0), Area.point(getLength().asPixels(), getWidth().asPixels()));
   }
 }

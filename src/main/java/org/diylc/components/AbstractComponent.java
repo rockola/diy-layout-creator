@@ -350,7 +350,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
    * @param clip
    * @return true if none of the control points lie in the clip rectangle.
    */
-  protected boolean checkPointsClipped(Shape clip) {
+  protected boolean checkPointsClipped(Area clip) {
     for (int i = 0; i < getControlPointCount(); i++) {
       if (clip.contains(getControlPoint(i))) {
         return false;
@@ -377,6 +377,10 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     }
     Rectangle2D rect = new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     return !clip.intersects(rect);
+  }
+
+  protected boolean checkPointsClipped(Shape clip) {
+    return checkPointsClipped(new Area(clip));
   }
 
   public IDIYComponent<T> clone() throws CloneNotSupportedException {

@@ -26,6 +26,7 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractRadialComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -79,14 +80,13 @@ public class RadialFilmCapacitor extends RadialCapacitor {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double radius = getWidth().convertToPixels() * 0.7;
-    return new RoundRectangle2D.Double(
+    return Area.roundRect(
         0f,
         0f,
         getLength().convertToPixels(),
         getClosestOdd(getWidth().convertToPixels()),
-        radius,
         radius);
   }
 }

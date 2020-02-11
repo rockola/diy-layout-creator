@@ -28,7 +28,6 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -144,7 +143,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       r = null;
     }
 
-    Shape shape = getBodyShape();
+    Area shape = getBodyShape();
     // If there's no body, just draw the line connecting the ending points.
     if (shape == null) {
       drawLead(g2d, drawingObserver, isCopperArea());
@@ -160,23 +159,20 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       // When ending points are too close draw the component in standing
       // mode.
       width = length = getClosestOdd(this.width.convertToPixels());
-      Shape body =
-          new Ellipse2D.Double(
-              (getFlipStanding() ? getPoints()[1] : getPoints()[0]).x - width / 2,
-              (getFlipStanding() ? getPoints()[1] : getPoints()[0]).y - width / 2,
-              width,
-              width);
+      Area body = Area.circle(
+          (getFlipStanding() ? getPoints()[1] : getPoints()[0]).x - width / 2,
+          (getFlipStanding() ? getPoints()[1] : getPoints()[0]).y - width / 2,
+          width);
       shapeRect = body.getBounds();
       final Composite oldComposite = setTransparency(g2d);
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getStandingBodyColor());
-      g2d.fill(body);
+      body.fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : getStandingBodyColor());
       g2d.setComposite(oldComposite);
 
       Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-      g2d.setColor(finalBorderColor);
-      g2d.draw(body);
+      body.draw(g2d, finalBorderColor);
       if (!outlineMode) {
+        g2d.setColor(finalBorderColor);
+        g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
         drawLead(g2d, drawingObserver, false);
       }
     } else {
@@ -366,27 +362,18 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     }
 
     if (shouldShadeLeads()) {
-      Shape lineShape = stroke.createStrokedShape(line);
-
-      g2d.setColor(getLeadColorForPainting());
-      g2d.fill(lineShape);
-
-      if (isCopperArea) {
-        observer.stopTrackingContinuityArea();
-      }
-
-      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
+      Area lineShape = new Area(stroke.createStrokedShape(line));
       Color leadColor = getLeadColorForPainting();
-      g2d.setColor(leadColor.darker());
-      g2d.draw(lineShape);
+      lineShape.fill(g2d, leadColor);
+      g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
+      lineShape.draw(g2d, leadColor.darker());
     } else {
       g2d.setStroke(stroke);
       g2d.setColor(getLeadColorForPainting());
       g2d.draw(line);
-
-      if (isCopperArea) {
-        observer.stopTrackingContinuityArea();
-      }
+    }
+    if (isCopperArea) {
+      observer.stopTrackingContinuityArea();
     }
   }
 
@@ -439,7 +426,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
    * @return shape that represents component body. Shape should not be transformed and should be
    *     referenced to (0, 0).
    */
-  protected abstract Shape getBodyShape();
+  protected abstract Area getBodyShape();
 
   /**
    * Controls how component shape should be placed relative to start and end point.

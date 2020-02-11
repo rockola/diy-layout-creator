@@ -26,6 +26,7 @@ import java.awt.Shape;
 import org.apache.commons.text.WordUtils;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -74,30 +75,20 @@ public class BlankBoard extends AbstractBoard {
     }
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
+    Area board =
+        getType() == Type.SQUARE
+        ? Area.rect(firstPoint, secondPoint)
+        : Area.oval(firstPoint, secondPoint);
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
-      g2d.setColor(boardColor);
-      if (getType() == Type.SQUARE) {
-        g2d.fillRect(
-            firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-      } else {
-        g2d.fillOval(
-            firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-      }
+      board.fill(g2d, boardColor);
       g2d.setComposite(oldComposite);
     }
     // Do not track any changes that follow because the whole board has been
     // tracked so far.
     drawingObserver.stopTracking();
     // NOTE: ignoring outline mode as per original implementation
-    g2d.setColor(tryBorderColor(false, borderColor));
-    if (getType() == Type.SQUARE) {
-      g2d.drawRect(
-          firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-    } else {
-      g2d.drawOval(
-          firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
-    }
+    board.draw(g2d, tryBorderColor(false, borderColor));
   }
 
   /* unnecessary overrides

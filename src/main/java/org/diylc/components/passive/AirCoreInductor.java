@@ -111,10 +111,10 @@ public class AirCoreInductor extends AbstractLeadedComponent<Inductance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double width = getWidth().convertToPixels();
     double length = getLength().convertToPixels();
-    return new Rectangle2D.Double(0f, 0f, length, getClosestOdd(width));
+    return Area.rect(0f, 0f, length, getClosestOdd(width));
   }
 
   @Override

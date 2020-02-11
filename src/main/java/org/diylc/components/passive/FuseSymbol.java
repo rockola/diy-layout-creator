@@ -26,6 +26,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -103,7 +104,7 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     Path2D polyline = new Path2D.Double();
     double length = getLength().convertToPixels();
     double width = getWidth().convertToPixels();
@@ -116,7 +117,7 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
     polyline.append(
         new Ellipse2D.Double(length - radius * 2, width / 2 - radius, radius * 2, radius * 2),
         false);
-    return polyline;
+    return new Area(polyline);
   }
 
   @Override

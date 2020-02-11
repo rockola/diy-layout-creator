@@ -181,37 +181,28 @@ public class RadialInductor extends AbstractRadialComponent<Inductance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double height = (int) getHeight().convertToPixels();
     double diameter = (int) getLength().convertToPixels();
     double lip = getLip().convertToPixels();
     if (folded) {
-      Area body =
-          new Area(
-              new RoundRectangle2D.Double(
-                  0f,
-                  -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-                  getClosestOdd(diameter),
-                  getClosestOdd(height),
-                  EDGE_RADIUS.convertToPixels(),
-                  EDGE_RADIUS.convertToPixels()));
-      body.subtract(
-          new Area(
-              new Rectangle2D.Double(
-                  0f,
-                  -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
-                  lip,
-                  height - 2 * lip)));
-      body.subtract(
-          new Area(
-              new Rectangle2D.Double(
+      Area body = Area.roundRect(
+          0f,
+          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+          getClosestOdd(diameter),
+          getClosestOdd(height),
+          EDGE_RADIUS.convertToPixels()).subtract(Area.rect(
+              0f,
+              -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
+              lip,
+              height - 2 * lip)).subtract(Area.rect(
                   diameter - lip,
                   -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
                   lip * 2,
-                  height - 2 * lip)));
+                  height - 2 * lip));
       return body;
     }
-    return new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter));
+    return Area.oval(Area.point(0, 0), Area.point(diameter, diameter));
   }
 
   @EditableProperty

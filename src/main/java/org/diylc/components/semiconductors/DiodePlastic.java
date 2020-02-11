@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -41,10 +41,10 @@ import org.diylc.utils.Constants;
     category = "Semiconductors",
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "D",
-    description = "Plastic diode, like most rectifier, zener, schottky, etc.",
+    description = "Plastic diode, like most rectifier, zener, Schottky, etc.",
     zOrder = IDIYComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class DiodePlastic extends AbstractLeadedComponent<String> {
+public class DiodePlastic extends AbstractDiode {
 
   private static final long serialVersionUID = 1L;
 
@@ -56,38 +56,11 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
   public static final Color LABEL_COLOR = Color.white;
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
-  private String value = "";
-  private Color markerColor = MARKER_COLOR;
-
   public DiodePlastic() {
-    super();
+    super(MARKER_COLOR);
     this.labelColor = LABEL_COLOR;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
-  }
-
-  @Override
-  protected boolean supportsStandingMode() {
-    return true;
-  }
-
-  @Override
-  public Color getStandingBodyColor() {
-    return getFlipStanding() ? getBodyColor() : getMarkerColor();
-  }
-
-  @EditableProperty(name = "Reverse (standing)")
-  public boolean getFlipStanding() {
-    return super.getFlipStanding();
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -114,26 +87,11 @@ public class DiodePlastic extends AbstractLeadedComponent<String> {
   }
 
   @Override
-  protected Shape getBodyShape() {
-    return new Rectangle2D.Double(
-        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()));
-  }
-
-  @Override
   protected void decorateComponentBody(Graphics2D g2d, boolean outlineMode) {
     Color finalMarkerColor = tryColor(outlineMode, markerColor);
     g2d.setColor(finalMarkerColor);
     int width = (int) getLength().convertToPixels();
     int markerWidth = (int) MARKER_WIDTH.convertToPixels();
     g2d.fillRect(width - markerWidth, 0, markerWidth, getClosestOdd(getWidth().convertToPixels()));
-  }
-
-  @EditableProperty(name = "Marker")
-  public Color getMarkerColor() {
-    return markerColor;
-  }
-
-  public void setMarkerColor(Color markerColor) {
-    this.markerColor = markerColor;
   }
 }

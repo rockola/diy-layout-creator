@@ -22,8 +22,10 @@ package org.diylc.components.misc;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -92,8 +94,8 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
   }
 
   @Override
-  protected Shape getBodyShape() {
-    GeneralPath polyline = new GeneralPath();
+  protected Area getBodyShape() {
+    Path2D polyline = new Path2D.Double();
     double length = getLength().convertToPixels(); // plate spacing
     double width = getWidth().convertToPixels(); // plate size
     polyline.moveTo(0, 0); // start point
@@ -102,7 +104,7 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
     // w - w/4 = w/2 pixels
     polyline.moveTo(length, width / 4); // start 2nd plate
     polyline.lineTo(length, width - width / 4); // draw second plate w/2 pixels (negative)
-    return polyline;
+    return new Area(polyline);
   }
 
   @Override

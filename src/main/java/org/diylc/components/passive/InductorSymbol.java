@@ -22,9 +22,11 @@ package org.diylc.components.passive;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
+import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -98,7 +100,7 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
     g2d.drawLine(width * 7 / 8, height / 2, width, height / 2);
     g2d.setColor(COLOR);
 
-    GeneralPath polyline = new GeneralPath();
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(width / 8, height / 2);
     polyline.curveTo(width / 8, height / 4, width * 3 / 8, height / 4, width * 3 / 8, height / 2);
     polyline.curveTo(
@@ -124,8 +126,8 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
-    GeneralPath polyline = new GeneralPath();
+  protected Area getBodyShape() {
+    Path2D polyline = new Path2D.Double();
     double length = getLength().convertToPixels();
     double width = getWidth().convertToPixels();
     double d = length / 10;
@@ -141,7 +143,7 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
       polyline.moveTo(0, width * 7 / 8);
       polyline.lineTo(length, width * 7 / 8);
     }
-    return polyline;
+    return new Area(polyline);
   }
 
   @Override

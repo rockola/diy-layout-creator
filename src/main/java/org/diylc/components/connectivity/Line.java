@@ -33,6 +33,7 @@ import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
@@ -268,7 +269,7 @@ public class Line extends AbstractLeadedComponent<Void> {
   public void setValue(Void value) {}
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     return null;
   }
 

@@ -32,6 +32,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Map;
+import org.diylc.common.Orientation;
 import org.diylc.core.measures.Size;
 
 public class Area extends java.awt.geom.Area {
@@ -97,6 +98,11 @@ public class Area extends java.awt.geom.Area {
     return g2d;
   }
 
+  public Area rotate(Orientation orientation, Point point) {
+    transform(orientation.getRotation(point));
+    return this;
+  }
+
   public static Area roundedPolygon(Point[] points, double[] radii) {
     return new Area(new RoundedPolygon(points, radii));
   }
@@ -119,6 +125,17 @@ public class Area extends java.awt.geom.Area {
         y - diameterV / 2,
         diameterH,
         diameterV));
+  }
+
+  public static Area oval(Point upperLeft, Point lowerRight) {
+    // TODO check that lowerRight is to the right of and below upperLeft
+    double width = lowerRight.x - upperLeft.x;
+    double height = lowerRight.y - upperLeft.y;
+    return new Area(new Ellipse2D.Double(
+        upperLeft.x,
+        upperLeft.y,
+        width,
+        height));
   }
 
   /**
@@ -250,6 +267,13 @@ public class Area extends java.awt.geom.Area {
 
   public static Area rect(Point upperLeft, Dimension dim) {
     return rect(upperLeft.x, upperLeft.y, dim.getWidth(), dim.getHeight());
+  }
+
+  public static Area rect(Point upperLeft, Point lowerRight) {
+    // TODO check that lowerRight is to the right of and below upperLeft
+    double width = lowerRight.x - upperLeft.x;
+    double height = lowerRight.y - upperLeft.y;
+    return rect(upperLeft.x, upperLeft.y, width, height);
   }
 
   /**

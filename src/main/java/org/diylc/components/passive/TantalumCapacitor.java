@@ -127,42 +127,28 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
 
     int totalDiameter = getClosestOdd(getLength().convertToPixels());
     if (!outlineMode) {
+      Area area = new Area(getBodyShape());
       if (folded) {
-        Area area = new Area(getBodyShape());
         if (!invert) {
-          area.subtract(
-              new Area(
-                  new Rectangle2D.Double(totalDiameter * 0.2, -height, totalDiameter, height * 2)));
+          area.subtract(Area.rect(totalDiameter * 0.2, -height, totalDiameter, height * 2));
         } else {
-          area.subtract(
-              new Area(new Rectangle2D.Double(0, -height, totalDiameter * 0.8, height * 2)));
+          area.subtract(Area.rect(0, -height, totalDiameter * 0.8, height * 2));
         }
-        g2d.setColor(markerColor);
-        g2d.fill(area);
       } else {
-        Area area = new Area(getBodyShape());
         if (!invert) {
-          area.subtract(
-              new Area(
-                  new Rectangle2D.Double(totalDiameter * 0.2, 0, totalDiameter, totalDiameter)));
+          area.subtract(Area.rect(totalDiameter * 0.2, 0, totalDiameter, totalDiameter));
         } else {
-          area.subtract(new Area(new Rectangle2D.Double(0, 0, totalDiameter * 0.8, totalDiameter)));
+          area.subtract(Area.rect(0, 0, totalDiameter * 0.8, totalDiameter));
         }
-        g2d.setColor(markerColor);
-        g2d.fill(area);
       }
+      area.fill(g2d, markerColor);
     }
     Color finalTickColor = tryColor(outlineMode, tickColor);
     g2d.setColor(finalTickColor);
     g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1));
     int tickLength = (int) (totalDiameter * 0.12);
     int centerX = (int) (totalDiameter * (!invert ? 0.1 : 0.9));
-    int centerY;
-    if (folded) {
-      centerY = (int) (-height / 2 + tickLength * 3.5);
-    } else {
-      centerY = totalDiameter / 2;
-    }
+    int centerY = folded ? (int) (-height / 2 + tickLength * 3.5) : totalDiameter / 2;
     g2d.drawLine(centerX - tickLength / 2, centerY, centerX + tickLength / 2, centerY);
     g2d.drawLine(centerX, centerY - tickLength / 2, centerX, centerY + tickLength / 2);
   }
@@ -238,18 +224,21 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double height = (int) getHeight().convertToPixels();
     double diameter = (int) getLength().convertToPixels();
+    Area body = null;
     if (folded) {
-      return new RoundRectangle2D.Double(
+      body = Area.roundRect(
           0f,
           -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
           getClosestOdd(diameter),
           getClosestOdd(height),
-          diameter / 2,
           diameter / 2);
+    } else {
+      body = new Area(new Ellipse2D.Double(
+          0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
     }
-    return new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter));
+    return body;
   }
 }

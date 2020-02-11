@@ -103,7 +103,7 @@ public class Led extends AbstractLeadedComponent<String> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     int size = getClosestOdd((int) (getLength().convertToPixels() * 1.2));
     Area area = Area.circle(0, 0, size);
     area.intersect(Area.rect(0, 0, getLength().convertToPixels() * 1.15, size));

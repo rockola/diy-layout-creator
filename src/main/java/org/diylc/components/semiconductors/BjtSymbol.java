@@ -25,7 +25,8 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Path2D.Double;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.Abstract3LegSymbol;
 import org.diylc.components.Area;
@@ -49,20 +50,20 @@ public class BjtSymbol extends Abstract3LegSymbol {
 
   protected BjtPolarity polarity = BjtPolarity.NPN;
 
-  public Shape[] getBody() {
-    Shape[] body = new Shape[3];
+  public Area[] getBody() {
+    Area[] body = new Area[3];
     Point[] controlPoints = getControlPoints();
     int x = controlPoints[0].x;
     int y = controlPoints[0].y;
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
     int halfPinSpacing = (int) PIN_SPACING.convertToPixels() / 2;
 
-    GeneralPath polyline = new GeneralPath();
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(x + halfPinSpacing, y - pinSpacing);
     polyline.lineTo(x + halfPinSpacing, y + pinSpacing);
-    body[0] = polyline;
+    body[0] = new Area(polyline);
 
-    polyline = new GeneralPath();
+    polyline = new Path2D.Double();
     polyline.moveTo(x, y);
     int x2 = x + halfPinSpacing;
     int x3 = x + pinSpacing * 2;
@@ -73,7 +74,7 @@ public class BjtSymbol extends Abstract3LegSymbol {
     polyline.moveTo(x2, y + halfPinSpacing);
     polyline.lineTo(x3, y + pinSpacing);
     polyline.lineTo(x3, y + pinSpacing * 2);
-    body[1] = polyline;
+    body[1] = new Area(polyline);
 
     Area arrow;
     double theta = Math.atan(1.0 / 3);

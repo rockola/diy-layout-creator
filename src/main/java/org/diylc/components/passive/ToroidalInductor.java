@@ -119,11 +119,10 @@ public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
   }
 
   @Override
-  protected Shape getBodyShape() {
+  protected Area getBodyShape() {
     double width = getWidth().convertToPixels();
     double length = getLength().convertToPixels();
-    return new RoundRectangle2D.Double(
-        0f, 0f, length, getClosestOdd(width), length / 4, length / 4);
+    return Area.roundRect(0d, 0d, length, getClosestOdd(width), length / 4);
   }
 
   @Override
@@ -142,21 +141,16 @@ public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
     Rectangle rect = body.getBounds();
     Area copper = new Area();
     for (double y = leadThickness / 2; y < rect.height; y += leadThickness * 0.9d) {
-      double margin;
+      double margin = leadThickness / 4;
       if (y < leadThickness || y > rect.height - leadThickness) {
-        margin = -leadThickness / 4;
-      } else {
-        margin = leadThickness / 4;
+        margin = -margin;
       }
       Line2D line = new Line2D.Double(-margin, y, rect.width + margin, y);
       Shape s = stroke.createStrokedShape(line);
       copper.add(new Area(s));
     }
     //    copper.intersect(body);
-    g2d.setColor(COPPER_COLOR);
-    g2d.fill(copper);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.draw(copper);
+    copper.fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
   }
 
   @Deprecated
