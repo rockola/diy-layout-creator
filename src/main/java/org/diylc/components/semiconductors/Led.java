@@ -22,6 +22,7 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -71,9 +72,10 @@ public class Led extends AbstractLeadedComponent<String> {
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    g2d.rotate(-Math.PI / 4, width / 2, height / 2);
+    Point center = Area.point(width / 2, height / 2);
+    Area.rotate(g2d, -Math.PI / 4, center);
     g2d.setColor(LEAD_COLOR_ICON);
-    g2d.drawLine(0, height / 2, width, height / 2);
+    g2d.drawLine(0, center.y, width, center.y);
 
     int margin = 4 * width / 32;
     Area area = new Area(new Ellipse2D.Double(
@@ -87,7 +89,7 @@ public class Led extends AbstractLeadedComponent<String> {
         width - 5 * margin / 2,
         width - 2 * margin)));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
-    Area.circle(margin * 2 - 1, margin * 2 - 1, width - 4 * margin + 2).draw(g2d, BORDER_COLOR);
+    Area.circle(center, width - 4 * margin + 2).draw(g2d, BORDER_COLOR);
   }
 
   @Override
