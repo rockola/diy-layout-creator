@@ -36,12 +36,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.undo.UndoManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
-import org.diylc.action.ComponentEdit;
-import org.diylc.action.ProjectEdit;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
@@ -59,12 +56,11 @@ import org.diylc.netlist.Position;
 import org.diylc.netlist.SwitchSetup;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
-import org.diylc.presenter.ComponentArea; // needed for findComponentsAt
-import org.diylc.presenter.ComponentProcessor; // needed by createUniqueName
-import org.diylc.presenter.Connection; // needed by continuity area methods
-import org.diylc.presenter.DrawingManager; // needed for CONTROL_POINT_SIZE only
-import org.diylc.presenter.InstantiationManager; // needed by createUniqueName
-import org.diylc.presenter.Presenter; // needed for dispatchMessage
+import org.diylc.presenter.ComponentArea;
+import org.diylc.presenter.Connection;
+import org.diylc.presenter.DrawingManager;
+import org.diylc.presenter.InstantiationManager;
+import org.diylc.presenter.Presenter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

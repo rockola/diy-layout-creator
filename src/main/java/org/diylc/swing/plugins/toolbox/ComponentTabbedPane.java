@@ -32,22 +32,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Template;
 import org.diylc.presenter.ComparatorFactory;
-import org.diylc.presenter.ComponentProcessor;
 import org.diylc.presenter.Presenter;
 
 /**

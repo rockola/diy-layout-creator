@@ -88,23 +88,18 @@ public class Breadboard extends AbstractComponent<Void> {
     }
 
     // adjust the angle
-    double theta = getOrientation().getTheta();
-    if (theta != 0) {
-      g2d.rotate(theta, point.x, point.y);
-    }
-
-    int bodyArc = (int) BODY_ARC.convertToPixels();
-    int holeCount = getBreadboardSize() == BreadboardSize.Full ? 63 : 30;
+    getOrientation().applyRotation(g2d, point);
 
     // draw body
     g2d.setColor(FILL_COLOR);
-    int width = (int) (23 * project.getGridSpacing().convertToPixels());
-    int height = (int) ((holeCount + 1) * project.getGridSpacing().convertToPixels());
-    g2d.fillRoundRect(point.x, point.y, width, height, bodyArc, bodyArc);
-    // NOTE: ignoring outline mode, may not be correct
-    g2d.setColor(tryBorderColor(false, BORDER_COLOR));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    g2d.drawRoundRect(point.x, point.y, width, height, bodyArc, bodyArc);
+    int holeCount = getBreadboardSize() == BreadboardSize.Full ? 63 : 30;
+    double width = 23 * project.getGridSpacing().convertToPixels();
+    double height = (holeCount + 1) * project.getGridSpacing().convertToPixels();
+    int bodyArc = (int) BODY_ARC.convertToPixels();
+    // NOTE: ignoring outline mode, may not be correct
+    Area.roundRect(point, width, height, bodyArc)
+        .fillDraw(g2d, FILL_COLOR, tryBorderColor(false, BORDER_COLOR));
 
     drawingObserver.stopTracking();
 
@@ -145,12 +140,7 @@ public class Breadboard extends AbstractComponent<Void> {
 
       for (int y = 0; y < holeCount; y++) {
         g2d.setColor(COORDINATE_COLOR);
-        int coordinateX;
-        if (section == 0) {
-          coordinateX = (int) (point.x + offset + 5.5 * spacing);
-        } else {
-          coordinateX = (int) (point.x + offset + 10.5 * spacing);
-        }
+        int coordinateX = (int) (point.x + offset + (section == 0 ? 5.5 : 10.5) * spacing);
         StringUtils.drawCenteredText(
             g2d,
             Integer.toString(y + 1),
@@ -161,30 +151,22 @@ public class Breadboard extends AbstractComponent<Void> {
         for (int x = 0; x < 5; x++) {
           int holeX = (int) (point.x + offset + (x + 6) * spacing);
           int holeY = (int) (point.y + (y + 1) * spacing);
-          g2d.setColor(HOLE_COLOR);
-          g2d.fillRoundRect(
-              holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc);
-          g2d.setColor(BORDER_COLOR);
-          g2d.drawRoundRect(
-              holeX - holeSize / 2, holeY - holeSize / 2, holeSize, holeSize, holeArc, holeArc);
+          Area.roundRect(holeX, holeY, holeSize, holeSize, holeArc)
+              .fillDraw(g2d, HOLE_COLOR, BORDER_COLOR);
 
           // Draw horizontal labels
           if (y == 0) {
             g2d.setColor(COORDINATE_COLOR);
-            StringUtils.drawCenteredText(
-                g2d,
-                new String(new byte[] {(byte) (a + x + 5 * section)}),
-                holeX,
-                (int) (point.y),
-                HorizontalAlignment.CENTER,
-                VerticalAlignment.TOP);
-            StringUtils.drawCenteredText(
-                g2d,
-                new String(new byte[] {(byte) (a + x + 5 * section)}),
-                holeX,
-                (int) (point.y + spacing * 30 + COORDINATE_FONT_SIZE / 2),
-                HorizontalAlignment.CENTER,
-                VerticalAlignment.TOP);
+            String label = new String(new byte[] {(byte) (a + x + 5 * section)});
+            for (int i = 0; i < 2; i++) {
+              StringUtils.drawCenteredText(
+                  g2d,
+                  label,
+                  holeX,
+                  (int) (i == 0 ? point.y : point.y + spacing * 30 + COORDINATE_FONT_SIZE / 2),
+                  HorizontalAlignment.CENTER,
+                  VerticalAlignment.TOP);
+            }
           }
         }
       }

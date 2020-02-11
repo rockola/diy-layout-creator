@@ -35,17 +35,13 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
-import org.diylc.core.CreationMethod;
 import org.diylc.core.Grid;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Template;
-import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.measures.Size;
 
 /**
  * Manages component instantiation.

@@ -21,7 +21,6 @@
 package org.diylc.core.measures;
 
 import org.diylc.parsing.XmlNode;
-import org.diylc.utils.Constants;
 
 public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> {
 

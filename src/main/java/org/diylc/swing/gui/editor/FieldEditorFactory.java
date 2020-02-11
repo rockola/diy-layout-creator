@@ -24,10 +24,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JLabel;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.diylc.common.PropertyWrapper;
 import org.diylc.components.PinCount;
 import org.diylc.core.annotations.DynamicList;

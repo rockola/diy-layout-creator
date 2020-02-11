@@ -20,19 +20,11 @@
 
 package org.diylc.swingframework;
 
-import java.awt.BorderLayout;
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import org.diylc.images.Icon;
 
 /**
  * {@link JTextField} adapted to display {@link Double}. Use {@link #getValue()} and {@link

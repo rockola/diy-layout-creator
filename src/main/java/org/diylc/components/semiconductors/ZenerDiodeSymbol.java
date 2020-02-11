@@ -22,7 +22,6 @@ package org.diylc.components.semiconductors;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Path2D.Double;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.Area;

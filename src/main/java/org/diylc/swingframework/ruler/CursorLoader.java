@@ -21,7 +21,6 @@
 package org.diylc.swingframework.ruler;
 
 import java.awt.Cursor;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import org.diylc.images.Icon;

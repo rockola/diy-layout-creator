@@ -23,7 +23,6 @@ package org.diylc.components.electromechanical;
 import com.google.common.collect.ListMultimap;
 import java.awt.Point;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,10 +34,8 @@ import org.diylc.components.Area;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.Unmarshaller;
-import org.diylc.core.measures.Size;
 import org.diylc.parsing.XmlNode;
 import org.diylc.utils.Constants;
-import org.reflections.Reflections;
 
 @Unmarshaller("jack")
 public abstract class AbstractJack extends AbstractMultiPartComponent<String> {

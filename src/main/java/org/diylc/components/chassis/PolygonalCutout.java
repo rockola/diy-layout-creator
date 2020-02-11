@@ -20,8 +20,6 @@
 
 package org.diylc.components.chassis;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;

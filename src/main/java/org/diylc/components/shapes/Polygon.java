@@ -20,13 +20,10 @@
 
 package org.diylc.components.shapes;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Arrays;
-
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.core.ComponentState;

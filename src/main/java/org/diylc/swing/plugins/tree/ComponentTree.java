@@ -20,9 +20,7 @@
 
 package org.diylc.swing.plugins.tree;
 
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.util.EnumSet;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
@@ -30,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.appframework.miscutils.ConfigurationManager;
-import org.diylc.appframework.miscutils.IConfigListener;
 import org.diylc.common.BadPositionException;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;

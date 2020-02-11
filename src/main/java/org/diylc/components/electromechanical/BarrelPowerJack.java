@@ -20,20 +20,12 @@
 
 package org.diylc.components.electromechanical;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.awt.StringUtils;
-import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.IPlugInPort;
 import org.diylc.common.ObjectCache;
-import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;

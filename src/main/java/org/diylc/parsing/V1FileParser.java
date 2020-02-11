@@ -62,7 +62,6 @@ import org.diylc.components.semiconductors.DualInlineIc;
 import org.diylc.components.semiconductors.Led;
 import org.diylc.components.semiconductors.SingleInlineIc;
 import org.diylc.components.semiconductors.TransistorTO92;
-import org.diylc.core.Grid;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.measures.Capacitance;

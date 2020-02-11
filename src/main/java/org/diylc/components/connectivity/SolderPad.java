@@ -23,8 +23,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import org.apache.commons.text.WordUtils;
 import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;

@@ -42,7 +42,6 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.Unmarshaller;
-import org.diylc.core.annotations.Unmarshallers;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
 

@@ -29,7 +29,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.beryx.awt.color.ColorFactory;
-import org.diylc.App;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;

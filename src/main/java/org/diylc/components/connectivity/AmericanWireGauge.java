@@ -23,7 +23,6 @@ package org.diylc.components.connectivity;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.diylc.utils.Constants;
 
 /** American Wire Gauge, aka AWG. */

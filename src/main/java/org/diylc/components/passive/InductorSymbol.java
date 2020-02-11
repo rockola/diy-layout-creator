@@ -21,9 +21,7 @@
 package org.diylc.components.passive;
 
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Path2D;
-import java.awt.geom.Path2D.Double;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;

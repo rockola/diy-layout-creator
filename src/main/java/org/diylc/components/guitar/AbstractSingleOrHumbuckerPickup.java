@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
-import org.diylc.common.OrientationHV;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;

@@ -23,7 +23,6 @@ package org.diylc.components.semiconductors;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Shape;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.annotations.EditableProperty;

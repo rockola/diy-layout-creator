@@ -20,13 +20,10 @@
 
 package org.diylc.swing.plugins.config;
 
-import java.io.File;
 import java.util.EnumSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
-import org.diylc.appframework.Serializer;
-import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;

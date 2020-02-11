@@ -27,7 +27,6 @@ import org.diylc.common.ComponentType;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.presenter.ComponentProcessor;
 
 public class KeywordExtractor {
 

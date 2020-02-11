@@ -20,7 +20,6 @@
 
 package org.diylc.plugins.cloud.presenter;
 
-import com.diyfever.httpproxy.IFlatProxy;
 import com.diyfever.httpproxy.PhpFlatProxy;
 import java.io.File;
 import java.io.FileOutputStream;

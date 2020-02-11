@@ -23,7 +23,6 @@ package org.diylc.swing.plugins.canvas;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
@@ -42,7 +41,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
@@ -56,7 +54,6 @@ import org.diylc.common.Config;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IBlockProcessor.InvalidBlockException;
 import org.diylc.common.IPlugInPort;
-import org.diylc.presenter.Presenter;
 import org.diylc.swing.tree.ComponentTreePanel;
 
 /**

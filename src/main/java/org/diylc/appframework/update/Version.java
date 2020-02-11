@@ -34,8 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-import org.diylc.parsing.XmlNode;
-import org.w3c.dom.Element;
 
 public class Version implements Serializable, Comparable<Version> {
 

@@ -26,7 +26,6 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -39,18 +38,14 @@ import javax.swing.AbstractAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
-import org.diylc.appframework.undo.IUndoListener;
-// import org.diylc.appframework.undo.UndoHandler;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.core.ComponentTransferable;
 import org.diylc.core.ExpansionMode;
-import org.diylc.core.Project;
 import org.diylc.images.Icon;
 import org.diylc.swing.action.ActionFactory;
-import org.diylc.swing.action.ActionFactoryAction;
 
 public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 

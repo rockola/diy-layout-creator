@@ -21,15 +21,10 @@ package org.diylc.core.measures;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.text.WordUtils;
-
 import org.junit.jupiter.api.Test;
 
 public class SiUnitTest {

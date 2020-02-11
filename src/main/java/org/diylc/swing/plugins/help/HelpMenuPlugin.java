@@ -27,8 +27,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import org.apache.logging.log4j.LogManager;
 import org.diylc.App;
-import org.diylc.Splash;
-import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.UpdateChecker;
 import org.diylc.appframework.update.Version;
 import org.diylc.common.Config;

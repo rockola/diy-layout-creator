@@ -20,7 +20,6 @@
 
 package org.diylc.plugins.cloud.model;
 
-import com.diyfever.httpproxy.ParamName;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

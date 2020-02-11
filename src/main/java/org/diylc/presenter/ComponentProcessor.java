@@ -20,10 +20,6 @@
 
 package org.diylc.presenter;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,18 +27,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.common.ComponentType;
 import org.diylc.common.PropertyWrapper;
-import org.diylc.core.CreationMethod;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IPropertyValidator;
-import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.KeywordPolicy;
 
 /**
  * Utility class with component processing methods.

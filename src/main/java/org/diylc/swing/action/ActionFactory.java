@@ -66,7 +66,6 @@ import org.diylc.images.Icon;
 import org.diylc.netlist.Group;
 import org.diylc.netlist.Netlist;
 import org.diylc.netlist.Summary;
-import org.diylc.presenter.Presenter;
 import org.diylc.presenter.ProjectFileManager;
 import org.diylc.swing.gui.DialogFactory;
 import org.diylc.swing.gui.editor.PropertyEditorDialog;

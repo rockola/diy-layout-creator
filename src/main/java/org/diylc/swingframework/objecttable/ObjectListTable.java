@@ -36,12 +36,10 @@ public class ObjectListTable<T> extends AutoFitTable {
    * </ul>
    *
    * <p>The example below shows a simple class that has two fields. We are making a table with three
-   * columns, two of which will show the data and one will trigger an action. <br>
-   * {@code class Point { int x, y; public int getX() { return x; } public int getY() { return y; }
-   * }
-   *
-   * <p>new ObjectListTable<Point>( Point.class, new String[] {"getX/setY", "getY",
-   * "action:Delete"}, provider); }
+   * columns, two of which will show the data and one will trigger an action. <code>
+   *  class Point { int x, y; public int getX() { return x; } public int getY() { return y; }
+   * }</code> <code> new ObjectListTable<Point>( Point.class, new String[] {"getX/setY", "getY",
+   * "action:Delete"}, provider); </code>
    *
    * <p>The resulting table will contain columns named "X", "Y" and "Delete" in that order. Column
    * "Delete" contains buttons that trigger the action. Column "X" is editable because it has a

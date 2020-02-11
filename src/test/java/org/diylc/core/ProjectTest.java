@@ -21,18 +21,7 @@ package org.diylc.core;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.Format;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.text.WordUtils;
-
 import org.junit.jupiter.api.Test;
-
-import org.diylc.appframework.update.VersionNumber;
 
 public class ProjectTest {
   @Test

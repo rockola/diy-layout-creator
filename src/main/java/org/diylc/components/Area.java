@@ -31,7 +31,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Map;
 import org.diylc.common.Orientation;
 import org.diylc.core.measures.Size;
 
@@ -218,6 +217,10 @@ public class Area extends java.awt.geom.Area {
    */
   public static Area roundRect(double x, double y, double width, double height, double corner) {
     return roundRect(x, y, width, height, corner, corner);
+  }
+
+  public static Area roundRect(Point point, double width, double height, double corner) {
+    return roundRect(point.x, point.y, width, height, corner);
   }
 
   public static Area centeredRoundRect(

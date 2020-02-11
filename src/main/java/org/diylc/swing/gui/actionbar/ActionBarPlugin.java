@@ -29,7 +29,6 @@ import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.Project;
 import org.diylc.swing.action.ActionFactory;
 
 /**

@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.IComponentTransformer;
-import org.diylc.common.Orientation;
 import org.diylc.components.misc.Label;
 import org.diylc.components.misc.Misc;
 import org.diylc.components.misc.PcbText;

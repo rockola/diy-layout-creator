@@ -20,6 +20,7 @@
 
 package org.diylc.common;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 
@@ -83,6 +84,12 @@ public enum Orientation {
 
   public AffineTransform getRotation(int x, int y) {
     return AffineTransform.getRotateInstance(getTheta(), x, y);
+  }
+
+  public void applyRotation(Graphics2D g2d, Point point) {
+    if (getTheta() != 0) {
+      g2d.transform(getRotation(point));
+    }
   }
 
   public Orientation mirrorHorizontal() {
