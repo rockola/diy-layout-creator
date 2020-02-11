@@ -135,16 +135,13 @@ public class PerfBoard extends AbstractBoard {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int factor = 32 / width;
-    double x = 2 / factor;
-    double w = width - 4 / factor;
-    double h = height - 4 / factor;
+    double x = 2;
+    double w = width - 2 * x;
+    double h = height - 2 * x;
     Area.rect(x, x, w, h).fillDraw(g2d, BOARD_COLOR, BORDER_COLOR);
     x = width / 2;
-    Area.circle(x, x, x).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
-    g2d.setColor(CANVAS_COLOR);
-    int center = width / 2 - 2 / factor;
-    double d = getClosestOdd(5.0 / factor);
-    Area.circle(new Point(center, center), d).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
+    double d = x / 3;
+    Area.circle(x, x, d).fill(g2d, CANVAS_COLOR);
+    Area.ring(x, x, x, d).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
   }
 }
