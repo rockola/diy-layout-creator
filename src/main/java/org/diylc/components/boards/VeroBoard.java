@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Shape;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -90,17 +91,20 @@ public class VeroBoard extends AbstractBoard {
           g2d.setColor(stripColor);
           drawingObserver.startTrackingContinuityArea(true);
           g2d.fillRect(
-              p.x + spacing / 2, p.y - stripSize / 2, secondPoint.x - spacing - p.x, stripSize);
+              p.x + spacing / 2,
+              p.y - stripSize / 2,
+              secondPoint.x - spacing - p.x,
+              stripSize);
           drawingObserver.stopTrackingContinuityArea();
           g2d.setColor(stripColor.darker());
           g2d.drawRect(
-              p.x + spacing / 2, p.y - stripSize / 2, secondPoint.x - spacing - p.x, stripSize);
+              p.x + spacing / 2,
+              p.y - stripSize / 2,
+              secondPoint.x - spacing - p.x,
+              stripSize);
           while (p.x < secondPoint.x - spacing - holeSize) {
             p.x += spacing;
-            g2d.setColor(CANVAS_COLOR);
-            g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
-            g2d.setColor(stripColor.darker());
-            g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
+            Area.circle(p, holeSize).fillDraw(g2d, CANVAS_COLOR, stripColor.darker());
           }
         }
       } else {
@@ -110,17 +114,20 @@ public class VeroBoard extends AbstractBoard {
           g2d.setColor(stripColor);
           drawingObserver.startTrackingContinuityArea(true);
           g2d.fillRect(
-              p.x - stripSize / 2, p.y + spacing / 2, stripSize, secondPoint.y - spacing - p.y);
+              p.x - stripSize / 2,
+              p.y + spacing / 2,
+              stripSize,
+              secondPoint.y - spacing - p.y);
           drawingObserver.stopTrackingContinuityArea();
           g2d.setColor(stripColor.darker());
           g2d.drawRect(
-              p.x - stripSize / 2, p.y + spacing / 2, stripSize, secondPoint.y - spacing - p.y);
+              p.x - stripSize / 2,
+              p.y + spacing / 2,
+              stripSize,
+              secondPoint.y - spacing - p.y);
           while (p.y < secondPoint.y - spacing - holeSize) {
             p.y += spacing;
-            g2d.setColor(CANVAS_COLOR);
-            g2d.fillOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
-            g2d.setColor(stripColor.darker());
-            g2d.drawOval(p.x - holeSize / 2, p.y - holeSize / 2, holeSize, holeSize);
+            Area.circle(p, holeSize).fillDraw(g2d, CANVAS_COLOR, stripColor.darker());
           }
         }
       }
@@ -164,22 +171,20 @@ public class VeroBoard extends AbstractBoard {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    g2d.setColor(BOARD_COLOR);
-    g2d.fillRect(0, 2 / factor, width - 1, height - 4 / factor);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect(0, 2 / factor, width - 1, height - 4 / factor);
-    g2d.setColor(COPPER_COLOR);
-    g2d.fillRect(1 / factor, width / 4, width - 2 / factor, width / 2);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawRect(1 / factor, width / 4, width - 2 / factor, width / 2);
-
-    g2d.setColor(COPPER_COLOR);
-    g2d.fillRect(1 / factor, 2 / factor, width - 2 / factor, 3 / factor);
-    g2d.fillRect(1 / factor, height - 5 / factor, width - 2 / factor, 3 / factor);
-    g2d.setColor(COPPER_COLOR.darker());
-    g2d.drawRect(1 / factor, 2 / factor, width - 2 / factor, 3 / factor);
-    g2d.drawRect(1 / factor, height - 5 / factor, width - 2 / factor, 3 / factor);
-
+    Area.rect(0, 2 / factor, width - 1, height - 4 / factor)
+        .fillDraw(g2d, BOARD_COLOR, BORDER_COLOR);
+    Area.rect(1 / factor, width / 4, width - 2 / factor, width / 2)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(1 / factor, 2 / factor, width - 2 / factor, 3 / factor)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(1 / factor, height - 5 / factor, width - 2 / factor, 3 / factor)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    double holeWidth = height / 6;
+    for (int i = 0; i < 4; i++) {
+      Area.circle(i * width / 3, height / 2, holeWidth)
+          .fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
+    }
+    /*
     g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(
         width / 3 - 2 / factor,
@@ -202,5 +207,6 @@ public class VeroBoard extends AbstractBoard {
         width / 2 - 2 / factor,
         getClosestOdd(5.0 / factor),
         getClosestOdd(5.0 / factor));
+    */
   }
 }
