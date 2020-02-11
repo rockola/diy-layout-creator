@@ -197,13 +197,13 @@ public class Iec60320 implements Serializable {
     pins.add(Pin.rectangular(
         Area.point(
             pinReference.x - pinHorizontalSpacing.asPixels(),
-            pinReference.y + pinHeight.asPixels()),
+            pinReference.y + pinVerticalSpacing.asPixels()),
         pinWidth,
         pinHeight));
     pins.add(Pin.rectangular(
         Area.point(
             pinReference.x + pinHorizontalSpacing.asPixels(),
-            pinReference.y + pinHeight.asPixels()),
+            pinReference.y + pinVerticalSpacing.asPixels()),
         pinWidth,
         pinHeight));
     final Size inletWidth = Size.mm(24);
