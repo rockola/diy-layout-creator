@@ -85,6 +85,7 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   private Iec60320 iec;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
+  private Color pinColor = METAL_COLOR;
 
   public IecSocket() {
     super();
@@ -265,6 +266,18 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
 
   public void setBorderColor(Color borderColor) {
     this.borderColor = borderColor;
+  }
+
+  @EditableProperty(name = "Pin")
+  public Color getPinColor() {
+    if (pinColor == null) {
+      pinColor = METAL_COLOR;
+    }
+    return pinColor;
+  }
+
+  public void setPinColor(Color pinColor) {
+    this.pinColor = pinColor;
   }
 
   @Override
