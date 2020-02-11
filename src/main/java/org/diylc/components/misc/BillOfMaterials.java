@@ -230,6 +230,5 @@ public class BillOfMaterials extends AbstractComponent<Void> {
   }
 
   @Override
-  public void setValue(Void value) {
-  }
+  public void setValue(Void value) {}
 }

@@ -69,11 +69,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
 
   private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
@@ -83,7 +79,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   private boolean topLead = false;
   private Size diameter = DIAMETER;
   private Size length = LENGTH;
-  private final PinCount pinCount = new PinCount(3,10).setPins(8);
+  private final PinCount pinCount = new PinCount(3, 10).setPins(8);
   private Size leadSpacing = PIN_SPACING;
 
   public SubminiTube() {
@@ -220,104 +216,107 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
       switch (orientation) {
         case DEFAULT:
           if (folded) {
-            body[0] = Area.rect(
-                x + leadLength, y + pinSpacing - bodyWidth / 2, bodyHeight, bodyWidth);
-            body[1] = Area.rect(
-                x + leadLength + bodyHeight,
-                y + pinSpacing - bodyWidth / 2,
-                tabHeight,
-                bodyWidth).subtract(Area.circle(
-                    x + leadLength + bodyHeight + tabHeight / 2,
-                    y + pinSpacing,
-                    tabHoleDiameter));
+            body[0] =
+                Area.rect(x + leadLength, y + pinSpacing - bodyWidth / 2, bodyHeight, bodyWidth);
+            body[1] =
+                Area.rect(
+                        x + leadLength + bodyHeight,
+                        y + pinSpacing - bodyWidth / 2,
+                        tabHeight,
+                        bodyWidth)
+                    .subtract(
+                        Area.circle(
+                            x + leadLength + bodyHeight + tabHeight / 2,
+                            y + pinSpacing,
+                            tabHoleDiameter));
           } else {
             body[0] = Area.centeredRect(x, y, bodyThickness, bodyWidth);
-            body[1] = Area.rect(
-                x + bodyThickness / 2 - tabThickness,
-                y + pinSpacing - bodyWidth / 2,
-                tabThickness,
-                bodyWidth);
+            body[1] =
+                Area.rect(
+                    x + bodyThickness / 2 - tabThickness,
+                    y + pinSpacing - bodyWidth / 2,
+                    tabThickness,
+                    bodyWidth);
           }
           break;
         case _90:
           if (folded) {
-            body[0] = Area.rect(
-                x - pinSpacing - bodyWidth / 2, y + leadLength, bodyWidth, bodyHeight);
-            body[1] = Area.rect(
-                x - pinSpacing - bodyWidth / 2,
-                y + leadLength + bodyHeight,
-                bodyWidth,
-                tabHeight).subtract(Area.circle(
-                    x - pinSpacing,
-                    y + leadLength + bodyHeight + tabHeight / 2,
-                    tabHoleDiameter));
+            body[0] =
+                Area.rect(x - pinSpacing - bodyWidth / 2, y + leadLength, bodyWidth, bodyHeight);
+            body[1] =
+                Area.rect(
+                        x - pinSpacing - bodyWidth / 2,
+                        y + leadLength + bodyHeight,
+                        bodyWidth,
+                        tabHeight)
+                    .subtract(
+                        Area.circle(
+                            x - pinSpacing,
+                            y + leadLength + bodyHeight + tabHeight / 2,
+                            tabHoleDiameter));
           } else {
-            body[0] = Area.rect(
-                x - pinSpacing - bodyWidth / 2,
-                y - bodyThickness / 2,
-                bodyWidth,
-                bodyThickness);
-            body[1] = Area.rect(
-                x - pinSpacing - bodyWidth / 2,
-                y + bodyThickness / 2 - tabThickness,
-                bodyWidth,
-                tabThickness);
+            body[0] =
+                Area.rect(
+                    x - pinSpacing - bodyWidth / 2,
+                    y - bodyThickness / 2,
+                    bodyWidth,
+                    bodyThickness);
+            body[1] =
+                Area.rect(
+                    x - pinSpacing - bodyWidth / 2,
+                    y + bodyThickness / 2 - tabThickness,
+                    bodyWidth,
+                    tabThickness);
           }
           break;
         case _180:
           if (folded) {
-            body[0] = Area.rect(
-                x - leadLength - bodyHeight,
-                y - pinSpacing - bodyWidth / 2,
-                bodyHeight,
-                bodyWidth);
-            body[1] = Area.rect(
-                x - leadLength - bodyHeight - tabHeight,
-                y - pinSpacing - bodyWidth / 2,
-                tabHeight,
-                bodyWidth).subtract(Area.circle(
-                    x - leadLength - bodyHeight - tabHeight / 2,
-                    y - pinSpacing,
-                    tabHoleDiameter));
+            body[0] =
+                Area.rect(
+                    x - leadLength - bodyHeight,
+                    y - pinSpacing - bodyWidth / 2,
+                    bodyHeight,
+                    bodyWidth);
+            body[1] =
+                Area.rect(
+                        x - leadLength - bodyHeight - tabHeight,
+                        y - pinSpacing - bodyWidth / 2,
+                        tabHeight,
+                        bodyWidth)
+                    .subtract(
+                        Area.circle(
+                            x - leadLength - bodyHeight - tabHeight / 2,
+                            y - pinSpacing,
+                            tabHoleDiameter));
           } else {
-            body[0] = Area.centeredRect(
-                x,
-                y - pinSpacing,
-                bodyThickness,
-                bodyWidth);
-            body[1] = Area.rect(
-                x - bodyThickness / 2,
-                y - pinSpacing - bodyWidth / 2,
-                tabThickness,
-                bodyWidth);
+            body[0] = Area.centeredRect(x, y - pinSpacing, bodyThickness, bodyWidth);
+            body[1] =
+                Area.rect(
+                    x - bodyThickness / 2, y - pinSpacing - bodyWidth / 2, tabThickness, bodyWidth);
           }
           break;
         case _270:
           if (folded) {
-            body[0] = Area.rect(
-                x + pinSpacing - bodyWidth / 2,
-                y - leadLength - bodyHeight,
-                bodyWidth,
-                bodyHeight);
-            body[1] = Area.rect(
+            body[0] =
+                Area.rect(
+                    x + pinSpacing - bodyWidth / 2,
+                    y - leadLength - bodyHeight,
+                    bodyWidth,
+                    bodyHeight);
+            body[1] =
+                Area.rect(
                         x + pinSpacing - bodyWidth / 2,
                         y - leadLength - bodyHeight - tabHeight,
                         bodyWidth,
-                        tabHeight).subtract(Area.circle(
+                        tabHeight)
+                    .subtract(
+                        Area.circle(
                             x + pinSpacing,
                             y - leadLength - bodyHeight - tabHeight / 2,
                             tabHoleDiameter));
           } else {
-            body[0] = Area.centeredRect(
-                x + pinSpacing,
-                y,
-                bodyWidth,
-                bodyThickness);
-            body[1] = Area.centeredRect(
-                x + pinSpacing,
-                y,
-                bodyWidth,
-                tabThickness);
+            body[0] = Area.centeredRect(x + pinSpacing, y, bodyWidth, bodyThickness);
+            body[1] = Area.centeredRect(x + pinSpacing, y, bodyWidth, tabThickness);
           }
           break;
         default:

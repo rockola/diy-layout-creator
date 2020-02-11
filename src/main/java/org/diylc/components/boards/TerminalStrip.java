@@ -307,16 +307,9 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      Area indentation = new Area(new Ellipse2D.Double(
-          ix1,
-          iy1,
-          mountingHoleSize,
-          mountingHoleSize));
-      indentation.add(new Area(new Ellipse2D.Double(
-          ix2,
-          iy2,
-          mountingHoleSize,
-          mountingHoleSize)));
+      Area indentation =
+          new Area(new Ellipse2D.Double(ix1, iy1, mountingHoleSize, mountingHoleSize));
+      indentation.add(new Area(new Ellipse2D.Double(ix2, iy2, mountingHoleSize, mountingHoleSize)));
 
       Area bodyArea = Area.roundRect(x, y, width, height, EDGE_RADIUS);
       bodyArea.subtract(indentation);
@@ -332,12 +325,13 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
           p2 = p;
         }
 
-        Area terminal = Area.roundRect(
-            p1.x - holeSize,
-            p1.y - holeSize,
-            p2.x - p1.x + holeSize * 2,
-            p2.y - p1.y + holeSize * 2,
-            holeSize);
+        Area terminal =
+            Area.roundRect(
+                p1.x - holeSize,
+                p1.y - holeSize,
+                p2.x - p1.x + holeSize * 2,
+                p2.y - p1.y + holeSize * 2,
+                holeSize);
 
         terminal.subtract(Area.circle(p1, holeSize));
         terminal.subtract(Area.circle(p2, holeSize));
@@ -402,9 +396,10 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
     final double holeCenterX1 = x + terminalHeight / 2;
     final double holeCenterX2 = x + terminalWidth - terminalHeight / 2;
     final double holeCenterY = y + terminalHeight / 2;
-    Area terminal = Area.roundRect(x, y, terminalWidth, terminalHeight, radius)
-                    .subtract(Area.circle(holeCenterX1, holeCenterY, holeSize))
-                    .subtract(Area.circle(holeCenterX2, holeCenterY, holeSize));
+    Area terminal =
+        Area.roundRect(x, y, terminalWidth, terminalHeight, radius)
+            .subtract(Area.circle(holeCenterX1, holeCenterY, holeSize))
+            .subtract(Area.circle(holeCenterX2, holeCenterY, holeSize));
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
     g2d.translate(0, height * 2 / 5);
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);

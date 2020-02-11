@@ -132,11 +132,13 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       body[1] = terminalArea;
 
       int terminalBorder = (int) TERMINAL_BORDER.convertToPixels();
-      terminalArea = new Area(new Ellipse2D.Double(
-          x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder,
-          y - terminalDiameter / 2 + terminalBorder,
-          terminalDiameter - 2 * terminalBorder,
-          terminalDiameter - 2 * terminalBorder));
+      terminalArea =
+          new Area(
+              new Ellipse2D.Double(
+                  x + (totalLength - terminalSpacing) / 2 - terminalDiameter / 2 + terminalBorder,
+                  y - terminalDiameter / 2 + terminalBorder,
+                  terminalDiameter - 2 * terminalBorder,
+                  terminalDiameter - 2 * terminalBorder));
 
       for (int i = 0; i < 6; i++) {
         terminalX[i] =

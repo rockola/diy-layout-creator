@@ -42,10 +42,11 @@ public class UndoManager extends javax.swing.undo.UndoManager {
       Collection<IDIYComponent<?>> oldComponents,
       Collection<IDIYComponent<?>> newComponents) {
     LOG.trace("replaceComponents()");
-    ProjectEdit edit = new ProjectEdit(
-        project,
-        oldComponents == null ? null : new ArrayList<IDIYComponent<?>>(oldComponents),
-        newComponents == null ? null : new ArrayList<IDIYComponent<?>>(newComponents));
+    ProjectEdit edit =
+        new ProjectEdit(
+            project,
+            oldComponents == null ? null : new ArrayList<IDIYComponent<?>>(oldComponents),
+            newComponents == null ? null : new ArrayList<IDIYComponent<?>>(newComponents));
     edit.execute();
     boolean editAdded = addEdit(edit);
   }

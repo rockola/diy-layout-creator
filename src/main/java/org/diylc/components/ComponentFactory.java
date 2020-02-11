@@ -34,10 +34,12 @@ public class ComponentFactory {
   public static List<IDIYComponent<?>> makeComponents(Map<String, Collection<XmlNode>> specs) {
     List<IDIYComponent<?>> components = new ArrayList<>();
 
-    specs.entrySet().stream().forEach(e -> {
-        String key = e.getKey();
-        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      });
+    specs.entrySet().stream()
+        .forEach(
+            e -> {
+              String key = e.getKey();
+              // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            });
 
     return components;
   }

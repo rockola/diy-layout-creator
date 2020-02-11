@@ -29,9 +29,8 @@ import java.awt.Point;
 import org.diylc.utils.Constants;
 
 /**
- * Serializes {@link Point} objects by converting coordinates from
- * pixels to inches, thus avoiding the resolution to affect point
- * placement.
+ * Serializes {@link Point} objects by converting coordinates from pixels to inches, thus avoiding
+ * the resolution to affect point placement.
  *
  * @author Branislav Stojkovic
  */

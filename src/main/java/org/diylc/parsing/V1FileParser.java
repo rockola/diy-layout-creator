@@ -128,8 +128,7 @@ public class V1FileParser implements IOldFileParser {
     Point referencePoint = project.getGrid().snapToGrid(new Point(x, y));
     board.setControlPoint(referencePoint, 0);
     board.setControlPoint(
-        project.getGrid().snapToGrid(new Point(x + boardWidth, y + boardHeight)),
-        1);
+        project.getGrid().snapToGrid(new Point(x + boardWidth, y + boardHeight)), 1);
     project.getComponents().add(board);
 
     NodeList childNodes = root.getChildNodes();
@@ -697,9 +696,12 @@ public class V1FileParser implements IOldFileParser {
     titleLabel.setValue(project.getTitle());
     titleLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     titleLabel.setControlPoint(
-        project.getGrid().snapToGrid(new Point(
-            x + boardWidth / 2,
-            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5))),
+        project
+            .getGrid()
+            .snapToGrid(
+                new Point(
+                    x + boardWidth / 2,
+                    (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 5))),
         0);
     project.getComponents().add(titleLabel);
 
@@ -708,9 +710,12 @@ public class V1FileParser implements IOldFileParser {
     creditsLabel.setValue(project.getAuthor());
     creditsLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     creditsLabel.setControlPoint(
-        project.getGrid().snapToGrid(new Point(
-            x + boardWidth / 2,
-            (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4))),
+        project
+            .getGrid()
+            .snapToGrid(
+                new Point(
+                    x + boardWidth / 2,
+                    (int) (minY - Constants.PIXELS_PER_INCH * V1_GRID_SPACING.getValue() * 4))),
         0);
     project.getComponents().add(creditsLabel);
 
@@ -718,16 +723,18 @@ public class V1FileParser implements IOldFileParser {
     BillOfMaterials bom = new BillOfMaterials();
     int bomSize = (int) bom.getSize().convertToPixels();
     bom.setControlPoint(
-        project.getGrid().snapToGrid(new Point(
-            x + (boardWidth - bomSize) / 2,
-            (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()))),
+        project
+            .getGrid()
+            .snapToGrid(
+                new Point(
+                    x + (boardWidth - bomSize) / 2,
+                    (int) (y + boardHeight + 2 * V1_GRID_SPACING.convertToPixels()))),
         0);
     project.getComponents().add(bom);
 
     // Sort by z-order
     Collections.sort(
-        project.getComponents(),
-        ComparatorFactory.getInstance().getComponentZOrderComparator());
+        project.getComponents(), ComparatorFactory.getInstance().getComponentZOrderComparator());
     return project;
   }
 

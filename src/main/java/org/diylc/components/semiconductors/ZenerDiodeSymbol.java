@@ -90,18 +90,8 @@ public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
     // (int) (width + finSize));
     int base = (int) (width / SQRT_TWO + bandSize);
     g2d.drawPolyline(
-        new int[] {
-          (int) (base + finSize),
-          (int) base,
-          (int) base,
-          (int) (base - finSize)
-        },
-        new int[] {
-          (int) -finSize,
-          0,
-          (int) width,
-          (int) (width + finSize)
-        },
+        new int[] {(int) (base + finSize), (int) base, (int) base, (int) (base - finSize)},
+        new int[] {(int) -finSize, 0, (int) width, (int) (width + finSize)},
         4);
   }
 }

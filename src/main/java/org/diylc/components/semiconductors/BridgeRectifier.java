@@ -277,13 +277,15 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
         case MiniDIP1:
         case MiniDIP2:
         case InLine:
-          body[0] = new Area(new RoundRectangle2D.Double(
-              centerX - length / 2,
-              centerY - width / 2,
-              length,
-              width,
-              EDGE_RADIUS,
-              EDGE_RADIUS));
+          body[0] =
+              new Area(
+                  new RoundRectangle2D.Double(
+                      centerX - length / 2,
+                      centerY - width / 2,
+                      length,
+                      width,
+                      EDGE_RADIUS,
+                      EDGE_RADIUS));
           break;
         case MiniRound1:
         case MiniRound2:
@@ -301,22 +303,25 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
           //          path.lineTo(centerX - width / 2, centerY - width / 2 + margin);
           //          path.closePath();
 
-          RoundedPolygon poly = new RoundedPolygon(
-              new Point[] {
-                new Point(centerX, centerY - width / 2),
-                new Point(centerX + width / 2, centerY - width / 2),
-                new Point(centerX + width / 2, centerY + width / 2),
-                new Point(centerX - width / 2, centerY + width / 2),
-                new Point(centerX - width / 2, (int) (centerY - width / 2 + margin)),
-                new Point((int) (centerX - width / 2 + margin), centerY - width / 2),
-              },
-              new double[] {
-                EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS / 2, EDGE_RADIUS / 2
-              });
+          RoundedPolygon poly =
+              new RoundedPolygon(
+                  new Point[] {
+                    new Point(centerX, centerY - width / 2),
+                    new Point(centerX + width / 2, centerY - width / 2),
+                    new Point(centerX + width / 2, centerY + width / 2),
+                    new Point(centerX - width / 2, centerY + width / 2),
+                    new Point(centerX - width / 2, (int) (centerY - width / 2 + margin)),
+                    new Point((int) (centerX - width / 2 + margin), centerY - width / 2),
+                  },
+                  new double[] {
+                    EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS, EDGE_RADIUS / 2, EDGE_RADIUS / 2
+                  });
 
           body[0] = new Area(poly);
-          body[0].subtract(new Area(new Ellipse2D.Double(
-              centerX - holeSize / 2, centerY - holeSize / 2, holeSize, holeSize)));
+          body[0].subtract(
+              new Area(
+                  new Ellipse2D.Double(
+                      centerX - holeSize / 2, centerY - holeSize / 2, holeSize, holeSize)));
 
           if (orientation != Orientation.DEFAULT) {
             double theta = orientation.getTheta();
@@ -345,18 +350,20 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
 
     PinShape pinShape = rectifierType.getPinShape();
     int pinSize =
-        (int) (pinShape == PinShape.Round
-               ? ROUND_PIN_SIZE.convertToPixels()
-               : SQUARE_PIN_SIZE.convertToPixels())
-        / 2
-        * 2;
+        (int)
+                (pinShape == PinShape.Round
+                    ? ROUND_PIN_SIZE.convertToPixels()
+                    : SQUARE_PIN_SIZE.convertToPixels())
+            / 2
+            * 2;
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
     if (!outlineMode) {
       for (Point point : controlPoints) {
-        Area pin = (pinShape == PinShape.Round
-                    ? Area.circle(point, pinSize)
-                    : Area.centeredSquare(point, pinSize));
+        Area pin =
+            (pinShape == PinShape.Round
+                ? Area.circle(point, pinSize)
+                : Area.centeredSquare(point, pinSize));
         pin.fillDraw(g2d, PIN_COLOR, PIN_BORDER_COLOR);
       }
     }
@@ -533,8 +540,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = (int) (2f * width / 32);
-    Area area = new Area(new Ellipse2D.Double(
-        margin / 2, margin, width - 2 * margin, width - 2 * margin));
+    Area area =
+        new Area(new Ellipse2D.Double(margin / 2, margin, width - 2 * margin, width - 2 * margin));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     g2d.setColor(PIN_COLOR);
     int pinSize = 2 * width / 32;
@@ -547,26 +554,10 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     final int x1 = width * 2 / 8 + 1;
     final int y2 = height * 6 / 8 - 5 * width / 32;
     final int x2 = width * 6 / 8 - 2 * width / 32;
-    StringUtils.drawCenteredText(
-        g2d,
-        "+",
-        x1,
-        height * 2 / 8 + 4 * width / 32);
-    StringUtils.drawCenteredText(
-        g2d,
-        "-",
-        x1,
-        y2);
-    StringUtils.drawCenteredText(
-        g2d,
-        "~",
-        x2,
-        height * 2 / 8 + 5 * width / 32);
-    StringUtils.drawCenteredText(
-        g2d,
-        "~",
-        x2,
-        y2);
+    StringUtils.drawCenteredText(g2d, "+", x1, height * 2 / 8 + 4 * width / 32);
+    StringUtils.drawCenteredText(g2d, "-", x1, y2);
+    StringUtils.drawCenteredText(g2d, "~", x2, height * 2 / 8 + 5 * width / 32);
+    StringUtils.drawCenteredText(g2d, "~", x2, y2);
   }
 
   @EditableProperty(name = "Body")

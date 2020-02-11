@@ -55,10 +55,10 @@ public class Keymap {
 
   public String toString() {
     StringBuilder b = new StringBuilder();
-    b.append(String.format(
-        "<Keymap bindings.size() %d actionBindingMap.size() %d>%n",
-        bindings.size(),
-        actionBindingMap.size()));
+    b.append(
+        String.format(
+            "<Keymap bindings.size() %d actionBindingMap.size() %d>%n",
+            bindings.size(), actionBindingMap.size()));
     for (Binding bi : bindings) {
       b.append(bi.toString() + "\n");
     }

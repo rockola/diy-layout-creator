@@ -59,15 +59,9 @@ public class InstantiationManager {
 
   public static final int MAX_RECENT_COMPONENTS = 16;
   public static final ComponentType clipboardType =
-      new ComponentType(
-          "Clipboard contents",
-          "Components from the clipboard",
-          "Multi");
+      new ComponentType("Clipboard contents", "Components from the clipboard", "Multi");
   public static final ComponentType blockType =
-      new ComponentType(
-          "Building block",
-          "Components from the building block",
-          "Multi");
+      new ComponentType("Building block", "Components from the building block", "Multi");
 
   private static ComponentType componentTypeSlot;
   private static Template template;
@@ -104,10 +98,7 @@ public class InstantiationManager {
   }
 
   public static void setComponentTypeSlot(
-      ComponentType typeSlot,
-      Template theTemplate,
-      Project project,
-      boolean forceInstantiate)
+      ComponentType typeSlot, Template theTemplate, Project project, boolean forceInstantiate)
       throws Exception {
     componentTypeSlot = typeSlot;
     template = theTemplate;
@@ -121,8 +112,7 @@ public class InstantiationManager {
     potentialControlPoint = null;
   }
 
-  public static void instantiatePointByPoint(Point scaledPoint, Project project)
-      throws Exception {
+  public static void instantiatePointByPoint(Point scaledPoint, Project project) throws Exception {
     firstControlPoint = scaledPoint;
     componentSlot = instantiateComponent(componentTypeSlot, template, firstControlPoint, project);
     // Set the other control point to the same location, we'll
@@ -157,8 +147,7 @@ public class InstantiationManager {
     for (IDIYComponent<?> c : project.getComponents()) {
       existingNames.add(c.getName());
     }
-    List<IDIYComponent<?>> allComponents =
-        new ArrayList<IDIYComponent<?>>(project.getComponents());
+    List<IDIYComponent<?>> allComponents = new ArrayList<IDIYComponent<?>>(project.getComponents());
 
     // Adjust location of components so they are centered under the mouse
     // cursor
@@ -171,8 +160,8 @@ public class InstantiationManager {
     for (IDIYComponent<?> component : components) {
       // assign a new name if it already exists in the project
       if (existingNames.contains(component.getName())) {
-        ComponentType componentType = ComponentType.extractFrom(
-            (Class<? extends IDIYComponent<?>>) component.getClass());
+        ComponentType componentType =
+            ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) component.getClass());
         String newName = createUniqueName(componentType, allComponents);
         existingNames.add(newName);
         component.setName(newName);
@@ -301,9 +290,9 @@ public class InstantiationManager {
     fillWithDefaultProperties(component, template);
 
     // Write to recent components
-    List<String> recentComponentTypes = (List<String>) App.getObject(
-        Config.Flag.RECENT_COMPONENTS,
-        (Object) new ArrayList<ComponentType>());
+    List<String> recentComponentTypes =
+        (List<String>)
+            App.getObject(Config.Flag.RECENT_COMPONENTS, (Object) new ArrayList<ComponentType>());
     String className = componentType.getInstanceClass().getName();
     if (recentComponentTypes.size() == 0 || !recentComponentTypes.get(0).equals(className)) {
 
@@ -324,16 +313,15 @@ public class InstantiationManager {
   }
 
   /**
-   * Creates a unique component name for the specified type.
-   * Existing components are taken into account.
+   * Creates a unique component name for the specified type. Existing components are taken into
+   * account.
    *
    * @param componentType Type of component
    * @param components Existing components
    * @return
    */
   public static String createUniqueName(
-      ComponentType componentType,
-      List<IDIYComponent<?>> components) {
+      ComponentType componentType, List<IDIYComponent<?>> components) {
     boolean exists = true;
     String[] takenNames = new String[components.size()];
     for (int j = 0; j < components.size(); j++) {
@@ -353,9 +341,8 @@ public class InstantiationManager {
   }
 
   /**
-   * Finds any properties that have default values and injects default
-   * values. Typically it should be used for {@link IDIYComponent} and
-   * {@link Project} objects.
+   * Finds any properties that have default values and injects default values. Typically it should
+   * be used for {@link IDIYComponent} and {@link Project} objects.
    *
    * @param object
    * @param template
@@ -372,11 +359,11 @@ public class InstantiationManager {
     // Override with default values if available.
     for (PropertyWrapper property : properties) {
       propertyCache.put(property.getName(), property);
-      Object defaultValue = App.getObject(String.format(
-          "%s%s:%s",
-          Presenter.DEFAULTS_KEY_PREFIX,
-          object.getClass().getName(),
-          property.getName()));
+      Object defaultValue =
+          App.getObject(
+              String.format(
+                  "%s%s:%s",
+                  Presenter.DEFAULTS_KEY_PREFIX, object.getClass().getName(), property.getName()));
       if (defaultValue != null) {
         property.setValue(defaultValue);
         try {
@@ -448,11 +435,13 @@ public class InstantiationManager {
         angleProperty.readFrom(component);
         Object value = angleProperty.getValue();
         if (value instanceof Orientation) {
-          angleProperty.setValue(Orientation.values()[
-              (((Orientation) value).ordinal() + 1) % Orientation.values().length]);
+          angleProperty.setValue(
+              Orientation.values()[
+                  (((Orientation) value).ordinal() + 1) % Orientation.values().length]);
         } else if (value instanceof OrientationHV) {
-          angleProperty.setValue(OrientationHV.values()[
-              (((OrientationHV) value).ordinal() + 1) % OrientationHV.values().length]);
+          angleProperty.setValue(
+              OrientationHV.values()[
+                  (((OrientationHV) value).ordinal() + 1) % OrientationHV.values().length]);
         } else if (angleProperty.getName().equalsIgnoreCase("angle")) {
           int angle = (Integer) angleProperty.getValue();
           angle += 90;

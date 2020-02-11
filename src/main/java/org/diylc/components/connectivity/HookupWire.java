@@ -82,18 +82,22 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
         stroke = ObjectCache.getInstance().fetchBasicStroke(thickness);
         break;
       case DASHED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness * 2, thickness * 3},
-            thickness * 4,
-            BasicStroke.CAP_SQUARE);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness * 2, thickness * 3},
+                    thickness * 4,
+                    BasicStroke.CAP_SQUARE);
         break;
       case DOTTED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness / 4, thickness * 3},
-            0,
-            BasicStroke.CAP_ROUND);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness / 4, thickness * 3},
+                    0,
+                    BasicStroke.CAP_ROUND);
         break;
       default:
         throw new RuntimeException("unhandled line style " + getStyle().toString());
@@ -105,11 +109,13 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
       g2d.fill(s);
 
       if (getStriped()) {
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness / 2, thickness * 2},
-            thickness * 10,
-            BasicStroke.CAP_BUTT);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness / 2, thickness * 2},
+                    thickness * 10,
+                    BasicStroke.CAP_BUTT);
         if (stroke != null) {
           Shape stripe = stroke.createStrokedShape(curve);
           g2d.setColor(getStripeColor());

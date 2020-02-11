@@ -41,11 +41,14 @@ public class OverwritePromptFileChooser extends JFileChooser {
     if (selectedFile != null
         && selectedFile.exists()
         && JOptionPane.showConfirmDialog(
-            this,
-            selectedFile.getAbsolutePath() + " already exists.\nDo you " + "want to replace it?",
-            "Warning",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
+                this,
+                selectedFile.getAbsolutePath()
+                    + " already exists.\nDo you "
+                    + "want to replace it?",
+                "Warning",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE)
+            != JOptionPane.YES_OPTION) {
       return;
     }
     super.approveSelection();

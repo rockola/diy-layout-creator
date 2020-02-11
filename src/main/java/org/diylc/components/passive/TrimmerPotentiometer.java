@@ -126,8 +126,10 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
         case FLAT_SMALL2:
           int shaftSize = getClosestOdd(FLAT_SHAFT_SIZE.convertToPixels());
           Area shaft = Area.circle(centerX, centerY, shaftSize);
-          Area slot = new Area(new Rectangle2D.Double(
-              centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize, shaftSize / 4));
+          Area slot =
+              new Area(
+                  new Rectangle2D.Double(
+                      centerX - shaftSize / 2, centerY - shaftSize / 8, shaftSize, shaftSize / 4));
           slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, centerX, centerY));
           shaft.subtract(slot);
           body[1] = shaft;
@@ -233,8 +235,10 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     g2d.drawRect(margin, margin, width - 2 * margin, width - 2 * margin);
     int shaftSize = 11;
     int slotSize = 2;
-    Area area = new Area(new Ellipse2D.Double(
-        width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
+    Area area =
+        new Area(
+            new Ellipse2D.Double(
+                width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
     Area slot = new Area(new Rectangle2D.Double(0, width / 2 - slotSize / 2, width, slotSize));
     slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, width / 2));
     area.subtract(slot);
@@ -307,48 +311,28 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   }
 
   public enum TrimmerType {
-    FLAT_SMALL("Horizontal Small 1",
-               Size.mm(9.5),
-               2, 1, 0, 2),
-    FLAT_SMALL2("Horizontal Small 2",
-                Size.mm(9.5),
-                4, 1, 0, 2),
-    FLAT_XSMALL("Horizontal X-Small",
-                Size.mm(5),
-                2, 1, 0, 2),
-    FLAT_LARGE("Horizontal Medium",
-               Size.mm(9.5),
-               4, 1, 0, 2),
-    FLAT_XLARGE("Horizontal Large",
-                Size.mm(13),
-                5, 2, 0, 4),
-    VERTICAL_INLINE("Vertical Inline",
-                    Size.mm(9.5),
-                    Size.mm(4.5),
-                    0, 1, 0, 2),
-    VERTICAL_OFFSET("Vertical Offset 1",
-                    Size.mm(9.5),
-                    Size.mm(4.5),
-                    1, 1, 0, 2),
-    VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2",
-                            Size.mm(9.5),
-                            Size.mm(4.5),
-                            2, 1, 0, 2);
+    FLAT_SMALL("Horizontal Small 1", Size.mm(9.5), 2, 1, 0, 2),
+    FLAT_SMALL2("Horizontal Small 2", Size.mm(9.5), 4, 1, 0, 2),
+    FLAT_XSMALL("Horizontal X-Small", Size.mm(5), 2, 1, 0, 2),
+    FLAT_LARGE("Horizontal Medium", Size.mm(9.5), 4, 1, 0, 2),
+    FLAT_XLARGE("Horizontal Large", Size.mm(13), 5, 2, 0, 4),
+    VERTICAL_INLINE("Vertical Inline", Size.mm(9.5), Size.mm(4.5), 0, 1, 0, 2),
+    VERTICAL_OFFSET("Vertical Offset 1", Size.mm(9.5), Size.mm(4.5), 1, 1, 0, 2),
+    VERTICAL_OFFSET_BIG_GAP("Vertical Offset 2", Size.mm(9.5), Size.mm(4.5), 2, 1, 0, 2);
 
     private Size bodyLength;
     private Size bodyWidth;
     private Map<Orientation, int[]> multipliers = new HashMap<>();
     private String label;
 
-    TrimmerType(
-        String label, Size bodyLength, Size bodyWidth, int mx1, int my1, int mx2, int my2) {
+    TrimmerType(String label, Size bodyLength, Size bodyWidth, int mx1, int my1, int mx2, int my2) {
       this.label = label;
       this.bodyLength = bodyLength;
       this.bodyWidth = bodyWidth;
-      this.multipliers.put(Orientation.DEFAULT, new int[]{ mx1, my1, mx2, my2 });
-      this.multipliers.put(Orientation._90, new int[]{ -my1, mx1, -my2, mx2 });
-      this.multipliers.put(Orientation._180, new int[]{ -mx1, -my1, -mx2, -my2 });
-      this.multipliers.put(Orientation._270, new int[]{ my1, -mx1, my2, -mx2 });
+      this.multipliers.put(Orientation.DEFAULT, new int[] {mx1, my1, mx2, my2});
+      this.multipliers.put(Orientation._90, new int[] {-my1, mx1, -my2, mx2});
+      this.multipliers.put(Orientation._180, new int[] {-mx1, -my1, -mx2, -my2});
+      this.multipliers.put(Orientation._270, new int[] {my1, -mx1, my2, -mx2});
     }
 
     TrimmerType(String label, Size bodySize, int mx1, int my1, int mx2, int my2) {

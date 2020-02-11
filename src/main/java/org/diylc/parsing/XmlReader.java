@@ -47,9 +47,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
-   Simplified XML reader for unmarshaling Project files.
- */
+/** Simplified XML reader for unmarshaling Project files. */
 public class XmlReader {
 
   private static Logger LOG = LogManager.getLogger(XmlReader.class);
@@ -128,11 +126,12 @@ public class XmlReader {
     NodeList children = element.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
-      LOG.debug("Child #{} {} name {} value {}",
-                i,
-                nodeTypeToString(child.getNodeType()),
-                child.getNodeName(),
-                child.getNodeValue());
+      LOG.debug(
+          "Child #{} {} name {} value {}",
+          i,
+          nodeTypeToString(child.getNodeType()),
+          child.getNodeName(),
+          child.getNodeValue());
       switch (child.getNodeType()) {
         case Node.ELEMENT_NODE:
           // node.tagName = child.getNodeName();

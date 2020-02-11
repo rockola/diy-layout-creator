@@ -57,8 +57,7 @@ public class Summary implements Comparable<Summary> {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     Summary other = (Summary) obj;

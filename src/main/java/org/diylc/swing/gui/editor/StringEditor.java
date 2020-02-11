@@ -39,23 +39,25 @@ public class StringEditor extends JTextField {
     super(property.getValue() == null ? "" : (String) property.getValue());
     this.property = property;
     this.setColumns(32);
-    getDocument().addDocumentListener(new DocumentListener() {
+    getDocument()
+        .addDocumentListener(
+            new DocumentListener() {
 
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-          textChanged();
-        }
+              @Override
+              public void changedUpdate(DocumentEvent e) {
+                textChanged();
+              }
 
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-          textChanged();
-        }
+              @Override
+              public void insertUpdate(DocumentEvent e) {
+                textChanged();
+              }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-          textChanged();
-        }
-      });
+              @Override
+              public void removeUpdate(DocumentEvent e) {
+                textChanged();
+              }
+            });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

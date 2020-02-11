@@ -56,6 +56,7 @@ import org.diylc.swingframework.IDrawingProvider;
  * Export layout images.
  *
  * <p>Export destinations:
+ *
  * <ul>
  *   <li>PDF
  *   <li>PNG
@@ -85,51 +86,51 @@ public class DrawingExporter {
   public static void print(final IDrawingProvider provider) throws PrinterException {
     PrinterJob printJob = PrinterJob.getPrinterJob();
     final int pageCount = provider.getPageCount();
-    printJob.setPrintable(new Printable() {
+    printJob.setPrintable(
+        new Printable() {
 
-        @Override
-        public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
-          if (pageIndex >= pageCount) {
-            return (NO_SUCH_PAGE);
-          } else {
-            Graphics2D g2d = (Graphics2D) graphics;
-
-            Dimension d = provider.getSize();
-
-            double pageRatio = (pageFormat.getWidth() / pageFormat.getHeight());
-            double imageRatio = d.getWidth() / d.getHeight();
-            double scale;
-            if (imageRatio > pageRatio) {
-              scale = ((pageFormat.getWidth() - 2 * margin) / d.getWidth());
+          @Override
+          public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+              throws PrinterException {
+            if (pageIndex >= pageCount) {
+              return (NO_SUCH_PAGE);
             } else {
-              scale = ((pageFormat.getHeight() - 2 * margin) / d.getHeight());
+              Graphics2D g2d = (Graphics2D) graphics;
+
+              Dimension d = provider.getSize();
+
+              double pageRatio = (pageFormat.getWidth() / pageFormat.getHeight());
+              double imageRatio = d.getWidth() / d.getHeight();
+              double scale;
+              if (imageRatio > pageRatio) {
+                scale = ((pageFormat.getWidth() - 2 * margin) / d.getWidth());
+              } else {
+                scale = ((pageFormat.getHeight() - 2 * margin) / d.getHeight());
+              }
+              if (scale > 1) {
+                scale = 1d;
+              }
+
+              g2d.translate(
+                  pageFormat.getImageableX() + margin, pageFormat.getImageableY() + margin);
+
+              g2d.setFont(new Font(Config.getString("font.sans-serif"), Font.PLAIN, 6));
+              FontMetrics metrics = g2d.getFontMetrics();
+              g2d.setColor(Color.gray);
+
+              if (scale < 1) {
+                String warningStr = "Note: image has been scaled down to fit the page.";
+                g2d.drawString(warningStr, 0, (int) (d.getHeight() * scale + metrics.getHeight()));
+              }
+
+              // g2d.scale(scale, scale);
+
+              provider.draw(pageIndex, g2d, scale);
+
+              return (PAGE_EXISTS);
             }
-            if (scale > 1) {
-              scale = 1d;
-            }
-
-            g2d.translate(
-                pageFormat.getImageableX() + margin,
-                pageFormat.getImageableY() + margin);
-
-            g2d.setFont(new Font(Config.getString("font.sans-serif"), Font.PLAIN, 6));
-            FontMetrics metrics = g2d.getFontMetrics();
-            g2d.setColor(Color.gray);
-
-            if (scale < 1) {
-              String warningStr = "Note: image has been scaled down to fit the page.";
-              g2d.drawString(warningStr, 0, (int) (d.getHeight() * scale + metrics.getHeight()));
-            }
-
-            // g2d.scale(scale, scale);
-
-            provider.draw(pageIndex, g2d, scale);
-
-            return (PAGE_EXISTS);
           }
-        }
-      });
+        });
     if (printJob.printDialog()) {
       printJob.print();
     }
@@ -235,10 +236,11 @@ public class DrawingExporter {
       Dimension d = provider.getSize();
       double factor = 1f * PNG_RESOLUTION / SCREEN_RESOLUTION;
       for (int i = 0; i < pageCount; i++) {
-        BufferedImage image = new BufferedImage(
-            (int) (d.getWidth() * factor),
-            (int) (d.getHeight() * factor),
-            BufferedImage.TYPE_INT_RGB);
+        BufferedImage image =
+            new BufferedImage(
+                (int) (d.getWidth() * factor),
+                (int) (d.getHeight() * factor),
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
         provider.draw(0, g2d, factor);
         // Move down
@@ -247,8 +249,8 @@ public class DrawingExporter {
         g2d.dispose();
         File outFile =
             i == 0
-            ? file
-            : new File(file.getAbsolutePath().replaceAll("\\.png", "_" + (i + 1) + ".png"));
+                ? file
+                : new File(file.getAbsolutePath().replaceAll("\\.png", "_" + (i + 1) + ".png"));
         ImageIO.write(image, "PNG", outFile);
       }
     } catch (Exception e) {

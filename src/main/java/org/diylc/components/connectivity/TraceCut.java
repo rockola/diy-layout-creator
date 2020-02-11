@@ -101,16 +101,10 @@ public class TraceCut extends AbstractComponent<Void> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    Area.rect(
-        0,
-        2 / factor,
-        width - 1,
-        height - 4 / factor).fillDraw(g2d, AbstractBoard.BOARD_COLOR, AbstractBoard.BORDER_COLOR);
-    Area.rect(
-        1 / factor,
-        width / 3,
-        width - 2 / factor,
-        getClosestOdd(width / 3) + 1).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(0, 2 / factor, width - 1, height - 4 / factor)
+        .fillDraw(g2d, AbstractBoard.BOARD_COLOR, AbstractBoard.BORDER_COLOR);
+    Area.rect(1 / factor, width / 3, width - 2 / factor, getClosestOdd(width / 3) + 1)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
 
     g2d.setColor(AbstractBoard.BOARD_COLOR);
     g2d.fillRoundRect(
@@ -121,16 +115,10 @@ public class TraceCut extends AbstractComponent<Void> {
         width / 3,
         width / 3);
 
-    Area.rect(
-        1 / factor,
-        2 / factor,
-        width - 2 / factor,
-        4 / factor).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
-    Area.rect(
-        1 / factor,
-        height - 6 / factor,
-        width - 2 / factor,
-        4 / factor).fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(1 / factor, 2 / factor, width - 2 / factor, 4 / factor)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
+    Area.rect(1 / factor, height - 6 / factor, width - 2 / factor, 4 / factor)
+        .fillDraw(g2d, COPPER_COLOR, COPPER_COLOR.darker());
 
     g2d.setColor(CANVAS_COLOR);
     g2d.fillOval(

@@ -74,8 +74,7 @@ public class Group implements Cloneable, Comparable<Group> {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     Group other = (Group) obj;

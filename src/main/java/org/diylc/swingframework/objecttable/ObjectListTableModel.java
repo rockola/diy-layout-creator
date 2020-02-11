@@ -29,9 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * {@link TableModel} that parses object of type <code>T</code> based
- * on the specified rules and shows each object in a separate
- * rows. Individual properties are shown as cell in the row.
+ * {@link TableModel} that parses object of type <code>T</code> based on the specified rules and
+ * shows each object in a separate rows. Individual properties are shown as cell in the row.
  *
  * @see ObjectListTable
  * @author Branislav Stojkovic

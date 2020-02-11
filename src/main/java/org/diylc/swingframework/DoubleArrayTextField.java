@@ -35,8 +35,8 @@ import javax.swing.event.DocumentListener;
 import org.diylc.images.Icon;
 
 /**
- * {@link JTextField} adapted to display {@link Double}.
- * Use {@link #getValue()} and {@link #setValue(Double)} to read and write.
+ * {@link JTextField} adapted to display {@link Double}. Use {@link #getValue()} and {@link
+ * #setValue(Double)} to read and write.
  *
  * @author Branislav Stojkovic
  */

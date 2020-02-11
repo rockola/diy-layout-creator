@@ -82,10 +82,12 @@ public class PropertyEditorDialog extends ButtonDialog {
         try {
           property.getValidator().validate(property.getValue());
         } catch (ValidationException ve) {
-          App.ui().error(String.format(
-              App.getString("message.property-editor.input-error"),
-              property.getName(),
-              ve.getMessage()));
+          App.ui()
+              .error(
+                  String.format(
+                      App.getString("message.property-editor.input-error"),
+                      property.getName(),
+                      ve.getMessage()));
           return false;
         }
       }
@@ -116,15 +118,16 @@ public class PropertyEditorDialog extends ButtonDialog {
 
       Component editor = FieldEditorFactory.createFieldEditor(property);
 
-      editor.addKeyListener(new KeyAdapter() {
+      editor.addKeyListener(
+          new KeyAdapter() {
 
-          @Override
-          public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-              getButton(OK).doClick();
+            @Override
+            public void keyPressed(KeyEvent e) {
+              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                getButton(OK).doClick();
+              }
             }
-          }
-        });
+          });
 
       editorPanel.add(editor, gbc);
 
@@ -161,13 +164,14 @@ public class PropertyEditorDialog extends ButtonDialog {
   private JCheckBox createDefaultCheckBox(final PropertyWrapper property) {
     final JCheckBox checkBox = new JCheckBox();
     checkBox.setToolTipText(DEFAULT_BOX_TOOLTIP);
-    checkBox.addActionListener((e) -> {
-      if (checkBox.isSelected()) {
-        defaultedProperties.add(property);
-      } else {
-        defaultedProperties.remove(property);
-      }
-    });
+    checkBox.addActionListener(
+        (e) -> {
+          if (checkBox.isSelected()) {
+            defaultedProperties.add(property);
+          } else {
+            defaultedProperties.remove(property);
+          }
+        });
     return checkBox;
   }
 

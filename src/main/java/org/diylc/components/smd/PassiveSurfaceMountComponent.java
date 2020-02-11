@@ -296,19 +296,15 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
     int radius = 4 * width / 32;
     int thickness = getClosestOdd(width / 2);
     g2d.rotate(Math.PI / 4, width / 2, height / 2);
-    Area rect = Area.roundRect(
-        (width - thickness) / 2,
-        4 * width / 32,
-        thickness,
-        height - 8 * width / 32,
-        radius);
+    Area rect =
+        Area.roundRect(
+            (width - thickness) / 2, 4 * width / 32, thickness, height - 8 * width / 32, radius);
     rect.fillDraw(g2d, getBodyColor(), getBorderColor());
     Area contactArea = new Area();
     int contactSize = 4 * width / 32;
-    contactArea.add(Area.rect(
-        (width - thickness) / 2, 4 * width / 32, thickness, contactSize));
-    contactArea.add(Area.rect(
-        (width - thickness) / 2, height - 8 * width / 32, thickness, contactSize));
+    contactArea.add(Area.rect((width - thickness) / 2, 4 * width / 32, thickness, contactSize));
+    contactArea.add(
+        Area.rect((width - thickness) / 2, height - 8 * width / 32, thickness, contactSize));
     contactArea.intersect(new Area(rect));
     contactArea.fill(g2d, PIN_COLOR);
   }

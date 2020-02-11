@@ -78,15 +78,16 @@ public class ComponentTabbedPane extends JTabbedPane {
       JPanel panel = createTab((componentTypes.get(category)));
       addTab(category, panel);
     }
-    addChangeListener(e -> {
-      App.ui().getPresenter().setNewComponentTypeSlot(null, null, false);
-      // Refresh recent components if needed
-      if (pendingRecentComponents != null) {
-        refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
-        getRecentToolbar().invalidate();
-        pendingRecentComponents = null;
-      }
-    });
+    addChangeListener(
+        e -> {
+          App.ui().getPresenter().setNewComponentTypeSlot(null, null, false);
+          // Refresh recent components if needed
+          if (pendingRecentComponents != null) {
+            refreshRecentComponentsToolbar(getRecentToolbar(), pendingRecentComponents);
+            getRecentToolbar().invalidate();
+            pendingRecentComponents = null;
+          }
+        });
   }
 
   private JPanel createTab(List<ComponentType> componentTypes) {
@@ -219,8 +220,9 @@ public class ComponentTabbedPane extends JTabbedPane {
           LOG.trace("refreshRecentComponentsToolbar(...) Unknown class {}", componentClassName);
         } else {
           LOG.trace("refreshRecentComponentsToolbar(...) Found class for {}", componentClassName);
-          toolbar.add(ComponentButtonFactory.create(
-              plugInPort, componentType, createVariantPopup(componentType)));
+          toolbar.add(
+              ComponentButtonFactory.create(
+                  plugInPort, componentType, createVariantPopup(componentType)));
         }
       } catch (Exception e) {
         LOG.error("Could not create recent component button for " + componentClassName, e);
@@ -231,35 +233,36 @@ public class ComponentTabbedPane extends JTabbedPane {
   private JPopupMenu createVariantPopup(final ComponentType componentType) {
     final JPopupMenu variantPopup = new JPopupMenu();
     variantPopup.add("Loading...");
-    variantPopup.addPopupMenuListener(new PopupMenuListener() {
+    variantPopup.addPopupMenuListener(
+        new PopupMenuListener() {
 
-        @Override
-        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-          variantPopup.removeAll();
-          List<Template> variants = componentType.getVariants();
-          if (variants == null || variants.isEmpty()) {
-            JMenuItem item = new JMenuItem("<no variants>");
-            item.setEnabled(false);
-            variantPopup.add(item);
-          } else {
-            for (Template variant : variants) {
-              JMenuItem item = ComponentButtonFactory.createVariantItem(
-                  plugInPort, variant, componentType);
+          @Override
+          public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            variantPopup.removeAll();
+            List<Template> variants = componentType.getVariants();
+            if (variants == null || variants.isEmpty()) {
+              JMenuItem item = new JMenuItem("<no variants>");
+              item.setEnabled(false);
               variantPopup.add(item);
+            } else {
+              for (Template variant : variants) {
+                JMenuItem item =
+                    ComponentButtonFactory.createVariantItem(plugInPort, variant, componentType);
+                variantPopup.add(item);
+              }
             }
           }
-        }
 
-        @Override
-        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-          //
-        }
+          @Override
+          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            //
+          }
 
-        @Override
-        public void popupMenuCanceled(PopupMenuEvent e) {
-          //
-        }
-      });
+          @Override
+          public void popupMenuCanceled(PopupMenuEvent e) {
+            //
+          }
+        });
     return variantPopup;
   }
 }

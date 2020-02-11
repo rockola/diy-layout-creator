@@ -42,9 +42,12 @@ public class ConfigActions {
 
   public void injectActions(IPlugInPort plugInPort, String menuName) {
     for (ConfigAction a : actions) {
-      a.setMenuItem(App.ui().injectMenuAction(
-          ActionFactory.createConfigAction(plugInPort, a.getName(), a.getAction(), a.getDefault()),
-          menuName));
+      a.setMenuItem(
+          App.ui()
+              .injectMenuAction(
+                  ActionFactory.createConfigAction(
+                      plugInPort, a.getName(), a.getAction(), a.getDefault()),
+                  menuName));
     }
   }
 

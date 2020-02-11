@@ -136,9 +136,7 @@ public class OpenJack extends AbstractJack {
           new Point(controlPoints[0].x, (int) (controlPoints[0].y + holeToEdge * 1.25));
       AffineTransform ringTransform =
           AffineTransform.getRotateInstance(
-              getType().isSwitched() ? SWITCH_THETA : RING_THETA,
-              controlPoints[0].x,
-              centerY);
+              getType().isSwitched() ? SWITCH_THETA : RING_THETA, controlPoints[0].x, centerY);
       AffineTransform sleeveTransform =
           AffineTransform.getRotateInstance(
               getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
@@ -171,12 +169,7 @@ public class OpenJack extends AbstractJack {
 
   private void drawJackConnectionLabel(Graphics2D g2d, String text, Point position) {
     StringUtils.drawCenteredText(
-        g2d,
-        text,
-        position.x,
-        position.y,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        g2d, text, position.x, position.y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
   }
 
   public Area[] getBody() {
@@ -194,63 +187,78 @@ public class OpenJack extends AbstractJack {
       final int holeToEdge = (int) HOLE_TO_EDGE.convertToPixels();
       final int centerY = y + springLength - holeToEdge;
 
-      Area wafer = new Area(new Ellipse2D.Double(
-          x - outerDiameter / 2,
-          centerY - outerDiameter / 2,
-          outerDiameter,
-          outerDiameter));
-      wafer.subtract(new Area(new Ellipse2D.Double(
-          x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
+      Area wafer =
+          new Area(
+              new Ellipse2D.Double(
+                  x - outerDiameter / 2,
+                  centerY - outerDiameter / 2,
+                  outerDiameter,
+                  outerDiameter));
+      wafer.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
       body[0] = wafer;
 
-      Area tip = new Area(new RoundRectangle2D.Double(
-          x - springWidth / 2,
-          y - holeToEdge,
-          springWidth,
-          springLength - ringDiameter / 2,
-          springWidth,
-          springWidth));
-      tip.subtract(new Area(new Ellipse2D.Double(
-          x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area tip =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - springWidth / 2,
+                  y - holeToEdge,
+                  springWidth,
+                  springLength - ringDiameter / 2,
+                  springWidth,
+                  springWidth));
+      tip.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
       tip.subtract(wafer);
       body[1] = tip;
 
-      Area sleeve = new Area(new RoundRectangle2D.Double(
-          x - springWidth / 2,
-          y - holeToEdge,
-          springWidth,
-          springLength,
-          springWidth,
-          springWidth));
-      sleeve.subtract(new Area(new Ellipse2D.Double(
-          x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
+      Area sleeve =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - springWidth / 2,
+                  y - holeToEdge,
+                  springWidth,
+                  springLength,
+                  springWidth,
+                  springWidth));
+      sleeve.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - holeDiameter / 2, y - holeDiameter / 2, holeDiameter, holeDiameter)));
       sleeve.transform(
           AffineTransform.getRotateInstance(
-              getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
-              x,
-              centerY));
-      sleeve.add(new Area(new Ellipse2D.Double(
-          x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
-      sleeve.subtract(new Area(new Ellipse2D.Double(
-          x - innerDiameter / 2,
-          centerY - innerDiameter / 2,
-          innerDiameter,
-          innerDiameter)));
+              getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA, x, centerY));
+      sleeve.add(
+          new Area(
+              new Ellipse2D.Double(
+                  x - ringDiameter / 2, centerY - ringDiameter / 2, ringDiameter, ringDiameter)));
+      sleeve.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - innerDiameter / 2,
+                  centerY - innerDiameter / 2,
+                  innerDiameter,
+                  innerDiameter)));
       body[2] = sleeve;
 
       if (!getType().isMono()) {
-        Area ringOrSwitch = new Area(new RoundRectangle2D.Double(
-            x - springWidth / 2,
-            y - holeToEdge,
-            springWidth,
-            springLength,
-            springWidth,
-            springWidth));
+        Area ringOrSwitch =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x - springWidth / 2,
+                    y - holeToEdge,
+                    springWidth,
+                    springLength,
+                    springWidth,
+                    springWidth));
         ringOrSwitch.subtract(Area.circle(x, y, holeDiameter));
-        ringOrSwitch.transform(AffineTransform.getRotateInstance(
-            getType().isSwitched() ? SWITCH_THETA : RING_THETA,
-            x,
-            centerY));
+        ringOrSwitch.transform(
+            AffineTransform.getRotateInstance(
+                getType().isSwitched() ? SWITCH_THETA : RING_THETA, x, centerY));
         ringOrSwitch.subtract(Area.circle(x, centerY, outerDiameter));
         body[3] = ringOrSwitch;
       }
@@ -281,13 +289,11 @@ public class OpenJack extends AbstractJack {
     final int centerY = y + springLength - holeToEdge;
 
     AffineTransform.getRotateInstance(
-        getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA,
-            x,
-            centerY).transform(controlPoints[0], controlPoints[1]);
+            getType().isSwitched() ? SLEEVE_SWITCHED_THETA : SLEEVE_THETA, x, centerY)
+        .transform(controlPoints[0], controlPoints[1]);
     AffineTransform.getRotateInstance(
-        getType().isSwitched() ? SWITCH_THETA : RING_THETA,
-            x,
-            centerY).transform(controlPoints[0], controlPoints[2]);
+            getType().isSwitched() ? SWITCH_THETA : RING_THETA, x, centerY)
+        .transform(controlPoints[0], controlPoints[2]);
     // Rotate if needed
     if (getTheta() != 0) {
       AffineTransform rotation = AffineTransform.getRotateInstance(getTheta(), x, y);

@@ -32,10 +32,8 @@ import org.diylc.core.IDIYComponent;
 import org.diylc.parsing.XmlNode;
 
 /**
- * Annotation to use for each {@link IDIYComponent}
- * implementation. Describes component properties, how the component
- * should be represented, and how it interacts with the rest of the
- * system.
+ * Annotation to use for each {@link IDIYComponent} implementation. Describes component properties,
+ * how the component should be represented, and how it interacts with the rest of the system.
  *
  * @author Branislav Stojkovic
  */
@@ -44,82 +42,61 @@ import org.diylc.parsing.XmlNode;
 @Documented
 public @interface ComponentDescriptor {
 
-  /**
-     @return component type name.
-  */
+  /** @return component type name. */
   String name();
 
-  /**
-     @return component type description.
-  */
+  /** @return component type description. */
   String description();
 
   /**
-   * @return method that should be used to create a component. If
-   *     <code> CreationMethod.POINT_BY_POINT</code> is used, user
-   *     will have to select ending points before the component is
-   *     created.
+   * @return method that should be used to create a component. If <code>
+   *      CreationMethod.POINT_BY_POINT</code> is used, user will have to select ending points
+   *     before the component is created.
    */
   CreationMethod creationMethod() default CreationMethod.SINGLE_CLICK;
 
-  /**
-     @return component category, e.g. "Passive", "Semiconductors", etc.
-  */
+  /** @return component category, e.g. "Passive", "Semiconductors", etc. */
   String category();
 
-  /**
-     @return component author name.
-  */
+  /** @return component author name. */
   String author();
 
   /**
-   * @return prefix that will be used to generate component instance
-   *     names, e.g. "R" for resistors or "Q" for transistors.
+   * @return prefix that will be used to generate component instance names, e.g. "R" for resistors
+   *     or "Q" for transistors.
    */
   String instanceNamePrefix();
 
   /**
-     String specifyng XML tag from which this component can be
-     unmarshalled. Syntax is either "tag" or "tag:type", corresponding
-     to tag name or tag name and value of 'type' attribute
-     respectively.
-
-     @return tag string.
+   * String specifyng XML tag from which this component can be unmarshalled. Syntax is either "tag"
+   * or "tag:type", corresponding to tag name or tag name and value of 'type' attribute
+   * respectively.
+   *
+   * @return tag string.
    */
   String xmlTag() default XmlNode.NO_TAG;
 
-  /**
-     @return Z-order of the component.
-  */
+  /** @return Z-order of the component. */
   double zOrder();
 
-  /**
-     @return true if the component may go beyond it's predefined
-     layer without warning the user.
-   */
+  /** @return true if the component may go beyond it's predefined layer without warning the user. */
   boolean flexibleZOrder() default false;
 
-  /**
-   * @return controls what should be shown in the Bill of Materials.
-   */
+  /** @return controls what should be shown in the Bill of Materials. */
   BomPolicy bomPolicy() default BomPolicy.SHOW_ALL_NAMES;
 
-  /**
-   * @return true if component editor dialog should be shown in
-   *     Auto-Edit mode, false otherwise.
-   */
+  /** @return true if component editor dialog should be shown in Auto-Edit mode, false otherwise. */
   boolean autoEdit() default true;
 
   /**
-   * @return the transformer class that can rotate and/or mirror
-   *     objects of this class, if one exists
-   *
+   * @return the transformer class that can rotate and/or mirror objects of this class, if one
+   *     exists
    */
   Class<? extends IComponentTransformer> transformer() default DefaultTransformer.class;
 
   /**
-   * Defines if and how a component should appear in auto-generated
-   * project keywords. See {@link KeywordPolicy} for more info.
+   * Defines if and how a component should appear in auto-generated project keywords. See {@link
+   * KeywordPolicy} for more info.
    *
    * @return keyword policy.
    */

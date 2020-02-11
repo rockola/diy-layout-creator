@@ -21,18 +21,18 @@
 package org.diylc.components.electromechanical;
 
 public enum ToggleSwitchType {
-  SPST(1,1),
-  SPDT(1,2),
-  DPDT(2,2),
-  _DP3T_mustang(2,3),
-  _3PDT(3,2),
-  _4PDT(4,2),
-  _5PDT(5,2),
-  SPDT_off(1,2),
-  DPDT_off(2,2),
-  _3PDT_off(3,2),
-  _4PDT_off(4,2),
-  _5PDT_off(5,2);
+  SPST(1, 1),
+  SPDT(1, 2),
+  DPDT(2, 2),
+  _DP3T_mustang(2, 3),
+  _3PDT(3, 2),
+  _4PDT(4, 2),
+  _5PDT(5, 2),
+  SPDT_off(1, 2),
+  DPDT_off(2, 2),
+  _3PDT_off(3, 2),
+  _4PDT_off(4, 2),
+  _5PDT_off(5, 2);
 
   private int switchPoles;
   private int switchThrows;

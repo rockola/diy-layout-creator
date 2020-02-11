@@ -54,23 +54,26 @@ public class MultiLineStringEditor extends JScrollPane {
       textArea = new HtmlTextArea(property.getValue() == null ? "" : (String) property.getValue());
       textArea.setFont(getFont());
       oldBackground = textArea.getBackground();
-      textArea.getDocument().addDocumentListener(new DocumentListener() {
+      textArea
+          .getDocument()
+          .addDocumentListener(
+              new DocumentListener() {
 
-          @Override
-          public void changedUpdate(DocumentEvent e) {
-            textChanged();
-          }
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                  textChanged();
+                }
 
-          @Override
-          public void insertUpdate(DocumentEvent e) {
-            textChanged();
-          }
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                  textChanged();
+                }
 
-          @Override
-          public void removeUpdate(DocumentEvent e) {
-            textChanged();
-          }
-        });
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                  textChanged();
+                }
+              });
       if (!property.isUnique()) {
         textArea.setBackground(Constants.MULTI_VALUE_COLOR);
       }

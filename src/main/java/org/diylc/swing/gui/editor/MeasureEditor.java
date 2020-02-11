@@ -66,8 +66,9 @@ public class MeasureEditor extends Container {
         });
     add(valueField, BorderLayout.CENTER);
     try {
-      Type type = ((ParameterizedType) property.getType().getGenericSuperclass())
-                  .getActualTypeArguments()[0];
+      Type type =
+          ((ParameterizedType) property.getType().getGenericSuperclass())
+              .getActualTypeArguments()[0];
       Method method = ((Class<?>) type).getMethod("values");
       unitBox = new JComboBox((Object[]) method.invoke(null));
       unitBox.setSelectedItem(measure == null ? null : measure.getUnit());
@@ -86,9 +87,10 @@ public class MeasureEditor extends Container {
   private void actOnChange(PropertyWrapper property) {
     try {
       Constructor<?> ctor = property.getType().getConstructors()[0];
-      AbstractMeasure<?> newMeasure = (AbstractMeasure<?>) ctor.newInstance(
-          valueField.getValue(),
-          (Enum<? extends Unit>) unitBox.getSelectedItem());
+      AbstractMeasure<?> newMeasure =
+          (AbstractMeasure<?>)
+              ctor.newInstance(
+                  valueField.getValue(), (Enum<? extends Unit>) unitBox.getSelectedItem());
       property.setValue(newMeasure);
       property.setChanged(true);
       valueField.setBackground(oldBackground);

@@ -41,9 +41,7 @@ import org.diylc.core.Theme;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
 
-/**
- * Main class that runs the application.
- */
+/** Main class that runs the application. */
 public class App {
 
   private static final Logger LOG = LogManager.getLogger(App.class);
@@ -65,11 +63,10 @@ public class App {
 
   // ----------------------------------------------------------------
   /**
-     Get boolean value for configuration item, or use given default if
-     not set.
-
-     @param key Name of configuration item.
-     @param defaultValue Value to use if not set.
+   * Get boolean value for configuration item, or use given default if not set.
+   *
+   * @param key Name of configuration item.
+   * @param defaultValue Value to use if not set.
    */
   public static boolean getBoolean(String key, boolean defaultValue) {
     // First look in Config, then in ConfigurationManager
@@ -78,31 +75,30 @@ public class App {
   }
 
   /**
-     Get boolean value for configuration item, defaulting to false if
-     not set.
-
-     @param key Name of configuration item.
+   * Get boolean value for configuration item, defaulting to false if not set.
+   *
+   * @param key Name of configuration item.
    */
   public static boolean getBoolean(String key) {
     return getBoolean(key, false);
   }
 
   /**
-     Get boolean value for configuration item specified by
-     Config.Flag, or use given default if not set.
-
-     @param flag Name of configuration item.
-     @param defaultValue Value to use if not set.
+   * Get boolean value for configuration item specified by Config.Flag, or use given default if not
+   * set.
+   *
+   * @param flag Name of configuration item.
+   * @param defaultValue Value to use if not set.
    */
   public static boolean getBoolean(Config.Flag flag, boolean defaultValue) {
     return ConfigurationManager.getBoolean(flag, defaultValue);
   }
 
   /**
-     Get boolean value for configuration item specified by
-     Config.Flag, defaulting to false if not set.
-
-     @param flag Name of configuration item.
+   * Get boolean value for configuration item specified by Config.Flag, defaulting to false if not
+   * set.
+   *
+   * @param flag Name of configuration item.
    */
   public static boolean getBoolean(Config.Flag flag) {
     return ConfigurationManager.getBoolean(flag, false);
@@ -121,10 +117,10 @@ public class App {
   }
 
   /**
-     Get string from configuration, or given default if not found.
-
-     @param key Name of configuration parameter.
-     @param defaultValue Default value if key not found in configuration.
+   * Get string from configuration, or given default if not found.
+   *
+   * @param key Name of configuration parameter.
+   * @param defaultValue Default value if key not found in configuration.
    */
   public static String getString(String key, String defaultValue) {
     String s = Config.getString(key);
@@ -195,28 +191,26 @@ public class App {
   }
 
   /**
-     Get full version string.
-
-     <p>The format for the version string is "x.y.z{-specifier}",
-     where x = major version, y = minor version, z = build number, and
-     specifier is an optional string specifying, for example, an
-     alpha build.
-
-     @return Application version string.
-  */
+   * Get full version string.
+   *
+   * <p>The format for the version string is "x.y.z{-specifier}", where x = major version, y = minor
+   * version, z = build number, and specifier is an optional string specifying, for example, an
+   * alpha build.
+   *
+   * @return Application version string.
+   */
   public static String getFullVersionString() {
     return getString("app.version");
   }
 
   /**
-     Get version string.
-
-     <p>If full version string contains a hyphen (example:
-     "4.0.0-testing"), the hyphen and the substring following it are
-     stripped.
-
-     @return String representing the current version.
-  */
+   * Get version string.
+   *
+   * <p>If full version string contains a hyphen (example: "4.0.0-testing"), the hyphen and the
+   * substring following it are stripped.
+   *
+   * @return String representing the current version.
+   */
   public static String getVersionString() {
     String v = getFullVersionString();
     int hyphen = v.indexOf("-");
@@ -272,27 +266,21 @@ public class App {
     return getBoolean(Config.Flag.METRIC, true);
   }
 
-  /**
-     @return previous value of 'metric'.
-   */
+  /** @return previous value of 'metric'. */
   public static boolean setMetric(boolean isMetric) {
     boolean previous = metric();
     ConfigurationManager.putValue(Config.Flag.METRIC, isMetric);
     return previous;
   }
 
-  /**
-     @return true if outline mode is selected, otherwise false.
-   */
+  /** @return true if outline mode is selected, otherwise false. */
   public static boolean outlineMode() {
     boolean outline = getBoolean(Config.Flag.OUTLINE, false);
     LOG.trace("outlineMode() is {}", outline);
     return outline;
   }
 
-  /**
-     @return previous value of 'outline mode'.
-   */
+  /** @return previous value of 'outline mode'. */
   public static boolean setOutlineMode(boolean isOutline) {
     boolean previous = outlineMode();
     LOG.trace("setOutlineMode({}) was {}", isOutline, previous);
@@ -367,11 +355,11 @@ public class App {
   // ****************************************************************
 
   /**
-     Application main method.
-     Starts the application, optionally loading a Project if specified in args.
-
-     @param args Command line arguments
-  */
+   * Application main method. Starts the application, optionally loading a Project if specified in
+   * args.
+   *
+   * @param args Command line arguments
+   */
   public static void main(String[] args) {
 
     LOG.info("{} is running", App.title());
@@ -404,22 +392,20 @@ public class App {
         System.getProperty("os.version"),
         System.getProperty("java.runtime.version"),
         System.getProperty("java.vm.vendor"));
-    LOG.info(
-        "Starting {} with working directory {}",
-        App.title(),
-        System.getProperty("user.dir"));
+    LOG.info("Starting {} with working directory {}", App.title(), System.getProperty("user.dir"));
 
     // TODO: make sure proper Java options are always taken into
     // account so that SCRIPT_RUN property is not needed -
     // is different handling per platform required?
     String scriptRun = System.getProperty(SCRIPT_RUN);
     if (!scriptRun.equals("true")) {
-      int response = JOptionPane.showConfirmDialog(
-          null,
-          Message.getHtml("startup-warning"),
-          Config.getString("app.title"),
-          JOptionPane.YES_NO_OPTION,
-          JOptionPane.WARNING_MESSAGE);
+      int response =
+          JOptionPane.showConfirmDialog(
+              null,
+              Message.getHtml("startup-warning"),
+              Config.getString("app.title"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
       if (response != JOptionPane.YES_OPTION) {
         System.exit(0);
       }

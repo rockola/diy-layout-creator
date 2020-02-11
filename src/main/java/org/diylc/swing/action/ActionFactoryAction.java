@@ -47,8 +47,7 @@ public abstract class ActionFactoryAction extends AbstractAction {
     this(plugInPort, name, App.getKeyStroke(actionName), icon);
   }
 
-  protected ActionFactoryAction(
-      IPlugInPort plugInPort, String name, String actionName) {
+  protected ActionFactoryAction(IPlugInPort plugInPort, String name, String actionName) {
     this(plugInPort, name, App.getKeyStroke(actionName), null);
   }
 

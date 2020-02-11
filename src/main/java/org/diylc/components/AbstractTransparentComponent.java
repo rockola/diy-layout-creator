@@ -46,30 +46,28 @@ public abstract class AbstractTransparentComponent<T> extends AbstractComponent<
     final Composite oldComposite = g2d.getComposite();
     alpha = Math.max(0, Math.min(MAX_ALPHA, alpha));
     if (alpha < MAX_ALPHA) {
-      g2d.setComposite(AlphaComposite.getInstance(
-          AlphaComposite.SRC_OVER,
-          1f * alpha / MAX_ALPHA));
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f * alpha / MAX_ALPHA));
     }
     return oldComposite;
   }
 
   /**
-     Set transparency using alpha.
-
-     @param g2d Graphics context.
-     @return old Composite for later restoration
-  */
+   * Set transparency using alpha.
+   *
+   * @param g2d Graphics context.
+   * @return old Composite for later restoration
+   */
   protected Composite setTransparency(Graphics2D g2d) {
     return setAlphaTransparency(g2d, alpha);
   }
 
   /**
-     Set transparency using alpha, but use a different alpha when dragging.
-
-     @param g2d Graphics context.
-     @param alphaWhenDragging Alpha to use when dragging (0 = transparent, 100 = opaque).
-     @return old Composite for later restoration
-  */
+   * Set transparency using alpha, but use a different alpha when dragging.
+   *
+   * @param g2d Graphics context.
+   * @param alphaWhenDragging Alpha to use when dragging (0 = transparent, 100 = opaque).
+   * @return old Composite for later restoration
+   */
   protected Composite setTransparency(Graphics2D g2d, int alphaWhenDragging) {
     return setAlphaTransparency(g2d, isDragging() ? alphaWhenDragging : alpha);
   }

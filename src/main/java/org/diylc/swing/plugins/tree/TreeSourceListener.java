@@ -34,12 +34,12 @@ import org.diylc.common.IPlugInPort;
  */
 class TreeSourceListener implements DragSourceListener {
 
-  //@SuppressWarnings("unused")
-  //private IPlugInPort presenter;
+  // @SuppressWarnings("unused")
+  // private IPlugInPort presenter;
 
   public TreeSourceListener(IPlugInPort presenter) {
     super();
-    //this.presenter = presenter;
+    // this.presenter = presenter;
   }
 
   @Override

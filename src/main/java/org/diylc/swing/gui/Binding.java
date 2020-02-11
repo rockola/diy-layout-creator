@@ -90,9 +90,7 @@ public class Binding implements Serializable {
   public String toString() {
     return String.format(
         "<Binding keycode %d modifier %s action %s />",
-        this.getKeyCode(),
-        modifierToString(this.getModifier()),
-        this.getAction());
+        this.getKeyCode(), modifierToString(this.getModifier()), this.getAction());
   }
 
   public void setKeyCode(Integer keycode) {
@@ -126,8 +124,8 @@ public class Binding implements Serializable {
   }
 
   /**
-   * Compare modifier to this modifier. Should not be compared with ==
-   * in case new modifier flags are added.
+   * Compare modifier to this modifier. Should not be compared with == in case new modifier flags
+   * are added.
    *
    * @param m Other modifier
    */

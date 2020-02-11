@@ -36,11 +36,12 @@ public class BooleanEditor extends JCheckBox {
   public BooleanEditor(final PropertyWrapper property) {
     super();
     setSelected((Boolean) property.getValue());
-    addActionListener((e) -> {
-      property.setChanged(true);
-      setBackground(oldBackground);
-      property.setValue(isSelected());
-    });
+    addActionListener(
+        (e) -> {
+          property.setChanged(true);
+          setBackground(oldBackground);
+          property.setValue(isSelected());
+        });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

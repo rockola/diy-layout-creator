@@ -67,12 +67,16 @@ public class PotentiometerTransformer implements IComponentTransformer {
     potentiometer.setOrientation(o);
     for (int i = 0; i < potentiometer.getControlPointCount(); i++) {
       Point p = potentiometer.getControlPoint(i);
-      int px = p.x + (direction == IComponentTransformer.HORIZONTAL
-                      ? 2 * dx
-                      : potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x);
-      int py = p.y + (direction == IComponentTransformer.HORIZONTAL
-                      ? potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y
-                      : 2 * dy);
+      int px =
+          p.x
+              + (direction == IComponentTransformer.HORIZONTAL
+                  ? 2 * dx
+                  : potentiometer.getControlPoint(2).x - potentiometer.getControlPoint(0).x);
+      int py =
+          p.y
+              + (direction == IComponentTransformer.HORIZONTAL
+                  ? potentiometer.getControlPoint(2).y - potentiometer.getControlPoint(0).y
+                  : 2 * dy);
       potentiometer.setControlPoint(new Point(px, py), i);
     }
   }

@@ -35,8 +35,8 @@ import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.measures.AbstractMeasure;
 
 /**
- * Based on {@link PropertyWrapper#getType()}, creates an appropriate
- * {@link Component} that can edit that type.
+ * Based on {@link PropertyWrapper#getType()}, creates an appropriate {@link Component} that can
+ * edit that type.
  *
  * @author Branislav Stojkovic
  */
@@ -112,9 +112,8 @@ public class FieldEditorFactory {
       return editor;
     }
 
-    LOG.error("Unrecognized parameter type {} for {}",
-              property.getType().getName(),
-              property.getName());
+    LOG.error(
+        "Unrecognized parameter type {} for {}", property.getType().getName(), property.getName());
     return new JLabel("Unrecognized");
   }
 }

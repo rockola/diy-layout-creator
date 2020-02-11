@@ -25,9 +25,8 @@ import java.lang.reflect.Method;
 import org.diylc.core.IPropertyValidator;
 
 /**
- * Entity class for editable properties extracted from component
- * objects. Represents a single editable property together with it's
- * current value.
+ * Entity class for editable properties extracted from component objects. Represents a single
+ * editable property together with it's current value.
  *
  * @author Branislav Stojkovic
  */
@@ -175,7 +174,8 @@ public class PropertyWrapper implements Cloneable {
             this.type,
             this.getter,
             this.setter,
-            this.defaultable, this.validator,
+            this.defaultable,
+            this.validator,
             this.sortOrder);
     clone.value = this.value; // NOTE: not copied! //ola 20100110
     clone.changed = this.changed;

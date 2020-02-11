@@ -188,16 +188,18 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
       int smallDiameter = getClosestOdd(SMALL_DIAMETER.convertToPixels());
       int holeDistance = getClosestOdd(HOLE_DISTANCE.convertToPixels());
       int holeSize = getClosestOdd(HOLE_SIZE.convertToPixels());
-      TwoCircleTangent left = new TwoCircleTangent(
-          new Point2D.Double(x, y),
-          new Point2D.Double(x - holeDistance / 2, y),
-          largeDiameter / 2,
-          smallDiameter / 2);
-      TwoCircleTangent right = new TwoCircleTangent(
-          new Point2D.Double(x, y),
-          new Point2D.Double(x + holeDistance / 2, y),
-          largeDiameter / 2,
-          smallDiameter / 2);
+      TwoCircleTangent left =
+          new TwoCircleTangent(
+              new Point2D.Double(x, y),
+              new Point2D.Double(x - holeDistance / 2, y),
+              largeDiameter / 2,
+              smallDiameter / 2);
+      TwoCircleTangent right =
+          new TwoCircleTangent(
+              new Point2D.Double(x, y),
+              new Point2D.Double(x + holeDistance / 2, y),
+              largeDiameter / 2,
+              smallDiameter / 2);
 
       body[0] = left;
       body[0].add(right);
@@ -268,16 +270,19 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
     int largeR = getClosestOdd(width * 3d / 8);
     int smallR = getClosestOdd(width / 6d);
     int hole = 4 * width / 32;
-    Area area = new TwoCircleTangent(
-        new Point2D.Double(width * 0.5, height * 0.5),
-        new Point2D.Double(width / 2, height / 8d),
-        largeR,
-        smallR);
-    area.add((Area) new TwoCircleTangent(
-        new Point2D.Double(width * 0.5, height * 0.5),
-        new Point2D.Double(width / 2, height * 7 / 8d),
-        largeR,
-        smallR));
+    Area area =
+        new TwoCircleTangent(
+            new Point2D.Double(width * 0.5, height * 0.5),
+            new Point2D.Double(width / 2, height / 8d),
+            largeR,
+            smallR);
+    area.add(
+        (Area)
+            new TwoCircleTangent(
+                new Point2D.Double(width * 0.5, height * 0.5),
+                new Point2D.Double(width / 2, height * 7 / 8d),
+                largeR,
+                smallR));
     area.subtract(Area.circle(width / 2, height / 8, hole));
     area.subtract(Area.circle(width / 2, height * 7 / 8, hole));
     area.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, height / 2));

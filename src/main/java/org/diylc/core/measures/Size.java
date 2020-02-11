@@ -46,10 +46,9 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
   }
 
   /**
-     Convert to pixels.
-     Return value can be fractional. Use this when the return value is used in calculations.
-     Integer (int) values are returned directly by intPixels().
-  */
+   * Convert to pixels. Return value can be fractional. Use this when the return value is used in
+   * calculations. Integer (int) values are returned directly by intPixels().
+   */
   public double asPixels() {
     return getUnit().asPixels(getValue());
   }
@@ -58,9 +57,7 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
     return asPixels();
   }
 
-  /**
-    Convert to an integer number of pixels.
-  */
+  /** Convert to an integer number of pixels. */
   public int intPixels() {
     return (int) convertToPixels();
   }
@@ -102,9 +99,7 @@ public class Size extends AbstractMeasure<SizeUnit> implements Comparable<Size> 
 
   @Override
   public int compareTo(Size o) {
-    return Double.compare(
-        value * unit.getFactor(),
-        o.getValue() * o.getUnit().getFactor());
+    return Double.compare(value * unit.getFactor(), o.getValue() * o.getUnit().getFactor());
   }
 
   public static Size mm(double value) {

@@ -113,31 +113,32 @@ public class CloudPlugin implements IPlugIn {
   }
 
   private void initialize() {
-    App.ui().executeBackgroundTask(
-        new ITask<Boolean>() {
+    App.ui()
+        .executeBackgroundTask(
+            new ITask<Boolean>() {
 
-          @Override
-          public Boolean doInBackground() throws Exception {
-            return CloudPresenter.Instance.tryLoginWithToken();
-          }
-
-          @Override
-          public void failed(Exception e) {
-            LOG.error("Error while trying to login using token");
-          }
-
-          @Override
-          public void complete(Boolean result) {
-            try {
-              if (result) {
-                loggedIn();
+              @Override
+              public Boolean doInBackground() throws Exception {
+                return CloudPresenter.Instance.tryLoginWithToken();
               }
-            } catch (Exception e) {
-              LOG.error("Error while trying to login with token", e);
-            }
-          }
-        },
-        false);
+
+              @Override
+              public void failed(Exception e) {
+                LOG.error("Error while trying to login using token");
+              }
+
+              @Override
+              public void complete(Boolean result) {
+                try {
+                  if (result) {
+                    loggedIn();
+                  }
+                } catch (Exception e) {
+                  LOG.error("Error while trying to login with token", e);
+                }
+              }
+            },
+            false);
   }
 
   public CloudBrowserFrame getCloudBrowser() {
@@ -301,31 +302,32 @@ public class CloudPlugin implements IPlugIn {
       final UserEditDialog dialog = DialogFactory.getInstance().createUserEditDialog(null);
       dialog.setVisible(true);
       if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                CloudPresenter.Instance.createUserAccount(
-                    dialog.getUserName(),
-                    dialog.getPassword(),
-                    dialog.getEmail(),
-                    dialog.getWebsite(),
-                    dialog.getBio());
-                return null;
-              }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    CloudPresenter.Instance.createUserAccount(
+                        dialog.getUserName(),
+                        dialog.getPassword(),
+                        dialog.getEmail(),
+                        dialog.getWebsite(),
+                        dialog.getBio());
+                    return null;
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("account-not-created"), e);
-              }
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("account-not-created"), e);
+                  }
 
-              @Override
-              public void complete(Void result) {
-                App.ui().info(getMsg("account-created"));
-              }
-            },
-            true);
+                  @Override
+                  public void complete(Void result) {
+                    App.ui().info(getMsg("account-created"));
+                  }
+                },
+                true);
       }
     }
   }
@@ -348,27 +350,28 @@ public class CloudPlugin implements IPlugIn {
                 .createUserEditDialog(CloudPresenter.Instance.getUserDetails());
         dialog.setVisible(true);
         if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-          App.ui().executeBackgroundTask(
-              new ITask<Void>() {
+          App.ui()
+              .executeBackgroundTask(
+                  new ITask<Void>() {
 
-                @Override
-                public Void doInBackground() throws Exception {
-                  CloudPresenter.Instance.updateUserDetails(
-                      dialog.getEmail(), dialog.getWebsite(), dialog.getBio());
-                  return null;
-                }
+                    @Override
+                    public Void doInBackground() throws Exception {
+                      CloudPresenter.Instance.updateUserDetails(
+                          dialog.getEmail(), dialog.getWebsite(), dialog.getBio());
+                      return null;
+                    }
 
-                @Override
-                public void failed(Exception e) {
-                  App.ui().error(getMsg("account-not-updated"), e);
-                }
+                    @Override
+                    public void failed(Exception e) {
+                      App.ui().error(getMsg("account-not-updated"), e);
+                    }
 
-                @Override
-                public void complete(Void result) {
-                  App.ui().info(getMsg("account-updated"));
-                }
-              },
-              true);
+                    @Override
+                    public void complete(Void result) {
+                      App.ui().info(getMsg("account-updated"));
+                    }
+                  },
+                  true);
         }
       } catch (CloudException e1) {
         App.ui().error(getMsg("could-not-connect"), e1);
@@ -391,27 +394,28 @@ public class CloudPlugin implements IPlugIn {
       final ChangePasswordDialog dialog = DialogFactory.getInstance().createChangePasswordDialog();
       dialog.setVisible(true);
       if (ButtonDialog.OK.equals(dialog.getSelectedButtonCaption())) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                CloudPresenter.Instance.updatePassword(
-                    dialog.getOldPassword(), dialog.getNewPassword());
-                return null;
-              }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    CloudPresenter.Instance.updatePassword(
+                        dialog.getOldPassword(), dialog.getNewPassword());
+                    return null;
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("password-update-failed"), e);
-              }
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("password-update-failed"), e);
+                  }
 
-              @Override
-              public void complete(Void result) {
-                App.ui().info(getMsg("password-updated"));
-              }
-            },
-            true);
+                  @Override
+                  public void complete(Void result) {
+                    App.ui().info(getMsg("password-updated"));
+                  }
+                },
+                true);
       }
     }
   }
@@ -430,12 +434,14 @@ public class CloudPlugin implements IPlugIn {
     public void actionPerformed(ActionEvent e) {
       LOG.info("UploadAction triggered");
 
-      final File[] files = DialogFactory.getInstance().showOpenMultiDialog(
-          FileFilterEnum.DIY.getFilter(),
-          null,
-          FileFilterEnum.DIY.getExtensions()[0],
-          null,
-          App.ui().getOwnerFrame());
+      final File[] files =
+          DialogFactory.getInstance()
+              .showOpenMultiDialog(
+                  FileFilterEnum.DIY.getFilter(),
+                  null,
+                  FileFilterEnum.DIY.getExtensions()[0],
+                  null,
+                  App.ui().getOwnerFrame());
       if (files != null && files.length > 0) {
         List<ITask<String[]>> tasks = new ArrayList<ITask<String[]>>();
         final ListIterator<ITask<String[]>> taskIterator = tasks.listIterator();
@@ -462,42 +468,42 @@ public class CloudPlugin implements IPlugIn {
                     try {
                       final File thumbnailFile = File.createTempFile("upload-thumbnail", ".png");
                       if (ImageIO.write(dialog.getThumbnail(), "png", thumbnailFile)) {
-                        App.ui().executeBackgroundTask(
-                            new ITask<Void>() {
+                        App.ui()
+                            .executeBackgroundTask(
+                                new ITask<Void>() {
 
-                              @Override
-                              public Void doInBackground() throws Exception {
-                                CloudPresenter.Instance.uploadProject(
-                                    dialog.getName(),
-                                    dialog.getCategory(),
-                                    dialog.getDescription(),
-                                    dialog.getKeywords(),
-                                    App.getVersionNumber().toString(),
-                                    thumbnailFile,
-                                    file,
-                                    null);
-                                return null;
-                              }
-
-                              @Override
-                              public void failed(Exception e) {
-                                App.ui().error(getMsg("upload-error"), e);
-                              }
-
-                              @Override
-                              public void complete(Void result) {
-                                App.ui().info(getMsg("upload-success"),
-                                              getMsg("project-uploaded"));
-                                synchronized (taskIterator) {
-                                  if (taskIterator.hasPrevious()) {
-                                    App.ui().executeBackgroundTask(
-                                        taskIterator.previous(),
-                                        true);
+                                  @Override
+                                  public Void doInBackground() throws Exception {
+                                    CloudPresenter.Instance.uploadProject(
+                                        dialog.getName(),
+                                        dialog.getCategory(),
+                                        dialog.getDescription(),
+                                        dialog.getKeywords(),
+                                        App.getVersionNumber().toString(),
+                                        thumbnailFile,
+                                        file,
+                                        null);
+                                    return null;
                                   }
-                                }
-                              }
-                            },
-                            true);
+
+                                  @Override
+                                  public void failed(Exception e) {
+                                    App.ui().error(getMsg("upload-error"), e);
+                                  }
+
+                                  @Override
+                                  public void complete(Void result) {
+                                    App.ui()
+                                        .info(getMsg("upload-success"), getMsg("project-uploaded"));
+                                    synchronized (taskIterator) {
+                                      if (taskIterator.hasPrevious()) {
+                                        App.ui()
+                                            .executeBackgroundTask(taskIterator.previous(), true);
+                                      }
+                                    }
+                                  }
+                                },
+                                true);
                       } else {
                         App.ui().error(getMsg("upload-error"), getMsg("temp-file-error"));
                       }

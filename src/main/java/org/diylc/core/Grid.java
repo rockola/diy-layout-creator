@@ -54,9 +54,9 @@ public class Grid {
   }
 
   /**
-     Align point with grid.
-
-     @return Grid point closest to given point.
+   * Align point with grid.
+   *
+   * @return Grid point closest to given point.
    */
   public Point snapToGrid(Point point) {
     int x = roundToGrid(point.x);

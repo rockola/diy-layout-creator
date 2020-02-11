@@ -67,7 +67,7 @@ public class AutoSavePlugin implements IPlugIn {
       boolean success = dir.mkdirs();
       if (!success) {
         String msg = String.format("Directories not created for path {}", AUTO_SAVE_PATH);
-        LOG.error(msg); //throw new Exception(msg);
+        LOG.error(msg); // throw new Exception(msg);
       }
     }
   }
@@ -110,7 +110,6 @@ public class AutoSavePlugin implements IPlugIn {
         }
         break;
       default:
-
     }
   }
 

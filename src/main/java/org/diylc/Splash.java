@@ -33,9 +33,8 @@ import org.diylc.images.FontLoader;
 import org.diylc.images.Icon;
 
 /**
-   Application splash screen. Displayed briefly in the beginning of
-   application execution. Disappears by itself when application is
-   ready for user input.
+ * Application splash screen. Displayed briefly in the beginning of application execution.
+ * Disappears by itself when application is ready for user input.
  */
 public class Splash {
 
@@ -50,10 +49,9 @@ public class Splash {
   private String appVersion = null;
 
   /**
-     Create a Splash instance. This object is instantiated once, in
-     the initialization section of App class. start() is called right
-     after instantiation. This results in the splash animation
-     starting as soon as possible.
+   * Create a Splash instance. This object is instantiated once, in the initialization section of
+   * App class. start() is called right after instantiation. This results in the splash animation
+   * starting as soon as possible.
    */
   public Splash() {
     final SplashScreen splashScreen = SplashScreen.getSplashScreen();
@@ -71,29 +69,30 @@ public class Splash {
     font = FontLoader.getFont("Jura", Font.BOLD, 24);
     appVersion = Config.getString("app.version");
 
-    thread = new Thread(() -> {
-      for (int i = 90; i >= 0; i--) {
-        if (splashScreen.isVisible()) {
-          final int frame = i;
-          SwingUtilities.invokeLater(() -> {
-            renderSplashFrame(splashScreen, g, frame);
-            if (splashScreen.isVisible()) {
-              splashScreen.update();
-            }
-          });
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            // do nothing
-          }
-        }
-      }
-    });
+    thread =
+        new Thread(
+            () -> {
+              for (int i = 90; i >= 0; i--) {
+                if (splashScreen.isVisible()) {
+                  final int frame = i;
+                  SwingUtilities.invokeLater(
+                      () -> {
+                        renderSplashFrame(splashScreen, g, frame);
+                        if (splashScreen.isVisible()) {
+                          splashScreen.update();
+                        }
+                      });
+                  try {
+                    Thread.sleep(10);
+                  } catch (InterruptedException e) {
+                    // do nothing
+                  }
+                }
+              }
+            });
   }
 
-  /**
-     Start the splash animation.
-   */
+  /** Start the splash animation. */
   public void start() {
     if (thread != null) {
       thread.start();
@@ -110,11 +109,11 @@ public class Splash {
   private int textPxPerFrame = 2;
 
   /**
-     Render one frame of the splash animation.
-
-     @param splashScreen The splash screen.
-     @param g2d Graphics context.
-     @param frame Ordinal of animation frame.
+   * Render one frame of the splash animation.
+   *
+   * @param splashScreen The splash screen.
+   * @param g2d Graphics context.
+   * @param frame Ordinal of animation frame.
    */
   public void renderSplashFrame(SplashScreen splashScreen, Graphics2D g2d, int frame) {
     Graphics2D g = (Graphics2D) g2d.create();

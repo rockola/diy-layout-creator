@@ -69,32 +69,33 @@ public final class DropDownButtonFactory {
     private boolean mouseInArrowArea = false;
     private Map<String, Icon> regIcons = new HashMap<String, Icon>(5);
     private Map<String, Icon> arrowIcons = new HashMap<String, Icon>(5);
-    private transient PopupMenuListener menuListener = new PopupMenuListener() {
+    private transient PopupMenuListener menuListener =
+        new PopupMenuListener() {
 
-        @Override
-        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-          //
-        }
+          @Override
+          public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            //
+          }
 
-        @Override
-        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-          if (e.getSource() instanceof DropDownButton) {
-            DropDownButton button = (DropDownButton) e.getSource();
-            if (button.getModel() instanceof Model) {
-              ((Model) button.getModel())._release();
-            }
-            JPopupMenu menu;
-            if ((menu = button.getPopupMenu()) != null) {
-              menu.removePopupMenuListener(this);
+          @Override
+          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            if (e.getSource() instanceof DropDownButton) {
+              DropDownButton button = (DropDownButton) e.getSource();
+              if (button.getModel() instanceof Model) {
+                ((Model) button.getModel())._release();
+              }
+              JPopupMenu menu;
+              if ((menu = button.getPopupMenu()) != null) {
+                menu.removePopupMenuListener(this);
+              }
             }
           }
-        }
 
-        @Override
-        public void popupMenuCanceled(PopupMenuEvent e) {
-          //
-        }
-      };
+          @Override
+          public void popupMenuCanceled(PopupMenuEvent e) {
+            //
+          }
+        };
 
     public DropDownButton(Icon icon, JPopupMenu popup) {
       // Parameters.notNull((CharSequence) "icon", (Object) icon);
@@ -104,72 +105,73 @@ public final class DropDownButtonFactory {
       setDisabledIcon(ImageUtilities.createDisabledIcon((Icon) icon));
       resetIcons();
       addPropertyChangeListener(
-          "dropDownMenu",
-          (e) -> ((DropDownButton) e.getSource()).resetIcons());
-      addMouseMotionListener(new MouseMotionAdapter() {
+          "dropDownMenu", (e) -> ((DropDownButton) e.getSource()).resetIcons());
+      addMouseMotionListener(
+          new MouseMotionAdapter() {
 
-          @Override
-          public void mouseMoved(MouseEvent e) {
-            DropDownButton button = (DropDownButton) e.getSource();
-            if (button.getPopupMenu() != null) {
-              button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
-              button.updateRollover();
-            }
-          }
-        });
-      addMouseListener(new MouseAdapter() {
-          private boolean popupMenuOperation;
-
-          @Override
-          public void mousePressed(MouseEvent e) {
-            DropDownButton button = (DropDownButton) e.getSource();
-            this.popupMenuOperation = false;
-            JPopupMenu menu = button.getPopupMenu();
-            if (menu != null && button.getModel() instanceof Model) {
-              Model model = (Model) button.getModel();
-              if (!model._isPressed()) {
-                if (button.isInArrowArea(e.getPoint()) && menu.getComponentCount() > 0) {
-                  model._press();
-                  menu.addPopupMenuListener(button.getMenuListener());
-                  menu.show(button, 0, button.getHeight());
-                  this.popupMenuOperation = true;
-                }
-              } else {
-                model._release();
-                menu.removePopupMenuListener(button.getMenuListener());
-                this.popupMenuOperation = true;
+            @Override
+            public void mouseMoved(MouseEvent e) {
+              DropDownButton button = (DropDownButton) e.getSource();
+              if (button.getPopupMenu() != null) {
+                button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
+                button.updateRollover();
               }
             }
-          }
+          });
+      addMouseListener(
+          new MouseAdapter() {
+            private boolean popupMenuOperation;
 
-          @Override
-          public void mouseReleased(MouseEvent e) {
-            if (this.popupMenuOperation) {
+            @Override
+            public void mousePressed(MouseEvent e) {
+              DropDownButton button = (DropDownButton) e.getSource();
               this.popupMenuOperation = false;
-              e.consume();
+              JPopupMenu menu = button.getPopupMenu();
+              if (menu != null && button.getModel() instanceof Model) {
+                Model model = (Model) button.getModel();
+                if (!model._isPressed()) {
+                  if (button.isInArrowArea(e.getPoint()) && menu.getComponentCount() > 0) {
+                    model._press();
+                    menu.addPopupMenuListener(button.getMenuListener());
+                    menu.show(button, 0, button.getHeight());
+                    this.popupMenuOperation = true;
+                  }
+                } else {
+                  model._release();
+                  menu.removePopupMenuListener(button.getMenuListener());
+                  this.popupMenuOperation = true;
+                }
+              }
             }
-          }
 
-          @Override
-          public void mouseEntered(MouseEvent e) {
-            DropDownButton button = (DropDownButton) e.getSource();
-            button.mouseInButton = true;
-            if (button.hasPopupMenu()) {
-              button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
-              button.updateRollover();
+            @Override
+            public void mouseReleased(MouseEvent e) {
+              if (this.popupMenuOperation) {
+                this.popupMenuOperation = false;
+                e.consume();
+              }
             }
-          }
 
-          @Override
-          public void mouseExited(MouseEvent e) {
-            DropDownButton button = (DropDownButton) e.getSource();
-            button.mouseInButton = false;
-            button.mouseInArrowArea = false;
-            if (button.hasPopupMenu()) {
-              button.updateRollover();
+            @Override
+            public void mouseEntered(MouseEvent e) {
+              DropDownButton button = (DropDownButton) e.getSource();
+              button.mouseInButton = true;
+              if (button.hasPopupMenu()) {
+                button.mouseInArrowArea = button.isInArrowArea(e.getPoint());
+                button.updateRollover();
+              }
             }
-          }
-        });
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+              DropDownButton button = (DropDownButton) e.getSource();
+              button.mouseInButton = false;
+              button.mouseInArrowArea = false;
+              if (button.hasPopupMenu()) {
+                button.updateRollover();
+              }
+            }
+          });
       this.setModel(new Model());
     }
 
@@ -195,9 +197,9 @@ public final class DropDownButtonFactory {
         if (orig == null) {
           orig = regIcons.get(ICON_NORMAL);
         }
-        LOG.trace("rolloverIcon({}) creating IconWithArrow (mouse%s in arrow area)",
-                  selected,
-                  mouseInArrowArea ? "" : " not");
+        LOG.trace(
+            "rolloverIcon({}) creating IconWithArrow (mouse%s in arrow area)",
+            selected, mouseInArrowArea ? "" : " not");
         icon = new IconWithArrow(orig, !mouseInArrowArea);
         arrowIcons.put(mouseInArrowArea ? rollover : line, icon);
       }
@@ -243,7 +245,7 @@ public final class DropDownButtonFactory {
 
     private boolean isInArrowArea(Point p) {
       return (p.getLocation().x
-              >= getWidth() - IconWithArrow.getArrowAreaWidth() - getInsets().right);
+          >= getWidth() - IconWithArrow.getArrowAreaWidth() - getInsets().right);
     }
 
     @Override

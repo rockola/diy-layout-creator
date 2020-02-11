@@ -23,8 +23,7 @@ package org.diylc.components;
 import java.awt.geom.GeneralPath;
 
 /**
- * Creates a {@link GeneralPath} with rounded edges. To create a
- * rounded path, follow these steps:
+ * Creates a {@link GeneralPath} with rounded edges. To create a rounded path, follow these steps:
  *
  * <ul>
  *   <li>instantiate a {@link RoundedPath}
@@ -33,9 +32,8 @@ import java.awt.geom.GeneralPath;
  *   <li>call {@link RoundedPath#getPath()} to get a rounded path
  * </ul>
  *
- * <p>Note that the starting point shouldn't lie on a corner of the
- * polygon if you want that corner to get rounded too. Instead, place
- * the starting/ending point on one of the polygon sides.
+ * <p>Note that the starting point shouldn't lie on a corner of the polygon if you want that corner
+ * to get rounded too. Instead, place the starting/ending point on one of the polygon sides.
  *
  * @author bancika
  */
@@ -65,9 +63,7 @@ public class RoundedPath {
     double theta = Math.atan2(offsetY, offsetX);
     if (isFirst) {
       double r = Math.hypot(offsetY, offsetX);
-      path.lineTo(
-          this.x + Math.cos(theta) * (r - radius),
-          this.y + Math.sin(theta) * (r - radius));
+      path.lineTo(this.x + Math.cos(theta) * (r - radius), this.y + Math.sin(theta) * (r - radius));
     } else {
       path.curveTo(
           this.x,

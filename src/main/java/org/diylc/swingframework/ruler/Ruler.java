@@ -40,9 +40,8 @@ import org.diylc.App;
 import org.diylc.components.AbstractComponent;
 
 /**
- * {@link JComponent} that renders ruler. It features configurable
- * units (cm or in), orientation and ability to indicate cursor
- * position.
+ * {@link JComponent} that renders ruler. It features configurable units (cm or in), orientation and
+ * ability to indicate cursor position.
  *
  * @author Branislav Stojkovic
  */
@@ -85,13 +84,14 @@ public class Ruler extends JComponent {
     this.inSpacing = inSpacing;
     setIncrementAndUnits();
 
-    addComponentListener(new ComponentAdapter() {
+    addComponentListener(
+        new ComponentAdapter() {
 
-        @Override
-        public void componentResized(ComponentEvent e) {
-          invalidateBuffer();
-        }
-      });
+          @Override
+          public void componentResized(ComponentEvent e) {
+            invalidateBuffer();
+          }
+        });
   }
 
   public boolean isHorizontal() {
@@ -137,9 +137,8 @@ public class Ruler extends JComponent {
   }
 
   /**
-   * Changes cursor position. If less than zero, indicator will not
-   * be rendered. For horizontal ruler this should be X coordinate of
-   * mouse position, and Y for vertical.
+   * Changes cursor position. If less than zero, indicator will not be rendered. For horizontal
+   * ruler this should be X coordinate of mouse position, and Y for vertical.
    *
    * @param indicatorValue
    */
@@ -162,9 +161,9 @@ public class Ruler extends JComponent {
     ticksPerUnit = isMetric() ? 4 : 12;
     unitSize =
         zoomLevel
-        * (isMetric()
-           ? (cmSpacing == 0 ? PIXELS_PER_INCH / 2.54f : cmSpacing)
-           : (inSpacing == 0 ? PIXELS_PER_INCH : inSpacing));
+            * (isMetric()
+                ? (cmSpacing == 0 ? PIXELS_PER_INCH / 2.54f : cmSpacing)
+                : (inSpacing == 0 ? PIXELS_PER_INCH : inSpacing));
   }
 
   public boolean isMetric() {
@@ -204,9 +203,7 @@ public class Ruler extends JComponent {
     double increment = unitSize / ticksPerUnit;
     int x = 0;
     int i = (int) -offset;
-    int tickLimit = isHorizontal()
-                    ? clipRect.x + clipRect.width
-                    : clipRect.y + clipRect.height;
+    int tickLimit = isHorizontal() ? clipRect.x + clipRect.width : clipRect.y + clipRect.height;
 
     // ticks and labels
     while (x < tickLimit) {
@@ -234,11 +231,16 @@ public class Ruler extends JComponent {
         bufferGraphics.drawLine(startX, startY, endX, endY);
 
         if (text != null) {
-          int textX = isHorizontal()
-                      ? startX + 2
-                      : SIZE - (int) bufferGraphics.getFontMetrics().getStringBounds(
-                            text,
-                            bufferGraphics).getWidth() - 2;
+          int textX =
+              isHorizontal()
+                  ? startX + 2
+                  : SIZE
+                      - (int)
+                          bufferGraphics
+                              .getFontMetrics()
+                              .getStringBounds(text, bufferGraphics)
+                              .getWidth()
+                      - 2;
           int textY = isHorizontal() ? 15 : startY + 10;
 
           bufferGraphics.drawString(text, textX, textY);
@@ -248,8 +250,7 @@ public class Ruler extends JComponent {
     }
 
     // highlight value
-    if (indicatorValue >= 0
-        && indicatorValue < (isHorizontal() ? getWidth() : getHeight())) {
+    if (indicatorValue >= 0 && indicatorValue < (isHorizontal() ? getWidth() : getHeight())) {
       int startX = isHorizontal() ? indicatorValue : 0;
       int startY = isHorizontal() ? 0 : indicatorValue;
       int endX = isHorizontal() ? startX : SIZE - 1;

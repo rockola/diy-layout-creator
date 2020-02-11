@@ -27,8 +27,8 @@ import java.awt.Graphics2D;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
- * {@link IDrawingProvider} implementation that draws the specified
- * {@link Component} onto the canvas.
+ * {@link IDrawingProvider} implementation that draws the specified {@link Component} onto the
+ * canvas.
  *
  * @author Branislav Stojkovic
  */

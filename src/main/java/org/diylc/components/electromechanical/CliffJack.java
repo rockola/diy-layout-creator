@@ -120,27 +120,26 @@ public class CliffJack extends AbstractJack {
       body[0] = Area.centeredRect(centerX, centerY, bodyLength, bodyWidth);
 
       int tailLength = (int) TAIL_LENGTH.convertToPixels();
-      body[1] = Area.roundRect(
-          centerX - bodyLength / 2 - tailLength,
-          centerY - bodyWidth / 4,
-          tailLength * 2,
-          bodyWidth / 2,
-          tailLength);
+      body[1] =
+          Area.roundRect(
+              centerX - bodyLength / 2 - tailLength,
+              centerY - bodyWidth / 4,
+              tailLength * 2,
+              bodyWidth / 2,
+              tailLength);
       Area tailArea = new Area(body[1]);
       tailArea.subtract(new Area(body[0]));
       body[1] = tailArea;
 
-      body[2] = Area.rect(
-          centerX + bodyLength / 2,
-          centerY - bodyWidth / 4,
-          tailLength,
-          bodyWidth / 2);
+      body[2] =
+          Area.rect(centerX + bodyLength / 2, centerY - bodyWidth / 4, tailLength, bodyWidth / 2);
 
-      body[3] = Area.rect(
-          centerX + bodyLength / 2 + tailLength,
-          centerY - bodyWidth / 4,
-          tailLength,
-          bodyWidth / 2);
+      body[3] =
+          Area.rect(
+              centerX + bodyLength / 2 + tailLength,
+              centerY - bodyWidth / 4,
+              tailLength,
+              bodyWidth / 2);
       tailArea = new Area(body[3]);
       int radius = bodyLength / 2 + tailLength * 2;
       tailArea.intersect(Area.circle(centerX, centerY, radius * 2));
@@ -230,26 +229,16 @@ public class CliffJack extends AbstractJack {
 
     // body
     Area.roundRect(
-        (width - tailWidth) / 2,
-        height / 2,
-        tailWidth,
-        height / 2 - 2 * 32 / height,
-        w128).fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
+            (width - tailWidth) / 2, height / 2, tailWidth, height / 2 - 2 * 32 / height, w128)
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
 
     // nut
-    Area.roundRect(
-        (width - tailWidth) / 2,
-        2 * 32 / height,
-        tailWidth,
-        height / 2,
-        w128).fillDraw(g2d, NUT_COLOR, BORDER_COLOR);
+    Area.roundRect((width - tailWidth) / 2, 2 * 32 / height, tailWidth, height / 2, w128)
+        .fillDraw(g2d, NUT_COLOR, BORDER_COLOR);
 
     // "area": what is this part?
-    Area.rect(
-        (width - bodyWidth) / 2,
-        height / 7 + 1,
-        bodyWidth,
-        height * 5 / 7).fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
+    Area.rect((width - bodyWidth) / 2, height / 7 + 1, bodyWidth, height * 5 / 7)
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
 
     final int pinX1 = getClosestOdd((width - bodyWidth * 3 / 4) / 2);
     final int pinX2 = getClosestOdd((width + bodyWidth * 3 / 4) / 2) - 1;

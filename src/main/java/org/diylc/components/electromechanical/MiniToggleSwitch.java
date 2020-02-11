@@ -96,8 +96,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     }
     controlPoints = points.toArray(new Point[0]);
 
-    AffineTransform xform =
-        AffineTransform.getRotateInstance(-HALF_PI, firstPoint.x, firstPoint.y);
+    AffineTransform xform = AffineTransform.getRotateInstance(-HALF_PI, firstPoint.x, firstPoint.y);
     if (getOrientation().isHorizontal()) {
       for (int i = 1; i < controlPoints.length; i++) {
         xform.transform(controlPoints[i], controlPoints[i]);
@@ -238,66 +237,73 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
       int spacing = (int) getSpacing().convertToPixels();
       switch (switchType) {
         case SPST:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin,
-              2 * margin + spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin,
+                  2 * margin + spacing,
+                  margin);
           break;
         case SPDT:
         case SPDT_off:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin,
-              2 * margin + 2 * spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin,
+                  2 * margin + 2 * spacing,
+                  margin);
           break;
         case DPDT:
         case DPDT_off:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin + spacing,
-              2 * margin + 2 * spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + spacing,
+                  2 * margin + 2 * spacing,
+                  margin);
           break;
         case _DP3T_mustang:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin + spacing,
-              2 * margin + 3 * spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + spacing,
+                  2 * margin + 3 * spacing,
+                  margin);
           break;
         case _3PDT:
         case _3PDT_off:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin + 2 * spacing,
-              2 * margin + 2 * spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 2 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin);
           break;
         case _4PDT:
         case _4PDT_off:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin + 3 * spacing,
-              2 * margin + 2 * spacing,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 3 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin);
           break;
         case _5PDT:
         case _5PDT_off:
-          body = Area.roundRect(
-              firstPoint.x - margin,
-              firstPoint.y - margin,
-              2 * margin + 4 * spacing,
-              2 * margin + 2 * spacing,
-              margin,
-              margin);
+          body =
+              Area.roundRect(
+                  firstPoint.x - margin,
+                  firstPoint.y - margin,
+                  2 * margin + 4 * spacing,
+                  2 * margin + 2 * spacing,
+                  margin,
+                  margin);
           break;
         default:
           throw new RuntimeException("unknown type " + switchType);

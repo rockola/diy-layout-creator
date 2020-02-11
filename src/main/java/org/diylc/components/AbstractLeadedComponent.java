@@ -52,10 +52,9 @@ import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 /**
- * Base class for all leaded components such as resistors or
- * capacitors. Has two control points and draws leads between
- * them. Also, it positions and draws the shape of the component as
- * specified by a child class.
+ * Base class for all leaded components such as resistors or capacitors. Has two control points and
+ * draws leads between them. Also, it positions and draws the shape of the component as specified by
+ * a child class.
  *
  * @author Branislav Stojkovic
  */
@@ -87,7 +86,6 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   private boolean flipStanding = false;
   private LabelOrientation labelOrientation = LabelOrientation.Directional;
-
 
   protected AbstractLeadedComponent() {
     super();
@@ -159,10 +157,11 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       // When ending points are too close draw the component in standing
       // mode.
       width = length = getClosestOdd(this.width.convertToPixels());
-      Area body = Area.circle(
-          (getFlipStanding() ? getPoints()[1] : getPoints()[0]).x - width / 2,
-          (getFlipStanding() ? getPoints()[1] : getPoints()[0]).y - width / 2,
-          width);
+      Area body =
+          Area.circle(
+              (getFlipStanding() ? getPoints()[1] : getPoints()[0]).x - width / 2,
+              (getFlipStanding() ? getPoints()[1] : getPoints()[0]).y - width / 2,
+              width);
       shapeRect = body.getBounds();
       final Composite oldComposite = setTransparency(g2d);
       body.fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : getStandingBodyColor());
@@ -325,9 +324,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     g2d.draw(new Line2D.Double(getPoints()[1].x, getPoints()[1].y, endX, endY));
   }
 
-  private void drawLead(Graphics2D g2d,
-                        IDrawingObserver observer,
-                        boolean isCopperArea) {
+  private void drawLead(Graphics2D g2d, IDrawingObserver observer, boolean isCopperArea) {
     if (isCopperArea) {
       observer.startTrackingContinuityArea(true);
     }
@@ -342,18 +339,22 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     Stroke stroke = null;
     switch (getStyle()) {
       case DASHED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness * 2, thickness * 4},
-            thickness * 4,
-            BasicStroke.CAP_SQUARE);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness * 2, thickness * 4},
+                    thickness * 4,
+                    BasicStroke.CAP_SQUARE);
         break;
       case DOTTED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness / 4, thickness * 4},
-            0,
-            BasicStroke.CAP_ROUND);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness / 4, thickness * 4},
+                    0,
+                    BasicStroke.CAP_ROUND);
         break;
       case SOLID:
       default:
@@ -410,9 +411,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return 1f;
   }
 
-  /**
-     @return default component length.
-  */
+  /** @return default component length. */
   protected abstract Size getDefaultLength();
 
   /**
@@ -431,9 +430,9 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   /**
    * Controls how component shape should be placed relative to start and end point.
    *
-   * <p>Returns <code>true</code> if shape rect should be used to center
-   * the component or <code>false</code> to place the component
-   * relative to <code>length</code> and <code>width</code> values.
+   * <p>Returns <code>true</code> if shape rect should be used to center the component or <code>
+   * false</code> to place the component relative to <code>length</code> and <code>width</code>
+   * values.
    *
    * @return true (default unless child class overrides)
    */
@@ -441,16 +440,12 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return true;
   }
 
-  /**
-     @return default lead thickness. Override this method to change it.
-  */
+  /** @return default lead thickness. Override this method to change it. */
   protected float getLeadThickness() {
     return getClosestOdd(LEAD_THICKNESS.convertToPixels());
   }
 
-  /**
-     @return default lead color. Override this method to change it.
-  */
+  /** @return default lead color. Override this method to change it. */
   protected Color getLeadColorForPainting() {
     return tryLeadColor(getLeadColor());
   }
@@ -602,8 +597,8 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   }
 
   /**
-   * Override this method with @EditableProperty annotation in child
-   * classes where standing mode is supported.
+   * Override this method with @EditableProperty annotation in child classes where standing mode is
+   * supported.
    *
    * @return
    */

@@ -48,11 +48,8 @@ public class PinCount {
       this.largestPinNumber += 1;
     }
     if (this.smallestPinNumber > this.largestPinNumber) {
-      throw new RuntimeException(String.format(
-          "Invalid %srange (%d, %d)",
-          evenOnly ? "even only " : "",
-          min,
-          max));
+      throw new RuntimeException(
+          String.format("Invalid %srange (%d, %d)", evenOnly ? "even only " : "", min, max));
     }
     for (int i = this.smallestPinNumber; i <= this.largestPinNumber; i += evenOnly ? 2 : 1) {
       pinCounts.add(i);
@@ -75,9 +72,8 @@ public class PinCount {
    * @return this PinCount if newValue was valid and the value was set, null otherwise
    */
   public PinCount setPins(int newValue) {
-    if (newValue >= smallestPinNumber
-        && newValue <= largestPinNumber
-        && !evenPinsOnly || newValue % 2 == 0) {
+    if (newValue >= smallestPinNumber && newValue <= largestPinNumber && !evenPinsOnly
+        || newValue % 2 == 0) {
       value = Integer.valueOf(newValue);
       return this;
     }

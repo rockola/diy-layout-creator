@@ -74,8 +74,8 @@ import org.diylc.swing.plugins.file.FileFilterEnum;
 import org.diylc.swingframework.ButtonDialog;
 
 /**
- * Component that is capable of showing a list of {@link ProjectEntity}
- * objects. Can work in paging mode and pull one page of data at a time.
+ * Component that is capable of showing a list of {@link ProjectEntity} objects. Can work in paging
+ * mode and pull one page of data at a time.
  *
  * @see SearchSession
  * @author Branislav Stojkovic
@@ -88,8 +88,8 @@ public class ResultsScrollPanel extends JScrollPane {
 
   private JPanel resultsPanel;
   /**
-   * This label goes at the end of the page. When it gets rendered we
-   * know that we need to request another page.
+   * This label goes at the end of the page. When it gets rendered we know that we need to request
+   * another page.
    */
   private JLabel loadMoreLabel;
 
@@ -228,9 +228,9 @@ public class ResultsScrollPanel extends JScrollPane {
     caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
     descriptionArea.setEnabled(false);
 
-    final JLabel commentLabel = new JLabel(Integer.toString(project.getCommentCount()),
-                                           Icon.Messages.icon(),
-                                           SwingConstants.LEFT);
+    final JLabel commentLabel =
+        new JLabel(
+            Integer.toString(project.getCommentCount()), Icon.Messages.icon(), SwingConstants.LEFT);
     commentLabel.setToolTipText(App.getString("cloud.see-comments"));
     commentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     commentLabel.addMouseListener(
@@ -259,9 +259,8 @@ public class ResultsScrollPanel extends JScrollPane {
           }
         });
 
-    final JLabel viewLabel = new JLabel(Integer.toString(project.getViewCount()),
-                                        Icon.Eye.icon(),
-                                        SwingConstants.LEFT);
+    final JLabel viewLabel =
+        new JLabel(Integer.toString(project.getViewCount()), Icon.Eye.icon(), SwingConstants.LEFT);
     viewLabel.setToolTipText(App.getString("cloud.view-count"));
 
     final JLabel downloadLabel =
@@ -324,27 +323,28 @@ public class ResultsScrollPanel extends JScrollPane {
                           return;
                         }
 
-                        App.ui().executeBackgroundTask(
-                            new ITask<Void>() {
+                        App.ui()
+                            .executeBackgroundTask(
+                                new ITask<Void>() {
 
-                              @Override
-                              public Void doInBackground() throws Exception {
-                                LOG.debug("Opening from " + file.getAbsolutePath());
-                                plugInPort.loadProject(file.getAbsolutePath());
-                                return null;
-                              }
+                                  @Override
+                                  public Void doInBackground() throws Exception {
+                                    LOG.debug("Opening from " + file.getAbsolutePath());
+                                    plugInPort.loadProject(file.getAbsolutePath());
+                                    return null;
+                                  }
 
-                              @Override
-                              public void complete(Void result) {
-                                App.ui().bringToFocus();
-                              }
+                                  @Override
+                                  public void complete(Void result) {
+                                    App.ui().bringToFocus();
+                                  }
 
-                              @Override
-                              public void failed(Exception e) {
-                                App.ui().error(App.getString("cloud.file-not-opened"), e);
-                              }
-                            },
-                            true);
+                                  @Override
+                                  public void failed(Exception e) {
+                                    App.ui().error(App.getString("cloud.file-not-opened"), e);
+                                  }
+                                },
+                                true);
                       }
                     }
 
@@ -374,10 +374,11 @@ public class ResultsScrollPanel extends JScrollPane {
                 CloudPresenter.Instance.getProjectProperties(project);
             PropertyEditorDialog editor =
                 DialogFactory.getInstance()
-                    .createPropertyEditorDialog(cloudUI.getOwnerFrame(),
-                                                projectProperties,
-                                                App.getString("cloud.edit-published-project"),
-                                                true);
+                    .createPropertyEditorDialog(
+                        cloudUI.getOwnerFrame(),
+                        projectProperties,
+                        App.getString("cloud.edit-published-project"),
+                        true);
             editor.setVisible(true);
             if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
               // Update the project
@@ -437,16 +438,19 @@ public class ResultsScrollPanel extends JScrollPane {
         new MouseAdapter() {
           @Override
           public void mouseClicked(MouseEvent e) {
-            if (cloudUI.showConfirmDialog(String.format(App.getString("cloud.confirm-replace"),
-                                                        project.getName()),
-                                          "Replace Project",
-                                          IView.YES_NO_OPTION,
-                                          IView.QUESTION_MESSAGE) == IView.YES_OPTION) {
+            if (cloudUI.showConfirmDialog(
+                    String.format(App.getString("cloud.confirm-replace"), project.getName()),
+                    "Replace Project",
+                    IView.YES_NO_OPTION,
+                    IView.QUESTION_MESSAGE)
+                == IView.YES_OPTION) {
               final Presenter thumbnailPresenter = new Presenter();
-              final File file = DialogFactory.getInstance().showOpenDialog(
-                  FileFilterEnum.DIY.getFilter(),
-                  FileFilterEnum.DIY.getExtensions()[0],
-                  cloudUI.getOwnerFrame());
+              final File file =
+                  DialogFactory.getInstance()
+                      .showOpenDialog(
+                          FileFilterEnum.DIY.getFilter(),
+                          FileFilterEnum.DIY.getExtensions()[0],
+                          cloudUI.getOwnerFrame());
               if (file != null) {
                 LOG.info(
                     "Preparing replacement for project {} ({})",
@@ -687,40 +691,42 @@ public class ResultsScrollPanel extends JScrollPane {
 
   private JLabel getLoadMoreLabel() {
     if (loadMoreLabel == null) {
-      loadMoreLabel = new JLabel("Loading more data...") {
+      loadMoreLabel =
+          new JLabel("Loading more data...") {
 
-          private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-          @Override
-          public void paint(Graphics g) {
-            super.paint(g);
-            SwingWorker<List<ProjectEntity>, Void> worker = null;
-            if (armed && searchSession != null && searchSession.hasMoreData()) {
-              // disarm immediately so we don't trigger
-              // successive requests to the provider
-              LOG.info("Paging mechanism is disarmed");
-              armed = false;
-              worker = new SwingWorker<List<ProjectEntity>, Void>() {
+            @Override
+            public void paint(Graphics g) {
+              super.paint(g);
+              SwingWorker<List<ProjectEntity>, Void> worker = null;
+              if (armed && searchSession != null && searchSession.hasMoreData()) {
+                // disarm immediately so we don't trigger
+                // successive requests to the provider
+                LOG.info("Paging mechanism is disarmed");
+                armed = false;
+                worker =
+                    new SwingWorker<List<ProjectEntity>, Void>() {
 
-                  @Override
-                  protected List<ProjectEntity> doInBackground() throws Exception {
-                    return searchSession.requestMoreData();
-                  }
+                      @Override
+                      protected List<ProjectEntity> doInBackground() throws Exception {
+                        return searchSession.requestMoreData();
+                      }
 
-                  @Override
-                  protected void done() {
-                    try {
-                      List<ProjectEntity> newResults = get();
-                      addData(newResults);
-                    } catch (Exception e) {
-                      cloudUI.error(App.getString("cloud.search-failed"));
-                    }
-                  }
-                };
-              worker.execute();
+                      @Override
+                      protected void done() {
+                        try {
+                          List<ProjectEntity> newResults = get();
+                          addData(newResults);
+                        } catch (Exception e) {
+                          cloudUI.error(App.getString("cloud.search-failed"));
+                        }
+                      }
+                    };
+                worker.execute();
+              }
             }
-          }
-        };
+          };
       loadMoreLabel.setHorizontalAlignment(SwingConstants.CENTER);
       loadMoreLabel.setFont(loadMoreLabel.getFont().deriveFont(10f));
     }

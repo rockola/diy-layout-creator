@@ -46,23 +46,25 @@ public abstract class TextField extends JTextField {
     errorLabel = new JLabel(Icon.Warning.icon());
     errorLabel.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
     add(errorLabel, BorderLayout.EAST);
-    getDocument().addDocumentListener(new DocumentListener() {
+    getDocument()
+        .addDocumentListener(
+            new DocumentListener() {
 
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-          textChanged();
-        }
+              @Override
+              public void changedUpdate(DocumentEvent e) {
+                textChanged();
+              }
 
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-          textChanged();
-        }
+              @Override
+              public void insertUpdate(DocumentEvent e) {
+                textChanged();
+              }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-          textChanged();
-        }
-      });
+              @Override
+              public void removeUpdate(DocumentEvent e) {
+                textChanged();
+              }
+            });
   }
 
   public abstract void textChanged();

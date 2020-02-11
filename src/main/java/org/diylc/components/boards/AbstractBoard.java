@@ -78,10 +78,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     final Composite oldComposite = setTransparency(g2d, 0);
     g2d.setColor(boardColor);
     g2d.fillRect(
-        firstPoint.x,
-        firstPoint.y,
-        secondPoint.x - firstPoint.x,
-        secondPoint.y - firstPoint.y);
+        firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
     g2d.setComposite(oldComposite);
 
     // Do not track any changes that follow because the whole board has been
@@ -89,10 +86,7 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     drawingObserver.stopTracking();
     g2d.setColor(tryBorderColor(outlineMode, borderColor));
     g2d.drawRect(
-        firstPoint.x,
-        firstPoint.y,
-        secondPoint.x - firstPoint.x,
-        secondPoint.y - firstPoint.y);
+        firstPoint.x, firstPoint.y, secondPoint.x - firstPoint.x, secondPoint.y - firstPoint.y);
   }
 
   protected void drawCoordinates(Graphics2D g2d, int spacing, Project project) {

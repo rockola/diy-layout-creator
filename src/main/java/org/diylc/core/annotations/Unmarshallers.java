@@ -32,5 +32,4 @@ import java.lang.annotation.Target;
 public @interface Unmarshallers {
 
   Unmarshaller[] value();
-
 }

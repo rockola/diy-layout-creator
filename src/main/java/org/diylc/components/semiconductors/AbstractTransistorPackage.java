@@ -30,8 +30,7 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.netlist.ISpiceMapper;
 
-public abstract class AbstractTransistorPackage
-    extends AbstractTransparentComponent<String>
+public abstract class AbstractTransistorPackage extends AbstractTransparentComponent<String>
     implements ISpiceMapper {
 
   private static final long serialVersionUID = 1L;
@@ -39,8 +38,7 @@ public abstract class AbstractTransistorPackage
   protected String value = "";
   protected TransistorPinout pinout;
   protected Orientation orientation = Orientation.DEFAULT;
-  protected Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected transient Area[] body;
 
   protected Color bodyColor;

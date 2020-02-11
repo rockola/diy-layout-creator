@@ -46,13 +46,14 @@ public class MiniToolbar extends JPanel {
     l.setIcon((Icon) action.getValue(AbstractAction.SMALL_ICON));
     l.setToolTipText((String) action.getValue(AbstractAction.NAME));
     l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    l.addMouseListener(new MouseAdapter() {
+    l.addMouseListener(
+        new MouseAdapter() {
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          action.actionPerformed(null);
-        }
-      });
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            action.actionPerformed(null);
+          }
+        });
     add(l);
     setEnabled(false);
   }

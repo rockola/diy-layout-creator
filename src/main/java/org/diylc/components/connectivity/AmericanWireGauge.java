@@ -26,9 +26,7 @@ import java.util.Map;
 
 import org.diylc.utils.Constants;
 
-/**
-   American Wire Gauge, aka AWG.
- */
+/** American Wire Gauge, aka AWG. */
 public enum AmericanWireGauge {
   _8(8),
   _10(10),

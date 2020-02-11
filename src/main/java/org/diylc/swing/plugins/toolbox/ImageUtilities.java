@@ -89,8 +89,7 @@ public final class ImageUtilities {
     if (img.getHeight(null) * img.getWidth(null) > 576) {
       return img;
     }
-    BufferedImage rep = ImageUtilities.createBufferedImage(img.getWidth(null),
-                                                           img.getHeight(null));
+    BufferedImage rep = ImageUtilities.createBufferedImage(img.getWidth(null), img.getHeight(null));
     Graphics2D g = rep.createGraphics();
     g.drawImage(img, 0, 0, null);
     g.dispose();
@@ -103,19 +102,20 @@ public final class ImageUtilities {
       return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
     }
     ColorModel model = ImageUtilities.colorModel(Transparency.TRANSLUCENT);
-    BufferedImage buffImage = new BufferedImage(
-        model,
-        model.createCompatibleWritableRaster(width, height),
-        model.isAlphaPremultiplied(),
-        null);
+    BufferedImage buffImage =
+        new BufferedImage(
+            model,
+            model.createCompatibleWritableRaster(width, height),
+            model.isAlphaPremultiplied(),
+            null);
     return buffImage;
   }
 
   private static ColorModel colorModel(int transparency) {
     ColorModel model;
     try {
-      model = GraphicsEnvironment
-              .getLocalGraphicsEnvironment()
+      model =
+          GraphicsEnvironment.getLocalGraphicsEnvironment()
               .getDefaultScreenDevice()
               .getDefaultConfiguration()
               .getColorModel(transparency);

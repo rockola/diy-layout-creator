@@ -39,25 +39,27 @@ public class FontEditor extends FontChooserComboBox {
 
   public FontEditor(final PropertyWrapper property) {
     this.property = property;
-    ((JTextField) getEditor().getEditorComponent()).setBorder(
-        BorderFactory.createCompoundBorder(
-            ((JTextField) getEditor().getEditorComponent()).getBorder(),
-            BorderFactory.createEmptyBorder(0, 2, 0, 0)));
+    ((JTextField) getEditor().getEditorComponent())
+        .setBorder(
+            BorderFactory.createCompoundBorder(
+                ((JTextField) getEditor().getEditorComponent()).getBorder(),
+                BorderFactory.createEmptyBorder(0, 2, 0, 0)));
     setSelectedItem(((Font) property.getValue()).getName());
-    addItemListener(new ItemListener() {
+    addItemListener(
+        new ItemListener() {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            property.setChanged(true);
-            setBackground(oldBackground);
-            Font oldFont = (Font) FontEditor.this.property.getValue();
-            Font newFont =
-                new Font(getSelectedItem().toString(), oldFont.getStyle(), oldFont.getSize());
-            FontEditor.this.property.setValue(newFont);
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              property.setChanged(true);
+              setBackground(oldBackground);
+              Font oldFont = (Font) FontEditor.this.property.getValue();
+              Font newFont =
+                  new Font(getSelectedItem().toString(), oldFont.getStyle(), oldFont.getSize());
+              FontEditor.this.property.setValue(newFont);
+            }
           }
-        }
-      });
+        });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

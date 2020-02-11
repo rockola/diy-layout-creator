@@ -61,9 +61,7 @@ public class WrapLabel extends AbstractComponent<String> {
   protected Point[] controlPoints =
       new Point[] {
         new Point(0, 0),
-        new Point(
-            (int) DEFAULT_WIDTH.convertToPixels(),
-            (int) DEFAULT_HEIGHT.convertToPixels())
+        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
       };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
@@ -207,7 +205,7 @@ public class WrapLabel extends AbstractComponent<String> {
     FontMetrics fontMetrics = g2d.getFontMetrics();
     Rectangle2D rect = fontMetrics.getStringBounds("Wrap", g2d);
 
-    //int textHeight = (int) (rect.getHeight());
+    // int textHeight = (int) (rect.getHeight());
     int textWidth = (int) (rect.getWidth());
 
     int x = (width - textWidth) / 2 + 1;

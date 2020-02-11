@@ -25,8 +25,8 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
 /**
- * Base class for radial components. The same as
- * {@link AbstractRadialComponent} but with added pin spacing.
+ * Base class for radial components. The same as {@link AbstractRadialComponent} but with added pin
+ * spacing.
  *
  * @author bancika
  * @param <T>

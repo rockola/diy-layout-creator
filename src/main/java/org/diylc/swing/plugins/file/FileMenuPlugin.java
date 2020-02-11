@@ -112,8 +112,7 @@ public class FileMenuPlugin implements IPlugIn, IDynamicSubmenuHandler {
     if (summarizers != null) {
       for (INetlistAnalyzer summarizer : summarizers) {
         addAction(
-            ActionFactory.createSummarizeNetlistAction(plugInPort, summarizer),
-            ANALYZE_TITLE);
+            ActionFactory.createSummarizeNetlistAction(plugInPort, summarizer), ANALYZE_TITLE);
       }
     }
     addAction(null);

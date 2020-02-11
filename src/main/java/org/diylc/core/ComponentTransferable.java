@@ -29,8 +29,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents component selection as a {@link List} of {@link IDIYComponent}
- * objects. Implements {@link Transferable}, so it is suitable for clipboard usage.
+ * Represents component selection as a {@link List} of {@link IDIYComponent} objects. Implements
+ * {@link Transferable}, so it is suitable for clipboard usage.
  *
  * @author Branislav Stojkovic
  */

@@ -311,22 +311,26 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
         Shape pinShape;
         if (getMount() == Mount.PCB) {
           int pinSize = getClosestOdd(PIN_DIAMETER.convertToPixels());
-          pinShape = new Ellipse2D.Double(
-              controlPoints[i].x - pinSize / 2,
-              controlPoints[i].y - pinSize / 2,
-              pinSize,
-              pinSize);
+          pinShape =
+              new Ellipse2D.Double(
+                  controlPoints[i].x - pinSize / 2,
+                  controlPoints[i].y - pinSize / 2,
+                  pinSize,
+                  pinSize);
         } else {
           int pinWidth = getClosestOdd(PIN_WIDTH.convertToPixels());
           int pinThickness = getClosestOdd(PIN_THICKNESS.convertToPixels());
-          pinShape = new Rectangle2D.Double(
-              controlPoints[i].x - pinWidth / 2,
-              controlPoints[i].y - pinThickness / 2,
-              pinWidth,
-              pinThickness);
-          double theta = HALF_PI + Math.atan2(
-              controlPoints[i].y - controlPoints[0].y,
-              controlPoints[i].x - controlPoints[0].x);
+          pinShape =
+              new Rectangle2D.Double(
+                  controlPoints[i].x - pinWidth / 2,
+                  controlPoints[i].y - pinThickness / 2,
+                  pinWidth,
+                  pinThickness);
+          double theta =
+              HALF_PI
+                  + Math.atan2(
+                      controlPoints[i].y - controlPoints[0].y,
+                      controlPoints[i].x - controlPoints[0].x);
           Area rotatedPin = new Area(pinShape);
           rotatedPin.transform(
               AffineTransform.getRotateInstance(theta, controlPoints[i].x, controlPoints[i].y));
@@ -350,9 +354,10 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
       for (int i = 0; i < labels.length; i++) {
         if (i < controlPoints.length - 1) {
           String label = labels[i];
-          double theta = Math.atan2(
-              controlPoints[i + 1].y - controlPoints[0].y,
-              controlPoints[i + 1].x - controlPoints[0].x);
+          double theta =
+              Math.atan2(
+                  controlPoints[i + 1].y - controlPoints[0].y,
+                  controlPoints[i + 1].x - controlPoints[0].x);
           double x = controlPoints[i + 1].x - Math.cos(theta) * electrodeLabelOffset;
           double y = controlPoints[i + 1].y - Math.sin(theta) * electrodeLabelOffset;
           StringUtils.drawCenteredText(

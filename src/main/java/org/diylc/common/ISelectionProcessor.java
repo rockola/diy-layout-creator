@@ -39,17 +39,15 @@ public interface ISelectionProcessor {
   Collection<IDIYComponent<?>> getSelectedComponents();
 
   /**
-   * Updates the selection with the specified list of component. Also,
-   * updates control point map with all components that are stuck to
-   * the newly selected components.
+   * Updates the selection with the specified list of component. Also, updates control point map
+   * with all components that are stuck to the newly selected components.
    *
    * @param newSelection
    */
   void updateSelection(Collection<IDIYComponent<?>> newSelection);
 
   /**
-   * Expands the current selection to include surrounding
-   * components. Options are controlled with
+   * Expands the current selection to include surrounding components. Options are controlled with
    * <code>expansionMode</code> flag.
    *
    * @param expansionMode
@@ -71,9 +69,8 @@ public interface ISelectionProcessor {
   void mirrorSelection(int direction);
 
   /**
-   * Returns the minimum rectangle containing all selected components,
-   * or null if none exists.  Rectangle is scaled by the current zoom
-   * level.
+   * Returns the minimum rectangle containing all selected components, or null if none exists.
+   * Rectangle is scaled by the current zoom level.
    *
    * @param applyZoom
    * @return

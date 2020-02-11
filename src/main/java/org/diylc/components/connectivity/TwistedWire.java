@@ -338,11 +338,13 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
     Stroke stroke;
 
     if (stripe) {
-      stroke = ObjectCache.getInstance().fetchStroke(
-          thickness,
-          new float[] {thickness / 2, thickness * 2},
-          thickness * 10,
-          BasicStroke.CAP_BUTT);
+      stroke =
+          ObjectCache.getInstance()
+              .fetchStroke(
+                  thickness,
+                  new float[] {thickness / 2, thickness * 2},
+                  thickness * 10,
+                  BasicStroke.CAP_BUTT);
     } else {
       stroke = ObjectCache.getInstance().fetchBasicStroke(thickness);
     }

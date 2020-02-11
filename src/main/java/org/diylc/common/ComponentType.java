@@ -47,8 +47,7 @@ import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
 
 /**
- * Entity class used to describe a component type. In other words,
- * component metadata.
+ * Entity class used to describe a component type. In other words, component metadata.
  *
  * @author Branislav Stojkovic
  * @see IDIYComponent
@@ -97,24 +96,24 @@ public class ComponentType {
   private String searchKey;
 
   /**
-     ComponentType constructor.
-
-     @param name Component type name.
-     @param description Component type description.
-     @param creationMethod Component creation method: Single-click, or point-by-point.
-     @param category Component category name.
-     @param namePrefix Prefix used for naming individual components, e.g. "R" for resistors.
-     @param author Author of this component class.
-     @param icon Icon to use for these components.
-     @param instanceClass Class for instances of this component.
-     @param zOrder Z-order for stacking.
-     @param flexibleZOrder
-     @param bomPolicy
-     @param autoEdit
-     @param xmlTag XML tag corresponding to this component type.
-     @param transformer Transformer class for rotating/mirroring components of this type.
-     @param keywordPolicy
-     @param keywordTag
+   * ComponentType constructor.
+   *
+   * @param name Component type name.
+   * @param description Component type description.
+   * @param creationMethod Component creation method: Single-click, or point-by-point.
+   * @param category Component category name.
+   * @param namePrefix Prefix used for naming individual components, e.g. "R" for resistors.
+   * @param author Author of this component class.
+   * @param icon Icon to use for these components.
+   * @param instanceClass Class for instances of this component.
+   * @param zOrder Z-order for stacking.
+   * @param flexibleZOrder
+   * @param bomPolicy
+   * @param autoEdit
+   * @param xmlTag XML tag corresponding to this component type.
+   * @param transformer Transformer class for rotating/mirroring components of this type.
+   * @param keywordPolicy
+   * @param keywordTag
    */
   public ComponentType(
       String name,
@@ -165,24 +164,20 @@ public class ComponentType {
       }
     }
 
-    searchKey = String.format("%s/%s/%s",
-                              name.toLowerCase(),
-                              description.toLowerCase(),
-                              category.toLowerCase());
+    searchKey =
+        String.format(
+            "%s/%s/%s", name.toLowerCase(), description.toLowerCase(), category.toLowerCase());
     LOG.trace("ComponentType({}, ...) is {}th type", name, getTypeOrdinal());
   }
 
   /**
-     ComponentType constructor. Used for pseudo-components which have empty defaults.
-
-     @param name Component type name.
-     @param description Component type description.
-     @param creationMethod Component creation method: Single-click, or point-by-point.
-  */
-  public ComponentType(
-      String name,
-      String description,
-      String category) {
+   * ComponentType constructor. Used for pseudo-components which have empty defaults.
+   *
+   * @param name Component type name.
+   * @param description Component type description.
+   * @param creationMethod Component creation method: Single-click, or point-by-point.
+   */
+  public ComponentType(String name, String description, String category) {
     this(
         name,
         description,
@@ -203,19 +198,19 @@ public class ComponentType {
   }
 
   /**
-     Ordinal of this type. Used for debugging.
-
-     @return type ordinal.
+   * Ordinal of this type. Used for debugging.
+   *
+   * @return type ordinal.
    */
   private static int getTypeOrdinal() {
     return typeOrdinal++;
   }
 
   /**
-     Name of this type.
-
-     @return type name.
-  */
+   * Name of this type.
+   *
+   * @return type name.
+   */
   public String getName() {
     return name;
   }
@@ -277,14 +272,13 @@ public class ComponentType {
   }
 
   /**
-     Get variants associated with this type.
-
-     @return list of variants.
-  */
+   * Get variants associated with this type.
+   *
+   * @return list of variants.
+   */
   public List<Template> getVariants() {
     if (variants.isEmpty()) {
-      LOG.trace("getVariants() {} Getting variant map from {}",
-                getName(), Config.Flag.TEMPLATES);
+      LOG.trace("getVariants() {} Getting variant map from {}", getName(), Config.Flag.TEMPLATES);
       // Variants have not been cached yet for this type, let's do it
       // First try by class name and then by old category.type format
       List<String> keys = new ArrayList<String>();
@@ -328,9 +322,9 @@ public class ComponentType {
   }
 
   /**
-     Number of existing variants for this type.
-
-     @return number of variants (0 if none).
+   * Number of existing variants for this type.
+   *
+   * @return number of variants (0 if none).
    */
   public int howManyVariants() {
     return getVariants().size();
@@ -339,8 +333,8 @@ public class ComponentType {
   /**
    * True if this component type matches given key.
    *
-   * <p>Type matches key if name, description, or category contains
-   * key. Key must already be in lowercase.
+   * <p>Type matches key if name, description, or category contains key. Key must already be in
+   * lowercase.
    *
    * @param key Search string
    */
@@ -358,10 +352,9 @@ public class ComponentType {
   }
 
   /**
-   * Returns all available {@link ComponentType}s classified by
-   * category. Result is a {@link Map} between category name to a
-   * {@link List} of all {@link ComponentType}s that share that
-   * category name.
+   * Returns all available {@link ComponentType}s classified by category. Result is a {@link Map}
+   * between category name to a {@link List} of all {@link ComponentType}s that share that category
+   * name.
    *
    * @return
    */
@@ -443,8 +436,8 @@ public class ComponentType {
   }
 
   private static void loadVariants() throws IOException {
-    XmlNode variantsXml = XmlReader.read(ComponentType.class.getResource(
-        "/org/diylc/variants4.xml"));
+    XmlNode variantsXml =
+        XmlReader.read(ComponentType.class.getResource("/org/diylc/variants4.xml"));
     // TODO handle variants
     /*
       Map<String, List<Template>> map =
@@ -473,8 +466,7 @@ public class ComponentType {
   }
 
   /**
-   * Get component type from cache.
-   * If component type hasn't been added to cache, null is returned.
+   * Get component type from cache. If component type hasn't been added to cache, null is returned.
    *
    * @param className Name of component type class.
    * @return matching ComponentType, or null if not found
@@ -484,26 +476,24 @@ public class ComponentType {
   }
 
   /**
-     Extract component type from component instance.
-
-     @param component Component instance.
-     @return ComponentType instance corresponding to component.
-  */
+   * Extract component type from component instance.
+   *
+   * @param component Component instance.
+   * @return ComponentType instance corresponding to component.
+   */
   public static ComponentType extractFrom(IDIYComponent<?> component) {
     return extractFrom((Class<? extends IDIYComponent<?>>) component.getClass());
   }
 
   /**
-     Extract component type from class.
-     Class should implement IDIYComponent or be a subclass of one that does.
-     Also, class should have a ComponentDescriptor annotation.
-
-     NOTE: Could - and indeed should - this be done at compile time?
-     Runtime handling is of course required if components are to be
-     loaded from external JARs.
-
-     @param clazz The class.
-     @return component type
+   * Extract component type from class. Class should implement IDIYComponent or be a subclass of one
+   * that does. Also, class should have a ComponentDescriptor annotation.
+   *
+   * <p>NOTE: Could - and indeed should - this be done at compile time? Runtime handling is of
+   * course required if components are to be loaded from external JARs.
+   *
+   * @param clazz The class.
+   * @return component type
    */
   public static ComponentType extractFrom(Class<? extends IDIYComponent<?>> clazz) {
     LOG.trace("extractFrom({})", clazz == null ? "null" : clazz.getName());
@@ -544,23 +534,24 @@ public class ComponentType {
     } catch (Exception e) {
       LOG.error("Error drawing component icon for " + clazz.getName(), e);
     }
-    extractedType = new ComponentType(
-        name,
-        description,
-        creationMethod,
-        category,
-        namePrefix,
-        author,
-        icon,
-        clazz,
-        zOrder,
-        flexibleZOrder,
-        bomPolicy,
-        autoEdit,
-        xmlTag,
-        transformer,
-        keywordPolicy,
-        keywordTag);
+    extractedType =
+        new ComponentType(
+            name,
+            description,
+            creationMethod,
+            category,
+            namePrefix,
+            author,
+            icon,
+            clazz,
+            zOrder,
+            flexibleZOrder,
+            bomPolicy,
+            autoEdit,
+            xmlTag,
+            transformer,
+            keywordPolicy,
+            keywordTag);
     componentTypeMap.put(clazz.getName(), extractedType);
     return extractedType;
   }

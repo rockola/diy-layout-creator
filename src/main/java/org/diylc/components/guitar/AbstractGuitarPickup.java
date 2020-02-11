@@ -162,12 +162,13 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
 
   protected Point[] getControlPoints() {
     if (controlPoints == null) {
-      controlPoints = new Point[] {
-        controlPoint,
-        new Point(controlPoint.x, controlPoint.y),
-        new Point(controlPoint.x, controlPoint.y),
-        new Point(controlPoint.x, controlPoint.y)
-      };
+      controlPoints =
+          new Point[] {
+            controlPoint,
+            new Point(controlPoint.x, controlPoint.y),
+            new Point(controlPoint.x, controlPoint.y),
+            new Point(controlPoint.x, controlPoint.y)
+          };
       updateControlPoints();
     }
     return controlPoints;

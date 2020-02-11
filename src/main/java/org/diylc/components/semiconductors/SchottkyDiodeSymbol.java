@@ -58,9 +58,7 @@ public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
     g2d.fill(
         new Polygon(
             new int[] {
-              (width - size) / 2,
-              (width - size) / 2,
-              (int) ((width - size) / 2 + size / SQRT_TWO)
+              (width - size) / 2, (width - size) / 2, (int) ((width - size) / 2 + size / SQRT_TWO)
             },
             new int[] {(height - size) / 2, (height + size) / 2, height / 2},
             3));
@@ -104,20 +102,9 @@ public class SchottkyDiodeSymbol extends AbstractDiodeSymbol {
     int base = (int) (width / SQRT_TWO + bandSize);
     g2d.drawPolyline(
         new int[] {
-          base + finSize + 1,
-          base + finSize + 1,
-          base,
-          base,
-          base - finSize - 1,
-          base - finSize - 1
+          base + finSize + 1, base + finSize + 1, base, base, base - finSize - 1, base - finSize - 1
         },
-        new int[] {
-          (int) finSize,
-          0,
-          0,
-          (int) width,
-          (int) width,
-          (int) (width - finSize)},
+        new int[] {(int) finSize, 0, 0, (int) width, (int) width, (int) (width - finSize)},
         6);
   }
 }

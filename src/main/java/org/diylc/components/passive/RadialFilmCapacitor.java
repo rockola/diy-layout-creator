@@ -83,10 +83,6 @@ public class RadialFilmCapacitor extends RadialCapacitor {
   protected Area getBodyShape() {
     double radius = getWidth().convertToPixels() * 0.7;
     return Area.roundRect(
-        0f,
-        0f,
-        getLength().convertToPixels(),
-        getClosestOdd(getWidth().convertToPixels()),
-        radius);
+        0f, 0f, getLength().convertToPixels(), getClosestOdd(getWidth().convertToPixels()), radius);
   }
 }

@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * Represents a full switch configuration of the whole {@link Netlist},
- * containing one position of each switch in the {@link Netlist}.
+ * Represents a full switch configuration of the whole {@link Netlist}, containing one position of
+ * each switch in the {@link Netlist}.
  *
  * @author Branislav Stojkovic
  */
@@ -57,8 +57,7 @@ public class SwitchSetup implements Comparable<SwitchSetup> {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     SwitchSetup other = (SwitchSetup) obj;

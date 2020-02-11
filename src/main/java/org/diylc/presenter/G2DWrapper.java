@@ -63,13 +63,11 @@ import org.diylc.components.Area;
 import org.diylc.core.IDrawingObserver;
 
 /**
- * {@link Graphics2D} wrapper that keeps track of all drawing actions
- * and creates an {@link Area} that corresponds to drawn
- * objects. Before each component is drawn, {@link #startedDrawingComponent()}
- * should be called. After the component is drawn, area may be
- * retrieved using {@link #finishedDrawingComponent()}.
- * Graphics configuration (color, font, etc) is reset between each two
- * components.
+ * {@link Graphics2D} wrapper that keeps track of all drawing actions and creates an {@link Area}
+ * that corresponds to drawn objects. Before each component is drawn, {@link
+ * #startedDrawingComponent()} should be called. After the component is drawn, area may be retrieved
+ * using {@link #finishedDrawingComponent()}. Graphics configuration (color, font, etc) is reset
+ * between each two components.
  *
  * @author Branislav Stojkovic
  */
@@ -133,8 +131,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   /**
-   * Reverts {@link Graphics2D} settings and returns area drawn by
-   * component in the meantime.
+   * Reverts {@link Graphics2D} settings and returns area drawn by component in the meantime.
    *
    * @return
    */
@@ -145,10 +142,8 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
     canvasGraphics.setTransform(originalTransform);
     canvasGraphics.setComposite(originalComposite);
     canvasGraphics.setFont(originalFont);
-    ComponentArea area = new ComponentArea(
-        currentArea,
-        continuityPositiveAreas,
-        continuityNegativeAreas);
+    ComponentArea area =
+        new ComponentArea(currentArea, continuityPositiveAreas, continuityNegativeAreas);
     LOG.trace("finishedDrawingComponent() area is {}", area);
     return area;
   }
@@ -253,58 +248,33 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
   }
 
   @Override
-  public void drawImage(
-      BufferedImage img,
-      BufferedImageOp op,
-      int x,
-      int y) {
+  public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
     canvasGraphics.drawImage(img, op, x, y);
     // FIXME: process map
   }
 
   @Override
-  public boolean drawImage(
-      Image img,
-      int x,
-      int y,
-      ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
     boolean result = canvasGraphics.drawImage(img, x, y, observer);
     appendShape(new Rectangle2D.Double(x, y, img.getWidth(observer), img.getHeight(observer)));
     return result;
   }
 
   @Override
-  public boolean drawImage(
-      Image img,
-      int x,
-      int y,
-      Color bgcolor,
-      ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, bgcolor, observer);
   }
 
   @Override
-  public boolean drawImage(
-      Image img,
-      int x,
-      int y,
-      int width,
-      int height,
-      ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, width, height, observer);
   }
 
   @Override
   public boolean drawImage(
-      Image img,
-      int x,
-      int y,
-      int width,
-      int height,
-      Color bgcolor,
-      ImageObserver observer) {
+      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
     // FIXME: map
     return canvasGraphics.drawImage(img, x, y, width, height, bgcolor, observer);
   }
@@ -339,8 +309,7 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       Color bgcolor,
       ImageObserver observer) {
     // FIXME: map
-    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor,
-                                    observer);
+    return canvasGraphics.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, bgcolor, observer);
   }
 
   @Override
@@ -507,11 +476,13 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       BasicStroke bs = (BasicStroke) s;
       // make thin lines even thinner to compensate for zoom factor
       if (bs.getLineWidth() <= 2 && !(s instanceof ZoomableStroke)) {
-        s = ObjectCache.getInstance().fetchStroke(
-            (float) (bs.getLineWidth() / zoom),
-            bs.getDashArray(),
-            bs.getDashPhase(),
-            bs.getEndCap());
+        s =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    (float) (bs.getLineWidth() / zoom),
+                    bs.getDashArray(),
+                    bs.getDashPhase(),
+                    bs.getEndCap());
       }
     }
     canvasGraphics.setStroke(s);
@@ -525,9 +496,8 @@ class G2DWrapper extends Graphics2D implements IDrawingObserver {
       // Invert the transform that was set before we started drawing
       // the component.  We're left with only component transform.
       AffineTransform inverseInitialTransform = initialTransform.createInverse();
-      Point2D p = new Point2D.Double(
-          currentTransform.getTranslateX(),
-          currentTransform.getTranslateY());
+      Point2D p =
+          new Point2D.Double(currentTransform.getTranslateX(), currentTransform.getTranslateY());
       inverseInitialTransform.transform(p, p);
       currentTransform.concatenate(inverseInitialTransform);
       double[] matrix = new double[6];

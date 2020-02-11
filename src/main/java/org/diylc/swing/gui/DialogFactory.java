@@ -65,8 +65,8 @@ public class DialogFactory {
   }
 
   /**
-   * Sets the frame to be used as dialog parent. This should be called
-   * prior to any other methods in this class.
+   * Sets the frame to be used as dialog parent. This should be called prior to any other methods in
+   * this class.
    *
    * @param mainFrame
    */
@@ -98,9 +98,7 @@ public class DialogFactory {
     return dialog;
   }
 
-  public File showOpenDialog(
-      FileFilter fileFilter,
-      String defaultExtension) {
+  public File showOpenDialog(FileFilter fileFilter, String defaultExtension) {
     return showOpenDialog(fileFilter, null, defaultExtension, null);
   }
 
@@ -112,10 +110,7 @@ public class DialogFactory {
     return showOpenDialog(fileFilter, initialFile, defaultExtension, accessory, mainFrame);
   }
 
-  public File showOpenDialog(
-      FileFilter fileFilter,
-      String defaultExtension,
-      JFrame ownerFrame) {
+  public File showOpenDialog(FileFilter fileFilter, String defaultExtension, JFrame ownerFrame) {
     return showOpenDialog(fileFilter, null, defaultExtension, null, ownerFrame);
   }
 
@@ -157,9 +152,7 @@ public class DialogFactory {
     return showSaveDialog(mainFrame, fileFilter, initialFile, defaultExtension, accessory);
   }
 
-  public File showSaveDialog(
-      FileFilter fileFilter,
-      String defaultExtension) {
+  public File showSaveDialog(FileFilter fileFilter, String defaultExtension) {
     return showSaveDialog(mainFrame, fileFilter, null, defaultExtension, null);
   }
 

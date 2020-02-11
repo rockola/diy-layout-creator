@@ -85,8 +85,8 @@ public class RadialElectrolytic extends RadialCapacitor {
     Area body = Area.circle(x, y, diameter);
     g2d.fill(body);
     Area marker = new Area(body);
-    marker.subtract(Area.rect(
-        margin, margin, width - 4 * margin, getClosestOdd(width - 2 * margin)));
+    marker.subtract(
+        Area.rect(margin, margin, width - 4 * margin, getClosestOdd(width - 2 * margin)));
     g2d.setColor(MARKER_COLOR);
     g2d.fill(marker);
     g2d.setColor(TICK_COLOR);
@@ -102,11 +102,12 @@ public class RadialElectrolytic extends RadialCapacitor {
       int totalDiameter = getClosestOdd(getLength().convertToPixels());
       if (!outlineMode) {
         Area area = new Area(getBodyShape());
-        area.subtract(Area.rect(
-            invert ? totalDiameter * 0.2 : 0,
-            folded ? -height : 0,
-            invert ? totalDiameter * 0.8 : totalDiameter,
-            folded ? height * 2 : totalDiameter));
+        area.subtract(
+            Area.rect(
+                invert ? totalDiameter * 0.2 : 0,
+                folded ? -height : 0,
+                invert ? totalDiameter * 0.8 : totalDiameter,
+                folded ? height * 2 : totalDiameter));
         g2d.setColor(markerColor);
         g2d.fill(area);
       }
@@ -215,15 +216,16 @@ public class RadialElectrolytic extends RadialCapacitor {
     double diameter = (int) getLength().convertToPixels();
     Area body = null;
     if (folded) {
-      body = Area.roundRect(
-          0f,
-          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-          getClosestOdd(diameter),
-          getClosestOdd(height),
-          EDGE_RADIUS.convertToPixels());
+      body =
+          Area.roundRect(
+              0f,
+              -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+              getClosestOdd(diameter),
+              getClosestOdd(height),
+              EDGE_RADIUS.convertToPixels());
     } else {
-      body = new Area(new Ellipse2D.Double(
-        0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
+      body =
+          new Area(new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
     }
     return body;
   }

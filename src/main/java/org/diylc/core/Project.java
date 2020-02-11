@@ -70,9 +70,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Project entity class. Contains project properties and a collection
- * of components.This class is serialized to file. Some field getters
- * are tagged with {@link EditableProperty} to enable user editing.
+ * Project entity class. Contains project properties and a collection of components.This class is
+ * serialized to file. Some field getters are tagged with {@link EditableProperty} to enable user
+ * editing.
  *
  * @author Branislav Stojkovic
  */
@@ -113,51 +113,52 @@ public class Project implements Serializable, Cloneable {
   }
 
   public Project(XmlNode projectTree) {
-    projectTree.children.entries().stream().forEach((e) -> {
-      XmlNode node = e.getValue();
-      switch (node.tagName) {
-        case "fileVersion":
-          fileVersion = new VersionNumber(node);
-          break;
-        case "title":
-          title = node.value;
-          break;
-        case "author":
-          author = node.value;
-          break;
-        case "description":
-          description = node.value;
-          break;
-        case "width":
-          width = new Size(node);
-          break;
-        case "height":
-          height = new Size(node);
-          break;
-        case "gridSpacing":
-          grid = new Grid(new Size(node));
-          break;
-        case "components":
-          components.addAll(ComponentFactory.makeComponents(node.children.asMap()));
-          break;
-        case "groups":
-          break;
-        case "lockedLayers":
-          break;
-        case "hiddenLayers":
-          break;
-        case "font":
-          // TODO!
-          break;
-        default:
-          LOG.error("Unknown Project toplevel child {}", node.tagName);
-      }
-    });
+    projectTree.children.entries().stream()
+        .forEach(
+            (e) -> {
+              XmlNode node = e.getValue();
+              switch (node.tagName) {
+                case "fileVersion":
+                  fileVersion = new VersionNumber(node);
+                  break;
+                case "title":
+                  title = node.value;
+                  break;
+                case "author":
+                  author = node.value;
+                  break;
+                case "description":
+                  description = node.value;
+                  break;
+                case "width":
+                  width = new Size(node);
+                  break;
+                case "height":
+                  height = new Size(node);
+                  break;
+                case "gridSpacing":
+                  grid = new Grid(new Size(node));
+                  break;
+                case "components":
+                  components.addAll(ComponentFactory.makeComponents(node.children.asMap()));
+                  break;
+                case "groups":
+                  break;
+                case "lockedLayers":
+                  break;
+                case "hiddenLayers":
+                  break;
+                case "font":
+                  // TODO!
+                  break;
+                default:
+                  LOG.error("Unknown Project toplevel child {}", node.tagName);
+              }
+            });
   }
 
   /**
-     xStream does not call default constructor, so any transients must
-     be explicitly initialized.
+   * xStream does not call default constructor, so any transients must be explicitly initialized.
    */
   private Object readResolve() {
     created = new Date();
@@ -184,7 +185,6 @@ public class Project implements Serializable, Cloneable {
          getSelection(),
          ComparatorFactory.getInstance().getComponentProjectZOrderComparator(this));
   */
-
 
   public boolean emptySelection() {
     return selection.isEmpty();
@@ -345,9 +345,9 @@ public class Project implements Serializable, Cloneable {
             // use getBounds to optimize the computation,
             // don't get into complex math if not needed
             if ((a1.getBounds().contains(p.getP1())
-                 && a2.getBounds().contains(p.getP2())
-                 && a1.contains(p.getP1())
-                 && a2.contains(p.getP2()))
+                    && a2.getBounds().contains(p.getP2())
+                    && a1.contains(p.getP1())
+                    && a2.contains(p.getP2()))
                 || (a1.getBounds().contains(p.getP2())
                     && a2.getBounds().contains(p.getP1())
                     && a1.contains(p.getP2())
@@ -406,8 +406,7 @@ public class Project implements Serializable, Cloneable {
           /* PathIterator.SEG_CLOSE will bring us here */
           // TODO: maybe throw new RuntimeException("Unhandled segment type");
           LOG.error(
-              "Unhandled segment type {}",
-              type == PathIterator.SEG_CLOSE ? "SEG_CLOSE" : type);
+              "Unhandled segment type {}", type == PathIterator.SEG_CLOSE ? "SEG_CLOSE" : type);
       }
       pathIterator.next();
     }
@@ -442,9 +441,7 @@ public class Project implements Serializable, Cloneable {
     }
   }
 
-  /**
-     Remove components in selection from project.
-  */
+  /** Remove components in selection from project. */
   public void removeSelection() {
     // need a copy of selection to avoid race condition
     //
@@ -466,23 +463,19 @@ public class Project implements Serializable, Cloneable {
     selection.add(c);
   }
 
-  private IDIYComponent<?> copyWithUniqueName(
-      IDIYComponent<?> original) throws CloneNotSupportedException {
+  private IDIYComponent<?> copyWithUniqueName(IDIYComponent<?> original)
+      throws CloneNotSupportedException {
     IDIYComponent<?> theCopy = original.clone();
     /* TODO simplify unique name creation
-       TODO make it possible to do this for a number of components
-       so that existing components need to be traversed only once */
-    ComponentType componentType = ComponentType.extractFrom(
-        (Class<? extends IDIYComponent<?>>) theCopy.getClass());
-    theCopy.setName(InstantiationManager.createUniqueName(
-        componentType,
-        getComponents()));
+    TODO make it possible to do this for a number of components
+    so that existing components need to be traversed only once */
+    ComponentType componentType =
+        ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) theCopy.getClass());
+    theCopy.setName(InstantiationManager.createUniqueName(componentType, getComponents()));
     return theCopy;
   }
 
-  /**
-     Duplicate selection.
-  */
+  /** Duplicate selection. */
   public void duplicateSelection() {
     int offset = getGridSpacing().intPixels();
     Set<IDIYComponent<?>> newSelection = new HashSet<>();
@@ -503,7 +496,7 @@ public class Project implements Serializable, Cloneable {
     }
     // TODO this is the only action here that needs to be undoable
     App.undoManager().addComponents(this, newSelection);
-    //addAll(newSelection);
+    // addAll(newSelection);
     //
     clearContinuityArea();
     setSelection(newSelection);
@@ -512,9 +505,7 @@ public class Project implements Serializable, Cloneable {
     redraw();
   }
 
-  /**
-     Send Repaint message to change listeners.
-  */
+  /** Send Repaint message to change listeners. */
   private void redraw() {
     Presenter.dispatchMessage(EventType.REPAINT);
   }
@@ -728,7 +719,7 @@ public class Project implements Serializable, Cloneable {
           this,
           component.getIdentifier());
       // NOTE: BIG CHANGE - look for area directly from component! //ola 20100113
-      //ComponentArea area = componentAreaMap.get(component);
+      // ComponentArea area = componentAreaMap.get(component);
       ComponentArea area = component.getArea();
       if (area == null) {
         LOG.trace(
@@ -759,8 +750,6 @@ public class Project implements Serializable, Cloneable {
     }
     return found;
   }
-
-
 
   @Override
   public int hashCode() {
@@ -887,10 +876,7 @@ public class Project implements Serializable, Cloneable {
       return String.format("<Project id=%d created=\"%s\"/>", sequenceNumber, created.toString());
     } else {
       return String.format(
-          "<Project id=%d name=\"%s\" created=\"%s\"/>",
-          sequenceNumber,
-          title,
-          created.toString());
+          "<Project id=%d name=\"%s\" created=\"%s\"/>", sequenceNumber, title, created.toString());
     }
   }
 
@@ -986,9 +972,9 @@ public class Project implements Serializable, Cloneable {
   }
 
   /**
-     Create a Project from XML data.
-
-     @return Newly created Project.
+   * Create a Project from XML data.
+   *
+   * @return Newly created Project.
    */
   public static Project unmarshal(Element root) {
     Project project = new Project();
@@ -1017,9 +1003,9 @@ public class Project implements Serializable, Cloneable {
   }
 
   /* ****************************************************************
-     Netlist
-     ****************************************************************
-     */
+  Netlist
+  ****************************************************************
+  */
   public List<Netlist> extractNetlists(boolean includeSwitches) {
     Map<Netlist, Netlist> result = new HashMap<Netlist, Netlist>();
     List<org.diylc.netlist.Node> nodes = new ArrayList<org.diylc.netlist.Node>();
@@ -1027,8 +1013,8 @@ public class Project implements Serializable, Cloneable {
     List<ISwitch> switches = new ArrayList<ISwitch>();
 
     for (IDIYComponent<?> c : getComponents()) {
-      ComponentType type = ComponentType.extractFrom(
-          (Class<? extends IDIYComponent<?>>) c.getClass());
+      ComponentType type =
+          ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) c.getClass());
 
       // extract nodes
       if (!(c instanceof IContinuity)) {
@@ -1054,23 +1040,24 @@ public class Project implements Serializable, Cloneable {
 
     // if there are no switches, make one with 1 position so we get 1 result back
     if (switches.isEmpty()) {
-      switches.add(new ISwitch() {
+      switches.add(
+          new ISwitch() {
 
-          @Override
-          public String getPositionName(int position) {
-            return "Default";
-          }
+            @Override
+            public String getPositionName(int position) {
+              return "Default";
+            }
 
-          @Override
-          public int getPositionCount() {
-            return 1;
-          }
+            @Override
+            public int getPositionCount() {
+              return 1;
+            }
 
-          @Override
-          public boolean arePointsConnected(int index1, int index2, int position) {
-            return false;
-          }
-        });
+            @Override
+            public boolean arePointsConnected(int index1, int index2, int position) {
+              return false;
+            }
+          });
     }
 
     // construct all possible combinations
@@ -1129,8 +1116,8 @@ public class Project implements Serializable, Cloneable {
   private List<Connection> getConnections(Map<ISwitch, Integer> switchPositions) {
     Set<Connection> connections = new HashSet<Connection>();
     for (IDIYComponent<?> c : getComponents()) {
-      ComponentType type = ComponentType.extractFrom(
-          (Class<? extends IDIYComponent<?>>) c.getClass());
+      ComponentType type =
+          ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) c.getClass());
       // handle direct connections
       if (c instanceof IContinuity) {
         for (int i = 0; i < c.getControlPointCount() - 1; i++) {
@@ -1177,11 +1164,7 @@ public class Project implements Serializable, Cloneable {
         // try both directions
         if (point1.distance(point2) < DrawingManager.CONTROL_POINT_SIZE
             || checkGraphConnectionBothWays(
-                point1,
-                point2,
-                connections,
-                continuityAreas,
-                new boolean[connections.size()])
+                point1, point2, connections, continuityAreas, new boolean[connections.size()])
             || (commonPoint1 != null && commonPoint1.equalsIgnoreCase(commonPoint2))) {
           boolean added = false;
           // add to an existing vertex if possible

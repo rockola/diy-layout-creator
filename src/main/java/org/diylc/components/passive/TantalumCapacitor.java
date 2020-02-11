@@ -229,15 +229,16 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
     double diameter = (int) getLength().convertToPixels();
     Area body = null;
     if (folded) {
-      body = Area.roundRect(
-          0f,
-          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-          getClosestOdd(diameter),
-          getClosestOdd(height),
-          diameter / 2);
+      body =
+          Area.roundRect(
+              0f,
+              -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+              getClosestOdd(diameter),
+              getClosestOdd(height),
+              diameter / 2);
     } else {
-      body = new Area(new Ellipse2D.Double(
-          0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
+      body =
+          new Area(new Ellipse2D.Double(0f, 0f, getClosestOdd(diameter), getClosestOdd(diameter)));
     }
     return body;
   }

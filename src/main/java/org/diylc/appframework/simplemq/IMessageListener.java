@@ -33,17 +33,16 @@ import javax.swing.SwingUtilities;
 public interface IMessageListener<E extends Enum<E>> {
 
   /**
-   * Returns a set of event types to subscribe for. Listener will be
-   * notified only if event type is contained in this set.
+   * Returns a set of event types to subscribe for. Listener will be notified only if event type is
+   * contained in this set.
    *
    * @return
    */
   EnumSet<E> getSubscribedEventTypes();
 
   /**
-   * Called from the background thread when event is received. Use
-   * {@link SwingUtilities#invokeLater} if event processing needs to
-   * take place in the EDT.
+   * Called from the background thread when event is received. Use {@link
+   * SwingUtilities#invokeLater} if event processing needs to take place in the EDT.
    *
    * @param eventType Received event.
    * @param params Message parameters.

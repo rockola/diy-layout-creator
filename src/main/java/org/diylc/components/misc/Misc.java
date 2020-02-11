@@ -150,9 +150,9 @@ public abstract class Misc<T> extends AbstractComponent<T> {
   }
 
   public void setBold(boolean bold) {
-    font = font.deriveFont(
-        (bold ? Font.BOLD : Font.PLAIN)
-        + (font.isItalic() ? Font.ITALIC : Font.PLAIN));
+    font =
+        font.deriveFont(
+            (bold ? Font.BOLD : Font.PLAIN) + (font.isItalic() ? Font.ITALIC : Font.PLAIN));
   }
 
   @EditableProperty(name = "Font Italic")
@@ -161,9 +161,9 @@ public abstract class Misc<T> extends AbstractComponent<T> {
   }
 
   public void setItalic(boolean italic) {
-    font = font.deriveFont(
-        (italic ? Font.ITALIC : Font.PLAIN)
-        + (font.isBold() ? Font.BOLD : Font.PLAIN));
+    font =
+        font.deriveFont(
+            (italic ? Font.ITALIC : Font.PLAIN) + (font.isBold() ? Font.BOLD : Font.PLAIN));
   }
 
   @EditableProperty

@@ -102,8 +102,9 @@ public class RadialInductor extends AbstractRadialComponent<Inductance> {
       } else {
         margin = leadThickness / 4;
       }
-      Line2D line = new Line2D.Double(
-          -margin + lip, y - rect.height / 2, rect.width - lip + margin, y - rect.height / 2);
+      Line2D line =
+          new Line2D.Double(
+              -margin + lip, y - rect.height / 2, rect.width - lip + margin, y - rect.height / 2);
       Shape s = stroke.createStrokedShape(line);
       copper.add(new Area(s));
     }
@@ -186,20 +187,25 @@ public class RadialInductor extends AbstractRadialComponent<Inductance> {
     double diameter = (int) getLength().convertToPixels();
     double lip = getLip().convertToPixels();
     if (folded) {
-      Area body = Area.roundRect(
-          0f,
-          -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
-          getClosestOdd(diameter),
-          getClosestOdd(height),
-          EDGE_RADIUS.convertToPixels()).subtract(Area.rect(
-              0f,
-              -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
-              lip,
-              height - 2 * lip)).subtract(Area.rect(
-                  diameter - lip,
-                  -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
-                  lip * 2,
-                  height - 2 * lip));
+      Area body =
+          Area.roundRect(
+                  0f,
+                  -height / 2 - LEAD_THICKNESS.convertToPixels() / 2,
+                  getClosestOdd(diameter),
+                  getClosestOdd(height),
+                  EDGE_RADIUS.convertToPixels())
+              .subtract(
+                  Area.rect(
+                      0f,
+                      -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
+                      lip,
+                      height - 2 * lip))
+              .subtract(
+                  Area.rect(
+                      diameter - lip,
+                      -height / 2 + lip - LEAD_THICKNESS.convertToPixels() / 2,
+                      lip * 2,
+                      height - 2 * lip));
       return body;
     }
     return Area.oval(Area.point(0, 0), Area.point(diameter, diameter));

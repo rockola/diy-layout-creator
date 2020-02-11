@@ -69,10 +69,7 @@ public class RcaJack extends AbstractMultiPartComponent<String> {
   private static Size HOLE_TO_EDGE = Size.in(0.063);
 
   private String value = "";
-  private Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
@@ -139,8 +136,9 @@ public class RcaJack extends AbstractMultiPartComponent<String> {
 
       body[0] = Area.ring(x0, y0, waferDiameter, holeDiameter);
 
-      Area tip = new TwoCircleTangent(
-          controlPoints[0], controlPoints[1], bodyDiameter / 2, springWidth / 2);
+      Area tip =
+          new TwoCircleTangent(
+              controlPoints[0], controlPoints[1], bodyDiameter / 2, springWidth / 2);
       tip.subtract(Area.circle(x1, y1, holeDiameter));
       tip.subtract(Area.circle(x0, y0, waferDiameter));
       body[1] = tip;
@@ -189,11 +187,12 @@ public class RcaJack extends AbstractMultiPartComponent<String> {
     double y0 = height * 0.65;
     double x1 = width * 0.75;
     double y1 = height * 0.25;
-    TwoCircleTangent main = new TwoCircleTangent(
-        new Point2D.Double(width * 0.35, height * 0.65),
-        new Point2D.Double(x1, y1),
-        width * 0.3,
-        width * 0.1);
+    TwoCircleTangent main =
+        new TwoCircleTangent(
+            new Point2D.Double(width * 0.35, height * 0.65),
+            new Point2D.Double(x1, y1),
+            width * 0.3,
+            width * 0.1);
     main.subtract(new Area(new Ellipse2D.Double(x0 - 1, y0 - 1, 3, 3)));
     main.subtract(new Area(new Ellipse2D.Double(x1 - 1, y1 - 1, 2, 2)));
 
@@ -220,8 +219,9 @@ public class RcaJack extends AbstractMultiPartComponent<String> {
 
     double waferDiameter = width * 0.22;
     g2d.setColor(WAFER_COLOR);
-    g2d.draw(new Ellipse2D.Double(
-        x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
+    g2d.draw(
+        new Ellipse2D.Double(
+            x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
   }
 
   @Override

@@ -32,9 +32,7 @@ public class ComponentArea {
   private List<Area> continuityNegativeAreas;
 
   public ComponentArea(
-      Area outlineArea,
-      List<Area> continuityPositiveAreas,
-      List<Area> continuityNegativeAreas) {
+      Area outlineArea, List<Area> continuityPositiveAreas, List<Area> continuityNegativeAreas) {
     super();
     this.outlineArea = outlineArea;
     this.continuityPositiveAreas = continuityPositiveAreas;
@@ -56,12 +54,13 @@ public class ComponentArea {
       return tag("ComponentArea", tag("outlineArea", null));
     }
     Rectangle bounds = outlineArea.getBounds();
-    return tag("componentArea", tag("outlineArea", String.format(
-        "<bounds h=\"%d\" w=\"%d\" x=\"%d\" y=\"%d\"/>",
-        bounds.height,
-        bounds.width,
-        bounds.x,
-        bounds.y)));
+    return tag(
+        "componentArea",
+        tag(
+            "outlineArea",
+            String.format(
+                "<bounds h=\"%d\" w=\"%d\" x=\"%d\" y=\"%d\"/>",
+                bounds.height, bounds.width, bounds.x, bounds.y)));
   }
 
   public Area getOutlineArea() {

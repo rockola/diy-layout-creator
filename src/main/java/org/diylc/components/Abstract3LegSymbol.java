@@ -64,12 +64,13 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   public Point[] getControlPoints() {
     if (controlPoints.length == 3) {
-      controlPoints = new Point[] {
-        controlPoints[0],
-        controlPoints[1],
-        controlPoints[2],
-        getDefaultLabelPosition(controlPoints)
-      };
+      controlPoints =
+          new Point[] {
+            controlPoints[0],
+            controlPoints[1],
+            controlPoints[2],
+            getDefaultLabelPosition(controlPoints)
+          };
     }
     return controlPoints;
   }
@@ -134,16 +135,16 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     Rectangle shapeRect = body[0].getBounds().union(body[1].getBounds()).union(body[2].getBounds());
     int labelX =
         getMoveLabel()
-        ? controlPoints[3].x
-        : getLabelX(shapeRect, textRect, fontMetrics, outlineMode);
+            ? controlPoints[3].x
+            : getLabelX(shapeRect, textRect, fontMetrics, outlineMode);
     int labelY =
         getMoveLabel()
-        ? controlPoints[3].y
-        : getLabelY(shapeRect, textRect, fontMetrics, outlineMode);
+            ? controlPoints[3].y
+            : getLabelY(shapeRect, textRect, fontMetrics, outlineMode);
     HorizontalAlignment alignment =
         flip == SymbolFlipping.X
-        ? HorizontalAlignment.RIGHT
-        : (getMoveLabel() ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
+            ? HorizontalAlignment.RIGHT
+            : (getMoveLabel() ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
     StringUtils.drawCenteredText(g2d, label, labelX, labelY, alignment, VerticalAlignment.CENTER);
   }
 
@@ -307,8 +308,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
   }
 
   protected void applyOrientation(Area[] body) {
-    if (getOrientation() != Orientation.DEFAULT
-        && body != null) {
+    if (getOrientation() != Orientation.DEFAULT && body != null) {
       Point first = getControlPoints()[0];
       for (int i = 0; i < body.length; i++) {
         body[i].rotate(getOrientation(), first);

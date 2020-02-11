@@ -28,28 +28,21 @@ import org.diylc.netlist.TreeException;
 
 public interface INetlistAnalyzer {
 
-  /**
-     @return summarizer name
-  */
+  /** @return summarizer name */
   String getName();
 
-  /**
-     @return name of the icon to use
-  */
+  /** @return name of the icon to use */
   String getIconName();
 
   /**
    * Summarizes all {@link Netlist}s provided.
    *
    * @param netlists {@link Netlist}s to be summarized.
-   * @param preferredOutput optional, needed only where there's more
-   *     than one possible output node.
+   * @param preferredOutput optional, needed only where there's more than one possible output node.
    * @return
    */
   List<Summary> summarize(List<Netlist> netlists, Node preferredOutput) throws TreeException;
 
-  /**
-     @return name of the font to be used for display
-  */
+  /** @return name of the font to be used for display */
   String getFontName();
 }

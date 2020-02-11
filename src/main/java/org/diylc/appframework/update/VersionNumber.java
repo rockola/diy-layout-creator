@@ -51,10 +51,7 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
   }
 
   public VersionNumber(XmlNode node) {
-    this(
-        node.getValue("major"),
-        node.getValue("minor"),
-        node.getValue("build"));
+    this(node.getValue("major"), node.getValue("minor"), node.getValue("build"));
   }
 
   public int getMajor() {
@@ -96,14 +93,11 @@ public class VersionNumber implements Serializable, Comparable<VersionNumber> {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     VersionNumber other = (VersionNumber) obj;
-    if (build != other.build
-        || major != other.major
-        || minor != other.minor) {
+    if (build != other.build || major != other.major || minor != other.minor) {
       return false;
     }
     return true;

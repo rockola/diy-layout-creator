@@ -23,8 +23,8 @@ package org.diylc.netlist;
 import org.diylc.core.IDIYComponent;
 
 /**
- * Represents a single node in a {@link Netlist}, uniquely defined by
- * a component and a control point.
+ * Represents a single node in a {@link Netlist}, uniquely defined by a component and a control
+ * point.
  *
  * @author Branislav Stojkovic
  */
@@ -67,8 +67,7 @@ public class Node implements Comparable<Node> {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     Node other = (Node) obj;
@@ -92,7 +91,7 @@ public class Node implements Comparable<Node> {
     }
     return component.getName() + "." + getDisplayName();
     /* + " @ (" + component.getControlPoint(pointIndex).getX()
-       + ":" + component.getControlPoint(pointIndex).getY() + ")"*/
+    + ":" + component.getControlPoint(pointIndex).getY() + ")"*/
   }
 
   @Override

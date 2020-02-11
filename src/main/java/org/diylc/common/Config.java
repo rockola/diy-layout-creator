@@ -59,17 +59,18 @@ public final class Config {
   // private static FileBasedConfigurationBuilder<XMLConfiguration> builder = null;
   private static Keymap keymap = null;
 
-  private static final List<String> configurationFiles = Arrays.asList(
-      "org/diylc/defaults.xml",
-      "org/diylc/fonts.xml",
-      "icons-material.xml", // "org/diylc/icons.xml",
-      "org/diylc/strings-EN.xml");
+  private static final List<String> configurationFiles =
+      Arrays.asList(
+          "org/diylc/defaults.xml",
+          "org/diylc/fonts.xml",
+          "icons-material.xml", // "org/diylc/icons.xml",
+          "org/diylc/strings-EN.xml");
 
   private static FileBasedConfigurationBuilder<XMLConfiguration> getBuilder(
       String configurationFile) {
-    final FileLocationStrategy strategy = new CombinedLocationStrategy(Arrays.asList(
-        new ClasspathLocationStrategy(),
-        new FileSystemLocationStrategy()));
+    final FileLocationStrategy strategy =
+        new CombinedLocationStrategy(
+            Arrays.asList(new ClasspathLocationStrategy(), new FileSystemLocationStrategy()));
     return new FileBasedConfigurationBuilder<XMLConfiguration>(XMLConfiguration.class)
         .configure(
             new Parameters().xml().setLocationStrategy(strategy).setFileName(configurationFile));
@@ -112,10 +113,10 @@ public final class Config {
   }
 
   /**
-     Find URI corresponding to given key from String resources.
-
-     @param key Resource key
-     @return URI if found, or null
+   * Find URI corresponding to given key from String resources.
+   *
+   * @param key Resource key
+   * @return URI if found, or null
    */
   public static URI getUri(String key) {
     URI uri = null;
@@ -129,11 +130,11 @@ public final class Config {
   }
 
   /**
-     Find URL corresponding to given key from String resources.
-
-     @see getUri
-     @param key Resource key
-     @return URL if found, or null
+   * Find URL corresponding to given key from String resources.
+   *
+   * @see getUri
+   * @param key Resource key
+   * @return URL if found, or null
    */
   public static URL getUrl(String key) {
     URL url = null;
@@ -152,9 +153,8 @@ public final class Config {
   /**
    * Fetch _key_ contents from defaults as String.
    *
-   * <p>If contents is the empty string, return key in title
-   * case. <code>&lt;Key&gt;&lt;/key&gt;</code> can be stored simply
-   * as <code>&lt;key/&gt;</code>. Hyphens in _key_ are changed to
+   * <p>If contents is the empty string, return key in title case. <code>&lt;Key&gt;&lt;/key&gt;
+   * </code> can be stored simply as <code>&lt;key/&gt;</code>. Hyphens in _key_ are changed to
    * spaces. Only the last part after any dot ('.') is used.
    *
    * @param key Resource key
@@ -204,7 +204,7 @@ public final class Config {
     TEMPLATES,
     WHEEL_ZOOM;
 
-    private static final char[] camelCaseSeparators = new char[]{'_'};
+    private static final char[] camelCaseSeparators = new char[] {'_'};
 
     @Override
     public String toString() {

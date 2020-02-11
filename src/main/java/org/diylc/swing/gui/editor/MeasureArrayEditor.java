@@ -70,13 +70,13 @@ public class MeasureArrayEditor extends Container {
               AbstractMeasure<?>[] newMeasure = null;
               Double[] newValues = (Double[]) evt.getNewValue();
               if (newValues != null) {
-                newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
-                    property.getType().getComponentType(),
-                    newValues.length);
+                newMeasure =
+                    (AbstractMeasure<?>[])
+                        Array.newInstance(property.getType().getComponentType(), newValues.length);
                 for (int i = 0; i < newValues.length; i++) {
-                  newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
-                      newValues[i],
-                      unitBox.getSelectedItem());
+                  newMeasure[i] =
+                      (AbstractMeasure<?>)
+                          ctor.newInstance(newValues[i], unitBox.getSelectedItem());
                 }
               }
               property.setValue(newMeasure);
@@ -92,35 +92,35 @@ public class MeasureArrayEditor extends Container {
     try {
       Type type =
           ((ParameterizedType) property.getType().getComponentType().getGenericSuperclass())
-          .getActualTypeArguments()[0];
+              .getActualTypeArguments()[0];
       Method method = ((Class<?>) type).getMethod("values");
       unitBox = new JComboBox((Object[]) method.invoke(null));
-      unitBox.setSelectedItem(measure.length == 0 || measure[0] == null
-                              ? null
-                              : measure[0].getUnit());
-      unitBox.addActionListener((e) -> {
-        try {
-          Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
-          AbstractMeasure<?>[] newMeasure = null;
-          Double[] newValues = valueField.getValue();
-          if (newValues != null) {
-            newMeasure = (AbstractMeasure<?>[]) Array.newInstance(
-                property.getType().getComponentType(),
-                newValues.length);
-            for (int i = 0; i < newValues.length; i++) {
-              newMeasure[i] = (AbstractMeasure<?>) ctor.newInstance(
-                  newValues[i],
-                  unitBox.getSelectedItem());
+      unitBox.setSelectedItem(
+          measure.length == 0 || measure[0] == null ? null : measure[0].getUnit());
+      unitBox.addActionListener(
+          (e) -> {
+            try {
+              Constructor<?> ctor = property.getType().getComponentType().getConstructors()[0];
+              AbstractMeasure<?>[] newMeasure = null;
+              Double[] newValues = valueField.getValue();
+              if (newValues != null) {
+                newMeasure =
+                    (AbstractMeasure<?>[])
+                        Array.newInstance(property.getType().getComponentType(), newValues.length);
+                for (int i = 0; i < newValues.length; i++) {
+                  newMeasure[i] =
+                      (AbstractMeasure<?>)
+                          ctor.newInstance(newValues[i], unitBox.getSelectedItem());
+                }
+              }
+              property.setValue(newMeasure);
+              property.setChanged(true);
+              valueField.setBackground(oldBg);
+              unitBox.setBackground(oldBg);
+            } catch (Exception ex) {
+              LOG.error("Error while updating property units", ex);
             }
-          }
-          property.setValue(newMeasure);
-          property.setChanged(true);
-          valueField.setBackground(oldBg);
-          unitBox.setBackground(oldBg);
-        } catch (Exception ex) {
-          LOG.error("Error while updating property units", ex);
-        }
-      });
+          });
       add(unitBox, BorderLayout.EAST);
 
       if (!property.isUnique()) {

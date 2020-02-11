@@ -58,18 +58,20 @@ public class PhotoDiodeSymbol extends DiodeSymbol {
     int x2 = (int) (d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     int y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(d / 2, (int) width, x2, y2);
-    g2d.fillPolygon(new Polygon(
-        new int[] {d / 2, (int) ((d / 2) + arrowSize), d / 2},
-        new int[] {(int) width, (int) width, (int) (width + arrowSize)},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {d / 2, (int) ((d / 2) + arrowSize), d / 2},
+            new int[] {(int) width, (int) width, (int) (width + arrowSize)},
+            3));
     // upper arrow
     x2 = (int) (3 * d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(3 * d / 2, (int) width, x2, y2);
-    g2d.fillPolygon(new Polygon(
-        new int[] {3 * d / 2, (int) ((3 * d / 2) + arrowSize), 3 * d / 2},
-        new int[] {(int) width, (int) width, (int) (width + arrowSize)},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {3 * d / 2, (int) ((3 * d / 2) + arrowSize), 3 * d / 2},
+            new int[] {(int) width, (int) width, (int) (width + arrowSize)},
+            3));
   }
 
   @Override

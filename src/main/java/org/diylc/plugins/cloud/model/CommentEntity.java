@@ -94,8 +94,7 @@ public class CommentEntity implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     CommentEntity other = (CommentEntity) obj;
@@ -106,8 +105,7 @@ public class CommentEntity implements Serializable {
     } else if (!comment.equals(other.comment)) {
       return false;
     }
-    if (id != other.id
-        || parentId != other.parentId) {
+    if (id != other.id || parentId != other.parentId) {
       return false;
     }
     if (postedAt == null) {

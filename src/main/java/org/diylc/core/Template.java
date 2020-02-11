@@ -30,8 +30,7 @@ public class Template {
   private Map<String, Object> values;
   private List<Point> points;
 
-  @Deprecated
-  private boolean defaultFlag;
+  @Deprecated private boolean defaultFlag;
 
   public Template() {
     //

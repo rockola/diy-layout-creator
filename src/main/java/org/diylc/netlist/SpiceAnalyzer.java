@@ -81,8 +81,7 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
       if (c instanceof ISpiceMapper) {
         prefix = ((ISpiceMapper) c).getPrefix();
       }
-      if (prefix != null
-          && !name.toLowerCase().startsWith(prefix.toLowerCase())) {
+      if (prefix != null && !name.toLowerCase().startsWith(prefix.toLowerCase())) {
         name = prefix + name;
       }
 

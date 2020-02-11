@@ -262,11 +262,13 @@ public class PotentiometerPanel extends AbstractPotentiometer {
         }
         // Make holes in the lugs.
         for (int i = 0; i < 3; i++) {
-          body[4 + i].subtract(new Area(new Ellipse2D.Double(
-              controlPoints[i].x - holeDiameter / 2,
-              controlPoints[i].y - holeDiameter / 2,
-              holeDiameter,
-              holeDiameter)));
+          body[4 + i].subtract(
+              new Area(
+                  new Ellipse2D.Double(
+                      controlPoints[i].x - holeDiameter / 2,
+                      controlPoints[i].y - holeDiameter / 2,
+                      holeDiameter,
+                      holeDiameter)));
         }
       }
 
@@ -281,8 +283,10 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           pointsY[i] = (int) (centerY + Math.sin(alpha) * nutSize / 2);
         }
         body[7] = new Area(new Polygon(pointsX, pointsY, 6));
-        body[8] = new Area(new Ellipse2D.Double(
-            centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
+        body[8] =
+            new Area(
+                new Ellipse2D.Double(
+                    centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
       }
     }
     return body;
@@ -364,7 +368,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
     // Draw value.
     rect = fontMetrics.getStringBounds(getValueForDisplay(), g2d);
 
-    //textHeight = (int) rect.getHeight();
+    // textHeight = (int) rect.getHeight();
     textWidth = (int) rect.getWidth();
 
     x = (panelWidth - textWidth) / 2;

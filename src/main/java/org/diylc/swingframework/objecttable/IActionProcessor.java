@@ -26,9 +26,8 @@ public interface IActionProcessor<T> {
   String getActionLabel(String actionName);
 
   /**
-   * Notifies the listener that action has been
-   * executed. <code>value</code> parameter contains the object that
-   * represents the row that was clicked on.
+   * Notifies the listener that action has been executed. <code>value</code> parameter contains the
+   * object that represents the row that was clicked on.
    *
    * @param value
    * @param actionName

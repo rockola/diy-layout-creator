@@ -49,6 +49,7 @@ import org.diylc.common.Config;
  * Export {@link JTable} to a file.
  *
  * <p>Supported formats:
+ *
  * <ul>
  *   <li>CSV
  *   <li>PNG
@@ -128,24 +129,19 @@ public class TableExporter {
         if (value != null) {
           Class<?> clazz = table.getModel().getColumnClass(columnIdx);
 
-          if (short.class.isAssignableFrom(clazz)
-              || Short.class.isAssignableFrom(clazz)) {
+          if (short.class.isAssignableFrom(clazz) || Short.class.isAssignableFrom(clazz)) {
             // cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue(((Short) value).intValue());
-          } else if (int.class.isAssignableFrom(clazz)
-                     || Integer.class.isAssignableFrom(clazz)) {
+          } else if (int.class.isAssignableFrom(clazz) || Integer.class.isAssignableFrom(clazz)) {
             // cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue((Integer) value);
-          } else if (long.class.isAssignableFrom(clazz)
-                     || Long.class.isAssignableFrom(clazz)) {
+          } else if (long.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)) {
             // cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue(((Long) value).intValue());
-          } else if (float.class.isAssignableFrom(clazz)
-                     || Float.class.isAssignableFrom(clazz)) {
+          } else if (float.class.isAssignableFrom(clazz) || Float.class.isAssignableFrom(clazz)) {
             // cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue(((Float) value).doubleValue());
-          } else if (double.class.isAssignableFrom(clazz)
-                     || Double.class.isAssignableFrom(clazz)) {
+          } else if (double.class.isAssignableFrom(clazz) || Double.class.isAssignableFrom(clazz)) {
             // cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
             cell.setCellValue((Double) value);
           } else {
@@ -179,8 +175,7 @@ public class TableExporter {
     LOG.debug("Writing header row");
     out.write("  <tr>\n");
     for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-      out.write("    <th align=\"left\" bgcolor=\"#00CCFF\">"
-                + table.getColumnName(i) + "</th>\n");
+      out.write("    <th align=\"left\" bgcolor=\"#00CCFF\">" + table.getColumnName(i) + "</th>\n");
     }
     out.write("  </tr>\n");
 
@@ -194,8 +189,7 @@ public class TableExporter {
         TableCellRenderer renderer = table.getCellRenderer(j, i);
         if (renderer != null) {
           Component rendererComponent =
-              renderer.getTableCellRendererComponent(table, value, false, false,
-                                                     rowIdx, columnIdx);
+              renderer.getTableCellRendererComponent(table, value, false, false, rowIdx, columnIdx);
           try {
             Method method = rendererComponent.getClass().getMethod("getText");
             out.write("    <td>" + method.invoke(rendererComponent) + "</td>\n");
@@ -243,15 +237,12 @@ public class TableExporter {
         TableCellRenderer renderer = table.getCellRenderer(j, i);
         if (renderer != null) {
           Component rendererComponent =
-              renderer.getTableCellRendererComponent(table, value, false, false,
-                                                     rowIdx, columnIdx);
+              renderer.getTableCellRendererComponent(table, value, false, false, rowIdx, columnIdx);
           try {
             Method method = rendererComponent.getClass().getMethod("getText");
             out.write(method.invoke(rendererComponent).toString());
           } catch (Exception e) {
-            LOG.error(
-                "exportToCsv({" + table.toString() + ", " + file.toString() + ") failed",
-                e);
+            LOG.error("exportToCsv({" + table.toString() + ", " + file.toString() + ") failed", e);
           }
         }
       }

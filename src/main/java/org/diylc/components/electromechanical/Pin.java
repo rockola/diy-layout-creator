@@ -30,7 +30,7 @@ public class Pin {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(Pin.class);
-  private static final Point reference = new Point(0,0);
+  private static final Point reference = new Point(0, 0);
 
   private Area shape;
 

@@ -45,17 +45,18 @@ public class StringListEditor extends JComboBox {
     Object[] values = (Object[]) function.invoke(property.getOwnerObject());
     setModel(new DefaultComboBoxModel(values));
     setSelectedItem(property.getValue());
-    addItemListener(new ItemListener() {
+    addItemListener(
+        new ItemListener() {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            property.setChanged(true);
-            setBackground(oldBackground);
-            StringListEditor.this.property.setValue(e.getItem());
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              property.setChanged(true);
+              setBackground(oldBackground);
+              StringListEditor.this.property.setValue(e.getItem());
+            }
           }
-        }
-      });
+        });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

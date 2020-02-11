@@ -141,9 +141,10 @@ public class GroundFill extends AbstractComponent<Void> {
     if (oldPointCount < newPointCount) {
       this.controlPoints[newPointCount - 1] = this.controlPoints[oldPointCount - 1];
       for (int i = oldPointCount - 1; i < newPointCount - 1; i++) {
-        this.controlPoints[i] = new Point(
-            (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
-            (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
+        this.controlPoints[i] =
+            new Point(
+                (this.controlPoints[i - 1].x + this.controlPoints[newPointCount - 1].x) / 2,
+                (this.controlPoints[i - 1].y + this.controlPoints[newPointCount - 1].y) / 2);
       }
     }
     this.pointCount = pointCount;

@@ -44,9 +44,12 @@ public class Toolbox implements IPlugIn {
     LOG.trace("connect() adding component browser listener");
     ConfigurationManager.addListener(
         ConfigPlugin.COMPONENT_BROWSER,
-        (key, value) -> App.ui().getComponentTabbedPane().setVisible(
-            ConfigPlugin.COMPONENT_BROWSER.equals(key)
-            && ConfigPlugin.TABBED_TOOLBAR.equals(value)));
+        (key, value) ->
+            App.ui()
+                .getComponentTabbedPane()
+                .setVisible(
+                    ConfigPlugin.COMPONENT_BROWSER.equals(key)
+                        && ConfigPlugin.TABBED_TOOLBAR.equals(value)));
   }
 
   @Override

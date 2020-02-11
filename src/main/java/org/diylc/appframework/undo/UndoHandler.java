@@ -30,10 +30,9 @@ import org.diylc.App;
 import org.diylc.images.Icon;
 
 /**
- * Utility that handles undo/redo operations. Use {@link #getUndoAction()}
- * and {@link #getRedoAction()} to obtain instances of actions that
- * may be used for menus, buttons, etc. Action states are updated
- * automatically, i.e. they are enabled and disabled when needed.
+ * Utility that handles undo/redo operations. Use {@link #getUndoAction()} and {@link
+ * #getRedoAction()} to obtain instances of actions that may be used for menus, buttons, etc. Action
+ * states are updated automatically, i.e. they are enabled and disabled when needed.
  *
  * @author Branislav Stojkovic
  * @param <T> type of entities that actions are performed upon
@@ -138,15 +137,15 @@ public class UndoHandler<T> {
 
   private void refreshActions() {
     getUndoAction().setEnabled(!undoStack.isEmpty());
-    getUndoAction().putValue(Action.NAME,
-                             "Undo" + (undoStack.isEmpty()
-                                       ? ""
-                                       : " " + undoStack.peek().changeDescription));
+    getUndoAction()
+        .putValue(
+            Action.NAME,
+            "Undo" + (undoStack.isEmpty() ? "" : " " + undoStack.peek().changeDescription));
     getRedoAction().setEnabled(!redoStack.isEmpty());
-    getRedoAction().putValue(Action.NAME,
-                             "Redo" + (redoStack.isEmpty()
-                                       ? ""
-                                       : " " + redoStack.peek().changeDescription));
+    getRedoAction()
+        .putValue(
+            Action.NAME,
+            "Redo" + (redoStack.isEmpty() ? "" : " " + redoStack.peek().changeDescription));
     while (undoStack.size() > MAX_STACK_SIZE) {
       undoStack.remove(0);
     }

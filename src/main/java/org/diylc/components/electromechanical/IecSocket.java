@@ -74,11 +74,7 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
-  protected Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected String value;
 
   private Orientation orientation = Orientation.DEFAULT;
@@ -220,17 +216,18 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
     int terminal = (int) (4f * width / 32);
     int terminalSpacingH = (int) (7f * width / 32);
     int terminalSpacingV = (int) (4f * width / 32);
-    RoundedPolygon poly = new RoundedPolygon(
-        new Point[] {
-          new Point(width / 2, height / 5),
-          new Point(width - margin - slant, height / 5),
-          new Point(width - margin, height / 5 + slant),
-          new Point(width - margin, height * 4 / 5),
-          new Point(margin, height * 4 / 5),
-          new Point(margin, height / 5 + slant),
-          new Point(margin + slant, height / 5),
-        },
-        new double[] {2d});
+    RoundedPolygon poly =
+        new RoundedPolygon(
+            new Point[] {
+              new Point(width / 2, height / 5),
+              new Point(width - margin - slant, height / 5),
+              new Point(width - margin, height / 5 + slant),
+              new Point(width - margin, height * 4 / 5),
+              new Point(margin, height * 4 / 5),
+              new Point(margin, height / 5 + slant),
+              new Point(margin + slant, height / 5),
+            },
+            new double[] {2d});
     g2d.fill(poly);
     g2d.setColor(BORDER_COLOR);
     g2d.draw(poly);

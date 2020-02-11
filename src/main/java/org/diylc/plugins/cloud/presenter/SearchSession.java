@@ -24,11 +24,10 @@ import java.util.List;
 import org.diylc.plugins.cloud.model.ProjectEntity;
 
 /**
- * Used to create paging of the search results. Use
- * {@link SearchSession#startSession(String, String, String)} to start the
- * search session and then {@link SearchSession#hasMoreData()} returns
- * true if there's more data available and
- * {@link SearchSession#requestMoreData()} returns the next page.
+ * Used to create paging of the search results. Use {@link SearchSession#startSession(String,
+ * String, String)} to start the search session and then {@link SearchSession#hasMoreData()} returns
+ * true if there's more data available and {@link SearchSession#requestMoreData()} returns the next
+ * page.
  *
  * @author Branislav Stojkovic
  */

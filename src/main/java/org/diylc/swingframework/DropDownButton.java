@@ -132,8 +132,8 @@ public class DropDownButton extends Box {
   /**
    * Set the behavior of the main button.
    *
-   * @param enable if true, a click on the main button will trigger an
-   *     actionPerformed() on the first item in the popup menu.
+   * @param enable if true, a click on the main button will trigger an actionPerformed() on the
+   *     first item in the popup menu.
    */
   public void setRunFirstMenuOption(boolean enable) {
     mainButton.removeActionListener(mainButtonListener);
@@ -145,8 +145,8 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * @return true if a click on the main button will trigger an
-   *     actionPerformed() on the first item in the popup menu.
+   * @return true if a click on the main button will trigger an actionPerformed() on the first item
+   *     in the popup menu.
    */
   public boolean getRunFirstMenuOption() {
     return mainRunsDefaultMenuOption;
@@ -195,9 +195,8 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * This object watches for insertion/deletion of menu items in the
-   * popup menu, and disables the drop-down button when the popup menu
-   * becomes empty.
+   * This object watches for insertion/deletion of menu items in the popup menu, and disables the
+   * drop-down button when the popup menu becomes empty.
    */
   private class MenuContainerListener implements ContainerListener {
     public void componentAdded(ContainerEvent e) {
@@ -210,8 +209,8 @@ public class DropDownButton extends Box {
   }
 
   /**
-   * An adapter that wraps a border object, and chops some number of
-   * pixels off the right hand side of the border.
+   * An adapter that wraps a border object, and chops some number of pixels off the right hand side
+   * of the border.
    */
   private static class RightChoppedBorder implements Border {
     private Border border;

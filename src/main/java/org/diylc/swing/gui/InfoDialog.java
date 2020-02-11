@@ -36,12 +36,10 @@ public class InfoDialog extends ButtonDialog {
 
   private static final long serialVersionUID = 1L;
 
-  private static String[] tipKeys = new String[] {
-    App.getString("infoDialog.highlight-continuity-tooltip")
-  };
-  private static String[] messages = new String[] {
-    App.getString("infoDialog.highlight-continuity")
-  };
+  private static String[] tipKeys =
+      new String[] {App.getString("infoDialog.highlight-continuity-tooltip")};
+  private static String[] messages =
+      new String[] {App.getString("infoDialog.highlight-continuity")};
   private String message;
   private String tipKey;
 

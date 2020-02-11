@@ -39,10 +39,9 @@ import org.diylc.core.Theme;
 import org.diylc.core.measures.Size;
 
 /**
- * Interface for communication between plug-ins and the
- * application. Plug-ins may acquire information or make changes
- * through this interface. Application events are dispatched to
- * plug-ins through {@link MessageDispatcher}
+ * Interface for communication between plug-ins and the application. Plug-ins may acquire
+ * information or make changes through this interface. Application events are dispatched to plug-ins
+ * through {@link MessageDispatcher}
  *
  * @author Branislav Stojkovic
  * @see IPlugIn
@@ -57,11 +56,9 @@ public interface IPlugInPort
   int DND_TOGGLE_SNAP = 0x40000000;
 
   /**
-   * Returns size of the canvas that takes project dimensions into
-   * account as well as zoom level.  Each dimension is calculated as
-   * the product of the actual size and the number of pixels per
-   * unit. If <code>useZoom</code> is set to true, the result is
-   * scaled by zoom factor.
+   * Returns size of the canvas that takes project dimensions into account as well as zoom level.
+   * Each dimension is calculated as the product of the actual size and the number of pixels per
+   * unit. If <code>useZoom</code> is set to true, the result is scaled by zoom factor.
    *
    * @param useZoom If true, scale result by zoom factor.
    * @param includeExtraSpace If true, extend canvas dimensions by extra space.
@@ -70,8 +67,7 @@ public interface IPlugInPort
   Dimension getCanvasDimensions(boolean useZoom, boolean includeExtraSpace);
 
   /**
-   * Returns an instance of {@link Cursor} that should be used at the
-   * specified location.
+   * Returns an instance of {@link Cursor} that should be used at the specified location.
    *
    * <p>Note: point coordinates are scaled for zoom factor.
    *
@@ -115,15 +111,13 @@ public interface IPlugInPort
   void saveProjectToFile(String fileName, boolean isBackup);
 
   /**
-     File name for current project.
-
-   @return the current file name.
-  */
+   * File name for current project.
+   *
+   * @return the current file name.
+   */
   String getCurrentFileName();
 
-  /**
-     @return true if the current project is modified.
-  */
+  /** @return true if the current project is modified. */
   boolean isProjectModified();
 
   /**
@@ -134,21 +128,16 @@ public interface IPlugInPort
   boolean allowFileAction();
 
   /**
-   * Draws project on the provided {@link Graphics2D}. If the provided
-   * filter is not null, it will be used to filter the components that
-   * are shown.
+   * Draws project on the provided {@link Graphics2D}. If the provided filter is not null, it will
+   * be used to filter the components that are shown.
    *
    * @param g2d Graphics context.
    * @param drawOptions Specific drawing options.
-   * @param filter Component filter for ignoring components not to be
-   * drawn at this time.
+   * @param filter Component filter for ignoring components not to be drawn at this time.
    * @param externalZoom Zoom factor.
    */
   void draw(
-      Graphics2D g2d,
-      Set<DrawOption> drawOptions,
-      IComponentFilter filter,
-      Double externalZoom);
+      Graphics2D g2d, Set<DrawOption> drawOptions, IComponentFilter filter, Double externalZoom);
 
   /**
    * Get available zoom levels.
@@ -182,29 +171,22 @@ public interface IPlugInPort
   /**
    * Selects all components in the project.
    *
-   * @param layer If positive, designates layer to select. If negative
-   *     or zero, select all regardless of layer.
+   * @param layer If positive, designates layer to select. If negative or zero, select all
+   *     regardless of layer.
    */
   void selectAll(int layer);
 
-  /**
-     Deletes all the selected components from the project.
-  */
+  /** Deletes all the selected components from the project. */
   void deleteSelectedComponents();
 
-  /**
-     Groups all selected components.
-  */
+  /** Groups all selected components. */
   void groupSelectedComponents();
 
-  /**
-     Ungroups all selected components.
-  */
+  /** Ungroups all selected components. */
   void ungroupSelectedComponents();
 
   /**
-   * Expands the current selection to include surrounding
-   * components. Options are controlled with
+   * Expands the current selection to include surrounding components. Options are controlled with
    * <code>expansionMode</code> flag.
    *
    * @param expansionMode
@@ -212,8 +194,8 @@ public interface IPlugInPort
   void expandSelection(ExpansionMode expansionMode);
 
   /**
-   * Finds all components at the specified location, sorted by z-index
-   * from top to bottom. Location depends on the current zoom level.
+   * Finds all components at the specified location, sorted by z-index from top to bottom. Location
+   * depends on the current zoom level.
    *
    * @param point Location of interest.
    * @return Found components.
@@ -235,9 +217,8 @@ public interface IPlugInPort
   void mirrorSelection(int direction);
 
   /**
-   * Returns the minimum rectangle containing all selected components,
-   * or null if none exists.  Rectangle is scaled by the current zoom
-   * level.
+   * Returns the minimum rectangle containing all selected components, or null if none exists.
+   * Rectangle is scaled by the current zoom level.
    *
    * @param applyZoom
    * @return
@@ -254,8 +235,7 @@ public interface IPlugInPort
   void nudgeSelection(Size offsetX, Size offsetY, boolean includeStuckComponents);
 
   /**
-   * Sets default value for the specified property name for currently
-   * selected component types.
+   * Sets default value for the specified property name for currently selected component types.
    *
    * @param propertyName display name for property
    * @param value new default value, must not be null
@@ -272,10 +252,9 @@ public interface IPlugInPort
   void setDefaultPropertyValue(Class<?> clazz, String propertyName, Object value);
 
   /**
-   * @return a list of properties that are mutual for all the selected
-   *     components. Resulting list may be empty if selected
-   *     components do not have mutual properties or can be null if
-   *     the selection is empty.
+   * @return a list of properties that are mutual for all the selected components. Resulting list
+   *     may be empty if selected components do not have mutual properties or can be null if the
+   *     selection is empty.
    */
   List<PropertyWrapper> getMutualSelectionProperties();
 
@@ -295,14 +274,12 @@ public interface IPlugInPort
    */
   void applyProperties(Object obj, List<PropertyWrapper> properties);
 
-  /**
-     Gets the current new component slot.
-  */
+  /** Gets the current new component slot. */
   ComponentType getNewComponentTypeSlot();
 
   /**
-   * Sets the new component slot. Specified component type will be
-   * used to instantiate new component.
+   * Sets the new component slot. Specified component type will be used to instantiate new
+   * component.
    *
    * @param componentType
    * @param template
@@ -312,16 +289,15 @@ public interface IPlugInPort
       ComponentType componentType, Template template, boolean forceInstantiate);
 
   /**
-   * Changes default size notation, true for metric, false for
-   * imperial.
+   * Changes default size notation, true for metric, false for imperial.
    *
    * @param isMetric
    */
   void setMetric(boolean isMetric);
 
   /**
-   * Locks or unlocks the specified layer. All components within
-   * +-0.5 range will be affected by the change as well.
+   * Locks or unlocks the specified layer. All components within +-0.5 range will be affected by the
+   * change as well.
    *
    * @param layerZOrder
    * @param locked
@@ -329,8 +305,8 @@ public interface IPlugInPort
   void setLayerLocked(int layerZOrder, boolean locked);
 
   /**
-   * Shows or hides the specified layer. All components within +-0.5
-   * range will be affected by the change as well.
+   * Shows or hides the specified layer. All components within +-0.5 range will be affected by the
+   * change as well.
    *
    * @param layerZOrder
    * @param visible
@@ -338,30 +314,22 @@ public interface IPlugInPort
   void setLayerVisibility(int layerZOrder, boolean visible);
 
   /**
-     Get selection size as an array of extremum points.
-
-     @return selection size expressed in both inches or centimeters, respectively
-  */
+   * Get selection size as an array of extremum points.
+   *
+   * @return selection size expressed in both inches or centimeters, respectively
+   */
   Point2D[] calculateSelectionDimension();
 
-  /**
-     Sends each of the selected components one step back.
-  */
+  /** Sends each of the selected components one step back. */
   void sendSelectionToBack();
 
-  /**
-     Brings each of the selected components one step to front.
-  */
+  /** Brings each of the selected components one step to front. */
   void bringSelectionToFront();
 
-  /**
-     Causes the display to refresh.
-  */
+  /** Causes the display to refresh. */
   void refresh();
 
-  /**
-     @return currently selected theme.
-  */
+  /** @return currently selected theme. */
   Theme getSelectedTheme();
 
   /**
@@ -374,15 +342,13 @@ public interface IPlugInPort
   /**
    * Renumber selected components.
    *
-   * <p>The order in which the components are renumbered is either
-   * top-to-bottom (X axis first) or left-to-right (Y axis first).
+   * <p>The order in which the components are renumbered is either top-to-bottom (X axis first) or
+   * left-to-right (Y axis first).
    *
    * @param topToBottom Top-to-bottom if true, left-to-right (Y axis first) if false
    */
   void renumberSelectedComponents(boolean topToBottom);
 
-  /**
-     @return size of extra space around the canvas
-  */
+  /** @return size of extra space around the canvas */
   double getExtraSpace();
 }

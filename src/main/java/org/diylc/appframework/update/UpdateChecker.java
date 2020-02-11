@@ -68,10 +68,11 @@ public class UpdateChecker {
     List<Version> versions = findNewVersions();
     if (versions != null && !versions.isEmpty()) {
       Version v = versions.get(0);
-      return String.format(getMsg("version-short-format"),
-                           v.getName(),
-                           v.getVersionNumber(),
-                           dateFormat.format(v.getReleaseDate()));
+      return String.format(
+          getMsg("version-short-format"),
+          v.getName(),
+          v.getVersionNumber(),
+          dateFormat.format(v.getReleaseDate()));
     }
     return null;
   }
@@ -89,9 +90,7 @@ public class UpdateChecker {
         changeStr.append(
             String.format(
                 "&nbsp;&nbsp;&nbsp;<b>&rsaquo;</b>&nbsp;[<span class=\"%\">%s</span>] %s<br>%n",
-                change.getChangeType(),
-                change.getChangeType(),
-                change.getDescription()));
+                change.getChangeType(), change.getChangeType(), change.getDescription()));
       }
 
       bodyHtml.append(
@@ -107,7 +106,6 @@ public class UpdateChecker {
 
     return String.format(
         "<html><font face=\"%s\" size=\"2\">%n%s%n</font></html>",
-        Config.getString("font.sans-serif"),
-        bodyHtml.toString());
+        Config.getString("font.sans-serif"), bodyHtml.toString());
   }
 }

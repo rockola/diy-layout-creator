@@ -113,22 +113,12 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
     int x = (controlPoints[0].x + controlPoints[2].x) / 2;
     String label = getLabelForDisplay();
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    StringUtils.drawCenteredText(
-        g2d,
-        label,
-        x,
-        controlPoints[0].y + pinSpacing);
+    StringUtils.drawCenteredText(g2d, label, x, controlPoints[0].y + pinSpacing);
     // Draw +/- markers
     StringUtils.drawCenteredText(
-        g2d,
-        getFlip() ? "+" : "-",
-        controlPoints[0].x + pinSpacing,
-        controlPoints[0].y);
+        g2d, getFlip() ? "+" : "-", controlPoints[0].x + pinSpacing, controlPoints[0].y);
     StringUtils.drawCenteredText(
-        g2d,
-        getFlip() ? "-" : "+",
-        controlPoints[1].x + pinSpacing,
-        controlPoints[1].y);
+        g2d, getFlip() ? "-" : "+", controlPoints[1].x + pinSpacing, controlPoints[1].y);
   }
 
   @Override

@@ -53,13 +53,11 @@ import org.diylc.parsing.XmlNode;
 import org.diylc.presenter.ComponentArea; // should probably be in this package
 
 /**
- * Abstract implementation of {@link IDIYComponent} that contains
- * component name and toString.
+ * Abstract implementation of {@link IDIYComponent} that contains component name and toString.
  *
- * <p>IMPORTANT: to improve performance, all fields except for
- * <code>Point</code> and <code>Point</code> arrays should be
- * immutable. Failing to comply with this can result in annoying and
- * hard to trace bugs.
+ * <p>IMPORTANT: to improve performance, all fields except for <code>Point</code> and <code>Point
+ * </code> arrays should be immutable. Failing to comply with this can result in annoying and hard
+ * to trace bugs.
  *
  * @author Branislav Stojkovic
  * @param <T> Value type.
@@ -102,9 +100,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     componentArea = area;
   }
 
-  /**
-     Clears component area.
-  */
+  /** Clears component area. */
   public void resetArea() {
     setArea(null);
   }
@@ -154,9 +150,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   }
 
   private Color getColorUnlessSelectedOrDragging(
-      boolean outlineMode,
-      Color selectedOrDraggingColor,
-      Color color) {
+      boolean outlineMode, Color selectedOrDraggingColor, Color color) {
     if (isSelectedOrDragging()) {
       return selectedOrDraggingColor;
     }
@@ -164,72 +158,62 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   }
 
   /**
-     Use color unless in outline mode, selected, or dragging.
-
-     If in outline mode, returns outline color specified in theme.
-     Otherwise if selected or dragging, returns SELECTION_COLOR.
-     Finally, returns the given color.
-
-     @param outlineMode true if outline mode color should override.
-     @param color Color to use unless outline mode/selection/drag overrides.
-     @return color
-  */
+   * Use color unless in outline mode, selected, or dragging.
+   *
+   * <p>If in outline mode, returns outline color specified in theme. Otherwise if selected or
+   * dragging, returns SELECTION_COLOR. Finally, returns the given color.
+   *
+   * @param outlineMode true if outline mode color should override.
+   * @param color Color to use unless outline mode/selection/drag overrides.
+   * @return color
+   */
   public Color tryColor(boolean outlineMode, Color color) {
     return getColorUnlessSelectedOrDragging(outlineMode, SELECTION_COLOR, color);
   }
 
   /**
-     Use border color unless in outline mode, selected, or dragging.
-
-     Defaults to calling tryColor, which means using SELECTION_COLOR
-     when not in outline mode and selected or dragging. Override this
-     in subclass if different selected/dragging color is needed.
-
-     @param outlineMode true if outline mode color should override.
-     @param color Color to use unless outline mode/selection/drag overrides.
-     @return color
-  */
+   * Use border color unless in outline mode, selected, or dragging.
+   *
+   * <p>Defaults to calling tryColor, which means using SELECTION_COLOR when not in outline mode and
+   * selected or dragging. Override this in subclass if different selected/dragging color is needed.
+   *
+   * @param outlineMode true if outline mode color should override.
+   * @param color Color to use unless outline mode/selection/drag overrides.
+   * @return color
+   */
   public Color tryBorderColor(boolean outlineMode, Color color) {
     return tryColor(outlineMode, color);
   }
 
   /**
-     Use color unless in outline mode, selected, or dragging.
-
-     If in outline mode, returns outline color specified in theme.
-     Otherwise if selected or dragging, returns LABEL_COLOR_SELECTED.
-     Finally, returns the given color.
-
-     @param outlineMode true if outline mode color should override.
-     @param color Color to use unless outline mode/selection/drag overrides.
-     @return color
-  */
+   * Use color unless in outline mode, selected, or dragging.
+   *
+   * <p>If in outline mode, returns outline color specified in theme. Otherwise if selected or
+   * dragging, returns LABEL_COLOR_SELECTED. Finally, returns the given color.
+   *
+   * @param outlineMode true if outline mode color should override.
+   * @param color Color to use unless outline mode/selection/drag overrides.
+   * @return color
+   */
   public Color tryLabelColor(boolean outlineMode, Color color) {
     return getColorUnlessSelectedOrDragging(outlineMode, LABEL_COLOR_SELECTED, color);
   }
 
   /**
-     Use color unless selected or dragging.
-
-     If selected or dragging, returns SELECTION_COLOR.
-
-     @param color Color to use unless selected or dragging.
-     @return color unless selected or dragging, defaults to SELECTION_COLOR otherwise
-  */
+   * Use color unless selected or dragging.
+   *
+   * <p>If selected or dragging, returns SELECTION_COLOR.
+   *
+   * @param color Color to use unless selected or dragging.
+   * @return color unless selected or dragging, defaults to SELECTION_COLOR otherwise
+   */
   public Color tryLeadColor(Color color) {
     return getColorUnlessSelectedOrDragging(false, SELECTION_COLOR, color);
   }
 
-  /**
-     Draw or fill rectangle according to outline mode.
-  */
+  /** Draw or fill rectangle according to outline mode. */
   public void drawFillRect(
-      Graphics2D g2d,
-      boolean outlineMode,
-      int x,
-      int y,
-      int width,
-      int height) {
+      Graphics2D g2d, boolean outlineMode, int x, int y, int width, int height) {
     if (outlineMode) {
       g2d.drawRect(x, y, width, height);
     } else {
@@ -248,10 +232,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
       sequenceNumber = nextSequenceNumber();
     }
     return String.format(
-        "<%s id=%d name=\"%s\"/>",
-        this.getClass().getName(),
-        sequenceNumber,
-        getName());
+        "<%s id=%d name=\"%s\"/>", this.getClass().getName(), sequenceNumber, getName());
   }
 
   protected String getLabelForDisplay() {
@@ -396,8 +377,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
         // Copy over all non-static, non-final fields that are declared
         // in AbstractComponent or one of it's child classes
         for (Field field : fields) {
-          if (!Modifier.isStatic(field.getModifiers())
-              && !Modifier.isFinal(field.getModifiers())) {
+          if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
             field.setAccessible(true);
             Object value = field.get(this);
 
@@ -426,8 +406,7 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
       }
       return newInstance;
     } catch (Exception e) {
-      throw new CloneNotSupportedException(
-          "Could not clone the component. " + e.getMessage());
+      throw new CloneNotSupportedException("Could not clone the component. " + e.getMessage());
     }
   }
 
@@ -545,14 +524,9 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return new ImageIcon(image);
   }
 
-  /****************************************************************
-   * Unmarshal XML
-   */
+  /** ************************************************************** Unmarshal XML */
 
-  /**
-     TODO: turn this into an exception class
-   */
-
+  /** TODO: turn this into an exception class */
   private RuntimeException unsupportedUnmarshalFunction(String f) {
     return new RuntimeException(f + "() not supported for " + getClass().getName());
   }

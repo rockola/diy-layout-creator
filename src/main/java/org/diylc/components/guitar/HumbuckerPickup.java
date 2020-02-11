@@ -195,13 +195,15 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
       int coilSpacing = width / 2;
       int coilMargin = (width - coilSpacing) / 2;
       int poleMargin = (length - poleSpacing * 5) / 2;
-      Area base = new Area(new RoundRectangle2D.Double(
-          x /* + pointMargin */ - length,
-          y - pointMargin,
-          length,
-          width,
-          edgeRadius,
-          edgeRadius));
+      Area base =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x /* + pointMargin */ - length,
+                  y - pointMargin,
+                  length,
+                  width,
+                  edgeRadius,
+                  edgeRadius));
 
       // base or cover
       body[0] = new Area(base);
@@ -209,41 +211,51 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
         int cutoutMargin = (int) FILTETRON_CUTOUT_MARGIN.convertToPixels();
         int cutoutHeight = poleSize + 2 * cutoutMargin;
         int cutoutWidth = 5 * poleSpacing + poleSize + 2 * cutoutMargin;
-        Area cutout = new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
-            y - pointMargin + coilMargin - poleSize / 2 - cutoutMargin,
-            cutoutWidth,
-            cutoutHeight,
-            cutoutHeight,
-            cutoutHeight));
+        Area cutout =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
+                    y - pointMargin + coilMargin - poleSize / 2 - cutoutMargin,
+                    cutoutWidth,
+                    cutoutHeight,
+                    cutoutHeight,
+                    cutoutHeight));
         ((Area) body[0]).subtract(cutout);
-        cutout = new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
-            y - pointMargin + width - coilMargin - poleSize / 2 - cutoutMargin,
-            cutoutWidth,
-            cutoutHeight,
-            cutoutHeight,
-            cutoutHeight));
+        cutout =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2 - cutoutMargin,
+                    y - pointMargin + width - coilMargin - poleSize / 2 - cutoutMargin,
+                    cutoutWidth,
+                    cutoutHeight,
+                    cutoutHeight,
+                    cutoutHeight));
         ((Area) body[0]).subtract(cutout);
         int middleCutoutWidth = poleSpacing / 5;
-        cutout = new Area(new Rectangle2D.Double(
-            x /* + pointMargin */ - length / 2 - middleCutoutWidth / 2,
-            y - pointMargin + width / 4,
-            middleCutoutWidth,
-            width / 2));
+        cutout =
+            new Area(
+                new Rectangle2D.Double(
+                    x /* + pointMargin */ - length / 2 - middleCutoutWidth / 2,
+                    y - pointMargin + width / 4,
+                    middleCutoutWidth,
+                    width / 2));
         ((Area) body[0]).subtract(cutout);
         if (!getLegs()) {
-          cutout = new Area(new Ellipse2D.Double(
-              x /* + pointMargin */ - length + lipHoleSize * 2,
-              y - pointMargin + width / 2 - lipHoleSize * 0.75,
-              lipHoleSize * 1.5,
-              lipHoleSize * 1.5));
+          cutout =
+              new Area(
+                  new Ellipse2D.Double(
+                      x /* + pointMargin */ - length + lipHoleSize * 2,
+                      y - pointMargin + width / 2 - lipHoleSize * 0.75,
+                      lipHoleSize * 1.5,
+                      lipHoleSize * 1.5));
           ((Area) body[0]).subtract(cutout);
-          cutout = new Area(new Ellipse2D.Double(
-              x /* + pointMargin */ - lipHoleSize * 3,
-              y - pointMargin + width / 2 - lipHoleSize * 0.75,
-              lipHoleSize * 1.5,
-              lipHoleSize * 1.5));
+          cutout =
+              new Area(
+                  new Ellipse2D.Double(
+                      x /* + pointMargin */ - lipHoleSize * 3,
+                      y - pointMargin + width / 2 - lipHoleSize * 0.75,
+                      lipHoleSize * 1.5,
+                      lipHoleSize * 1.5));
           ((Area) body[0]).subtract(cutout);
         }
       }
@@ -252,69 +264,83 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
       if (!getCover() || isFiltertron()) {
         int bobbinWidth = width / 2;
         int bobbinRadius = (int) (isFiltertron() ? edgeRadius * 1.1f : bobbinWidth);
-        body[4] = new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length,
-            y - pointMargin,
-            length,
-            bobbinWidth,
-            bobbinRadius,
-            bobbinRadius));
-        body[5] = new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length,
-            y - pointMargin + bobbinWidth,
-            length,
-            bobbinWidth,
-            bobbinRadius,
-            bobbinRadius));
+        body[4] =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length,
+                    y - pointMargin,
+                    length,
+                    bobbinWidth,
+                    bobbinRadius,
+                    bobbinRadius));
+        body[5] =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length,
+                    y - pointMargin + bobbinWidth,
+                    length,
+                    bobbinWidth,
+                    bobbinRadius,
+                    bobbinRadius));
       }
 
       // legs
       if (getLegs()) {
-        Area legArea = new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length - lipLength,
-            y - pointMargin + width / 2 - lipWidth / 2,
-            length + 2 * lipLength,
-            lipWidth,
-            edgeRadius / 2,
-            edgeRadius / 2));
+        Area legArea =
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length - lipLength,
+                    y - pointMargin + width / 2 - lipWidth / 2,
+                    length + 2 * lipLength,
+                    lipWidth,
+                    edgeRadius / 2,
+                    edgeRadius / 2));
         legArea.subtract((Area) (body[0]));
-        legArea.subtract(new Area(new Ellipse2D.Double(
-            x /* + pointMargin */ - length - lipLength / 2,
-            y - pointMargin + width / 2 - lipHoleSize / 2,
-            lipHoleSize,
-            lipHoleSize)));
-        legArea.subtract(new Area(new Ellipse2D.Double(
-            x /* + pointMargin */ + lipLength / 2,
-            y - pointMargin + width / 2 - lipHoleSize / 2,
-            lipHoleSize,
-            lipHoleSize)));
+        legArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /* + pointMargin */ - length - lipLength / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
+        legArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x /* + pointMargin */ + lipLength / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
         legArea.subtract(base);
         body[1] = legArea;
       }
 
       // contact point
-      body[2] = new Area(new Ellipse2D.Double(
-          x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] =
+          new Area(
+              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       Area poleArea = new Area();
       Area poleDecorationArea = new Area();
 
       if (getCoilType1() == PolePieceType.Rail) {
-        poleArea.add(new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length + poleMargin - poleSize / 2,
-            y - pointMargin + coilMargin - poleSize / 2,
-            poleSpacing * 5 + poleSize,
-            poleSize,
-            poleSize / 2,
-            poleSize / 2)));
+        poleArea.add(
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2,
+                    y - pointMargin + coilMargin - poleSize / 2,
+                    poleSpacing * 5 + poleSize,
+                    poleSize,
+                    poleSize / 2,
+                    poleSize / 2)));
       } else if (getCoilType1() == PolePieceType.Rods || getCoilType1() == PolePieceType.Screws) {
         Path2D screwPath = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
-          Ellipse2D pole = new Ellipse2D.Double(
-              x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
-              y - pointMargin + coilMargin - poleSize / 2,
-              poleSize,
-              poleSize);
+          Ellipse2D pole =
+              new Ellipse2D.Double(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing - poleSize / 2,
+                  y - pointMargin + coilMargin - poleSize / 2,
+                  poleSize,
+                  poleSize);
           poleArea.add(new Area(pole));
           if (getCoilType1() == PolePieceType.Screws) {
             if (i % 2 == 0) {
@@ -323,7 +349,11 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
                   y - pointMargin + coilMargin - poleSize / 2);
               screwPath.lineTo(
                   x /* + pointMargin */
-                  - length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + coilMargin - poleSize / 2 + poleSize);
             } else {
               screwPath.moveTo(
@@ -331,7 +361,11 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
                   y - pointMargin + coilMargin - poleSize / 2 + poleSize);
               screwPath.lineTo(
                   x /* + pointMargin */
-                  - length + poleMargin + i * poleSpacing - poleSize / 2 + poleSize,
+                      - length
+                      + poleMargin
+                      + i * poleSpacing
+                      - poleSize / 2
+                      + poleSize,
                   y - pointMargin + coilMargin - poleSize / 2);
             }
           }
@@ -346,20 +380,23 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
       }
 
       if (getCoilType2() == PolePieceType.Rail) {
-        poleArea.add(new Area(new RoundRectangle2D.Double(
-            x /* + pointMargin */ - length + poleMargin - poleSize / 2,
-            y - pointMargin + width - coilMargin - poleSize / 2,
-            poleSpacing * 5 + poleSize,
-            poleSize,
-            poleSize / 2,
-            poleSize / 2)));
+        poleArea.add(
+            new Area(
+                new RoundRectangle2D.Double(
+                    x /* + pointMargin */ - length + poleMargin - poleSize / 2,
+                    y - pointMargin + width - coilMargin - poleSize / 2,
+                    poleSpacing * 5 + poleSize,
+                    poleSize,
+                    poleSize / 2,
+                    poleSize / 2)));
       } else if (getCoilType2() == PolePieceType.Rods || getCoilType2() == PolePieceType.Screws) {
         Path2D screwPath = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
-          poleArea.add(Area.circle(
-              x /* + pointMargin */ - length + poleMargin + i * poleSpacing,
-              y - pointMargin + width - coilMargin,
-              poleSize));
+          poleArea.add(
+              Area.circle(
+                  x /* + pointMargin */ - length + poleMargin + i * poleSpacing,
+                  y - pointMargin + width - coilMargin,
+                  poleSize));
           if (getCoilType1() == PolePieceType.Screws) {
             if (i % 2 != 0) {
               screwPath.moveTo(
@@ -438,38 +475,16 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
     int baseLength = 27 * width / 32;
 
     g2d.setColor(BASE_COLOR);
-    g2d.fillRoundRect(
-        x - baseWidth / 8,
-        0,
-        baseWidth / 4,
-        height - 1,
-        width / 16,
-        width / 16);
+    g2d.fillRoundRect(x - baseWidth / 8, 0, baseWidth / 4, height - 1, width / 16, width / 16);
     g2d.setColor(BASE_COLOR.darker());
-    g2d.drawRoundRect(
-        x - baseWidth / 8,
-        0,
-        baseWidth / 4,
-        height - 1,
-        width / 16,
-        width / 16);
+    g2d.drawRoundRect(x - baseWidth / 8, 0, baseWidth / 4, height - 1, width / 16, width / 16);
 
     g2d.setColor(BASE_COLOR);
     g2d.fillRoundRect(
-        x - baseWidth / 2,
-        y - baseLength / 2,
-        baseWidth,
-        baseLength,
-        width / 8,
-        width / 8);
+        x - baseWidth / 2, y - baseLength / 2, baseWidth, baseLength, width / 8, width / 8);
     g2d.setColor(BASE_COLOR.darker());
     g2d.drawRoundRect(
-        x - baseWidth / 2,
-        y - baseLength / 2,
-        baseWidth,
-        baseLength,
-        width / 8,
-        width / 8);
+        x - baseWidth / 2, y - baseLength / 2, baseWidth, baseLength, width / 8, width / 8);
 
     g2d.setColor(BOBBIN_COLOR1);
     g2d.fillRoundRect(
@@ -481,12 +496,7 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
         baseWidth / 2);
     g2d.setColor(BOBBIN_COLOR2);
     g2d.fillRoundRect(
-        x,
-        y - baseLength / 2,
-        baseWidth / 2,
-        baseLength,
-        baseWidth / 2,
-        baseWidth / 2);
+        x, y - baseLength / 2, baseWidth / 2, baseLength, baseWidth / 2, baseWidth / 2);
 
     g2d.setColor(METAL_COLOR);
     int poleSize = 2;

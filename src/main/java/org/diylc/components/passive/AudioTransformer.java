@@ -249,10 +249,9 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   private AffineTransform getTx() {
     AffineTransform rotation = null;
     if (orientation != Orientation.DEFAULT) {
-      rotation = AffineTransform.getRotateInstance(
-          orientation.getTheta(),
-          controlPoints[0].x,
-          controlPoints[0].y);
+      rotation =
+          AffineTransform.getRotateInstance(
+              orientation.getTheta(), controlPoints[0].x, controlPoints[0].y);
     }
     return rotation;
   }
@@ -303,25 +302,35 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     g2d.setFont(project.getFont());
 
     // Draw winding designations
-    Point windingPoint = new Point(
-        (int) (controlPoints[0].x + project.getFontSize()),
-        (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+    Point windingPoint =
+        new Point(
+            (int) (controlPoints[0].x + project.getFontSize()),
+            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
     AffineTransform tx = getTx();
     if (tx != null) {
       tx.transform(windingPoint, windingPoint);
     }
     StringUtils.drawCenteredText(
-        g2d, "P", windingPoint.x, windingPoint.y,
-        HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-    windingPoint = new Point(
-        (int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()),
-        (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
+        g2d,
+        "P",
+        windingPoint.x,
+        windingPoint.y,
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
+    windingPoint =
+        new Point(
+            (int) (controlPoints[0].x + windingSpacing.convertToPixels() - project.getFontSize()),
+            (int) (controlPoints[0].y + leadSpacing.convertToPixels()));
     if (tx != null) {
       tx.transform(windingPoint, windingPoint);
     }
     StringUtils.drawCenteredText(
-        g2d, "S", windingPoint.x, windingPoint.y,
-        HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+        g2d,
+        "S",
+        windingPoint.x,
+        windingPoint.y,
+        HorizontalAlignment.CENTER,
+        VerticalAlignment.CENTER);
 
     // Draw label.
     Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());

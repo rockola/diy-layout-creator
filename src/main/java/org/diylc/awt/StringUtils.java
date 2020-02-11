@@ -63,11 +63,9 @@ public class StringUtils {
   }
 
   /**
-   * Returns an array of strings, one for each line in the string
-   * after it has been wrapped to fit lines of
-   * <var>maxWidth</var>. Lines end with any of cr, lf, or cr lf. A
-   * line ending at the end of the string will not output a further,
-   * empty string.
+   * Returns an array of strings, one for each line in the string after it has been wrapped to fit
+   * lines of <var>maxWidth</var>. Lines end with any of cr, lf, or cr lf. A line ending at the end
+   * of the string will not output a further, empty string.
    *
    * <p>This code assumes <var>str</var> is not <code>null</code>.
    *
@@ -90,8 +88,8 @@ public class StringUtils {
   }
 
   /**
-   * Given a line of text and font metrics information, wrap the line
-   * and add the new line(s) to <var>list</var>.
+   * Given a line of text and font metrics information, wrap the line and add the new line(s) to
+   * <var>list</var>.
    *
    * @param line a line of text
    * @param list an output list of strings
@@ -173,9 +171,8 @@ public class StringUtils {
   }
 
   /**
-   * Returns an array of strings, one for each line in the
-   * string. Lines end with any of cr, lf, or cr lf. A line ending at
-   * the end of the string will not output a further, empty string.
+   * Returns an array of strings, one for each line in the string. Lines end with any of cr, lf, or
+   * cr lf. A line ending at the end of the string will not output a further, empty string.
    *
    * <p>This code assumes <var>str</var> is not <code>null</code>.
    *
@@ -291,11 +288,7 @@ public class StringUtils {
     g2d.drawString(text, textX, textY);
   }
 
-  public static void drawCenteredText(
-      Graphics2D g2d,
-      String text,
-      int x,
-      int y) {
+  public static void drawCenteredText(Graphics2D g2d, String text, int x, int y) {
     drawCenteredText(g2d, text, x, y, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
   }
 }

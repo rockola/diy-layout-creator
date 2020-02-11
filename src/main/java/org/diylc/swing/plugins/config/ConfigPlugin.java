@@ -51,14 +51,12 @@ public class ConfigPlugin implements IPlugIn {
     // TODO: get default value for AUTO_PADS from Config
     actions.add("auto-create-pads", Config.Flag.AUTO_PADS, false);
     actions.add("auto-edit-mode", Config.Flag.AUTO_EDIT, App.autoEdit());
-    actions.add(
-        "continuous-creation", Config.Flag.CONTINUOUS_CREATION, App.continuousCreation());
+    actions.add("continuous-creation", Config.Flag.CONTINUOUS_CREATION, App.continuousCreation());
     actions.add("export-grid", Config.Flag.EXPORT_GRID, App.exportGrid());
     actions.add("extra-working-area", Config.Flag.EXTRA_SPACE, App.extraSpace());
     actions.add(
         "hardware-acceleration", Config.Flag.HARDWARE_ACCELERATION, App.hardwareAcceleration());
-    actions.add(
-        "hi-quality-rendering", Config.Flag.HI_QUALITY_RENDER, App.highQualityRendering());
+    actions.add("hi-quality-rendering", Config.Flag.HI_QUALITY_RENDER, App.highQualityRendering());
     actions.add(
         "highlight-connected-areas",
         Config.Flag.HIGHLIGHT_CONTINUITY_AREA,
@@ -86,20 +84,20 @@ public class ConfigPlugin implements IPlugIn {
     final String themeMenu = App.getString("menu.config.theme");
     App.ui().injectSubmenu(themeMenu, Icon.Pens, configMenu);
     for (String themeName : Theme.getThemes().keySet()) {
-      App.ui().injectMenuAction(
-          ActionFactory.createThemeAction(plugInPort, Theme.getTheme(themeName)),
-          themeMenu);
+      App.ui()
+          .injectMenuAction(
+              ActionFactory.createThemeAction(plugInPort, Theme.getTheme(themeName)), themeMenu);
     }
 
     // Toolbox
     final String componentBrowserMenu = App.getString("menu.config.component-browser");
     App.ui().injectSubmenu(componentBrowserMenu, Icon.Hammer, configMenu);
-    App.ui().injectMenuAction(
-        ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE),
-        componentBrowserMenu);
-    App.ui().injectMenuAction(
-        ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR),
-        componentBrowserMenu);
+    App.ui()
+        .injectMenuAction(
+            ActionFactory.createComponentBrowserAction(SEARCHABLE_TREE), componentBrowserMenu);
+    App.ui()
+        .injectMenuAction(
+            ActionFactory.createComponentBrowserAction(TABBED_TOOLBAR), componentBrowserMenu);
 
     // Developer Tools
     final String developerMenu = App.getString("menu.config.developer");
@@ -110,9 +108,7 @@ public class ConfigPlugin implements IPlugIn {
     developerActions.add("debug-continuity-areas", Config.Flag.DEBUG_CONTINUITY_AREA, false);
     developerActions.injectActions(plugInPort, developerMenu);
 
-    App.ui().injectMenuAction(
-        ActionFactory.createResetOptionsAction(this),
-        configMenu);
+    App.ui().injectMenuAction(ActionFactory.createResetOptionsAction(this), configMenu);
   }
 
   public void resetOptionsToDefaults() {

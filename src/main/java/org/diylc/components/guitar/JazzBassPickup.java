@@ -115,13 +115,17 @@ public class JazzBassPickup extends AbstractBassPickup {
       final int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());
       final int lipHoleSpacing = getClosestOdd(LIP_HOLE_SPACING.convertToPixels());
 
-      body[0] = new Area(new RoundRectangle2D.Double(
-          x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
+      body[0] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
 
-      Area lip = new Area(new Ellipse2D.Double(
-          -lipRadius / 2, -lipRadius / 2, lipRadius, lipRadius));
-      lip.subtract(new Area(new Ellipse2D.Double(
-          -lipHoleSize / 2, -lipHoleSpacing - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
+      Area lip =
+          new Area(new Ellipse2D.Double(-lipRadius / 2, -lipRadius / 2, lipRadius, lipRadius));
+      lip.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  -lipHoleSize / 2, -lipHoleSpacing - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
       lip.transform(
           AffineTransform.getTranslateInstance(x - length / 2 - lipSpacing / 2, y - pointMargin));
 
@@ -136,8 +140,9 @@ public class JazzBassPickup extends AbstractBassPickup {
 
       ((Area) body[1]).subtract((Area) body[0]);
 
-      body[2] = new Area(new Ellipse2D.Double(
-          x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] =
+          new Area(
+              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       int poleSize = (int) POLE_SIZE.convertToPixels();
       int poleSpacing = (int) POLE_SPACING.convertToPixels();
@@ -145,17 +150,19 @@ public class JazzBassPickup extends AbstractBassPickup {
       int poleMargin = (length - poleSpacing * 3) / 2;
       Area poleArea = new Area();
       for (int i = 0; i < getNumberOfStrings(); i++) {
-        Ellipse2D pole = new Ellipse2D.Double(
-            x - length + poleMargin + i * poleSpacing - poleSize / 2 - poleSpacingMinor / 2,
-            y - pointMargin - poleSize / 2 + width / 2,
-            poleSize,
-            poleSize);
+        Ellipse2D pole =
+            new Ellipse2D.Double(
+                x - length + poleMargin + i * poleSpacing - poleSize / 2 - poleSpacingMinor / 2,
+                y - pointMargin - poleSize / 2 + width / 2,
+                poleSize,
+                poleSize);
         poleArea.add(new Area(pole));
-        pole = new Ellipse2D.Double(
-            x - length + poleMargin + i * poleSpacing - poleSize / 2 + poleSpacingMinor / 2,
-            y - pointMargin - poleSize / 2 + width / 2,
-            poleSize,
-            poleSize);
+        pole =
+            new Ellipse2D.Double(
+                x - length + poleMargin + i * poleSpacing - poleSize / 2 + poleSpacingMinor / 2,
+                y - pointMargin - poleSize / 2 + width / 2,
+                poleSize,
+                poleSize);
         poleArea.add(new Area(pole));
       }
       body[3] = poleArea;
@@ -199,10 +206,12 @@ public class JazzBassPickup extends AbstractBassPickup {
     // lipSpacing = 1/2 * distance between lips
     int lipSpacing = (int) (7f * width / 32);
     int lipSize = (int) (3f * width / 32);
-    g2d.fill(Area.centeredRoundRect(
-        x - lipSize / 2, y - lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
-    g2d.fill(Area.centeredRoundRect(
-        x - lipSize / 2, y + lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
+    g2d.fill(
+        Area.centeredRoundRect(
+            x - lipSize / 2, y - lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
+    g2d.fill(
+        Area.centeredRoundRect(
+            x - lipSize / 2, y + lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
 
     g2d.setColor(BODY_COLOR.darker());
     g2d.drawRoundRect(

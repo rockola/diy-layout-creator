@@ -25,8 +25,8 @@ import org.diylc.core.ValidationException;
 import org.diylc.core.measures.AbstractMeasure;
 
 /**
- * Validates any generic {@link AbstractMeasure} descendants and makes
- * sure that the value is positive.
+ * Validates any generic {@link AbstractMeasure} descendants and makes sure that the value is
+ * positive.
  *
  * @author Branislav Stojkovic
  */

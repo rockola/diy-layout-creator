@@ -24,8 +24,8 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 /**
- * Creates an area covered by the two circles and the area between them
- * bordered by the two external common tangents.
+ * Creates an area covered by the two circles and the area between them bordered by the two external
+ * common tangents.
  *
  * @author Branislav Stojkovic
  */

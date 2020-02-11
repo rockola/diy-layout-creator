@@ -23,7 +23,6 @@ package org.diylc.common;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 
-
 public enum Orientation {
   DEFAULT(0, 0),
   _90(90, Math.PI / 2),
@@ -67,19 +66,17 @@ public enum Orientation {
     return this == _270;
   }
 
-  /**
-     Get angle.
-  */
+  /** Get angle. */
   public double getTheta() {
     return this.theta;
   }
 
   /**
-     Get rotation corresponding to angle.
-
-     @param point Reference point of rotation.
-     @return AffineTransform implementing the rotation.
-  */
+   * Get rotation corresponding to angle.
+   *
+   * @param point Reference point of rotation.
+   * @return AffineTransform implementing the rotation.
+   */
   public AffineTransform getRotation(Point point) {
     return getRotation(point.x, point.y);
   }
@@ -122,11 +119,11 @@ public enum Orientation {
   }
 
   /**
-     Rotate this orientation.
-
-     @param direction 1 clockwise, -1 counterclockwise
-     @return new orientation
-  */
+   * Rotate this orientation.
+   *
+   * @param direction 1 clockwise, -1 counterclockwise
+   * @return new orientation
+   */
   public Orientation rotate(int direction) {
     // TODO maybe limit direction to be one of {-1, 1} - this is
     // probably how it's always called, but we can't be sure here

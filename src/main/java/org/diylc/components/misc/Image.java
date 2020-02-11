@@ -64,6 +64,7 @@ public class Image extends AbstractTransparentComponent<Void> {
   private byte[] data;
   private Byte scale;
   private byte newScale = DEFAULT_SCALE;
+
   @XStreamConverter(IconImageConverter.class)
   @Deprecated
   private ImageIcon image;
@@ -74,7 +75,10 @@ public class Image extends AbstractTransparentComponent<Void> {
     if (imgURL != null) {
       ICON = new ImageIcon(imgURL, name);
     } else {
-      byte[] iconData = java.util.Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAK3RFWHRDcmVhdGlvbiBUaW1lAE1vIDI5IFNlcCAyMDAzIDE1OjE1OjUyICswMTAwvjqHlwAAAAd0SU1FB9YFFw0yKjOOuzAAAAAJcEhZcwAACvAAAArwAUKsNJgAAAAEZ0FNQQAAsY8L/GEFAAACMElEQVR42p1Tz2sTURD+3u4GN92aEKUVizWJYKSHGnKr8T8QQRDBm/ZP8NS7/0EF0YtCjx5qLz0JQgteRHptkZZWsM3GtptEbX7sZnffc+ZlY3LUDjv7fs7MN9/MExiIwPlEieXNZt8WMqWkoqWij0Yp+Qy8p5X3YtpWUt8J/ABLj28V6NKxRcbiyUIGv/0IQgloP9o19DzWa5HMBdIpgbWNGkd/RLpqKYrWJuP1HYnvX7cwV7kLFQdkFZNDSabqrzKScjGTIMQsqW0wJBYnbqA0O4Uv75cRuNvImV1kjA4yZo9Gmos2sqTkFYmNoX86R5pkTYra9VCtVtE43Eb0sw7HCHG1/gk5/wgTlsSk6AxSTIKyWJqUsI8jbwuV6TKUFaM4swCz10J57R6MbkOnc3LnOdwb9zVB4w50Cn2EeNlaxIvdJXjNPVwmAm8fvIVx6SJlehPIz+Hzt1eovKvAC1rEwaiOlmSahcB8KQ9f7uPZzlPsfWhjMTeDN/kSTGcCH5s1PDipAxGXxxySOEohIh9nQUD8pFEsTsOZcrBy4GJl14VjpdDphyCQIKiIdYuMccBljIiZU4Jmqh78KEKgQhSu2XBtH51TsvTpJnEMKkJIpVXjCJgQ50IWr8v7uqOZZT6W3FTEGHdCJAeoOd3JdI4AeCMHQbcXr2/WLDWEpiMkbS1Hra2SNeQPhGe/2FYOH9F10oekhWT9Lw+LjQ+5lfmyTXolGf9HmJnjYbRzP+c/c5s3Rp+EAfUAAAAASUVORK5CYII=");
+      byte[] iconData =
+          java.util.Base64.getDecoder()
+              .decode(
+                  "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAK3RFWHRDcmVhdGlvbiBUaW1lAE1vIDI5IFNlcCAyMDAzIDE1OjE1OjUyICswMTAwvjqHlwAAAAd0SU1FB9YFFw0yKjOOuzAAAAAJcEhZcwAACvAAAArwAUKsNJgAAAAEZ0FNQQAAsY8L/GEFAAACMElEQVR42p1Tz2sTURD+3u4GN92aEKUVizWJYKSHGnKr8T8QQRDBm/ZP8NS7/0EF0YtCjx5qLz0JQgteRHptkZZWsM3GtptEbX7sZnffc+ZlY3LUDjv7fs7MN9/MExiIwPlEieXNZt8WMqWkoqWij0Yp+Qy8p5X3YtpWUt8J/ABLj28V6NKxRcbiyUIGv/0IQgloP9o19DzWa5HMBdIpgbWNGkd/RLpqKYrWJuP1HYnvX7cwV7kLFQdkFZNDSabqrzKScjGTIMQsqW0wJBYnbqA0O4Uv75cRuNvImV1kjA4yZo9Gmos2sqTkFYmNoX86R5pkTYra9VCtVtE43Eb0sw7HCHG1/gk5/wgTlsSk6AxSTIKyWJqUsI8jbwuV6TKUFaM4swCz10J57R6MbkOnc3LnOdwb9zVB4w50Cn2EeNlaxIvdJXjNPVwmAm8fvIVx6SJlehPIz+Hzt1eovKvAC1rEwaiOlmSahcB8KQ9f7uPZzlPsfWhjMTeDN/kSTGcCH5s1PDipAxGXxxySOEohIh9nQUD8pFEsTsOZcrBy4GJl14VjpdDphyCQIKiIdYuMccBljIiZU4Jmqh78KEKgQhSu2XBtH51TsvTpJnEMKkJIpVXjCJgQ50IWr8v7uqOZZT6W3FTEGHdCJAeoOd3JdI4AeCMHQbcXr2/WLDWEpiMkbS1Hra2SNeQPhGe/2FYOH9F10oekhWT9Lw+LjQ+5lfmyTXolGf9HmJnjYbRzP+c/c5s3Rp+EAfUAAAAASUVORK5CYII=");
       ICON = new ImageIcon(iconData);
     }
   }

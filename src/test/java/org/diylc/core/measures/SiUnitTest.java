@@ -47,15 +47,18 @@ public class SiUnitTest {
 
   @Test
   public void unitNames() {
-    Map<String, SiUnit> map = Stream.of(new Object[][] {
-        { "ampere", SiUnit.AMPERE },
-        { "farad", SiUnit.FARAD },
-        { "henry", SiUnit.HENRY },
-        { "meter", SiUnit.METER },
-        { "ohm", SiUnit.OHM },
-        { "volt", SiUnit.VOLT },
-        { "watt", SiUnit.WATT }
-      }).collect(Collectors.toMap(data -> (String) data[0], data -> (SiUnit) data[1]));
+    Map<String, SiUnit> map =
+        Stream.of(
+                new Object[][] {
+                  {"ampere", SiUnit.AMPERE},
+                  {"farad", SiUnit.FARAD},
+                  {"henry", SiUnit.HENRY},
+                  {"meter", SiUnit.METER},
+                  {"ohm", SiUnit.OHM},
+                  {"volt", SiUnit.VOLT},
+                  {"watt", SiUnit.WATT}
+                })
+            .collect(Collectors.toMap(data -> (String) data[0], data -> (SiUnit) data[1]));
 
     for (Map.Entry<String, SiUnit> entry : map.entrySet()) {
       assertEquals(entry.getKey(), entry.getValue().toString());

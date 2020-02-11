@@ -108,58 +108,48 @@ public class Area extends java.awt.geom.Area {
   }
 
   /**
-     Create an oval area (ellipse).
-
-     @param center Circle center.
-     @param diameterH Horizontal diameter.
-     @param diameterV Vertical diameter.
-     @return new Area
-  */
+   * Create an oval area (ellipse).
+   *
+   * @param center Circle center.
+   * @param diameterH Horizontal diameter.
+   * @param diameterV Vertical diameter.
+   * @return new Area
+   */
   public static Area oval(Point center, double diameterH, double diameterV) {
     return oval(center.x, center.y, diameterH, diameterV);
   }
 
   public static Area oval(int x, int y, double diameterH, double diameterV) {
-    return new Area(new Ellipse2D.Double(
-        x - diameterH / 2,
-        y - diameterV / 2,
-        diameterH,
-        diameterV));
+    return new Area(
+        new Ellipse2D.Double(x - diameterH / 2, y - diameterV / 2, diameterH, diameterV));
   }
 
   public static Area oval(Point upperLeft, Point lowerRight) {
     // TODO check that lowerRight is to the right of and below upperLeft
     double width = lowerRight.x - upperLeft.x;
     double height = lowerRight.y - upperLeft.y;
-    return new Area(new Ellipse2D.Double(
-        upperLeft.x,
-        upperLeft.y,
-        width,
-        height));
+    return new Area(new Ellipse2D.Double(upperLeft.x, upperLeft.y, width, height));
   }
 
   /**
-     Create a circular area (circle).
-
-     @param centerX X coordinate of circle center.
-     @param centerY Y coordinate of circle center.
-     @param diameter Circle diameter.
-     @return new Area
+   * Create a circular area (circle).
+   *
+   * @param centerX X coordinate of circle center.
+   * @param centerY Y coordinate of circle center.
+   * @param diameter Circle diameter.
+   * @return new Area
    */
   public static Area circle(double centerX, double centerY, double diameter) {
-    return new Area(new Ellipse2D.Double(
-        centerX - diameter / 2,
-        centerY - diameter / 2,
-        diameter,
-        diameter));
+    return new Area(
+        new Ellipse2D.Double(centerX - diameter / 2, centerY - diameter / 2, diameter, diameter));
   }
 
   /**
-     Create a circular area (circle).
-
-     @param center Circle center as a Point.
-     @param diameter Circle diameter.
-     @return new Area
+   * Create a circular area (circle).
+   *
+   * @param center Circle center as a Point.
+   * @param diameter Circle diameter.
+   * @return new Area
    */
   public static Area circle(Point center, double diameter) {
     return circle(center.x, center.y, diameter);
@@ -201,24 +191,18 @@ public class Area extends java.awt.geom.Area {
   }
 
   /**
-     Create a rounded rectangle.
-
-     @param x The X coordinate of this rounded rectangle.
-     @param y The Y coordinate of this rounded rectangle.
-     @param width The width of this rounded rectangle.
-     @param height The height of this rounded rectangle.
-     @param cornerWidth The width of the arc that rounds off the corners.
-     @param cornerHeight The height of the arc that rounds off the corners.
-  */
+   * Create a rounded rectangle.
+   *
+   * @param x The X coordinate of this rounded rectangle.
+   * @param y The Y coordinate of this rounded rectangle.
+   * @param width The width of this rounded rectangle.
+   * @param height The height of this rounded rectangle.
+   * @param cornerWidth The width of the arc that rounds off the corners.
+   * @param cornerHeight The height of the arc that rounds off the corners.
+   */
   public static Area roundRect(
       double x, double y, double width, double height, double cornerWidth, double cornerHeight) {
-    return new Area(new RoundRectangle2D.Double(
-        x,
-        y,
-        width,
-        height,
-        cornerWidth,
-        cornerHeight));
+    return new Area(new RoundRectangle2D.Double(x, y, width, height, cornerWidth, cornerHeight));
   }
 
   /**
@@ -231,7 +215,7 @@ public class Area extends java.awt.geom.Area {
    * @param width The width of this rounded rectangle.
    * @param height The height of this rounded rectangle.
    * @param corner The width and height of the arc that rounds off the corners.
-  */
+   */
   public static Area roundRect(double x, double y, double width, double height, double corner) {
     return roundRect(x, y, width, height, corner, corner);
   }
@@ -250,13 +234,13 @@ public class Area extends java.awt.geom.Area {
   }
 
   /**
-     Create a rectangle.
-
-     @param x The X coordinate of this rectangle.
-     @param y The Y coordinate of this rectangle.
-     @param width The width of this rectangle.
-     @param height The height of this rectangle.
-  */
+   * Create a rectangle.
+   *
+   * @param x The X coordinate of this rectangle.
+   * @param y The Y coordinate of this rectangle.
+   * @param width The width of this rectangle.
+   * @param height The height of this rectangle.
+   */
   public static Area rect(double x, double y, double width, double height) {
     return new Area(new Rectangle2D.Double(x, y, width, height));
   }
@@ -277,34 +261,34 @@ public class Area extends java.awt.geom.Area {
   }
 
   /**
-     Create a centered rectangle.
-
-     @param x The X coordinate of the center of this rectangle.
-     @param y The Y coordinate of the center this rectangle.
-     @param width The width of this rectangle.
-     @param height The height of this rectangle.
-  */
+   * Create a centered rectangle.
+   *
+   * @param x The X coordinate of the center of this rectangle.
+   * @param y The Y coordinate of the center this rectangle.
+   * @param width The width of this rectangle.
+   * @param height The height of this rectangle.
+   */
   public static Area centeredRect(double x, double y, double width, double height) {
     return rect(x - width / 2, y - height / 2, width, height);
   }
 
   /**
-     Create a centered rectangle.
-
-     @param center The center of this rectangle as a Point.
-     @param width The width of this rectangle.
-     @param height The height of this rectangle.
-  */
+   * Create a centered rectangle.
+   *
+   * @param center The center of this rectangle as a Point.
+   * @param width The width of this rectangle.
+   * @param height The height of this rectangle.
+   */
   public static Area centeredRect(Point center, double width, double height) {
     return rect(center.x - width / 2, center.y - height / 2, width, height);
   }
 
   /**
-     Create a centered square.
-
-     @param center The center of this rectangle as a Point.
-     @param size The height and width of this square.
-  */
+   * Create a centered square.
+   *
+   * @param center The center of this rectangle as a Point.
+   * @param size The height and width of this square.
+   */
   public static Area centeredSquare(Point center, double size) {
     return centeredRect(center, size, size);
   }
@@ -314,14 +298,14 @@ public class Area extends java.awt.geom.Area {
   }
 
   /**
-     Create a rectangle with a round hole in the middle.
-
-     @param x The X coordinate of this rectangle.
-     @param y The Y coordinate of this rectangle.
-     @param width The width of this rectangle.
-     @param height The height of this rectangle.
-     @param holeDiameter The diameter of the hole in this rectangle.
-  */
+   * Create a rectangle with a round hole in the middle.
+   *
+   * @param x The X coordinate of this rectangle.
+   * @param y The Y coordinate of this rectangle.
+   * @param width The width of this rectangle.
+   * @param height The height of this rectangle.
+   * @param holeDiameter The diameter of the hole in this rectangle.
+   */
   public static Area centeredRectWithRoundHole(
       double x, double y, double width, double height, double holeDiameter) {
     Area rect = centeredRect(x, y, width, height);
@@ -385,8 +369,6 @@ public class Area extends java.awt.geom.Area {
     g2d.setColor(borderColor);
     g2d.draw(this);
   }
-
-
 
   /**
    * Draw or fill this area.

@@ -38,28 +38,29 @@ public enum FileFilterEnum {
 
   FileFilterEnum(final String description, final String... extensions) {
     this.extensions = extensions;
-    filter = new FileFilter() {
+    filter =
+        new FileFilter() {
 
-        @Override
-        public boolean accept(File f) {
-          if (f.isDirectory()) {
-            return true;
-          }
-          String fileExt = f.getName();
-          fileExt = fileExt.substring(fileExt.lastIndexOf('.') + 1).toLowerCase();
-          for (String ext : extensions) {
-            if (ext.equals(fileExt)) {
+          @Override
+          public boolean accept(File f) {
+            if (f.isDirectory()) {
               return true;
             }
+            String fileExt = f.getName();
+            fileExt = fileExt.substring(fileExt.lastIndexOf('.') + 1).toLowerCase();
+            for (String ext : extensions) {
+              if (ext.equals(fileExt)) {
+                return true;
+              }
+            }
+            return false;
           }
-          return false;
-        }
 
-        @Override
-        public String getDescription() {
-          return description;
-        }
-      };
+          @Override
+          public String getDescription() {
+            return description;
+          }
+        };
   }
 
   public FileFilter getFilter() {

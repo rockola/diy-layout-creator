@@ -70,10 +70,11 @@ public abstract class AbstractDiodeSymbol extends AbstractSchematicLeadedSymbol<
   @Override
   protected Area getBodyShape() {
     double width = getWidth().convertToPixels();
-    Polygon p = new Polygon(
-        new int[] {0, 0, (int) (width / SQRT_TWO)},
-        new int[] {0, (int) (width), (int) (width / 2)},
-        3);
+    Polygon p =
+        new Polygon(
+            new int[] {0, 0, (int) (width / SQRT_TWO)},
+            new int[] {0, (int) (width), (int) (width / 2)},
+            3);
     // Area a = new Area(p);
     // int bandSize = (int) BAND_SIZE.convertToPixels();
     // a.add(new Area(new Rectangle2D.Double((int) (width / SQRT_TWO) +

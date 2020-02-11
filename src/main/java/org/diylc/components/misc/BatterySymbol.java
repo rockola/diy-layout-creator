@@ -45,13 +45,9 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Plate spacing.
-   */
+  /** Plate spacing. */
   public static final Size DEFAULT_LENGTH = Size.in(0.05);
-  /**
-   * Plate size.
-   */
+  /** Plate size. */
   public static final Size DEFAULT_WIDTH = Size.in(0.15);
 
   private String value = "Battery";

@@ -51,19 +51,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Combobox which lists all installed fonts, sorted alphabetically. In
- * the dropdown, each font name is shown in the default font together
- * with some characters in its own font, which can be customized
- * calling the <code>setPreviewString</code> method.
+ * Combobox which lists all installed fonts, sorted alphabetically. In the dropdown, each font name
+ * is shown in the default font together with some characters in its own font, which can be
+ * customized calling the <code>setPreviewString</code> method.
  *
- * <p>In the main text field, the default font is used to display the
- * font name. It is editable and supports auto completion.
+ * <p>In the main text field, the default font is used to display the font name. It is editable and
+ * supports auto completion.
  *
- * <p>The last <code>n</code> selected fonts can be shown on the top
- * by calling <code> setRecentFontsCount(n)</code>.
+ * <p>The last <code>n</code> selected fonts can be shown on the top by calling <code>
+ *  setRecentFontsCount(n)</code>.
  *
- * <p>This file is public domain. However, if you improve it, please
- * share your work with andi@xenoage.com. Thanks!
+ * <p>This file is public domain. However, if you improve it, please share your work with
+ * andi@xenoage.com. Thanks!
  *
  * @author Andreas Wenger
  */
@@ -89,9 +88,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
     fontNames = Arrays.asList(fonts);
   }
 
-  /**
-     Creates a new {@link FontChooserComboBox}.
-  */
+  /** Creates a new {@link FontChooserComboBox}. */
   public FontChooserComboBox() {
     // recent fonts
     recentFontNames = new LinkedList<String>();
@@ -127,8 +124,8 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
   }
 
   /**
-   * Sets the preview characters, or the empty string or null to
-   * display no preview but only the font names.
+   * Sets the preview characters, or the empty string or null to display no preview but only the
+   * font names.
    */
   public void setPreviewString(String previewString) {
     this.previewString =
@@ -142,8 +139,8 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
   }
 
   /**
-   * Sets the number of recently selected fonts, that are shown on the
-   * top of the list, or 0 to hide them.
+   * Sets the number of recently selected fonts, that are shown on the top of the list, or 0 to hide
+   * them.
    */
   public void setRecentFontsCount(int recentFontsCount) {
     this.recentFontsCount = recentFontsCount;
@@ -214,9 +211,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
     return new Dimension(0, new JComboBox().getPreferredSize().height);
   }
 
-  /**
-     Sets the selected font by the given name. If it does not exist, nothing happens.
-  */
+  /** Sets the selected font by the given name. If it does not exist, nothing happens. */
   public void setSelectedItem(String fontName) {
     // If a string is given, find the corresponding font, otherwise do nothing
     //
@@ -232,8 +227,7 @@ public class FontChooserComboBox extends JComboBox implements ItemListener {
   }
 
   /**
-   * The editor component of the list. This is an editable text area
-   * which supports auto completion.
+   * The editor component of the list. This is an editable text area which supports auto completion.
    *
    * @author Andreas Wenger
    */

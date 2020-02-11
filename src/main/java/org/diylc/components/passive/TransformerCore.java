@@ -111,9 +111,11 @@ public class TransformerCore extends AbstractComponent<Void> {
       return;
     }
 
-    double theta = HALF_PI + Math.atan2(
-        this.controlPoints[1].y - this.controlPoints[0].y,
-        this.controlPoints[1].x - this.controlPoints[0].x);
+    double theta =
+        HALF_PI
+            + Math.atan2(
+                this.controlPoints[1].y - this.controlPoints[0].y,
+                this.controlPoints[1].x - this.controlPoints[0].x);
     double spacing = SPACING.convertToPixels();
 
     Color finalColor = tryColor(outlineMode, color);

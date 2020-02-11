@@ -52,9 +52,11 @@ public class HelpMenuPlugin implements IPlugIn {
   private AboutDialog aboutDialog;
 
   private void navigateUrl(String menuEntry, Icon icon, String key) {
-    App.ui().injectMenuAction(new NavigateUrlAction(
-        Config.getString("menu.help." + menuEntry), icon, Config.getUrl(key).toString()),
-                                HELP_TITLE);
+    App.ui()
+        .injectMenuAction(
+            new NavigateUrlAction(
+                Config.getString("menu.help." + menuEntry), icon, Config.getUrl(key).toString()),
+            HELP_TITLE);
   }
 
   private void separator() {
@@ -76,7 +78,7 @@ public class HelpMenuPlugin implements IPlugIn {
 
   @Override
   public void connect(IPlugInPort plugInPort) {
-    //this.plugInPort = plugInPort;
+    // this.plugInPort = plugInPort;
   }
 
   @Override
@@ -108,13 +110,15 @@ public class HelpMenuPlugin implements IPlugIn {
 
   private AboutDialog getAboutDialog() {
     if (aboutDialog == null) {
-      aboutDialog = DialogFactory.getInstance().createAboutDialog(
-          Config.getString("app.title"),
-          Icon.App.icon(),
-          Config.getString("app.version"),
-          Config.getString("app.author"),
-          Config.getUrl("website"),
-          defaultAboutText());
+      aboutDialog =
+          DialogFactory.getInstance()
+              .createAboutDialog(
+                  Config.getString("app.title"),
+                  Icon.App.icon(),
+                  Config.getString("app.version"),
+                  Config.getString("app.author"),
+                  Config.getUrl("website"),
+                  defaultAboutText());
 
       aboutDialog.setSize(aboutDialog.getSize().width + 30, aboutDialog.getSize().height + 200);
       aboutDialog.addAction("W", "warranty", new AboutTextAction(aboutDialog, "warranty"));

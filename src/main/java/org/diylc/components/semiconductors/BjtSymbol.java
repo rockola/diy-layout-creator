@@ -79,30 +79,32 @@ public class BjtSymbol extends Abstract3LegSymbol {
     Area arrow;
     double theta = Math.atan(1.0 / 3);
     if (polarity == BjtPolarity.NPN) {
-      arrow = new Area(new Polygon(
-          new int[] {x + pinSpacing, x + pinSpacing, x + pinSpacing * 10 / 6},
-          new int[] {
-            y - pinSpacing / 5 + halfPinSpacing,
-            y + pinSpacing / 5 + halfPinSpacing,
-            y + halfPinSpacing
-          },
-          3));
+      arrow =
+          new Area(
+              new Polygon(
+                  new int[] {x + pinSpacing, x + pinSpacing, x + pinSpacing * 10 / 6},
+                  new int[] {
+                    y - pinSpacing / 5 + halfPinSpacing,
+                    y + pinSpacing / 5 + halfPinSpacing,
+                    y + halfPinSpacing
+                  },
+                  3));
       arrow.transform(
           AffineTransform.getRotateInstance(theta, x + halfPinSpacing, y + halfPinSpacing));
     } else {
       theta = -theta;
-      arrow = new Area(new Polygon(
-          new int[] {x + pinSpacing, x + pinSpacing * 10 / 6, x + pinSpacing * 10 / 6},
-          new int[] {
-            y - halfPinSpacing,
-            y - pinSpacing / 5 - halfPinSpacing,
-            y + pinSpacing / 5 - halfPinSpacing
-          },
-          3));
-      arrow.transform(AffineTransform.getRotateInstance(
-          theta,
-          x + halfPinSpacing,
-          y - halfPinSpacing));
+      arrow =
+          new Area(
+              new Polygon(
+                  new int[] {x + pinSpacing, x + pinSpacing * 10 / 6, x + pinSpacing * 10 / 6},
+                  new int[] {
+                    y - halfPinSpacing,
+                    y - pinSpacing / 5 - halfPinSpacing,
+                    y + pinSpacing / 5 - halfPinSpacing
+                  },
+                  3));
+      arrow.transform(
+          AffineTransform.getRotateInstance(theta, x + halfPinSpacing, y - halfPinSpacing));
     }
     body[2] = arrow;
 

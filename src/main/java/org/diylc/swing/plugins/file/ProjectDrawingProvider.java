@@ -32,8 +32,7 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.swingframework.IDrawingProvider;
 
 /**
- * {@link IDrawingProvider} implementation that uses
- * {@link IPlugInPort} to draw a project onto the
+ * {@link IDrawingProvider} implementation that uses {@link IPlugInPort} to draw a project onto the
  * canvas.
  *
  * @author Branislav Stojkovic

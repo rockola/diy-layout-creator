@@ -184,7 +184,7 @@ public enum Icon {
     String resourceID = "icon." + this.toString();
     URL resource = null;
     String r = null;
-    for (String iconDirectory: iconDirectories) {
+    for (String iconDirectory : iconDirectories) {
       r = iconDirectory + org.diylc.App.getString(resourceID) + PNG_SUFFIX;
       resource = Icon.class.getResource(r);
       if (resource != null) {

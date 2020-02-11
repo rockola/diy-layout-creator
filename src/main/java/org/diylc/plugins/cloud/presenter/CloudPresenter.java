@@ -47,8 +47,7 @@ import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.ComponentProcessor;
 
 /**
- * Contains all the back-end logic for using the cloud and
- * manipulating projects on the cloud.
+ * Contains all the back-end logic for using the cloud and manipulating projects on the cloud.
  *
  * @author Branislav Stojkovic
  */
@@ -165,8 +164,8 @@ public class CloudPresenter {
           cats.add(0, "");
           categories = cats.toArray(new String[0]);
         } else {
-          throw new CloudException("Unexpected server response received for category list: "
-                                   + res.getClass().getName());
+          throw new CloudException(
+              "Unexpected server response received for category list: " + res.getClass().getName());
         }
       } catch (Exception e) {
         throw new CloudException(e);
@@ -190,18 +189,20 @@ public class CloudPresenter {
 
     LOG.info("Uploading new project '{}'", projectName);
     try {
-      String res = getService().uploadProject(
-          currentUsername(),
-          currentToken(),
-          getMachineId(),
-          projectName,
-          category,
-          description,
-          diylcVersion,
-          keywords,
-          thumbnail,
-          project,
-          projectId);
+      String res =
+          getService()
+              .uploadProject(
+                  currentUsername(),
+                  currentToken(),
+                  getMachineId(),
+                  projectName,
+                  category,
+                  description,
+                  diylcVersion,
+                  keywords,
+                  thumbnail,
+                  project,
+                  projectId);
       if (!res.equals(SUCCESS)) {
         throw new CloudException(res);
       }
@@ -216,18 +217,20 @@ public class CloudPresenter {
     validateLogin();
     LOG.info("Updating project with id {}", project.getId());
     try {
-      String res = getService().uploadProject(
-          currentUsername(),
-          currentToken(),
-          getMachineId(),
-          project.getName(),
-          project.getCategoryForDisplay(),
-          project.getDescription(),
-          diylcVersion,
-          project.getKeywords(),
-          null,
-          null,
-          project.getId());
+      String res =
+          getService()
+              .uploadProject(
+                  currentUsername(),
+                  currentToken(),
+                  getMachineId(),
+                  project.getName(),
+                  project.getCategoryForDisplay(),
+                  project.getDescription(),
+                  diylcVersion,
+                  project.getKeywords(),
+                  null,
+                  null,
+                  project.getId());
       if (!res.equals(SUCCESS)) {
         throw new CloudException(res);
       }
@@ -241,8 +244,8 @@ public class CloudPresenter {
     validateLogin();
     LOG.info("Deleting project with id {}", projectId);
     try {
-      String res = getService().deleteProject(currentUsername(), currentToken(), getMachineId(),
-                                              projectId);
+      String res =
+          getService().deleteProject(currentUsername(), currentToken(), getMachineId(), projectId);
       if (!res.equals(SUCCESS)) {
         throw new CloudException(res);
       }
@@ -257,8 +260,9 @@ public class CloudPresenter {
     LOG.info("Posting a new comment to project {}", projectId);
 
     try {
-      String res = getService().postComment(currentUsername(), currentToken(), getMachineId(),
-                                            projectId, comment);
+      String res =
+          getService()
+              .postComment(currentUsername(), currentToken(), getMachineId(), projectId, comment);
       if (!res.equals(SUCCESS)) {
         throw new CloudException(res);
       }
@@ -298,8 +302,8 @@ public class CloudPresenter {
     if (res instanceof UserEntity) {
       return (UserEntity) res;
     }
-    throw new CloudException("Unexpected server response received for category list: "
-                             + res.getClass().getName());
+    throw new CloudException(
+        "Unexpected server response received for category list: " + res.getClass().getName());
   }
 
   public void updatePassword(String oldPassword, String newPassword) throws CloudException {
@@ -321,8 +325,10 @@ public class CloudPresenter {
     LOG.info("Updating user details for {}", currentUsername());
     String res;
     try {
-      res = getService().updateUserDetails(currentUsername(), currentToken(), getMachineId(),
-                                           email, website, bio);
+      res =
+          getService()
+              .updateUserDetails(
+                  currentUsername(), currentToken(), getMachineId(), email, website, bio);
     } catch (Exception e) {
       throw new CloudException(e);
     }
@@ -334,12 +340,13 @@ public class CloudPresenter {
   public List<ProjectEntity> search(
       String criteria, String category, String sortOrder, int pageNumber, int itemsPerPage)
       throws CloudException {
-    LOG.info(String.format(
-        "search(%1$s,%2$s,%3$s,%4$d,%5$d)",
-        criteria, category, sortOrder, pageNumber, itemsPerPage));
+    LOG.info(
+        String.format(
+            "search(%1$s,%2$s,%3$s,%4$d,%5$d)",
+            criteria, category, sortOrder, pageNumber, itemsPerPage));
     try {
-      Object res = getService().search(
-          criteria, category, pageNumber, itemsPerPage, sortOrder, null, null);
+      Object res =
+          getService().search(criteria, category, pageNumber, itemsPerPage, sortOrder, null, null);
       return processResults(res);
     } catch (Exception e) {
       throw new CloudException(e);
@@ -350,8 +357,10 @@ public class CloudPresenter {
     UserEntity user = getUserDetails();
     LOG.info("Fetching all user uploads for {}", user.getUsername());
     try {
-      Object res = getService().search(
-          "", "", 1, Integer.MAX_VALUE, getSortings()[0], user.getUsername(), projectId);
+      Object res =
+          getService()
+              .search(
+                  "", "", 1, Integer.MAX_VALUE, getSortings()[0], user.getUsername(), projectId);
       return processResults(res);
     } catch (Exception e) {
       throw new CloudException(e);
@@ -384,8 +393,8 @@ public class CloudPresenter {
       LOG.info("Finished downloading thumbnails.");
       return projects;
     }
-    throw new CloudException("Unexpected server response received for search results: "
-                             + res.getClass().getName());
+    throw new CloudException(
+        "Unexpected server response received for search results: " + res.getClass().getName());
   }
 
   public String[] getSortings() throws CloudException {
@@ -411,16 +420,15 @@ public class CloudPresenter {
         List<CommentEntity> comments = (List<CommentEntity>) res;
         return comments;
       }
-      throw new CloudException("Unexpected server response received for comments: "
-                               + res.getClass().getName());
+      throw new CloudException(
+          "Unexpected server response received for comments: " + res.getClass().getName());
     } catch (Exception e) {
       throw new CloudException(e);
     }
   }
 
   public List<PropertyWrapper> getProjectProperties(ProjectEntity project) {
-    List<PropertyWrapper> properties =
-        ComponentProcessor.extractProperties(ProjectEntity.class);
+    List<PropertyWrapper> properties = ComponentProcessor.extractProperties(ProjectEntity.class);
     try {
       for (PropertyWrapper property : properties) {
         property.readFrom(project);

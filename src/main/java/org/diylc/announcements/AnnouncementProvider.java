@@ -52,9 +52,7 @@ public class AnnouncementProvider {
     renderer = HtmlRenderer.builder().build();
     String lastDateStr = App.getString(lastReadKey);
     try {
-      lastDate = lastDateStr == null
-                 ? null
-                 : dateFormat.parse(lastDateStr);
+      lastDate = lastDateStr == null ? null : dateFormat.parse(lastDateStr);
       LOG.info("Announcement last read {}", lastDate);
     } catch (ParseException e) {
       LOG.error("Could not parse last read date {}", lastDateStr);

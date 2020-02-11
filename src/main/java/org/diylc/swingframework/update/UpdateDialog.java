@@ -79,30 +79,32 @@ public class UpdateDialog extends JDialog {
     if (latestVersionUrl != null) {
       JButton downloadButton = new JButton("Download");
       final UpdateDialog thisDialog = this;
-      downloadButton.addActionListener((e) -> {
-        try {
-          App.openUrl(new URL(latestVersionUrl));
-          thisDialog.setVisible(false);
-        } catch (Exception e1) {
-          JOptionPane.showMessageDialog(
-              thisDialog,
-              "Could not launch default browser. To download the latest version visit "
-              + latestVersionUrl);
-          LOG.error("Could not launch default browser", e1);
-        }
-      });
+      downloadButton.addActionListener(
+          (e) -> {
+            try {
+              App.openUrl(new URL(latestVersionUrl));
+              thisDialog.setVisible(false);
+            } catch (Exception e1) {
+              JOptionPane.showMessageDialog(
+                  thisDialog,
+                  "Could not launch default browser. To download the latest version visit "
+                      + latestVersionUrl);
+              LOG.error("Could not launch default browser", e1);
+            }
+          });
       buttonPanel.add(downloadButton);
       buttonPanel.add(Box.createHorizontalStrut(4));
     }
 
     JButton cancelButton = new JButton("Close");
-    cancelButton.addActionListener(new ActionListener() {
+    cancelButton.addActionListener(
+        new ActionListener() {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          UpdateDialog.this.setVisible(false);
-        }
-      });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            UpdateDialog.this.setVisible(false);
+          }
+        });
     buttonPanel.add(cancelButton);
 
     return buttonPanel;

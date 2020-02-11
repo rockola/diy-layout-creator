@@ -246,16 +246,20 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
       final int dx = orientation.isHorizontal() ? spacing / 2 : 0;
       final int dy = orientation.isVertical() ? spacing / 2 : 0;
       body = new Area[2];
-      body[0] = new Area(new Ellipse2D.Double(
-          firstPoint.x + dx - outerDiameter / 2,
-          firstPoint.y + dy - outerDiameter / 2,
-          outerDiameter,
-          outerDiameter));
-      body[1] = new Area(new Ellipse2D.Double(
-          firstPoint.x + dx - innerDiameter / 2,
-          firstPoint.y + dy - innerDiameter / 2,
-          innerDiameter,
-          innerDiameter));
+      body[0] =
+          new Area(
+              new Ellipse2D.Double(
+                  firstPoint.x + dx - outerDiameter / 2,
+                  firstPoint.y + dy - outerDiameter / 2,
+                  outerDiameter,
+                  outerDiameter));
+      body[1] =
+          new Area(
+              new Ellipse2D.Double(
+                  firstPoint.x + dx - innerDiameter / 2,
+                  firstPoint.y + dy - innerDiameter / 2,
+                  innerDiameter,
+                  innerDiameter));
     }
     return body;
   }

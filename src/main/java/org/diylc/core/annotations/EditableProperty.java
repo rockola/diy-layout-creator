@@ -26,12 +26,12 @@ import org.diylc.core.AllowAllValidator;
 import org.diylc.core.IPropertyValidator;
 
 /**
- * Used to annotate editable component property. Editable property XYZ
- * must have both getter and setter named <code>getXYZ</code> and
- * <code>setXYZ</code> respectively and this annotation must be placed
- * on the getter method. <br> <br> In the example below, {@code category}
- * is the property we want to edit and {@code getCategories()} provides
- * a list of available values for category.
+ * Used to annotate editable component property. Editable property XYZ must have both getter and
+ * setter named <code>getXYZ</code> and <code>setXYZ</code> respectively and this annotation must be
+ * placed on the getter method. <br>
+ * <br>
+ * In the example below, {@code category} is the property we want to edit and {@code
+ * getCategories()} provides a list of available values for category.
  *
  * <pre>
  * <code>
@@ -52,10 +52,9 @@ import org.diylc.core.IPropertyValidator;
 public @interface EditableProperty {
 
   /**
-   * Returns property name. If left blank property name will be
-   * extracted from the getter name, e.g.  getter <code>getXYZ</code>
-   * will induce property name <code>XYZ</code>. <br> Default value is
-   * blank.
+   * Returns property name. If left blank property name will be extracted from the getter name, e.g.
+   * getter <code>getXYZ</code> will induce property name <code>XYZ</code>. <br>
+   * Default value is blank.
    *
    * @return
    */

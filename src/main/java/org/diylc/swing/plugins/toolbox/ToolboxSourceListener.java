@@ -34,12 +34,12 @@ import org.diylc.common.IPlugInPort;
  */
 class ToolboxSourceListener implements DragSourceListener {
 
-  //@SuppressWarnings("unused")
-  //private IPlugInPort presenter;
+  // @SuppressWarnings("unused")
+  // private IPlugInPort presenter;
 
   public ToolboxSourceListener(IPlugInPort presenter) {
     super();
-    //this.presenter = presenter;
+    // this.presenter = presenter;
   }
 
   @Override

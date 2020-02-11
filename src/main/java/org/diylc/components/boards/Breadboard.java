@@ -192,8 +192,8 @@ public class Breadboard extends AbstractComponent<Void> {
 
     double powerOffset =
         getPowerStripPosition() == PowerStripPosition.Inline
-        ? (getBreadboardSize() == BreadboardSize.Full ? 2d : 1d)
-        : (getBreadboardSize() == BreadboardSize.Full ? 1.5d : 0.5d);
+            ? (getBreadboardSize() == BreadboardSize.Full ? 2d : 1d)
+            : (getBreadboardSize() == BreadboardSize.Full ? 1.5d : 0.5d);
 
     int psHoleCount = Math.round(holeCount / 10f) * 10;
 
@@ -289,9 +289,10 @@ public class Breadboard extends AbstractComponent<Void> {
     for (int row = 0; row < 3; row++) {
       for (int col = 0; col < 4; col++) {
         Area.circle(
-            holeHorizontalOffset + col * holeHorizontalSpacing,
-            holeVerticalOffset + row * holeVerticalSpacing,
-            holeDiameter).fillDraw(g2d, HOLE_COLOR, BORDER_COLOR);
+                holeHorizontalOffset + col * holeHorizontalSpacing,
+                holeVerticalOffset + row * holeVerticalSpacing,
+                holeDiameter)
+            .fillDraw(g2d, HOLE_COLOR, BORDER_COLOR);
       }
     }
 
@@ -354,9 +355,8 @@ public class Breadboard extends AbstractComponent<Void> {
     double spacing = SPACING.convertToPixels();
     int holeCount = (getBreadboardSize() == BreadboardSize.Full) ? 63 : 30;
     // adjust the angle
-    Point secondPoint = new Point(
-        (int) (point.x + 23 * spacing),
-        (int) (point.y + (holeCount + 1) * spacing));
+    Point secondPoint =
+        new Point((int) (point.x + 23 * spacing), (int) (point.y + (holeCount + 1) * spacing));
     double theta = getOrientation().getTheta();
     if (theta != 0) {
       AffineTransform tx = getOrientation().getRotation(point);

@@ -29,18 +29,14 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
-   Command line argument handler.
- */
+/** Command line argument handler. */
 public class CommandLineArguments {
 
   private static final Logger LOG = LogManager.getLogger(CommandLineArguments.class);
 
   private CommandLine commandLine;
 
-  /**
-     @param args Command line arguments to be parsed.
-   */
+  /** @param args Command line arguments to be parsed. */
   public CommandLineArguments(String[] args) {
     Options options = new Options();
     // no options for now
@@ -54,9 +50,9 @@ public class CommandLineArguments {
   }
 
   /**
-     Get non-option command line arguments.
-
-     @return list of arguments that were not parsed, i.e. filenames
+   * Get non-option command line arguments.
+   *
+   * @return list of arguments that were not parsed, i.e. filenames
    */
   public List<String> filenames() {
     return commandLine.getArgList();

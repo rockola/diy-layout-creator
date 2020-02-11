@@ -22,10 +22,7 @@ public class CheckBoxListDialog extends ButtonDialog {
     this(owner, title, new String[] {"OK", "Cancel"}, options);
   }
 
-  public CheckBoxListDialog(JFrame owner,
-                            String title,
-                            String[] buttonCaptions,
-                            Object[] options) {
+  public CheckBoxListDialog(JFrame owner, String title, String[] buttonCaptions, Object[] options) {
     super(owner, title, buttonCaptions);
     this.options = options;
 

@@ -52,8 +52,7 @@ public class Connection {
   @Override
   public boolean equals(Object obj) {
     if (this != obj) {
-      if (obj == null
-          || getClass() != obj.getClass()) {
+      if (obj == null || getClass() != obj.getClass()) {
         return false;
       }
       Connection other = (Connection) obj;

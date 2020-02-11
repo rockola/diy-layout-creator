@@ -120,50 +120,61 @@ public class TransistorTO1 extends AbstractTransistorPackage {
       if (folded) {
         switch (orientation) {
           case DEFAULT:
-            newBody = new Area(new RoundRectangle2D.Double(
-                x - bodyLength,
-                y - bodyDiameter / 2,
-                bodyLength,
-                bodyDiameter,
-                edgeRadius,
-                edgeRadius));
-            newBody.add(new Area(new Rectangle2D.Double(
-                x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+            newBody =
+                new Area(
+                    new RoundRectangle2D.Double(
+                        x - bodyLength,
+                        y - bodyDiameter / 2,
+                        bodyLength,
+                        bodyDiameter,
+                        edgeRadius,
+                        edgeRadius));
+            newBody.add(
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
             break;
           case _90:
-            newBody = new Area(new RoundRectangle2D.Double(
-                x - bodyDiameter / 2,
-                y - bodyLength,
-                bodyDiameter,
-                bodyLength,
-                edgeRadius,
-                edgeRadius));
-            newBody.add(new Area(new Rectangle2D.Double(
-                x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2)));
+            newBody =
+                new Area(
+                    new RoundRectangle2D.Double(
+                        x - bodyDiameter / 2,
+                        y - bodyLength,
+                        bodyDiameter,
+                        bodyLength,
+                        edgeRadius,
+                        edgeRadius));
+            newBody.add(
+                new Area(
+                    new Rectangle2D.Double(
+                        x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2)));
             break;
           case _180:
-            newBody = new Area(new RoundRectangle2D.Double(
-                x,
-                y - bodyDiameter / 2,
-                bodyLength,
-                bodyDiameter,
-                edgeRadius,
-                edgeRadius));
-            newBody.add(new Area(new Rectangle2D.Double(
-                x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+            newBody =
+                new Area(
+                    new RoundRectangle2D.Double(
+                        x, y - bodyDiameter / 2, bodyLength, bodyDiameter, edgeRadius, edgeRadius));
+            newBody.add(
+                new Area(
+                    new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
             break;
           case _270:
-            newBody = new Area(new RoundRectangle2D.Double(
-                x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius, edgeRadius));
-            newBody.add(new Area(new Rectangle2D.Double(
-                x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)));
+            newBody =
+                new Area(
+                    new RoundRectangle2D.Double(
+                        x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius, edgeRadius));
+            newBody.add(
+                new Area(
+                    new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
         }
       } else {
-        newBody = new Area(new Ellipse2D.Double(
-            x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+        newBody =
+            new Area(
+                new Ellipse2D.Double(
+                    x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
       }
 
       body = new Area[] {newBody};

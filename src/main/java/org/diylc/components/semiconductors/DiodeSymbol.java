@@ -59,9 +59,7 @@ public class DiodeSymbol extends AbstractDiodeSymbol {
     g2d.fill(
         new Polygon(
             new int[] {
-              (width - size) / 2,
-              (width - size) / 2,
-              (int) ((width - size) / 2 + size / SQRT_TWO)
+              (width - size) / 2, (width - size) / 2, (int) ((width - size) / 2 + size / SQRT_TWO)
             },
             new int[] {(height - size) / 2, (height + size) / 2, height / 2},
             3));
@@ -80,9 +78,6 @@ public class DiodeSymbol extends AbstractDiodeSymbol {
     g2d.setColor(getBodyColor());
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
     g2d.drawLine(
-        (int) (width / SQRT_TWO) + bandSize,
-        0,
-        (int) (width / SQRT_TWO + bandSize),
-        (int) width);
+        (int) (width / SQRT_TWO) + bandSize, 0, (int) (width / SQRT_TWO + bandSize), (int) width);
   }
 }

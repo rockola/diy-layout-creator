@@ -73,16 +73,18 @@ public class LedSymbol extends DiodeSymbol {
     int x2 = (int) (d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     int y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(d / 2, (int) width, x2 - 2, y2 - 2);
-    g2d.fillPolygon(new Polygon(
-        new int[] {x2, x2, (int) (x2 - arrowSize)},
-        new int[] {y2, (int) (y2 - arrowSize), y2},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {x2, x2, (int) (x2 - arrowSize)},
+            new int[] {y2, (int) (y2 - arrowSize), y2},
+            3));
     x2 = (int) (3 * d / 2 + Math.cos(Math.PI / 4) * arrowLength);
     y2 = (int) (width + Math.sin(Math.PI / 4) * arrowLength);
     g2d.drawLine(3 * d / 2, (int) width, x2 - 2, y2 - 2);
-    g2d.fillPolygon(new Polygon(
-        new int[] {x2, x2, (int) (x2 - arrowSize)},
-        new int[] {y2, (int) (y2 - arrowSize), y2},
-        3));
+    g2d.fillPolygon(
+        new Polygon(
+            new int[] {x2, x2, (int) (x2 - arrowSize)},
+            new int[] {y2, (int) (y2 - arrowSize), y2},
+            3));
   }
 }

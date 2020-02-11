@@ -40,17 +40,18 @@ public class EnumEditor extends JComboBox {
     Object[] values = property.getType().getEnumConstants();
     setModel(new DefaultComboBoxModel(values));
     setSelectedItem(property.getValue());
-    addItemListener(new ItemListener() {
+    addItemListener(
+        new ItemListener() {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            property.setChanged(true);
-            setBackground(oldBackground);
-            EnumEditor.this.property.setValue(e.getItem());
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              property.setChanged(true);
+              setBackground(oldBackground);
+              EnumEditor.this.property.setValue(e.getItem());
+            }
           }
-        }
-      });
+        });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

@@ -28,9 +28,7 @@ public enum ChangeType {
   NEW_FEATURE,
   IMPROVEMENT;
 
-  /**
-     Human readable string. Can be translated in resources.
-  */
+  /** Human readable string. Can be translated in resources. */
   public String theString() {
     return App.getString("message.update." + this.toString().replace("_", "-"));
   }

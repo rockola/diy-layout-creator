@@ -91,18 +91,19 @@ public class Line extends AbstractLeadedComponent<Void> {
         stroke = ObjectCache.getInstance().fetchZoomableStroke(thickness);
         break;
       case DASHED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness * 2, thickness * 4},
-            thickness * 4,
-            BasicStroke.CAP_SQUARE);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness,
+                    new float[] {thickness * 2, thickness * 4},
+                    thickness * 4,
+                    BasicStroke.CAP_SQUARE);
         break;
       case DOTTED:
-        stroke = ObjectCache.getInstance().fetchStroke(
-            thickness,
-            new float[] {thickness, thickness * 5},
-            0,
-            BasicStroke.CAP_ROUND);
+        stroke =
+            ObjectCache.getInstance()
+                .fetchStroke(
+                    thickness, new float[] {thickness, thickness * 5}, 0, BasicStroke.CAP_ROUND);
         break;
       default:
         throw new RuntimeException("Unknown line style " + getStyle());
@@ -115,9 +116,10 @@ public class Line extends AbstractLeadedComponent<Void> {
 
     if (arrowStart) {
       arrowTx.setToIdentity();
-      double angle = Math.atan2(
-          getControlPoint(1).y - getControlPoint(0).y,
-          getControlPoint(1).x - getControlPoint(0).x);
+      double angle =
+          Math.atan2(
+              getControlPoint(1).y - getControlPoint(0).y,
+              getControlPoint(1).x - getControlPoint(0).x);
       arrowTx.translate(getControlPoint(0).x, getControlPoint(0).y);
       arrowTx.rotate(angle + HALF_PI);
       AffineTransform oldTx = g2d.getTransform();
@@ -132,9 +134,10 @@ public class Line extends AbstractLeadedComponent<Void> {
     }
     if (arrowEnd) {
       arrowTx.setToIdentity();
-      double angle = Math.atan2(
-          getControlPoint(1).y - getControlPoint(0).y,
-          getControlPoint(1).x - getControlPoint(0).x);
+      double angle =
+          Math.atan2(
+              getControlPoint(1).y - getControlPoint(0).y,
+              getControlPoint(1).x - getControlPoint(0).x);
       arrowTx.translate(getControlPoint(1).x, getControlPoint(1).y);
       arrowTx.rotate(angle - HALF_PI);
       AffineTransform oldTx = g2d.getTransform();

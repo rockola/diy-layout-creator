@@ -77,8 +77,8 @@ public class BlankBoard extends AbstractBoard {
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Area board =
         getType() == Type.SQUARE
-        ? Area.rect(firstPoint, secondPoint)
-        : Area.oval(firstPoint, secondPoint);
+            ? Area.rect(firstPoint, secondPoint)
+            : Area.oval(firstPoint, secondPoint);
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
       board.fill(g2d, boardColor);

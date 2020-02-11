@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ParamName {
 
   /**
-   * @return parameter name, this will be used to put together server
-   *         request and dynamically create code.
+   * @return parameter name, this will be used to put together server request and dynamically create
+   *     code.
    */
   String value();
 }

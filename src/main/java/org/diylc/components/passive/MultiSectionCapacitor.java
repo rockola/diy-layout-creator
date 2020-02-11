@@ -188,8 +188,10 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   }
 
   private void updateControlPoints() {
-    int pinSpacing = (int) (getDiameter().convertToPixels()
-                            * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+    int pinSpacing =
+        (int)
+            (getDiameter().convertToPixels()
+                * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
 
     int newCount = value.length + 1;
     if (newCount != controlPoints.length) {
@@ -403,10 +405,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     Rectangle bounds = area[0].getBounds();
     g2d.setFont(project.getFont());
     StringUtils.drawCenteredText(
-        g2d,
-        getLabelForDisplay(),
-        bounds.x + bounds.width / 2,
-        bounds.y + bounds.height / 2);
+        g2d, getLabelForDisplay(), bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
 
     // draw polarity markers
     g2d.setColor(pinColor.darker());
@@ -425,19 +424,21 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int margin = 2 * width / 32;
-    Area area = new Area(new Ellipse2D.Double(
-        margin, margin, width - 2 * margin, width - 2 * margin));
+    Area area =
+        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     margin = 6 * width / 32;
-    area = new Area(new Ellipse2D.Double(
-        margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
+    area =
+        new Area(
+            new Ellipse2D.Double(margin, margin, width - 2 * margin + 1, width - 2 * margin + 1));
     area.fill(g2d, BASE_COLOR);
     int pinSize = 2 * width / 32;
     for (int i = 0; i < 3; i++) {
       Area.circle(
-          (i == 1 ? width * 3 / 8 : width / 2) - pinSize / 2,
-          height / 2 + (i - 1) * (height / 5),
-          pinSize).fill(g2d, PIN_COLOR);
+              (i == 1 ? width * 3 / 8 : width / 2) - pinSize / 2,
+              height / 2 + (i - 1) * (height / 5),
+              pinSize)
+          .fill(g2d, PIN_COLOR);
     }
   }
 

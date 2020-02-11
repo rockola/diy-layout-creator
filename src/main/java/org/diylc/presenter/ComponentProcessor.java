@@ -76,8 +76,7 @@ public class ComponentProcessor {
       if (getter.getName().startsWith("get")) {
         try {
           EditableProperty annotation = getter.getAnnotation(EditableProperty.class);
-          if (annotation != null
-              && !getter.isAnnotationPresent(Deprecated.class)) {
+          if (annotation != null && !getter.isAnnotationPresent(Deprecated.class)) {
             /* We are interested in this method if it
                a) is named as a getter (starts with "get")
                b) has @EditableProperty annotation
@@ -153,7 +152,7 @@ public class ComponentProcessor {
         if (newProperties.contains(oldProperty)) {
           PropertyWrapper newProperty = newProperties.get(newProperties.indexOf(oldProperty));
           if (((newProperty.getValue() != null && oldProperty.getValue() != null)
-               && !newProperty.getValue().equals(oldProperty.getValue()))
+                  && !newProperty.getValue().equals(oldProperty.getValue()))
               || newProperty.getValue() != oldProperty.getValue()) {
             // Values don't match, so the property is not unique valued.
             oldProperty.setUnique(false);

@@ -36,7 +36,7 @@ public class Iec60320 implements Serializable {
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(Iec60320.class);
   private static final Map<String, Iec60320> couplers = new HashMap<>();
-  private static final Point reference = new Point(0,0);
+  private static final Point reference = new Point(0, 0);
 
   enum CouplerType {
     CONNECTOR, // i.e. plug
@@ -46,29 +46,19 @@ public class Iec60320 implements Serializable {
   static {
     couplers.put("C1", getC1());
     couplers.put("C2", getC2());
-    //couplers.put("C13", C13());
+    // couplers.put("C13", C13());
     couplers.put("C14", getC14());
   }
 
-  /**
-     Type of coupler (male connector/plug or female inlet/socket).
-  */
+  /** Type of coupler (male connector/plug or female inlet/socket). */
   private final CouplerType couplerType;
-  /**
-     Coupler pins.
-  */
+  /** Coupler pins. */
   private final List<Pin> pins;
-  /**
-     Coupler main area (plug for connectors, opening for inlets).
-  */
+  /** Coupler main area (plug for connectors, opening for inlets). */
   private final Area coupler;
-  /**
-     Area surrounding the main area.
-  */
+  /** Area surrounding the main area. */
   private final Area courtyard;
-  /**
-     Area of mounting ears (optional).
-  */
+  /** Area of mounting ears (optional). */
   private final Area mount;
 
   private Area[] body;
@@ -133,16 +123,8 @@ public class Iec60320 implements Serializable {
     return new Iec60320(
         CouplerType.CONNECTOR,
         pins,
-        Area.centeredRoundRect(
-            reference,
-            inletWidth,
-            inletHeight,
-            inletHeight.half()),
-         Area.centeredRoundRect(
-            reference,
-            courtyardWidth,
-            courtyardHeight,
-            courtyardCornerRadius));
+        Area.centeredRoundRect(reference, inletWidth, inletHeight, inletHeight.half()),
+        Area.centeredRoundRect(reference, courtyardWidth, courtyardHeight, courtyardCornerRadius));
   }
 
   /**
@@ -166,23 +148,14 @@ public class Iec60320 implements Serializable {
     return new Iec60320(
         CouplerType.INLET,
         pins,
-        Area.centeredRoundRect(
-            reference,
-            inletWidth,
-            inletHeight,
-            inletHeight.half()),
-        Area.centeredRoundRect(
-            reference,
-            courtyardWidth,
-            courtyardHeight,
-            courtyardCornerRadius));
+        Area.centeredRoundRect(reference, inletWidth, inletHeight, inletHeight.half()),
+        Area.centeredRoundRect(reference, courtyardWidth, courtyardHeight, courtyardCornerRadius));
   }
 
   /**
    * IEC60320 C14
    *
-   * <p>10 A 250 V appliance coupler for class I equipment and cold
-   * conditions, inlet.
+   * <p>10 A 250 V appliance coupler for class I equipment and cold conditions, inlet.
    *
    * @return Instance of Iec60320 as per IEC60320-C14.
    */
@@ -194,18 +167,20 @@ public class Iec60320 implements Serializable {
     final Size pinHeight = Size.mm(4);
     final Point pinReference = Area.point(reference.x, reference.y - pinHeight.half().asPixels());
     pins.add(Pin.rectangular(pinReference, pinWidth, pinHeight));
-    pins.add(Pin.rectangular(
-        Area.point(
-            pinReference.x - pinHorizontalSpacing.asPixels(),
-            pinReference.y + pinVerticalSpacing.asPixels()),
-        pinWidth,
-        pinHeight));
-    pins.add(Pin.rectangular(
-        Area.point(
-            pinReference.x + pinHorizontalSpacing.asPixels(),
-            pinReference.y + pinVerticalSpacing.asPixels()),
-        pinWidth,
-        pinHeight));
+    pins.add(
+        Pin.rectangular(
+            Area.point(
+                pinReference.x - pinHorizontalSpacing.asPixels(),
+                pinReference.y + pinVerticalSpacing.asPixels()),
+            pinWidth,
+            pinHeight));
+    pins.add(
+        Pin.rectangular(
+            Area.point(
+                pinReference.x + pinHorizontalSpacing.asPixels(),
+                pinReference.y + pinVerticalSpacing.asPixels()),
+            pinWidth,
+            pinHeight));
     final Size inletWidth = Size.mm(24);
     final Size inletHeight = Size.mm(16);
     // opening lower corner radius, IEC spec says R = 3 max.
@@ -237,27 +212,19 @@ public class Iec60320 implements Serializable {
         // inlet
         Area.roundedPolygon(
             new Point[] {
+              Area.point(reference.x, reference.y - halfInletHeight),
               Area.point(
-                  reference.x,
-                  reference.y - halfInletHeight),
-              Area.point(
-                  reference.x + pinHorizontalSpacing.asPixels(),
-                  reference.y - halfInletHeight),
+                  reference.x + pinHorizontalSpacing.asPixels(), reference.y - halfInletHeight),
               Area.point(
                   reference.x + halfInletWidth,
                   reference.y - inletUpperCornerVerticalOffset.asPixels()),
-              Area.point(
-                  reference.x + halfInletWidth,
-                  reference.y + halfInletHeight),
-              Area.point(
-                  reference.x - halfInletWidth,
-                  reference.y + halfInletHeight),
+              Area.point(reference.x + halfInletWidth, reference.y + halfInletHeight),
+              Area.point(reference.x - halfInletWidth, reference.y + halfInletHeight),
               Area.point(
                   reference.x - halfInletWidth,
                   reference.y - inletUpperCornerVerticalOffset.asPixels()),
               Area.point(
-                  reference.x - pinHorizontalSpacing.asPixels(),
-                  reference.y - halfInletHeight)
+                  reference.x - pinHorizontalSpacing.asPixels(), reference.y - halfInletHeight)
             },
             new double[] {
               inletUpperRadius,
@@ -271,24 +238,24 @@ public class Iec60320 implements Serializable {
         Area.centeredRoundRect(reference, courtyardWidth, courtyardHeight, courtyardRadius),
         // mount
         Area.roundedPolygon(
-            new Point[] {
-              Area.point(reference.x, reference.y - halfMountHeight),
-              Area.point(reference.x + halfMountWidth, reference.y - halfMountHeight),
-              Area.point(reference.x + lugWidth, reference.y),
-              Area.point(reference.x + halfMountWidth, reference.y + halfMountHeight),
-              Area.point(reference.x - halfMountWidth, reference.y + halfMountHeight),
-              Area.point(reference.x - lugWidth, reference.y),
-              Area.point(reference.x - halfMountWidth, reference.y - halfMountHeight),
-            },
-            new double[] {
-              inletUpperRadius,
-              lugRadius,
-              inletUpperRadius,
-              inletUpperRadius,
-              lugRadius,
-              inletUpperRadius
-            })
-        .subtract(Area.circle(reference.x + holeOffset, reference.y, mountHoleDiameter))
-        .subtract(Area.circle(reference.x - holeOffset, reference.y, mountHoleDiameter)));
+                new Point[] {
+                  Area.point(reference.x, reference.y - halfMountHeight),
+                  Area.point(reference.x + halfMountWidth, reference.y - halfMountHeight),
+                  Area.point(reference.x + lugWidth, reference.y),
+                  Area.point(reference.x + halfMountWidth, reference.y + halfMountHeight),
+                  Area.point(reference.x - halfMountWidth, reference.y + halfMountHeight),
+                  Area.point(reference.x - lugWidth, reference.y),
+                  Area.point(reference.x - halfMountWidth, reference.y - halfMountHeight),
+                },
+                new double[] {
+                  inletUpperRadius,
+                  lugRadius,
+                  inletUpperRadius,
+                  inletUpperRadius,
+                  lugRadius,
+                  inletUpperRadius
+                })
+            .subtract(Area.circle(reference.x + holeOffset, reference.y, mountHoleDiameter))
+            .subtract(Area.circle(reference.x - holeOffset, reference.y, mountHoleDiameter)));
   }
 }

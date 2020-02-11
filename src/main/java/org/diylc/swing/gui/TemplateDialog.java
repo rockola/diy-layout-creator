@@ -139,10 +139,11 @@ public class TemplateDialog extends JDialog {
   public JButton getLoadButton() {
     if (loadButton == null) {
       loadButton = new JButton("Load Template");
-      loadButton.addActionListener((e) -> {
-        App.ui().getPresenter().loadProject(templateProject, true, null);
-        dispose();
-      });
+      loadButton.addActionListener(
+          (e) -> {
+            App.ui().getPresenter().loadProject(templateProject, true, null);
+            dispose();
+          });
     }
     return loadButton;
   }
@@ -169,45 +170,50 @@ public class TemplateDialog extends JDialog {
     if (fileList == null) {
       fileList = new JList(getFiles().toArray());
       fileList.setPreferredSize(new Dimension(128, -1));
-      fileList.setCellRenderer(new DefaultListCellRenderer() {
+      fileList.setCellRenderer(
+          new DefaultListCellRenderer() {
 
-          private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-          @Override
-          public Component getListCellRendererComponent(
-              JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(
-                list, value, index, isSelected, cellHasFocus);
-            if (value instanceof File) {
-              label.setText(((File) value).getName());
+            @Override
+            public Component getListCellRendererComponent(
+                JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+              JLabel label =
+                  (JLabel)
+                      super.getListCellRendererComponent(
+                          list, value, index, isSelected, cellHasFocus);
+              if (value instanceof File) {
+                label.setText(((File) value).getName());
+              }
+              return label;
             }
-            return label;
-          }
-        });
-      fileList.addListSelectionListener(new ListSelectionListener() {
+          });
+      fileList.addListSelectionListener(
+          new ListSelectionListener() {
 
-          @Override
-          public void valueChanged(ListSelectionEvent e) {
-            File file = (File) fileList.getSelectedValue();
-            if (file != null) {
-              Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
-              templateProject = p;
-              // TODO: show p in canvasPanel
-              Dimension dim = DrawingManager.getCanvasDimensions(
-                  p,
-                  // TODO:
-                  // drawingManager.
-                  // zoomLevel
-                  1.0,
-                  true);
-              // TODO: set zoom level
-              //double xFactor = panelSize.getWidth() / dim.getWidth();
-              //double yFactor = panelSize.getHeight() / dim.getHeight();
-              //presenter.setZoomLevel(Math.min(xFactor, yFactor));
-              getCanvasPanel().repaint();
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+              File file = (File) fileList.getSelectedValue();
+              if (file != null) {
+                Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+                templateProject = p;
+                // TODO: show p in canvasPanel
+                Dimension dim =
+                    DrawingManager.getCanvasDimensions(
+                        p,
+                        // TODO:
+                        // drawingManager.
+                        // zoomLevel
+                        1.0,
+                        true);
+                // TODO: set zoom level
+                // double xFactor = panelSize.getWidth() / dim.getWidth();
+                // double yFactor = panelSize.getHeight() / dim.getHeight();
+                // presenter.setZoomLevel(Math.min(xFactor, yFactor));
+                getCanvasPanel().repaint();
+              }
             }
-          }
-        });
+          });
       fileList.setSelectedIndex(0);
     }
     return fileList;
@@ -244,19 +250,20 @@ public class TemplateDialog extends JDialog {
 
   public JPanel getCanvasPanel() {
     if (canvasPanel == null) {
-      canvasPanel = new JPanel() {
+      canvasPanel =
+          new JPanel() {
 
-          private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-          @Override
-          public void paint(Graphics g) {
-            super.paint(g);
-            Presenter.drawProject(
-                templateProject,
-                (Graphics2D) g,
-                EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING));
-          }
-        };
+            @Override
+            public void paint(Graphics g) {
+              super.paint(g);
+              Presenter.drawProject(
+                  templateProject,
+                  (Graphics2D) g,
+                  EnumSet.of(DrawOption.ZOOM, DrawOption.ANTIALIASING));
+            }
+          };
       canvasPanel.setBackground(Color.white);
       canvasPanel.setPreferredSize(panelSize);
     }

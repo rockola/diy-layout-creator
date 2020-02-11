@@ -7,8 +7,8 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 /**
- * {@link ListCellRenderer} that shows {@link Double} values as
- * percents, e.g. 0.5 will be rendered as 50%.
+ * {@link ListCellRenderer} that shows {@link Double} values as percents, e.g. 0.5 will be rendered
+ * as 50%.
  *
  * @author Branislav Stojkovic
  */
@@ -19,8 +19,8 @@ public class PercentageListCellRenderer extends DefaultListCellRenderer {
   @Override
   public Component getListCellRendererComponent(
       JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index,
-                                                               isSelected, cellHasFocus);
+    JLabel label =
+        (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     label.setText(Integer.toString((int) (100 * (Double) value)) + "%");
     return label;
   }

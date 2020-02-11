@@ -101,8 +101,7 @@ public class FilteredTreeModel extends DefaultTreeModel {
     int index = -1;
     for (int i = 0; i < childCount; i++) {
       Object child = super.getChild(parent, i);
-      if (recursiveMatch(child, filter)
-          && childToFind.equals(child)) {
+      if (recursiveMatch(child, filter) && childToFind.equals(child)) {
         index = i;
         break;
       }

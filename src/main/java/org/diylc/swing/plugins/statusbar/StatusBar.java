@@ -104,99 +104,106 @@ public class StatusBar extends JPanel implements IPlugIn {
   private String statusMessage;
 
   {
-    recentChangesLabel = new JLabel(Icon.ScrollInformation.icon()) {
+    recentChangesLabel =
+        new JLabel(Icon.ScrollInformation.icon()) {
 
-        private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-          return new Point(0, -16);
-        }
-      };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -16);
+          }
+        };
     recentChangesLabel.setToolTipText(getMsg("recent-changes-tooltip"));
     recentChangesLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    recentChangesLabel.addMouseListener(new MouseAdapter() {
+    recentChangesLabel.addMouseListener(
+        new MouseAdapter() {
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          List<Version> updates = Version.getRecentUpdates();
-          if (updates == null) {
-            App.ui().info(getMsg("no-version-history"));
-          } else {
-            String html = UpdateChecker.createUpdateHtml(updates);
-            UpdateDialog updateDialog =
-                new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, null);
-            updateDialog.setVisible(true);
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            List<Version> updates = Version.getRecentUpdates();
+            if (updates == null) {
+              App.ui().info(getMsg("no-version-history"));
+            } else {
+              String html = UpdateChecker.createUpdateHtml(updates);
+              UpdateDialog updateDialog =
+                  new UpdateDialog(App.ui().getOwnerFrame().getRootPane(), html, null);
+              updateDialog.setVisible(true);
+            }
           }
-        }
-      });
-    updateLabel = new UpdateLabel(App.getVersionNumber(), Config.getUrl("update").toString()) {
+        });
+    updateLabel =
+        new UpdateLabel(App.getVersionNumber(), Config.getUrl("update").toString()) {
 
-        private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-          return new Point(0, -16);
-        }
-      };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -16);
+          }
+        };
     updateLabel.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
     zoomBox = new JComboBox(plugInPort.getAvailableZoomLevels());
     zoomBox.setSelectedItem(plugInPort.getZoomLevel());
     zoomBox.setFocusable(false);
     zoomBox.setRenderer(new PercentageListCellRenderer());
-    zoomBox.addActionListener(
-        (e) -> plugInPort.setZoomLevel((Double) zoomBox.getSelectedItem()));
-    announcementLabel = new JLabel(Icon.Megaphone.icon()) {
+    zoomBox.addActionListener((e) -> plugInPort.setZoomLevel((Double) zoomBox.getSelectedItem()));
+    announcementLabel =
+        new JLabel(Icon.Megaphone.icon()) {
 
-        private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-          return new Point(0, -16);
-        }
-      };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -16);
+          }
+        };
     announcementLabel.setToolTipText("Click to fetch the most recent public announcement");
     announcementLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    announcementLabel.addMouseListener(new MouseAdapter() {
+    announcementLabel.addMouseListener(
+        new MouseAdapter() {
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          App.ui().executeBackgroundTask(new ITask<String>() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            App.ui()
+                .executeBackgroundTask(
+                    new ITask<String>() {
 
-              @Override
-              public String doInBackground() throws Exception {
-                return announcementProvider.getCurrentAnnouncements(true);
-              }
+                      @Override
+                      public String doInBackground() throws Exception {
+                        return announcementProvider.getCurrentAnnouncements(true);
+                      }
 
-              @Override
-              public void failed(Exception e) {
-                LOG.error("Error while fetching announcements", e);
-                App.ui().error(getMsg("failed-announcements"));
-              }
+                      @Override
+                      public void failed(Exception e) {
+                        LOG.error("Error while fetching announcements", e);
+                        App.ui().error(getMsg("failed-announcements"));
+                      }
 
-              @Override
-              public void complete(String result) {
-                final String pa = getMsg("public-announcement");
-                if (result != null && result.length() > 0) {
-                  App.ui().info(pa, result);
-                  announcementProvider.dismissed();
-                } else {
-                  App.ui().info(pa, getMsg("no-announcements"));
-                }
-              }
-            },
-            true);
-        }
-      });
-    memoryPanel = new MemoryBar() {
+                      @Override
+                      public void complete(String result) {
+                        final String pa = getMsg("public-announcement");
+                        if (result != null && result.length() > 0) {
+                          App.ui().info(pa, result);
+                          announcementProvider.dismissed();
+                        } else {
+                          App.ui().info(pa, getMsg("no-announcements"));
+                        }
+                      }
+                    },
+                    true);
+          }
+        });
+    memoryPanel =
+        new MemoryBar() {
 
-        private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-          return new Point(0, -52);
-        }
-      };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -52);
+          }
+        };
     memoryPanel.start();
     statusLabel = new JLabel();
     statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
@@ -204,33 +211,35 @@ public class StatusBar extends JPanel implements IPlugIn {
     selectionSizeLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
     positionLabel = new JLabel();
     positionLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 4));
-    sizeLabel = new JLabel(Icon.Size.icon()) {
+    sizeLabel =
+        new JLabel(Icon.Size.icon()) {
 
-        private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-          return new Point(0, -16);
-        }
-      };
+          @Override
+          public Point getToolTipLocation(MouseEvent event) {
+            return new Point(0, -16);
+          }
+        };
     sizeLabel.setFocusable(true);
     sizeLabel.setToolTipText(getMsg("selection-size-tooltip"));
-    sizeLabel.addMouseListener(new MouseAdapter() {
+    sizeLabel.addMouseListener(
+        new MouseAdapter() {
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          Point2D[] sizes = plugInPort.calculateSelectionDimension();
-          String text = refreshSelectionSize();
-          if (text == null) {
-            text = getMsg("empty-selection");
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            Point2D[] sizes = plugInPort.calculateSelectionDimension();
+            String text = refreshSelectionSize();
+            if (text == null) {
+              text = getMsg("empty-selection");
+            }
+            JOptionPane.showMessageDialog(
+                SwingUtilities.getRootPane(StatusBar.this),
+                text,
+                "Selection Size",
+                JOptionPane.INFORMATION_MESSAGE);
           }
-          JOptionPane.showMessageDialog(
-              SwingUtilities.getRootPane(StatusBar.this),
-              text,
-              "Selection Size",
-              JOptionPane.INFORMATION_MESSAGE);
-        }
-      });
+        });
   }
 
   public String refreshSelectionSize() {
@@ -239,9 +248,9 @@ public class StatusBar extends JPanel implements IPlugIn {
     if (sizes != null) {
       int nth = App.metric() ? 1 : 0;
       String format = App.metric() ? "%s x %s cm²" : "%s\" x %s\"";
-      text = String.format(format,
-                           sizeFormat.format(sizes[nth].getX()),
-                           sizeFormat.format(sizes[nth].getY()));
+      text =
+          String.format(
+              format, sizeFormat.format(sizes[nth].getX()), sizeFormat.format(sizes[nth].getY()));
     }
     final String sizeString = sizes == null ? "" : text;
     SwingUtilities.invokeLater(() -> selectionSizeLabel.setText(sizeString));
@@ -265,53 +274,53 @@ public class StatusBar extends JPanel implements IPlugIn {
       LOG.error("Could not install status bar", e);
     }
 
-    App.ui().executeBackgroundTask(new ITask<String>() {
+    App.ui()
+        .executeBackgroundTask(
+            new ITask<String>() {
 
-        @Override
-        public String doInBackground() throws Exception {
-          Thread.sleep(1000);
-          String announcements = announcementProvider.getCurrentAnnouncements(false);
-          String update = updateLabel.getUpdateChecker().findNewVersionShort();
+              @Override
+              public String doInBackground() throws Exception {
+                Thread.sleep(1000);
+                String announcements = announcementProvider.getCurrentAnnouncements(false);
+                String update = updateLabel.getUpdateChecker().findNewVersionShort();
 
-          if (update != null) {
-            String updateHtml =
-                String.format(Message.getHtml("statusbar.new-version.available"), update);
-            if (announcements == null || announcements.length() == 0) {
-              return "<html>" + updateHtml + "</html>";
-            }
-            announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
-          }
+                if (update != null) {
+                  String updateHtml =
+                      String.format(Message.getHtml("statusbar.new-version.available"), update);
+                  if (announcements == null || announcements.length() == 0) {
+                    return "<html>" + updateHtml + "</html>";
+                  }
+                  announcements = announcements.replace("<html>", "<html>" + updateHtml + "<br>");
+                }
 
-          return announcements;
-        }
+                return announcements;
+              }
 
-        @Override
-        public void failed(Exception e) {
-          LOG.error("Error while fetching announcements", e);
-        }
+              @Override
+              public void failed(Exception e) {
+                LOG.error("Error while fetching announcements", e);
+              }
 
-        @Override
-        public void complete(String result) {
-          if (result != null && result.length() > 0) {
-            new BalloonTip(
-                updateLabel,
-                result,
-                new EdgedBalloonStyle(
-                    UIManager.getColor("ToolTip.background"),
-                    UIManager.getColor("ToolTip.foreground")),
-                true);
-            announcementProvider.dismissed();
-          }
-        }
-      },
-      false);
+              @Override
+              public void complete(String result) {
+                if (result != null && result.length() > 0) {
+                  new BalloonTip(
+                      updateLabel,
+                      result,
+                      new EdgedBalloonStyle(
+                          UIManager.getColor("ToolTip.background"),
+                          UIManager.getColor("ToolTip.foreground")),
+                      true);
+                  announcementProvider.dismissed();
+                }
+              }
+            },
+            false);
 
     ConfigurationManager.addListener(
-        Config.Flag.METRIC,
-        (key, value) -> refreshPosition((Boolean) value));
+        Config.Flag.METRIC, (key, value) -> refreshPosition((Boolean) value));
     ConfigurationManager.addListener(
-        Config.Flag.HIGHLIGHT_CONTINUITY_AREA,
-        (key, value) -> refreshStatusText());
+        Config.Flag.HIGHLIGHT_CONTINUITY_AREA, (key, value) -> refreshStatusText());
   }
 
   private void layoutComponents() {
@@ -398,13 +407,14 @@ public class StatusBar extends JPanel implements IPlugIn {
       case ZOOM_CHANGED:
         if (!params[0].equals(zoomBox.getSelectedItem())) {
           final Double zoom = (Double) params[0];
-          SwingUtilities.invokeLater(new Runnable() {
+          SwingUtilities.invokeLater(
+              new Runnable() {
 
-              @Override
-              public void run() {
-                zoomBox.setSelectedItem(zoom);
-              }
-            });
+                @Override
+                public void run() {
+                  zoomBox.setSelectedItem(zoom);
+                }
+              });
         }
         break;
       case SELECTION_CHANGED:
@@ -457,12 +467,11 @@ public class StatusBar extends JPanel implements IPlugIn {
     Point2D mousePosition = metric ? mousePositionMm : mousePositionIn;
     String unit = metric ? " mm" : "\"";
 
-    positionLabel.setText(mousePosition == null ? null : String.format(
-        "X: %.2f%s Y: %.2f%s",
-        mousePosition.getX(),
-        unit,
-        mousePosition.getY(),
-        unit));
+    positionLabel.setText(
+        mousePosition == null
+            ? null
+            : String.format(
+                "X: %.2f%s Y: %.2f%s", mousePosition.getX(), unit, mousePosition.getY(), unit));
   }
 
   private void refreshStatusText() {
@@ -475,16 +484,18 @@ public class StatusBar extends JPanel implements IPlugIn {
         statusText = "<html>Drag control point(s) of " + formattedNames + "</html>";
       } else if (selectedComponentNames != null && !selectedComponentNames.isEmpty()) {
         StringBuilder builder = new StringBuilder();
-        builder.append(Utils.toCommaString(selectedComponentNames.subList(
-            0,
-            Math.min(maxComponents, selectedComponentNames.size()))));
+        builder.append(
+            Utils.toCommaString(
+                selectedComponentNames.subList(
+                    0, Math.min(maxComponents, selectedComponentNames.size()))));
         if (selectedComponentNames.size() > maxComponents) {
           builder.append(" and " + (selectedComponentNames.size() - maxComponents) + " more");
         }
         if (!stuckComponentNames.isEmpty()) {
           builder.append(" (hold <b>Ctrl</b> and drag to detach from ");
-          builder.append(Utils.toCommaString(
-              stuckComponentNames.subList(0, Math.min(maxStuck, stuckComponentNames.size()))));
+          builder.append(
+              Utils.toCommaString(
+                  stuckComponentNames.subList(0, Math.min(maxStuck, stuckComponentNames.size()))));
           if (stuckComponentNames.size() > maxStuck) {
             builder.append(" and " + (stuckComponentNames.size() - maxStuck) + " more");
           }
@@ -496,22 +507,24 @@ public class StatusBar extends JPanel implements IPlugIn {
       if (forceInstantiate != null && forceInstantiate) {
         statusText =
             "<html>Drag the mouse over the canvas to place a new "
-            + blueFont(componentSlot.getName())
-            + "</html>";
+                + blueFont(componentSlot.getName())
+                + "</html>";
       } else {
         switch (componentSlot.getCreationMethod()) {
           case POINT_BY_POINT:
             String nth = controlPointSlot == null ? "first" : "second";
             statusText =
-                "<html>Click on the canvas to set the " + nth + " control point of a new "
-                + blueFont(componentSlot.getName())
-                + " or press <b>Esc</b> to cancel</html>";
+                "<html>Click on the canvas to set the "
+                    + nth
+                    + " control point of a new "
+                    + blueFont(componentSlot.getName())
+                    + " or press <b>Esc</b> to cancel</html>";
             break;
           case SINGLE_CLICK:
             statusText =
                 "<html>Click on the canvas to create a new "
-                + blueFont(componentSlot.getName())
-                + " or press <b>Esc</b> to cancel</html>";
+                    + blueFont(componentSlot.getName())
+                    + " or press <b>Esc</b> to cancel</html>";
             break;
           default:
             LOG.error("refreshStatusText(): unknown creation method");

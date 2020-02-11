@@ -77,9 +77,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
       ComponentState componentState,
       IDrawingObserver drawingObserver);
 
-  /**
-     @return default color.
-  */
+  /** @return default color. */
   protected abstract Color getDefaultColor();
 
   @Override
@@ -225,9 +223,7 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
               (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
       newPoints[1] =
-          new Point(
-              (newPoints[2].x + newPoints[0].x) / 2,
-              (newPoints[2].y + newPoints[0].y) / 2);
+          new Point((newPoints[2].x + newPoints[0].x) / 2, (newPoints[2].y + newPoints[0].y) / 2);
       newPoints[3] =
           new Point(
               (newPoints[pointCount.count - 1].x + newPoints[2].x) / 2,
@@ -238,13 +234,9 @@ public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComp
               (newPoints[pointCount.count - 1].x + newPoints[0].x) / 2,
               (newPoints[pointCount.count - 1].y + newPoints[0].y) / 2);
       newPoints[2] =
-          new Point(
-              (newPoints[3].x + newPoints[0].x) / 2,
-              (newPoints[3].y + newPoints[0].y) / 2);
+          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
       newPoints[1] =
-          new Point(
-              (newPoints[3].x + newPoints[0].x) / 2,
-              (newPoints[3].y + newPoints[0].y) / 2);
+          new Point((newPoints[3].x + newPoints[0].x) / 2, (newPoints[3].y + newPoints[0].y) / 2);
       newPoints[4] =
           new Point(
               (newPoints[pointCount.count - 1].x + newPoints[3].x) / 2,

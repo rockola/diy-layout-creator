@@ -41,23 +41,26 @@ public class ImageEditor extends JButton {
 
   public ImageEditor(final PropertyWrapper property) {
     super(property.isUnique() ? title : "(multi value) " + title);
-    addActionListener((e) -> {
-      File file = DialogFactory.getInstance().showOpenDialog(
-          FileFilterEnum.IMAGES.getFilter(),
-          null,
-          FileFilterEnum.IMAGES.getExtensions()[0],
-          null);
-      if (file != null) {
-        try (FileInputStream fis = new FileInputStream(file)) {
-          byte[] byteArray = IOUtils.toByteArray(fis);
-          property.setValue(byteArray);
-          property.setChanged(true);
-        } catch (FileNotFoundException e1) {
-          LOG.error("File not found, path is " + file.getAbsolutePath(), e1);
-        } catch (IOException e1) {
-          LOG.error("IO exception for " + file.getAbsolutePath(), e1);
-        }
-      }
-    });
+    addActionListener(
+        (e) -> {
+          File file =
+              DialogFactory.getInstance()
+                  .showOpenDialog(
+                      FileFilterEnum.IMAGES.getFilter(),
+                      null,
+                      FileFilterEnum.IMAGES.getExtensions()[0],
+                      null);
+          if (file != null) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+              byte[] byteArray = IOUtils.toByteArray(fis);
+              property.setValue(byteArray);
+              property.setChanged(true);
+            } catch (FileNotFoundException e1) {
+              LOG.error("File not found, path is " + file.getAbsolutePath(), e1);
+            } catch (IOException e1) {
+              LOG.error("IO exception for " + file.getAbsolutePath(), e1);
+            }
+          }
+        });
   }
 }

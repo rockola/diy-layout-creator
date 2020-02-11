@@ -169,22 +169,30 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
         new RoundRectangle2D.Double(0f, 0f, length, width, width / 6, width / 6);
     Area a = new Area(rect);
     double notchDiameter = width / 4;
-    a.subtract(new Area(new Ellipse2D.Double(
-        notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
-    a.subtract(new Area(new Ellipse2D.Double(
-        notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
+    a.subtract(
+        new Area(
+            new Ellipse2D.Double(
+                notchDiameter, -notchDiameter * 3 / 4, notchDiameter, notchDiameter)));
+    a.subtract(
+        new Area(
+            new Ellipse2D.Double(
+                notchDiameter, width - notchDiameter / 4, notchDiameter, notchDiameter)));
 
     if (!getPolarized()) {
-      a.subtract(new Area(new Ellipse2D.Double(
-          length - notchDiameter * 2,
-          -notchDiameter * 3 / 4,
-          notchDiameter,
-          notchDiameter)));
-      a.subtract(new Area(new Ellipse2D.Double(
-          length - notchDiameter * 2,
-          width - notchDiameter / 4,
-          notchDiameter,
-          notchDiameter)));
+      a.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  length - notchDiameter * 2,
+                  -notchDiameter * 3 / 4,
+                  notchDiameter,
+                  notchDiameter)));
+      a.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  length - notchDiameter * 2,
+                  width - notchDiameter / 4,
+                  notchDiameter,
+                  notchDiameter)));
     }
     return a;
   }

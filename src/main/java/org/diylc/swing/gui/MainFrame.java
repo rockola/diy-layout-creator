@@ -116,9 +116,9 @@ public class MainFrame extends JFrame {
 
     topPanel.add(componentTabbedPane);
     pack();
-    componentTabbedPane.setVisible(App.getString(
-        ConfigPlugin.COMPONENT_BROWSER,
-        ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.TABBED_TOOLBAR));
+    componentTabbedPane.setVisible(
+        App.getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
+            .equals(ConfigPlugin.TABBED_TOOLBAR));
   }
 
   public void activate() {
@@ -145,26 +145,27 @@ public class MainFrame extends JFrame {
 
       presenter.createNewProject();
 
-      addWindowListener(new WindowAdapter() {
+      addWindowListener(
+          new WindowAdapter() {
 
-          private void doExit() {
-            if (presenter.allowFileAction()) {
-              App.putValue(Config.Flag.ABNORMAL_EXIT, false);
-              dispose();
-              System.exit(0);
+            private void doExit() {
+              if (presenter.allowFileAction()) {
+                App.putValue(Config.Flag.ABNORMAL_EXIT, false);
+                dispose();
+                System.exit(0);
+              }
             }
-          }
 
-          @Override
-          public void windowClosed(WindowEvent e) {
-            doExit();
-          }
+            @Override
+            public void windowClosed(WindowEvent e) {
+              doExit();
+            }
 
-          @Override
-          public void windowClosing(WindowEvent e) {
-            doExit();
-          }
-        });
+            @Override
+            public void windowClosing(WindowEvent e) {
+              doExit();
+            }
+          });
 
       setGlassPane(new CustomGlassPane());
       setLocationRelativeTo(null);
@@ -185,15 +186,16 @@ public class MainFrame extends JFrame {
     super.setVisible(b);
     // TODO: hack to prevent painting issues in the scroll bar rulers. Find
     // a better fix if possible.
-    Timer timer = new Timer(
-        500,
-        new ActionListener() {
+    Timer timer =
+        new Timer(
+            500,
+            new ActionListener() {
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            canvasPlugin.refresh();
-          }
-        });
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                canvasPlugin.refresh();
+              }
+            });
     timer.setRepeats(false);
     timer.start();
   }
@@ -304,6 +306,7 @@ public class MainFrame extends JFrame {
    * Application will layout plug-in panels accordingly.
    *
    * <p>Valid positions are:
+   *
    * <ul>
    *   <li>{@link SwingConstants#TOP}
    *   <li>{@link SwingConstants#BOTTOM}
@@ -345,9 +348,8 @@ public class MainFrame extends JFrame {
   /**
    * Inject a custom menu action into application main menu.
    *
-   * <p>If <code>action</code> is set to null, a menu separator will
-   * be added. If the specified menu does not exist, it will be
-   * automatically created.
+   * <p>If <code>action</code> is set to null, a menu separator will be added. If the specified menu
+   * does not exist, it will be automatically created.
    *
    * @param action {@link Action} to insert
    * @param menuName name of the menu to insert into
@@ -355,7 +357,8 @@ public class MainFrame extends JFrame {
   public JComponent injectMenuAction(Action action, String menuName) {
     LOG.trace(
         "injectMenuAction({}, {})",
-        action == null ? "Separator" : action.getValue(Action.NAME), menuName);
+        action == null ? "Separator" : action.getValue(Action.NAME),
+        menuName);
     JMenu menu = findOrCreateMenu(menuName);
     if (action == null) {
       menu.addSeparator();
@@ -429,32 +432,33 @@ public class MainFrame extends JFrame {
     emptyItem.setEnabled(false);
     submenu.add(emptyItem);
 
-    submenu.addMenuListener(new MenuListener() {
+    submenu.addMenuListener(
+        new MenuListener() {
 
-        @Override
-        public void menuSelected(MenuEvent e) {
-          submenu.removeAll();
-          List<String> items = handler.getAvailableItems();
-          if (items == null || items.isEmpty()) {
-            submenu.add(emptyItem);
-          } else {
-            for (String item : items) {
-              final JMenuItem menuItem = new JMenuItem(item);
-              menuItem.addActionListener((ev) -> handler.onActionPerformed(menuItem.getText()));
-              submenu.add(menuItem);
+          @Override
+          public void menuSelected(MenuEvent e) {
+            submenu.removeAll();
+            List<String> items = handler.getAvailableItems();
+            if (items == null || items.isEmpty()) {
+              submenu.add(emptyItem);
+            } else {
+              for (String item : items) {
+                final JMenuItem menuItem = new JMenuItem(item);
+                menuItem.addActionListener((ev) -> handler.onActionPerformed(menuItem.getText()));
+                submenu.add(menuItem);
+              }
             }
+            //        submenu.revalidate();
+            //        submenu.repaint();
+            //        submenu.doClick();
           }
-          //        submenu.revalidate();
-          //        submenu.repaint();
-          //        submenu.doClick();
-        }
 
-        @Override
-        public void menuDeselected(MenuEvent e) {}
+          @Override
+          public void menuDeselected(MenuEvent e) {}
 
-        @Override
-        public void menuCanceled(MenuEvent e) {}
-      });
+          @Override
+          public void menuCanceled(MenuEvent e) {}
+        });
   }
 
   /**
@@ -463,54 +467,52 @@ public class MainFrame extends JFrame {
    * @param task
    * @param blockUI
    */
-  public <T extends Object> void executeBackgroundTask(
-      final ITask<T> task,
-      boolean blockUI) {
+  public <T extends Object> void executeBackgroundTask(final ITask<T> task, boolean blockUI) {
 
     if (blockUI) {
       getGlassPane().setVisible(true);
     }
-    SwingWorker<T, Void> worker = new SwingWorker<T, Void>() {
+    SwingWorker<T, Void> worker =
+        new SwingWorker<T, Void>() {
 
-        @Override
-        protected T doInBackground() throws Exception {
-          return task.doInBackground();
-        }
-
-        @Override
-        protected void done() {
-          try {
-            T result = get();
-            task.complete(result);
-            getGlassPane().setVisible(false);
-          } catch (ExecutionException e) {
-            getGlassPane().setVisible(false);
-            LOG.error("Background task execution failed", e);
-            task.failed(e);
-          } catch (InterruptedException e) {
-            getGlassPane().setVisible(false);
-            LOG.error("Background task execution interrupted", e);
-            task.failed(e);
+          @Override
+          protected T doInBackground() throws Exception {
+            return task.doInBackground();
           }
-        }
-      };
+
+          @Override
+          protected void done() {
+            try {
+              T result = get();
+              task.complete(result);
+              getGlassPane().setVisible(false);
+            } catch (ExecutionException e) {
+              getGlassPane().setVisible(false);
+              LOG.error("Background task execution failed", e);
+              task.failed(e);
+            } catch (InterruptedException e) {
+              getGlassPane().setVisible(false);
+              LOG.error("Background task execution interrupted", e);
+              task.failed(e);
+            }
+          }
+        };
     worker.execute();
   }
 
-  /**
-     @return {@link JFrame} that can be used to reference secondary dialogs and frames
-  */
+  /** @return {@link JFrame} that can be used to reference secondary dialogs and frames */
   public JFrame getOwnerFrame() {
     return this;
   }
 
   public File promptFileSave() {
-    return DialogFactory.getInstance().showSaveDialog(
-        this,
-        FileFilterEnum.DIY.getFilter(),
-        null,
-        FileFilterEnum.DIY.getExtensions()[0],
-        null);
+    return DialogFactory.getInstance()
+        .showSaveDialog(
+            this,
+            FileFilterEnum.DIY.getFilter(),
+            null,
+            FileFilterEnum.DIY.getExtensions()[0],
+            null);
   }
 
   class FramePlugin implements IPlugIn {
@@ -535,12 +537,9 @@ public class MainFrame extends JFrame {
           fileName = "Untitled";
         }
         String modified = (Boolean) params[1] ? " (modified)" : "";
-        setTitle(String.format(
-            "%s v%s - %s%s",
-            App.title(),
-            App.getFullVersionString(),
-            fileName,
-            modified));
+        setTitle(
+            String.format(
+                "%s v%s - %s%s", App.title(), App.getFullVersionString(), fileName, modified));
       }
     }
   }

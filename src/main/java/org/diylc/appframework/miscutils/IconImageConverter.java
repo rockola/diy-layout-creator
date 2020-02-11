@@ -39,9 +39,7 @@ public class IconImageConverter implements Converter {
   private static final Logger LOG = LogManager.getLogger(IconImageConverter.class);
 
   @Override
-  public void marshal(Object object,
-                      HierarchicalStreamWriter writer,
-                      MarshallingContext context) {
+  public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
     ImageIcon image = (ImageIcon) object;
     int width = image.getIconWidth();
     int height = image.getIconHeight();

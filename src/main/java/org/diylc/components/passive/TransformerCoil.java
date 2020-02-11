@@ -47,7 +47,8 @@ import org.diylc.utils.Constants;
     author = "Branislav Stojkovic",
     category = "Schematic Symbols",
     instanceNamePrefix = "L",
-    description = "Transformer coil symbol. Use together with \"Transformer Core Symbol\"<br>for transformer schematics.",
+    description =
+        "Transformer coil symbol. Use together with \"Transformer Core Symbol\"<br>for transformer schematics.",
     zOrder = IDIYComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic")

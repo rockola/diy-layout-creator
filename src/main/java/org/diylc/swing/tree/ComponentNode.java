@@ -45,8 +45,7 @@ public class ComponentNode extends DefaultMutableTreeNode {
     this(userObject, true, true);
   }
 
-  public ComponentNode(Object userObject, boolean allowsChildren,
-                       boolean isVisible) {
+  public ComponentNode(Object userObject, boolean allowsChildren, boolean isVisible) {
     super(userObject, allowsChildren);
     this.isVisible = isVisible;
   }
@@ -74,7 +73,7 @@ public class ComponentNode extends DefaultMutableTreeNode {
     }
 
     // throw new ArrayIndexOutOfBoundsException(String.format("index %d unmatched", index));
-    return (TreeNode)children.elementAt(index);
+    return (TreeNode) children.elementAt(index);
   }
 
   public int getChildCount(boolean filterIsActive) {
@@ -97,9 +96,7 @@ public class ComponentNode extends DefaultMutableTreeNode {
     return count;
   }
 
-  /**
-     @return previous state of isVisible
-  */
+  /** @return previous state of isVisible */
   public boolean setVisible(boolean visible) {
     boolean previous = this.isVisible;
     this.isVisible = visible;

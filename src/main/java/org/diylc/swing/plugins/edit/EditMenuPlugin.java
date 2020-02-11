@@ -40,7 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.appframework.undo.IUndoListener;
-//import org.diylc.appframework.undo.UndoHandler;
+// import org.diylc.appframework.undo.UndoHandler;
 import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
@@ -68,7 +68,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
 
   private List<String> actionsToRefresh;
 
-  //private UndoHandler<Project> undoHandler;
+  // private UndoHandler<Project> undoHandler;
 
   public EditMenuPlugin() {
 
@@ -85,13 +85,14 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
         }
       });
     */
-    clipboard.addFlavorListener(new FlavorListener() {
+    clipboard.addFlavorListener(
+        new FlavorListener() {
 
-        @Override
-        public void flavorsChanged(FlavorEvent e) {
-          refreshActions();
-        }
-      });
+          @Override
+          public void flavorsChanged(FlavorEvent e) {
+            refreshActions();
+          }
+        });
 
     editActions.put("undo", ActionFactory.createUndoAction());
     editActions.put("redo", ActionFactory.createRedoAction());
@@ -103,14 +104,16 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
     editActions.put("edit-selection", ActionFactory.createEditSelectionAction(plugInPort));
     editActions.put("delete-selection", ActionFactory.createDeleteSelectionAction(plugInPort));
 
-    transformActions.put("rotate-clockwise", ActionFactory.createRotateSelectionAction(
-        plugInPort, 1));
-    transformActions.put("rotate-counterclockwise", ActionFactory.createRotateSelectionAction(
-        plugInPort, -1));
-    transformActions.put("mirror-horizontally", ActionFactory.createMirrorSelectionAction(
-        plugInPort, IComponentTransformer.HORIZONTAL));
-    transformActions.put("mirror-vertically", ActionFactory.createMirrorSelectionAction(
-        plugInPort, IComponentTransformer.VERTICAL));
+    transformActions.put(
+        "rotate-clockwise", ActionFactory.createRotateSelectionAction(plugInPort, 1));
+    transformActions.put(
+        "rotate-counterclockwise", ActionFactory.createRotateSelectionAction(plugInPort, -1));
+    transformActions.put(
+        "mirror-horizontally",
+        ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.HORIZONTAL));
+    transformActions.put(
+        "mirror-vertically",
+        ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.VERTICAL));
     transformActions.put("nudge", ActionFactory.createNudgeAction(plugInPort));
     transformActions.put("send-to-back", ActionFactory.createSendToBackAction(plugInPort));
     transformActions.put("bring-to-front", ActionFactory.createBringToFrontAction(plugInPort));
@@ -120,23 +123,39 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
     renumberActions.put("renumber-x-axis", ActionFactory.createRenumberAction(plugInPort, true));
     renumberActions.put("renumber-y-axis", ActionFactory.createRenumberAction(plugInPort, false));
 
-    expandActions.put("expand-all", ActionFactory.createExpandSelectionAction(
-        plugInPort, ExpansionMode.ALL));
-    expandActions.put("expand-immediate", ActionFactory.createExpandSelectionAction(
-        plugInPort, ExpansionMode.IMMEDIATE));
-    expandActions.put("expand-same-type", ActionFactory.createExpandSelectionAction(
-        plugInPort, ExpansionMode.SAME_TYPE));
+    expandActions.put(
+        "expand-all", ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.ALL));
+    expandActions.put(
+        "expand-immediate",
+        ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.IMMEDIATE));
+    expandActions.put(
+        "expand-same-type",
+        ActionFactory.createExpandSelectionAction(plugInPort, ExpansionMode.SAME_TYPE));
 
     saveAsActions.put("save-as-template", ActionFactory.createSaveAsTemplateAction(plugInPort));
     saveAsActions.put("save-as-block", ActionFactory.createSaveAsBlockAction(plugInPort));
 
-    actionsToRefresh = Arrays.asList(
-        "cut", "copy", "duplicate", "edit-selection", "delete-selection",
-        "group", "ungroup", "expand-all", "expand-immediate", "expand-same-type",
-        "nudge", "send-to-back", "bring-to-front",
-        "rotate-clockwise", "rotate-counterclockwise",
-        "mirror-horizontally", "mirror-vertically",
-        "save-as-template", "save-as-block");
+    actionsToRefresh =
+        Arrays.asList(
+            "cut",
+            "copy",
+            "duplicate",
+            "edit-selection",
+            "delete-selection",
+            "group",
+            "ungroup",
+            "expand-all",
+            "expand-immediate",
+            "expand-same-type",
+            "nudge",
+            "send-to-back",
+            "bring-to-front",
+            "rotate-clockwise",
+            "rotate-counterclockwise",
+            "mirror-horizontally",
+            "mirror-vertically",
+            "save-as-template",
+            "save-as-block");
   }
 
   private void separator(String menuTitle) {
@@ -144,9 +163,7 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
   }
 
   private void addActions(
-      String menuTitle,
-      Map<String, AbstractAction> actionMap,
-      Queue<String> separatorsAfter) {
+      String menuTitle, Map<String, AbstractAction> actionMap, Queue<String> separatorsAfter) {
     for (Map.Entry<String, AbstractAction> entry : actionMap.entrySet()) {
       String key = entry.getKey();
       AbstractAction action = entry.getValue();
@@ -243,8 +260,9 @@ public class EditMenuPlugin implements IPlugIn, ClipboardOwner {
   private void refreshActions() {
     boolean enabled = !plugInPort.currentProject().emptySelection();
     try {
-      actions.get("paste").setEnabled(
-          clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor));
+      actions
+          .get("paste")
+          .setEnabled(clipboard.isDataFlavorAvailable(ComponentTransferable.listFlavor));
     } catch (IllegalStateException e) {
       // clipboard unavailable
       actions.get("paste").setEnabled(false);

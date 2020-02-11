@@ -24,52 +24,55 @@ public class UpdateLabel extends JLabel {
 
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     final UpdateLabel thisLabel = this;
-    addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          if (updatedVersions != null && updatedVersions.size() > 0) {
-            UpdateDialog updateDialog = new UpdateDialog(
-                thisLabel,
-                UpdateChecker.createUpdateHtml(updatedVersions),
-                updatedVersions.get(0).getUrl());
-            updateDialog.setVisible(true);
-          } else {
-            checkForUpdates();
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (updatedVersions != null && updatedVersions.size() > 0) {
+              UpdateDialog updateDialog =
+                  new UpdateDialog(
+                      thisLabel,
+                      UpdateChecker.createUpdateHtml(updatedVersions),
+                      updatedVersions.get(0).getUrl());
+              updateDialog.setVisible(true);
+            } else {
+              checkForUpdates();
+            }
           }
-        }
-      });
+        });
     checkForUpdates();
   }
 
   private void checkForUpdates() {
-    SwingWorker<List<Version>, Void> worker = new SwingWorker<List<Version>, Void>() {
+    SwingWorker<List<Version>, Void> worker =
+        new SwingWorker<List<Version>, Void>() {
 
-        @Override
-        protected List<Version> doInBackground() throws Exception {
-          return updateChecker.findNewVersions();
-        }
-
-        @Override
-        protected void done() {
-          Icon icon = Icon.LightBulbOff;
-          String tooltipText = null;
-          try {
-            updatedVersions = get();
-            if (updatedVersions.size() == 0) {
-              // TODO get these strings from strings-<lang>.xml
-              tooltipText = "No updates available, click to check again";
-            } else {
-              icon = Icon.LightBulbOn;
-              tooltipText = "Updates are available, click to see details";
-            }
-          } catch (Exception e) {
-            tooltipText = "Error occurred while searching for updates: " + e.getMessage();
-            setCursor(Cursor.getDefaultCursor());
+          @Override
+          protected List<Version> doInBackground() throws Exception {
+            return updateChecker.findNewVersions();
           }
-          setIcon(icon.icon());
-          setToolTipText(tooltipText);
-        }
-      };
+
+          @Override
+          protected void done() {
+            Icon icon = Icon.LightBulbOff;
+            String tooltipText = null;
+            try {
+              updatedVersions = get();
+              if (updatedVersions.size() == 0) {
+                // TODO get these strings from strings-<lang>.xml
+                tooltipText = "No updates available, click to check again";
+              } else {
+                icon = Icon.LightBulbOn;
+                tooltipText = "Updates are available, click to see details";
+              }
+            } catch (Exception e) {
+              tooltipText = "Error occurred while searching for updates: " + e.getMessage();
+              setCursor(Cursor.getDefaultCursor());
+            }
+            setIcon(icon.icon());
+            setToolTipText(tooltipText);
+          }
+        };
     worker.execute();
   }
 

@@ -191,13 +191,14 @@ public abstract class NetlistAnalyzer {
 
         for (int i = 0; i < pathsToMerge.get(0).getChildren().size(); i++) {
           boolean canMerge = true;
-          unique = pathsToMerge.get(0).getChildren()
+          unique =
+              pathsToMerge
+                  .get(0)
+                  .getChildren()
                   .get(backward ? i : pathsToMerge.get(0).getChildren().size() - i - 1);
           for (Tree t : pathsToMerge) {
             if (t.getChildren().size() <= i
-                || !t.getChildren().get(backward
-                                        ? 0
-                                        : t.getChildren().size() - 1).equals(unique)) {
+                || !t.getChildren().get(backward ? 0 : t.getChildren().size() - 1).equals(unique)) {
               canMerge = false;
               break;
             }

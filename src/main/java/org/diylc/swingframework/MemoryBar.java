@@ -37,9 +37,8 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.common.Message;
 
 /**
- * {@link JComponent} that draws current memory usage as a vertical
- * bar. Details are provided in the tooltip. Click on the component
- * will run the garbage collector. Memory usage information is read
+ * {@link JComponent} that draws current memory usage as a vertical bar. Details are provided in the
+ * tooltip. Click on the component will run the garbage collector. Memory usage information is read
  * periodically.
  *
  * @author Branislav Stojkovic
@@ -48,10 +47,9 @@ public class MemoryBar extends JComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(MemoryBar.class);
-  /**
-     Milliseconds between memory bar updates.
-   */
+  /** Milliseconds between memory bar updates. */
   private static final int DELAY = 10000;
+
   private static final Format format = new DecimalFormat("0.00");
   private static final double THRESHOLD = 0.1d;
 
@@ -70,37 +68,40 @@ public class MemoryBar extends JComponent {
 
   public void start() {
     final MemoryBar bar = this;
-    thread = new Thread("DIYLC Free Memory") {
-      @Override
-      public void run() {
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-        final String tooltipPattern =
-            Message.getHtml("message.memorybar.tooltip", true, "<br>");
-        while (true) {
-          totalMemory = Runtime.getRuntime().totalMemory();
-          freeMemory = Runtime.getRuntime().freeMemory();
-          maxMemory = Runtime.getRuntime().maxMemory();
-          percentFree = (double) freeMemory / totalMemory;
-          final String tooltipText = String.format(
-              tooltipPattern,
-              format.format(convertToMb(freeMemory)),
-              format.format(convertToMb(totalMemory)),
-              format.format(convertToMb(maxMemory)));
-          if (percentFree < THRESHOLD) {
-            LOG.debug("memory: {}", tooltipText);
+    thread =
+        new Thread("DIYLC Free Memory") {
+          @Override
+          public void run() {
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            final String tooltipPattern =
+                Message.getHtml("message.memorybar.tooltip", true, "<br>");
+            while (true) {
+              totalMemory = Runtime.getRuntime().totalMemory();
+              freeMemory = Runtime.getRuntime().freeMemory();
+              maxMemory = Runtime.getRuntime().maxMemory();
+              percentFree = (double) freeMemory / totalMemory;
+              final String tooltipText =
+                  String.format(
+                      tooltipPattern,
+                      format.format(convertToMb(freeMemory)),
+                      format.format(convertToMb(totalMemory)),
+                      format.format(convertToMb(maxMemory)));
+              if (percentFree < THRESHOLD) {
+                LOG.debug("memory: {}", tooltipText);
+              }
+              SwingUtilities.invokeLater(
+                  () -> {
+                    bar.setToolTipText(tooltipText);
+                    bar.repaint();
+                  });
+              try {
+                Thread.sleep(DELAY);
+              } catch (InterruptedException e) {
+                // ignore
+              }
+            }
           }
-          SwingUtilities.invokeLater(() -> {
-            bar.setToolTipText(tooltipText);
-            bar.repaint();
-          });
-          try {
-            Thread.sleep(DELAY);
-          } catch (InterruptedException e) {
-            // ignore
-          }
-        }
-      }
-    };
+        };
     thread.start();
   }
 
@@ -113,9 +114,7 @@ public class MemoryBar extends JComponent {
 
     int barHeight = (int) ((1 - percentFree) * getHeight());
     g2d.setColor(
-        percentFree < THRESHOLD
-        ? Color.red
-        : UIManager.getColor("List.selectionBackground"));
+        percentFree < THRESHOLD ? Color.red : UIManager.getColor("List.selectionBackground"));
     g2d.fillRect(0, getHeight() - barHeight - 1, getWidth() - 1, barHeight);
 
     g2d.setColor(UIManager.getColor("Button.shadow"));

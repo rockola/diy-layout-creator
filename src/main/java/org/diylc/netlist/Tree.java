@@ -84,8 +84,7 @@ public class Tree {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     Tree other = (Tree) obj;
@@ -114,13 +113,15 @@ public class Tree {
       return children;
     }
     List<Tree> ordered = new ArrayList<Tree>(children);
-    Collections.sort(ordered, new Comparator<Tree>() {
+    Collections.sort(
+        ordered,
+        new Comparator<Tree>() {
 
-        @Override
-        public int compare(Tree o1, Tree o2) {
-          return o1.toString().compareToIgnoreCase(o2.toString());
-        }
-      });
+          @Override
+          public int compare(Tree o1, Tree o2) {
+            return o1.toString().compareToIgnoreCase(o2.toString());
+          }
+        });
     return ordered;
   }
 
@@ -249,9 +250,7 @@ public class Tree {
     if (t2 == null) {
       return t1;
     }
-    if (children == null
-        || !this.contains(t1)
-        || !this.contains(t2)) {
+    if (children == null || !this.contains(t1) || !this.contains(t2)) {
       return null;
     }
     Tree p1 = this;

@@ -75,22 +75,23 @@ public class ProjectFileManager {
   private MessageDispatcher<EventType> messageDispatcher;
 
   static {
-    xStream = new XStream(new DomDriver(ENCODING)) {
+    xStream =
+        new XStream(new DomDriver(ENCODING)) {
 
-        @Override
-        protected MapperWrapper wrapMapper(MapperWrapper next) {
-          return new MapperWrapper(next) {
-            @Override
-            public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-              if (definedIn == Object.class) {
-                missingFields.add(definedIn.getName() + "." + fieldName);
-                return false;
+          @Override
+          protected MapperWrapper wrapMapper(MapperWrapper next) {
+            return new MapperWrapper(next) {
+              @Override
+              public boolean shouldSerializeMember(Class definedIn, String fieldName) {
+                if (definedIn == Object.class) {
+                  missingFields.add(definedIn.getName() + "." + fieldName);
+                  return false;
+                }
+                return super.shouldSerializeMember(definedIn, fieldName);
               }
-              return super.shouldSerializeMember(definedIn, fieldName);
-            }
-          };
-        }
-      };
+            };
+          }
+        };
 
     XStream.setupDefaultSecurity(xStream);
     String[] allowTypes = new String[] {"org.diylc.**", "java.awt.**"};
@@ -140,8 +141,7 @@ public class ProjectFileManager {
         if (!Modifier.isAbstract(clazz.getModifiers())
             && IOldFileParser.class.isAssignableFrom(clazz)) {
 
-          IOldFileParser instance =
-              (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
+          IOldFileParser instance = (IOldFileParser) clazz.getDeclaredConstructor().newInstance();
           parsers.add(instance);
         }
       }
@@ -162,9 +162,7 @@ public class ProjectFileManager {
   }
 
   public synchronized void serializeProjectToFile(
-      Project project,
-      String fileName,
-      boolean isBackup) throws IOException {
+      Project project, String fileName, boolean isBackup) throws IOException {
     if (!isBackup) {
       LOG.info("serializeProjectToFile({})", fileName);
     }
@@ -193,8 +191,7 @@ public class ProjectFileManager {
       for (String w : warnings) {
         LOG.warn(w);
       }
-      App.ui().error(
-          String.format(App.getString("message.presenter.could-not-open"), fileName), e);
+      App.ui().error(String.format(App.getString("message.presenter.could-not-open"), fileName), e);
     }
     return project;
   }
@@ -259,8 +256,7 @@ public class ProjectFileManager {
         EventType.FILE_STATUS_CHANGED, getCurrentFileName(), isModified());
   }
 
-  private static Project parseV3File(String fileName, List<String> warnings)
-      throws IOException {
+  private static Project parseV3File(String fileName, List<String> warnings) throws IOException {
     Project project;
     VersionNumber fileVersion;
     try {

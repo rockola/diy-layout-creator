@@ -58,11 +58,11 @@ public class Serializer {
   }
 
   /**
-     Fetch object from URL and deserialize.
-
-     @param url String specifying the URL
-     @return deserialized object
-  */
+   * Fetch object from URL and deserialize.
+   *
+   * @param url String specifying the URL
+   * @return deserialized object
+   */
   public static Object fromUrl(String url) throws IOException {
     Object o = null;
     try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream())) {
@@ -72,28 +72,28 @@ public class Serializer {
   }
 
   /**
-     Fetch object from resource and deserialize.
-
-     @param resource String specifying the resource
-     @return deserialized object
-  */
+   * Fetch object from resource and deserialize.
+   *
+   * @param resource String specifying the resource
+   * @return deserialized object
+   */
   public static Object fromResource(String resource) throws IOException {
     Object o = null;
     try (BufferedInputStream in =
-         new BufferedInputStream(Serializer.class.getResourceAsStream(resource))) {
+        new BufferedInputStream(Serializer.class.getResourceAsStream(resource))) {
       o = xsd.fromXML(in);
     }
     return o;
   }
 
   /**
-     Fetch object from file and deserialize.
-
-     Files should be used sparingly; use resources or remote URLs instead.
-
-     @param file Filename
-     @return deserialized object
-  */
+   * Fetch object from file and deserialize.
+   *
+   * <p>Files should be used sparingly; use resources or remote URLs instead.
+   *
+   * @param file Filename
+   * @return deserialized object
+   */
   public static Object fromFile(String file) throws IOException {
     Object o = null;
     try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
@@ -103,13 +103,13 @@ public class Serializer {
   }
 
   /**
-     Fetch object from file and deserialize.
-
-     Files should be used sparingly; use resources or remote URLs instead.
-
-     @param file File to deserialize
-     @return deserialized object
-  */
+   * Fetch object from file and deserialize.
+   *
+   * <p>Files should be used sparingly; use resources or remote URLs instead.
+   *
+   * @param file File to deserialize
+   * @return deserialized object
+   */
   public static Object fromFile(File file) throws IOException {
     Object o = null;
     try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
@@ -119,11 +119,11 @@ public class Serializer {
   }
 
   /**
-     Serialize object to file.
-
-     @param file Filename
-     @param o Object to serialize
-  */
+   * Serialize object to file.
+   *
+   * @param file Filename
+   * @param o Object to serialize
+   */
   public static void toFile(String file, Object o) throws IOException {
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
       xsd.toXML(o, out);
@@ -131,11 +131,11 @@ public class Serializer {
   }
 
   /**
-     Serialize object to file.
-
-     @param file File
-     @param o Object to serialize
-  */
+   * Serialize object to file.
+   *
+   * @param file File
+   * @param o Object to serialize
+   */
   public static void toFile(File file, Object o) throws IOException {
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
       xsd.toXML(o, out);
@@ -143,11 +143,11 @@ public class Serializer {
   }
 
   /**
-     Deserialize object from input stream.
-
-     @param stream Input stream
-     @return deserialized object
-  */
+   * Deserialize object from input stream.
+   *
+   * @param stream Input stream
+   * @return deserialized object
+   */
   public static Object fromInputStream(InputStream stream) throws IOException {
     Object o = null;
     if (stream != null) {

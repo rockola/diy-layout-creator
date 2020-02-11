@@ -145,18 +145,16 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
       int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());
       int lipHoleSpacing = getClosestOdd(LIP_HOLE_SPACING.convertToPixels());
 
-      body[0] = new Area(new RoundRectangle2D.Double(
-          x - length,
-          y - pointMargin,
-          length,
-          width,
-          edgeRadius,
-          edgeRadius));
+      body[0] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
 
       if (getType() == P90Type.DOG_EAR) {
         double rectWidth = (totalLength - length) / SQRT_TWO;
-        RoundRectangle2D roundRect = new RoundRectangle2D.Double(
-            -rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
+        RoundRectangle2D roundRect =
+            new RoundRectangle2D.Double(
+                -rectWidth / 2, -rectWidth / 2, rectWidth, rectWidth, lipRadius, lipRadius);
         Area leftEar = new Area(roundRect);
         leftEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         leftEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
@@ -167,38 +165,43 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
         Area rightEar = new Area(roundRect);
         rightEar.transform(AffineTransform.getRotateInstance(Math.PI / 4));
         rightEar.transform(AffineTransform.getScaleInstance(1.1, 1.45));
-        rightEar.transform(
-            AffineTransform.getTranslateInstance(x, y - pointMargin + width / 2));
+        rightEar.transform(AffineTransform.getTranslateInstance(x, y - pointMargin + width / 2));
         rightEar.subtract((Area) body[0]);
         Area lipArea = leftEar;
         lipArea.add(rightEar);
-        lipArea.subtract(new Area(new Ellipse2D.Double(
-            x - length / 2 - lipHoleSpacing / 2 - lipHoleSize / 2,
-            y - pointMargin + width / 2 - lipHoleSize / 2,
-            lipHoleSize,
-            lipHoleSize)));
-        lipArea.subtract(new Area(new Ellipse2D.Double(
-            x - length / 2 + lipHoleSpacing / 2 - lipHoleSize / 2,
-            y - pointMargin + width / 2 - lipHoleSize / 2,
-            lipHoleSize,
-            lipHoleSize)));
+        lipArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x - length / 2 - lipHoleSpacing / 2 - lipHoleSize / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
+        lipArea.subtract(
+            new Area(
+                new Ellipse2D.Double(
+                    x - length / 2 + lipHoleSpacing / 2 - lipHoleSize / 2,
+                    y - pointMargin + width / 2 - lipHoleSize / 2,
+                    lipHoleSize,
+                    lipHoleSize)));
 
         body[1] = lipArea;
       }
 
-      body[2] = new Area(new Ellipse2D.Double(
-          x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] =
+          new Area(
+              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
 
       int poleSize = (int) POLE_SIZE.convertToPixels();
       int poleSpacing = (int) POLE_SPACING.convertToPixels();
       int poleMargin = (length - poleSpacing * 5) / 2;
       Area poleArea = new Area();
       for (int i = 0; i < 6; i++) {
-        Ellipse2D pole = new Ellipse2D.Double(
-            x - length + poleMargin + i * poleSpacing - poleSize / 2,
-            y - pointMargin - poleSize / 2 + width / 2,
-            poleSize,
-            poleSize);
+        Ellipse2D pole =
+            new Ellipse2D.Double(
+                x - length + poleMargin + i * poleSpacing - poleSize / 2,
+                y - pointMargin - poleSize / 2 + width / 2,
+                poleSize,
+                poleSize);
         poleArea.add(new Area(pole));
       }
       body[3] = poleArea;
@@ -234,24 +237,20 @@ public class P90Pickup extends AbstractSingleOrHumbuckerPickup {
     final int radius = 6 * width / 32;
 
     g2d.setColor(BODY_COLOR);
-    Polygon base = new Polygon(
-        new int[] {
-          x,
-          x + baseWidth / 2,
-          x + baseWidth / 2,
-          x,
-          x - baseWidth / 2,
-          x - baseWidth / 2
-        },
-        new int[] {
-          -2,
-          y - baseLength / 2,
-          y + baseLength / 2,
-          height + 1,
-          y + baseLength / 2,
-          y - baseLength / 2
-        },
-        6);
+    Polygon base =
+        new Polygon(
+            new int[] {
+              x, x + baseWidth / 2, x + baseWidth / 2, x, x - baseWidth / 2, x - baseWidth / 2
+            },
+            new int[] {
+              -2,
+              y - baseLength / 2,
+              y + baseLength / 2,
+              height + 1,
+              y + baseLength / 2,
+              y - baseLength / 2
+            },
+            6);
     Area baseArea = new Area(base);
     baseArea.intersect(new Area(new Rectangle(0, -1, width, height + 1)));
     g2d.fill(baseArea);

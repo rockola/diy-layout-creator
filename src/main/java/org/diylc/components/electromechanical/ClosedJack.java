@@ -126,8 +126,8 @@ public class ClosedJack extends AbstractJack {
 
       int shaftLength = (int) SHAFT_LENGTH.convertToPixels();
       int shaftWidth = (int) SHAFT_WIDTH.convertToPixels();
-      Area shaft = Area.rect(
-          x + lugLength + bodyLength, y - shaftWidth / 2, shaftLength, shaftWidth);
+      Area shaft =
+          Area.rect(x + lugLength + bodyLength, y - shaftWidth / 2, shaftLength, shaftWidth);
       body[1] = shaft;
 
       AffineTransform rotation = null;

@@ -79,8 +79,8 @@ public class ShadedPaintContext implements PaintContext {
   Raster saved;
   ColorModel model;
 
-  public ShadedPaintContext(ColorModel cm, Point2D p1, Point2D p2,
-                            AffineTransform xform, Color c1, Color c2) {
+  public ShadedPaintContext(
+      ColorModel cm, Point2D p1, Point2D p2, AffineTransform xform, Color c1, Color c2) {
     // First calculate the distance moved in user space when
     // we move a single unit along the X & Y axes in device space.
     Point2D xvec = new Point2D.Double(1, 0);
@@ -133,9 +133,9 @@ public class ShadedPaintContext implements PaintContext {
         //
         // NOTE: SpotBugs reports "Dead store to local variable"
         // for p2 //ola 20200109
-        //Point2D p = p1;
+        // Point2D p = p1;
         p1 = p2;
-        //p2 = p;
+        // p2 = p;
         Color c = c1;
         c1 = c2;
         c2 = c;
@@ -205,8 +205,8 @@ public class ShadedPaintContext implements PaintContext {
   }
 
   /**
-   * Return a Raster containing the colors generated for the graphics operation.
-   * Parameters specify the area in device space for which colors are generated.
+   * Return a Raster containing the colors generated for the graphics operation. Parameters specify
+   * the area in device space for which colors are generated.
    *
    * @param x X coordinate of color area.
    * @param y Y coordinate of color area.

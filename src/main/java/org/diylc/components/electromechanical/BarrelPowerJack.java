@@ -67,11 +67,7 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
   private static Color BORDER_COLOR = Color.black;
   private static Color MARKING_COLOR = Color.lightGray;
 
-  private Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private String value = "";
   private DcPolarity polarity = DcPolarity.CENTER_NEGATIVE;
   private transient Area[] body;
@@ -108,11 +104,7 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
       int lugThickness = getClosestOdd(LUG_THICKNESS.convertToPixels());
       Point groundPoint = controlPoints[controlPoints.length - 1];
       Area groundLug = Area.circle(groundPoint.x + spacing, groundPoint.y, lugWidth);
-      groundLug.add(Area.rect(
-          groundPoint.x,
-          groundPoint.y - lugWidth / 2,
-          spacing,
-          lugWidth));
+      groundLug.add(Area.rect(groundPoint.x, groundPoint.y - lugWidth / 2, spacing, lugWidth));
       groundLug.subtract(Area.circle(groundPoint.x + spacing, groundPoint.y, lugWidth / 3));
       body[2] = groundLug;
 
@@ -188,10 +180,7 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
     g2d.drawLine(width * 2 / 3, (height - lugWidth) / 2, width * 2 / 3, (height + lugWidth) / 2);
     Area.circle(width / 2, height * 2 / 3, lugWidth).fill(g2d, METAL_COLOR);
     g2d.fillRect(
-        width / 2 - lugWidth * 3 / 2,
-        height * 2 / 3 - lugWidth / 2,
-        lugWidth * 3 / 2,
-        lugWidth);
+        width / 2 - lugWidth * 3 / 2, height * 2 / 3 - lugWidth / 2, lugWidth * 3 / 2, lugWidth);
     Area.circle(width / 2, height * 2 / 3, margin).fill(g2d, PHENOLIC_COLOR);
   }
 

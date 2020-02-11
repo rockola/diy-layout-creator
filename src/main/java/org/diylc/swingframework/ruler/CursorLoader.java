@@ -42,14 +42,14 @@ public enum CursorLoader {
 
   CursorLoader(Icon icon) {
     this.icon = icon;
-    this.cursor = icon.image() == null
-                  ? Cursor.getDefaultCursor()
-                  : Toolkit.getDefaultToolkit().createCustomCursor(
-                        icon.image(),
-                        new Point(
-                            icon.image().getWidth(null) / 2,
-                            icon.image().getHeight(null) / 2),
-                        "custom:" + name());
+    this.cursor =
+        icon.image() == null
+            ? Cursor.getDefaultCursor()
+            : Toolkit.getDefaultToolkit()
+                .createCustomCursor(
+                    icon.image(),
+                    new Point(icon.image().getWidth(null) / 2, icon.image().getHeight(null) / 2),
+                    "custom:" + name());
   }
 
   public Cursor getCursor() {

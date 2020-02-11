@@ -177,9 +177,7 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
 
   @Override
   protected void decorateComponentBody(Graphics2D g2d, boolean outlineMode) {
-    if (!outlineMode
-        && value != null
-        && colorCode != ResistorColorCode.NONE) {
+    if (!outlineMode && value != null && colorCode != ResistorColorCode.NONE) {
       Area body = (Area) getBodyShape();
       Stroke stroke = ObjectCache.getInstance().fetchZoomableStroke(2);
       int width = getClosestOdd(getWidth().convertToPixels());
@@ -206,9 +204,10 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
     Color[] bands = value.getColorCode(colorCode);
     int bandLenght = FIRST_BAND + BAND_SPACING * (bands.length - 1);
 
-    if (labelLength < (getShape() == ResistorShape.Standard
-                       ? bodyLength - 2 * bodyWidth - bandLenght
-                       : bodyLength - bandLenght)) {
+    if (labelLength
+        < (getShape() == ResistorShape.Standard
+            ? bodyLength - 2 * bodyWidth - bandLenght
+            : bodyLength - bandLenght)) {
       return bandLenght;
     }
 

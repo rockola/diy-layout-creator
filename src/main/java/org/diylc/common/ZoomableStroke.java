@@ -49,8 +49,7 @@ public class ZoomableStroke extends BasicStroke {
   }
 
   public ZoomableStroke(
-      float width, int cap, int join, float miterlimit,
-      float[] dash, float dashPhase) {
+      float width, int cap, int join, float miterlimit, float[] dash, float dashPhase) {
     super(width, cap, join, miterlimit, dash, dashPhase);
     // TODO Auto-generated constructor stub
   }

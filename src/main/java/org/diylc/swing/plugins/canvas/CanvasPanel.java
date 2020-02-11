@@ -76,7 +76,8 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   private HashMap<String, ComponentType> componentTypeCache;
   private GraphicsConfiguration screenGraphicsConfiguration =
       GraphicsEnvironment.getLocalGraphicsEnvironment()
-      .getDefaultScreenDevice().getDefaultConfiguration();
+          .getDefaultScreenDevice()
+          .getDefaultConfiguration();
 
   public CanvasPanel(IPlugInPort plugInPort) {
     super();
@@ -105,10 +106,11 @@ public class CanvasPanel extends JComponent implements Autoscroll {
 
   private void initializeDnD() {
     // Initialize drag source recognizer.
-    DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(
-        this,
-        DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_LINK,
-        new CanvasGestureListener(plugInPort));
+    DragSource.getDefaultDragSource()
+        .createDefaultDragGestureRecognizer(
+            this,
+            DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_LINK,
+            new CanvasGestureListener(plugInPort));
     // Initialize drop target.
     new DropTarget(
         this, DnDConstants.ACTION_COPY_OR_MOVE, new CanvasTargetListener(plugInPort), true);
@@ -123,58 +125,61 @@ public class CanvasPanel extends JComponent implements Autoscroll {
       final int x = i;
       String fkey = "functionKey" + i;
       focusedMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1 + i - 1, 0), fkey);
-      getActionMap().put(
-          fkey,
-          new AbstractAction() {
+      getActionMap()
+          .put(
+              fkey,
+              new AbstractAction() {
 
-            private static final long serialVersionUID = 1L;
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              functionKeyPressed(x);
-            }
-          });
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                  functionKeyPressed(x);
+                }
+              });
     }
 
-    getActionMap().put(
-        "clearSlot",
-        new AbstractAction() {
+    getActionMap()
+        .put(
+            "clearSlot",
+            new AbstractAction() {
 
-          private static final long serialVersionUID = 1L;
+              private static final long serialVersionUID = 1L;
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            CanvasPanel.this.plugInPort.setNewComponentTypeSlot(null, null, false);
-          }
-        });
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                CanvasPanel.this.plugInPort.setNewComponentTypeSlot(null, null, false);
+              }
+            });
 
-    getActionMap().put(
-        "repeatLast",
-        new AbstractAction() {
+    getActionMap()
+        .put(
+            "repeatLast",
+            new AbstractAction() {
 
-          private static final long serialVersionUID = 1L;
+              private static final long serialVersionUID = 1L;
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            List<String> recent =
-                (List<String>) App.getObject(Config.Flag.RECENT_COMPONENTS);
-            if (recent != null && !recent.isEmpty()) {
-              String clazz = recent.get(0);
-              Map<String, List<ComponentType>> componentTypes = ComponentType.getComponentTypes();
-              for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet()) {
-                for (ComponentType type : entry.getValue()) {
-                  if (type.getInstanceClass().getCanonicalName().equals(clazz)) {
-                    CanvasPanel.this.plugInPort.setNewComponentTypeSlot(type, null, false);
-                    // hack: fake mouse movement to repaint
-                    CanvasPanel.this.plugInPort.mouseMoved(
-                        getMousePosition(), false, false, false);
-                    return;
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                List<String> recent = (List<String>) App.getObject(Config.Flag.RECENT_COMPONENTS);
+                if (recent != null && !recent.isEmpty()) {
+                  String clazz = recent.get(0);
+                  Map<String, List<ComponentType>> componentTypes =
+                      ComponentType.getComponentTypes();
+                  for (Map.Entry<String, List<ComponentType>> entry : componentTypes.entrySet()) {
+                    for (ComponentType type : entry.getValue()) {
+                      if (type.getInstanceClass().getCanonicalName().equals(clazz)) {
+                        CanvasPanel.this.plugInPort.setNewComponentTypeSlot(type, null, false);
+                        // hack: fake mouse movement to repaint
+                        CanvasPanel.this.plugInPort.mouseMoved(
+                            getMousePosition(), false, false, false);
+                        return;
+                      }
+                    }
                   }
                 }
               }
-            }
-          }
-        });
+            });
   }
 
   protected void functionKeyPressed(int i) {
@@ -194,9 +199,7 @@ public class CanvasPanel extends JComponent implements Autoscroll {
         plugInPort.loadBlock(blockName);
       } catch (InvalidBlockException e) {
         LOG.error(
-            "functionKeyPressed({}) Could not find block assigned to shortcut {}",
-            i,
-            blockName);
+            "functionKeyPressed({}) Could not find block assigned to shortcut {}", i, blockName);
       }
     } else {
       ComponentType type = getComponentTypeCache().get(typeName);
@@ -289,14 +292,15 @@ public class CanvasPanel extends JComponent implements Autoscroll {
   }
 
   private void initializeListeners() {
-    addComponentListener(new ComponentAdapter() {
+    addComponentListener(
+        new ComponentAdapter() {
 
-        @Override
-        public void componentResized(ComponentEvent e) {
-          invalidateCache();
-          invalidate();
-        }
-      });
+          @Override
+          public void componentResized(ComponentEvent e) {
+            invalidateCache();
+            invalidate();
+          }
+        });
   }
 
   @Override

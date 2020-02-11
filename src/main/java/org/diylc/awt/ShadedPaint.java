@@ -65,10 +65,11 @@ public class ShadedPaint implements Paint {
         b = i;
       }
 
-      this.c2 = new Color(
-          Math.min((int) (r / shadeFactor), 255),
-          Math.min((int) (g / shadeFactor), 255),
-          Math.min((int) (b / shadeFactor), 255));
+      this.c2 =
+          new Color(
+              Math.min((int) (r / shadeFactor), 255),
+              Math.min((int) (g / shadeFactor), 255),
+              Math.min((int) (b / shadeFactor), 255));
     }
   }
 

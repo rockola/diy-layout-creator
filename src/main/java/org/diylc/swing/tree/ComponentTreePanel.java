@@ -71,9 +71,7 @@ public class ComponentTreePanel extends JPanel {
   private JTextField searchField = new JTextField();
   private JTree tree;
 
-  /**
-     Constructor.
-   */
+  /** Constructor. */
   public ComponentTreePanel() {
     super();
     setLayout(new GridBagLayout());
@@ -98,47 +96,48 @@ public class ComponentTreePanel extends JPanel {
         }
       }
     }
-    tree.setCellRenderer(new DefaultTreeCellRenderer() {
-        public Component getTreeCellRendererComponent(
-            JTree tree,
-            Object value,
-            boolean sel,
-            boolean expanded,
-            boolean leaf,
-            int row,
-            boolean hasFocus) {
-          super.getTreeCellRendererComponent(tree, value, sel, expanded,
-                                             leaf, row, hasFocus);
-          ComponentNode item = (ComponentNode) value;
-          ComponentType type = item.getComponentType();
-          boolean visible = item.isVisible();
-          if (visible) {
-            if (item.isCategory()) {
-              setPreferredSize(new Dimension(250, 20));
-              setOpenIcon(Icon.FolderOpen.icon());
-              setClosedIcon(Icon.Folder.icon());
-            } else if (type != null) {
-              setPreferredSize(new Dimension(250, 32));
-              // TODO: modify icon if this item is a variant (Template)
-              // perhaps add a "V" in lower right corner?
-              // currently shows parent ComponentType icon as is
-              setIcon(type.getIcon());
+    tree.setCellRenderer(
+        new DefaultTreeCellRenderer() {
+          public Component getTreeCellRendererComponent(
+              JTree tree,
+              Object value,
+              boolean sel,
+              boolean expanded,
+              boolean leaf,
+              int row,
+              boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+            ComponentNode item = (ComponentNode) value;
+            ComponentType type = item.getComponentType();
+            boolean visible = item.isVisible();
+            if (visible) {
+              if (item.isCategory()) {
+                setPreferredSize(new Dimension(250, 20));
+                setOpenIcon(Icon.FolderOpen.icon());
+                setClosedIcon(Icon.Folder.icon());
+              } else if (type != null) {
+                setPreferredSize(new Dimension(250, 32));
+                // TODO: modify icon if this item is a variant (Template)
+                // perhaps add a "V" in lower right corner?
+                // currently shows parent ComponentType icon as is
+                setIcon(type.getIcon());
+              }
+            } else {
+              setPreferredSize(new Dimension(0, 0));
             }
-          } else {
-            setPreferredSize(new Dimension(0, 0));
+            return this;
           }
-          return this;
-        }
-      });
-    tree.addTreeSelectionListener(e -> {
-      if (e.isAddedPath()) {
-        ComponentNode node = (ComponentNode) e.getPath().getLastPathComponent();
-        final ComponentType type = node.getComponentType();
-        if (type != null) {
-          App.ui().getPresenter().setNewComponentTypeSlot(type, node.getVariant(), false);
-        }
-      }
-    });
+        });
+    tree.addTreeSelectionListener(
+        e -> {
+          if (e.isAddedPath()) {
+            ComponentNode node = (ComponentNode) e.getPath().getLastPathComponent();
+            final ComponentType type = node.getComponentType();
+            if (type != null) {
+              App.ui().getPresenter().setNewComponentTypeSlot(type, node.getVariant(), false);
+            }
+          }
+        });
 
     GridBagConstraints constraints = new GridBagConstraints();
     constraints.gridx = 0;
@@ -149,79 +148,81 @@ public class ComponentTreePanel extends JPanel {
     add(getSearchField(), constraints);
 
     final ComponentTreePanel treePanel = this;
-    getSearchField().getDocument().addDocumentListener(new DocumentListener() {
+    getSearchField()
+        .getDocument()
+        .addDocumentListener(
+            new DocumentListener() {
 
-        public void changedUpdate(DocumentEvent e) {
-          process(e);
-        }
+              public void changedUpdate(DocumentEvent e) {
+                process(e);
+              }
 
-        public void removeUpdate(DocumentEvent e) {
-          process(e);
-        }
+              public void removeUpdate(DocumentEvent e) {
+                process(e);
+              }
 
-        public void insertUpdate(DocumentEvent e) {
-          process(e);
-        }
+              public void insertUpdate(DocumentEvent e) {
+                process(e);
+              }
 
-        private void show(ComponentNode node) {
-          showNode(node, true);
-          for (Enumeration e = node.children(); e.hasMoreElements();) {
-            ComponentNode n = (ComponentNode) e.nextElement();
-            show(n);
-          }
-        }
-
-        private boolean showNode(ComponentNode node, boolean show) {
-          boolean wasShown = node.setVisible(show);
-          LOG.trace("showNode({}, {}) wasShown {}",
-                    node, show, wasShown);
-          if (show != wasShown) {
-            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-            model.nodeChanged(node);
-          }
-          return show;
-        }
-
-        private boolean visitAllNodes(
-            JTree tree,
-            ComponentNode node,
-            String searchString) {
-          boolean childMatched = false;
-          Object u = node.getUserObject();
-          String s = u.toString();
-          boolean match = u.toString().toLowerCase().contains(searchString);
-          if (node.getChildCount() > 0) {
-            for (Enumeration e = node.children(); e.hasMoreElements();) {
-              ComponentNode n = (ComponentNode) e.nextElement();
-              if (match) {
-                show(n);
-              } else {
-                boolean b = visitAllNodes(tree, n, searchString);
-                if (b) {
-                  childMatched = true;
+              private void show(ComponentNode node) {
+                showNode(node, true);
+                for (Enumeration e = node.children(); e.hasMoreElements(); ) {
+                  ComponentNode n = (ComponentNode) e.nextElement();
+                  show(n);
                 }
               }
-            }
-          }
-          LOG.trace("visitAllNodes(..., {}) {} {}",
-                    searchString, s, match ? "matches" : "does not match");
-          return showNode(node, match || childMatched);
-        }
 
-        private void expandTree(final JTree tree) {
-          for (int i = 0; i < tree.getRowCount(); i++) {
-            tree.expandRow(i);
-          }
-        }
+              private boolean showNode(ComponentNode node, boolean show) {
+                boolean wasShown = node.setVisible(show);
+                LOG.trace("showNode({}, {}) wasShown {}", node, show, wasShown);
+                if (show != wasShown) {
+                  DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+                  model.nodeChanged(node);
+                }
+                return show;
+              }
 
-        private void process(DocumentEvent e) {
-          String text = treePanel.getSearchField().getText().trim().toLowerCase();
-          FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
-          filteredModel.setFilter(text);
-          filteredModel.reload();
-          expandTree(tree);
-        }
-      });
+              private boolean visitAllNodes(JTree tree, ComponentNode node, String searchString) {
+                boolean childMatched = false;
+                Object u = node.getUserObject();
+                String s = u.toString();
+                boolean match = u.toString().toLowerCase().contains(searchString);
+                if (node.getChildCount() > 0) {
+                  for (Enumeration e = node.children(); e.hasMoreElements(); ) {
+                    ComponentNode n = (ComponentNode) e.nextElement();
+                    if (match) {
+                      show(n);
+                    } else {
+                      boolean b = visitAllNodes(tree, n, searchString);
+                      if (b) {
+                        childMatched = true;
+                      }
+                    }
+                  }
+                }
+                LOG.trace(
+                    "visitAllNodes(..., {}) {} {}",
+                    searchString,
+                    s,
+                    match ? "matches" : "does not match");
+                return showNode(node, match || childMatched);
+              }
+
+              private void expandTree(final JTree tree) {
+                for (int i = 0; i < tree.getRowCount(); i++) {
+                  tree.expandRow(i);
+                }
+              }
+
+              private void process(DocumentEvent e) {
+                String text = treePanel.getSearchField().getText().trim().toLowerCase();
+                FilteredTreeModel filteredModel = (FilteredTreeModel) tree.getModel();
+                filteredModel.setFilter(text);
+                filteredModel.reload();
+                expandTree(tree);
+              }
+            });
 
     constraints.gridy++;
     constraints.weightx = 1;
@@ -232,7 +233,7 @@ public class ComponentTreePanel extends JPanel {
 
   private void collapse(TreeNode node) {
     if (node.getChildCount() > 0) {
-      for (Enumeration e = node.children(); e.hasMoreElements();) {
+      for (Enumeration e = node.children(); e.hasMoreElements(); ) {
         TreeNode n = (TreeNode) e.nextElement();
         collapse(n);
       }

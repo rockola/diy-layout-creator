@@ -72,12 +72,8 @@ public class UploadDialog extends ButtonDialog {
   private IPlugInPort plugInPort;
   private String[] categories;
 
-  public UploadDialog(JFrame owner, IPlugInPort plugInPort,
-                      String[] categories,
-                      boolean isUpdate) {
-    super(owner,
-          isUpdate ? "Re-Upload A Project" : "Upload A Project",
-          new String[] {OK, CANCEL});
+  public UploadDialog(JFrame owner, IPlugInPort plugInPort, String[] categories, boolean isUpdate) {
+    super(owner, isUpdate ? "Re-Upload A Project" : "Upload A Project", new String[] {OK, CANCEL});
     this.plugInPort = plugInPort;
     this.categories = categories;
     layoutGui();
@@ -281,8 +277,8 @@ public class UploadDialog extends ButtonDialog {
     if (keywordsField == null) {
       keywordsField = new JTextField();
       keywordsField.setColumns(32);
-      keywordsField.setText(KeywordExtractor.getInstance().extractKeywords(
-          plugInPort.currentProject()));
+      keywordsField.setText(
+          KeywordExtractor.getInstance().extractKeywords(plugInPort.currentProject()));
     }
     return keywordsField;
   }
@@ -301,8 +297,7 @@ public class UploadDialog extends ButtonDialog {
 
   public BufferedImage getThumbnail() {
     Dimension d = getThumbnailSize();
-    BufferedImage thumbnailImage =
-        new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
+    BufferedImage thumbnailImage = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     Graphics2D cg = thumbnailImage.createGraphics();
     paintThumbnail(cg, new Rectangle(thumbnailImage.getWidth(), thumbnailImage.getHeight()));
     return thumbnailImage;
@@ -316,9 +311,10 @@ public class UploadDialog extends ButtonDialog {
     Dimension d = plugInPort.getCanvasDimensions(false, false);
     double projectRatio = d.getWidth() / d.getHeight();
     double actualRatio = rect.getWidth() / rect.getHeight();
-    double zoomRatio = (projectRatio > actualRatio)
-                       ? rect.getWidth() / d.getWidth()
-                       : rect.getHeight() / d.getHeight();
+    double zoomRatio =
+        (projectRatio > actualRatio)
+            ? rect.getWidth() / d.getWidth()
+            : rect.getHeight() / d.getHeight();
     plugInPort.draw(g2d, EnumSet.of(DrawOption.ANTIALIASING), null, zoomRatio);
   }
 

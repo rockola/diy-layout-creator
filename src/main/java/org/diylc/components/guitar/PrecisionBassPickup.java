@@ -108,8 +108,10 @@ public class PrecisionBassPickup extends AbstractBassPickup {
       int edgeRadius = (int) EDGE_RADIUS.convertToPixels();
       int pointMargin = (int) POINT_MARGIN.convertToPixels();
 
-      body[0] = new Area(new RoundRectangle2D.Double(
-          x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
+      body[0] =
+          new Area(
+              new RoundRectangle2D.Double(
+                  x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
 
       int lipRadius = (int) LIP_RADIUS.convertToPixels();
       int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());

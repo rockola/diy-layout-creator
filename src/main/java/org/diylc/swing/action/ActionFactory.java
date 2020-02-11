@@ -266,11 +266,12 @@ public class ActionFactory {
     return new ConfigAction(plugInPort, title, configKey, defaultValue);
   }
 
-  public static ConfigAction createConfigAction(IPlugInPort plugInPort,
-                                                String title,
-                                                Config.Flag configKey,
-                                                boolean defaultValue,
-                                                String tipKey) {
+  public static ConfigAction createConfigAction(
+      IPlugInPort plugInPort,
+      String title,
+      Config.Flag configKey,
+      boolean defaultValue,
+      String tipKey) {
     return new ConfigAction(plugInPort, title, configKey, defaultValue, tipKey);
   }
 
@@ -316,9 +317,7 @@ public class ActionFactory {
 
   // File menu actions.
 
-  /**
-     Creates a new project. Not undoable.
-   */
+  /** Creates a new project. Not undoable. */
   public static class NewAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -351,9 +350,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Opens an existing project. Not undoable.
-  */
+  /** Opens an existing project. Not undoable. */
   public static class OpenAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -368,38 +365,38 @@ public class ActionFactory {
       if (!plugInPort.allowFileAction()) {
         return;
       }
-      final File file = DialogFactory.getInstance().showOpenDialog(
-          FileFilterEnum.DIY.getFilter(),
-          FileFilterEnum.DIY.getExtensions()[0]);
+      final File file =
+          DialogFactory.getInstance()
+              .showOpenDialog(
+                  FileFilterEnum.DIY.getFilter(), FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Opening from " + file.getAbsolutePath());
-              plugInPort.loadProject(file.getAbsolutePath());
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Opening from " + file.getAbsolutePath());
+                    plugInPort.loadProject(file.getAbsolutePath());
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {
-              //
-            }
+                  @Override
+                  public void complete(Void result) {
+                    //
+                  }
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not open file. " + e.getMessage());
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not open file. " + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Import all components from another project into the current project.
-     TODO: Undoable.
-   */
+  /** Import all components from another project into the current project. TODO: Undoable. */
   public static class ImportAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -440,41 +437,42 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportAction triggered");
 
-      final File file = DialogFactory.getInstance().showOpenDialog(
-          FileFilterEnum.DIY.getFilter(),
-          FileFilterEnum.DIY.getExtensions()[0]);
+      final File file =
+          DialogFactory.getInstance()
+              .showOpenDialog(
+                  FileFilterEnum.DIY.getFilter(), FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Opening from " + file.getAbsolutePath());
-              // Get project BUT do not load
-              Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
-              // Grab all components and paste them into
-              // the main presenter (i.e. current project)
-              plugInPort.pasteComponents(p.getComponents(), false);
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Opening from " + file.getAbsolutePath());
+                    // Get project BUT do not load
+                    Project p = ProjectFileManager.getProjectFromFile(file.getAbsolutePath());
+                    // Grab all components and paste them into
+                    // the main presenter (i.e. current project)
+                    plugInPort.pasteComponents(p.getComponents(), false);
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {
-              //
-            }
+                  @Override
+                  public void complete(Void result) {
+                    //
+                  }
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not open file. " + e.getMessage());
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not open file. " + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Save project. Not undoable.
-  */
+  /** Save project. Not undoable. */
   public static class SaveAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -487,59 +485,62 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("SaveAction triggered");
       if (plugInPort.getCurrentFileName() == null) {
-        final File file = DialogFactory.getInstance().showSaveDialog(
-            FileFilterEnum.DIY.getFilter(),
-            FileFilterEnum.DIY.getExtensions()[0]);
+        final File file =
+            DialogFactory.getInstance()
+                .showSaveDialog(
+                    FileFilterEnum.DIY.getFilter(), FileFilterEnum.DIY.getExtensions()[0]);
         if (file != null) {
-          App.ui().executeBackgroundTask(new ITask<Void>() {
+          App.ui()
+              .executeBackgroundTask(
+                  new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Saving to " + file.getAbsolutePath());
-                plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-                return null;
-              }
+                    @Override
+                    public Void doInBackground() throws Exception {
+                      LOG.debug("Saving to " + file.getAbsolutePath());
+                      plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
+                      return null;
+                    }
 
-              @Override
-              public void complete(Void result) {
-                //
-              }
+                    @Override
+                    public void complete(Void result) {
+                      //
+                    }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error("Could not save to file. " + e.getMessage());
-              }
-            },
-            true);
+                    @Override
+                    public void failed(Exception e) {
+                      App.ui().error("Could not save to file. " + e.getMessage());
+                    }
+                  },
+                  true);
         }
       } else {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Saving to " + plugInPort.getCurrentFileName());
-              plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Saving to " + plugInPort.getCurrentFileName());
+                    plugInPort.saveProjectToFile(plugInPort.getCurrentFileName(), false);
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {
-              //
-            }
+                  @Override
+                  public void complete(Void result) {
+                    //
+                  }
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not save to file. " + e.getMessage());
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not save to file. " + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Save project under new name. Not undoable.
-  */
+  /** Save project under new name. Not undoable. */
   public static class SaveAsAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -551,37 +552,38 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("SaveAsAction triggered");
-      final File file = DialogFactory.getInstance().showSaveDialog(
-          FileFilterEnum.DIY.getFilter(),
-          FileFilterEnum.DIY.getExtensions()[0]);
+      final File file =
+          DialogFactory.getInstance()
+              .showSaveDialog(
+                  FileFilterEnum.DIY.getFilter(), FileFilterEnum.DIY.getExtensions()[0]);
       if (file != null) {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Saving to " + file.getAbsolutePath());
-              plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Saving to " + file.getAbsolutePath());
+                    plugInPort.saveProjectToFile(file.getAbsolutePath(), false);
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {
-              //
-            }
+                  @Override
+                  public void complete(Void result) {
+                    //
+                  }
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not save to file. " + e.getMessage());
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not save to file. " + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Create bill of materials. Not undoable.
-  */
+  /** Create bill of materials. Not undoable. */
   public static class CreateBomAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -608,9 +610,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Export project to PDF. Not undoable.
-   */
+  /** Export project to PDF. Not undoable. */
   public static class ExportPdfAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -633,41 +633,43 @@ public class ActionFactory {
       String currentFile = plugInPort.getCurrentFileName();
       if (currentFile != null) {
         File file = new File(currentFile);
-        initialFile = new File(
-            file.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
+        initialFile =
+            new File(file.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".pdf");
       }
 
-      final File file = DialogFactory.getInstance().showSaveDialog(
-          FileFilterEnum.PDF.getFilter(),
-          initialFile,
-          FileFilterEnum.PDF.getExtensions()[0],
-          null);
+      final File file =
+          DialogFactory.getInstance()
+              .showSaveDialog(
+                  FileFilterEnum.PDF.getFilter(),
+                  initialFile,
+                  FileFilterEnum.PDF.getExtensions()[0],
+                  null);
       if (file != null) {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Exporting to " + file.getAbsolutePath());
-              DrawingExporter.exportPdf(ExportPdfAction.this.drawingProvider, file);
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Exporting to " + file.getAbsolutePath());
+                    DrawingExporter.exportPdf(ExportPdfAction.this.drawingProvider, file);
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {}
+                  @Override
+                  public void complete(Void result) {}
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not export to PDF.", e);
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not export to PDF.", e);
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Export to PNG. Not undoable.
-  */
+  /** Export to PNG. Not undoable. */
   public static class ExportPngAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -694,37 +696,39 @@ public class ActionFactory {
             new File(file.getName().replaceAll("(?i)\\.diy", "") + defaultSuffix + ".png");
       }
 
-      final File file = DialogFactory.getInstance().showSaveDialog(
-          FileFilterEnum.PNG.getFilter(),
-          initialFile,
-          FileFilterEnum.PNG.getExtensions()[0],
-          null);
+      final File file =
+          DialogFactory.getInstance()
+              .showSaveDialog(
+                  FileFilterEnum.PNG.getFilter(),
+                  initialFile,
+                  FileFilterEnum.PNG.getExtensions()[0],
+                  null);
       if (file != null) {
-        App.ui().executeBackgroundTask(new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public Void doInBackground() throws Exception {
-              LOG.debug("Exporting to " + file.getAbsolutePath());
-              DrawingExporter.exportPng(ExportPngAction.this.drawingProvider, file);
-              return null;
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Exporting to " + file.getAbsolutePath());
+                    DrawingExporter.exportPng(ExportPngAction.this.drawingProvider, file);
+                    return null;
+                  }
 
-            @Override
-            public void complete(Void result) {}
+                  @Override
+                  public void complete(Void result) {}
 
-            @Override
-            public void failed(Exception e) {
-              App.ui().error("Could not export to PNG.", e);
-            }
-          },
-          true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error("Could not export to PNG.", e);
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Print. Not undoable.
-  */
+  /** Print. Not undoable. */
   public static class PrintAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -747,9 +751,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Export variants. Not undoable.
-  */
+  /** Export variants. Not undoable. */
   public static class ExportVariantsAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -842,50 +844,50 @@ public class ActionFactory {
                   ? "variants.xml"
                   : ("variants by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
-      final File file = DialogFactory.getInstance().showSaveDialog(
-          FileFilterEnum.XML.getFilter(),
-          initialFile,
-          FileFilterEnum.XML.getExtensions()[0],
-          null);
+      final File file =
+          DialogFactory.getInstance()
+              .showSaveDialog(
+                  FileFilterEnum.XML.getFilter(),
+                  initialFile,
+                  FileFilterEnum.XML.getExtensions()[0],
+                  null);
 
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Exporting variants to {}", file.getAbsolutePath());
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Exporting variants to {}", file.getAbsolutePath());
 
-                try {
-                  Serializer.toFile(file, variantPkg);
+                    try {
+                      Serializer.toFile(file, variantPkg);
 
-                  LOG.info("Exported variants successfully");
-                } catch (IOException e) {
-                  LOG.error("Could not export variants", e);
-                }
+                      LOG.info("Exported variants successfully");
+                    } catch (IOException e) {
+                      LOG.error("Could not export variants", e);
+                    }
 
-                return null;
-              }
+                    return null;
+                  }
 
-              @Override
-              public void complete(Void result) {
-                App.ui().success(String.format(getMsg("variants-exported"), file.getName()));
-              }
+                  @Override
+                  public void complete(Void result) {
+                    App.ui().success(String.format(getMsg("variants-exported"), file.getName()));
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("variant-export-failed") + e.getMessage());
-              }
-            },
-            true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("variant-export-failed") + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Import variants.
-     TODO: should this be undoable?
-   */
+  /** Import variants. TODO: should this be undoable? */
   public static class ImportVariantsAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -898,39 +900,41 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportVariantsAction triggered");
 
-      final File file = DialogFactory.getInstance().showOpenDialog(
-          FileFilterEnum.XML.getFilter(),
-          FileFilterEnum.XML.getExtensions()[0],
-          App.ui().getOwnerFrame());
+      final File file =
+          DialogFactory.getInstance()
+              .showOpenDialog(
+                  FileFilterEnum.XML.getFilter(),
+                  FileFilterEnum.XML.getExtensions()[0],
+                  App.ui().getOwnerFrame());
 
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Integer>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Integer>() {
 
-              @Override
-              public Integer doInBackground() throws Exception {
-                return plugInPort.importVariants(file.getAbsolutePath());
-              }
+                  @Override
+                  public Integer doInBackground() throws Exception {
+                    return plugInPort.importVariants(file.getAbsolutePath());
+                  }
 
-              @Override
-              public void complete(Integer result) {
-                App.ui().success(
-                    String.format(getMsg("variants-imported"), result, file.getName()));
-              }
+                  @Override
+                  public void complete(Integer result) {
+                    App.ui()
+                        .success(
+                            String.format(getMsg("variants-imported"), result, file.getName()));
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("variant-import-failed") + e.getMessage());
-              }
-            },
-            true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("variant-import-failed") + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Export blocks. Not undoable.
-   */
+  /** Export blocks. Not undoable. */
   public static class ExportBlocksAction extends AbstractAction {
 
     // private static final long serialVersionUID = 1L;
@@ -967,8 +971,9 @@ public class ActionFactory {
               }
             });
 
-        CheckBoxListDialog dialog = new CheckBoxListDialog(
-            App.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
+        CheckBoxListDialog dialog =
+            new CheckBoxListDialog(
+                App.ui().getOwnerFrame(), getMsg("export-building-blocks"), options);
 
         dialog.setVisible(true);
 
@@ -997,53 +1002,54 @@ public class ActionFactory {
           new BuildingBlockPackage(selectedBlocks, App.getString("user.name"));
 
       File initialFile =
-          new File(variantPkg.getOwner() == null
-                   ? "building blocks.xml"
-                   : ("building blocks by " + variantPkg.getOwner().toLowerCase() + ".xml"));
+          new File(
+              variantPkg.getOwner() == null
+                  ? "building blocks.xml"
+                  : ("building blocks by " + variantPkg.getOwner().toLowerCase() + ".xml"));
 
-      final File file = DialogFactory.getInstance().showSaveDialog(
-          FileFilterEnum.XML.getFilter(),
-          initialFile,
-          FileFilterEnum.XML.getExtensions()[0],
-          null);
+      final File file =
+          DialogFactory.getInstance()
+              .showSaveDialog(
+                  FileFilterEnum.XML.getFilter(),
+                  initialFile,
+                  FileFilterEnum.XML.getExtensions()[0],
+                  null);
 
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Void>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Void>() {
 
-              @Override
-              public Void doInBackground() throws Exception {
-                LOG.debug("Exporting variants to " + file.getAbsolutePath());
-                try {
-                  Serializer.toFile(file, variantPkg);
-                  LOG.info("Exported building blocks successfully");
-                } catch (IOException e) {
-                  LOG.error("Could not export building blocks", e);
-                }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    LOG.debug("Exporting variants to " + file.getAbsolutePath());
+                    try {
+                      Serializer.toFile(file, variantPkg);
+                      LOG.info("Exported building blocks successfully");
+                    } catch (IOException e) {
+                      LOG.error("Could not export building blocks", e);
+                    }
 
-                return null;
-              }
+                    return null;
+                  }
 
-              @Override
-              public void complete(Void result) {
-                App.ui().success(
-                    String.format(getMsg("building-blocks-exported"), file.getName()));
-              }
+                  @Override
+                  public void complete(Void result) {
+                    App.ui()
+                        .success(String.format(getMsg("building-blocks-exported"), file.getName()));
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("building-block-export-failed") + e.getMessage());
-              }
-            },
-            true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("building-block-export-failed") + e.getMessage());
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Import blocks.
-     TODO: should this be undoable?
-  */
+  /** Import blocks. TODO: should this be undoable? */
   public static class ImportBlocksAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -1056,38 +1062,40 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ImportBlocksAction triggered");
 
-      final File file = DialogFactory.getInstance().showOpenDialog(
-          FileFilterEnum.XML.getFilter(),
-          FileFilterEnum.XML.getExtensions()[0]);
+      final File file =
+          DialogFactory.getInstance()
+              .showOpenDialog(
+                  FileFilterEnum.XML.getFilter(), FileFilterEnum.XML.getExtensions()[0]);
 
       if (file != null) {
-        App.ui().executeBackgroundTask(
-            new ITask<Integer>() {
+        App.ui()
+            .executeBackgroundTask(
+                new ITask<Integer>() {
 
-              @Override
-              public Integer doInBackground() throws Exception {
-                return plugInPort.importBlocks(file.getAbsolutePath());
-              }
+                  @Override
+                  public Integer doInBackground() throws Exception {
+                    return plugInPort.importBlocks(file.getAbsolutePath());
+                  }
 
-              @Override
-              public void complete(Integer result) {
-                App.ui().success(
-                    String.format(getMsg("building-blocks-imported"), result, file.getName()));
-              }
+                  @Override
+                  public void complete(Integer result) {
+                    App.ui()
+                        .success(
+                            String.format(
+                                getMsg("building-blocks-imported"), result, file.getName()));
+                  }
 
-              @Override
-              public void failed(Exception e) {
-                App.ui().error(getMsg("building-block-import-failed"), e);
-              }
-            },
-            true);
+                  @Override
+                  public void failed(Exception e) {
+                    App.ui().error(getMsg("building-block-import-failed"), e);
+                  }
+                },
+                true);
       }
     }
   }
 
-  /**
-     Show template dialog. Not undoable.
-  */
+  /** Show template dialog. Not undoable. */
   public static class TemplateDialogAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -1102,9 +1110,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Exit the program. Definitely not undoable.
-  */
+  /** Exit the program. Definitely not undoable. */
   public static class ExitAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -1124,9 +1130,7 @@ public class ActionFactory {
 
   // Edit menu actions.
 
-  /**
-     Undo. Redoable.
-  */
+  /** Undo. Redoable. */
   public static class UndoAction extends ActionFactoryAction {
     public UndoAction() {
       super(null, getMsg("undo"), "Undo", Icon.Undo.icon());
@@ -1138,9 +1142,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Redo. Undoable.
-  */
+  /** Redo. Undoable. */
   public static class RedoAction extends ActionFactoryAction {
     public RedoAction() {
       super(null, getMsg("redo"), "Redo", Icon.Redo.icon());
@@ -1152,9 +1154,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Cut. Undoable.
-  */
+  /** Cut. Undoable. */
   public static class CutAction extends ActionFactoryAction {
 
     // private static final long serialVersionUID = 1L;
@@ -1172,16 +1172,13 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Cut triggered");
       clipboard.setContents(
-          new ComponentTransferable(cloneComponents(
-              plugInPort.currentProject().getSelection())),
+          new ComponentTransferable(cloneComponents(plugInPort.currentProject().getSelection())),
           clipboardOwner);
       plugInPort.deleteSelectedComponents();
     }
   }
 
-  /**
-     Paste. Undoable.
-  */
+  /** Paste. Undoable. */
   public static class PasteAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1206,9 +1203,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Copy. Not undoable.
-  */
+  /** Copy. Not undoable. */
   public static class CopyAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1231,9 +1226,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Duplicate. Undoable.
-  */
+  /** Duplicate. Undoable. */
   public static class DuplicateAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1267,9 +1260,7 @@ public class ActionFactory {
     return result;
   }
 
-  /**
-     Select all. Not undoable.
-  */
+  /** Select all. Not undoable. */
   public static class SelectAllAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1285,9 +1276,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Group components. Undoable.
-  */
+  /** Group components. Undoable. */
   public static class GroupAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1303,9 +1292,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Ungroup components. Undoable.
-  */
+  /** Ungroup components. Undoable. */
   public static class UngroupAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1321,9 +1308,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Edit project settings. Undoable.
-  */
+  /** Edit project settings. Undoable. */
   public static class EditProjectAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1352,9 +1337,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Nudge selection. Undoable.
-  */
+  /** Nudge selection. Undoable. */
   public static class NudgeAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1369,8 +1352,9 @@ public class ActionFactory {
       Nudge n = new Nudge();
       n.setOffsets(App.metric() ? Size.mm(0) : Size.in(0));
       List<PropertyWrapper> properties = plugInPort.getProperties(n);
-      PropertyEditorDialog editor = DialogFactory.getInstance().createPropertyEditorDialog(
-          properties, "Nudge Selection", false);
+      PropertyEditorDialog editor =
+          DialogFactory.getInstance()
+              .createPropertyEditorDialog(properties, "Nudge Selection", false);
       editor.setVisible(true);
       if (ButtonDialog.OK.equals(editor.getSelectedButtonCaption())) {
         plugInPort.applyProperties(n, properties);
@@ -1379,9 +1363,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Edit selection properties. Undoable.
-  */
+  /** Edit selection properties. Undoable. */
   public static class EditSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1402,9 +1384,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Delete selection. Undoable.
-  */
+  /** Delete selection. Undoable. */
   public static class DeleteSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1420,9 +1400,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Save as template. Not undoable.
-  */
+  /** Save as template. Not undoable. */
   public static class SaveAsTemplateAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1443,9 +1421,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Save as block. Not undoable.
-  */
+  /** Save as block. Not undoable. */
   public static class SaveAsBlockAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1466,10 +1442,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Expand selection.
-     TODO: what does this do, should this be undoable?
-   */
+  /** Expand selection. TODO: what does this do, should this be undoable? */
   public static class ExpandSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1497,9 +1470,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Rotate selection. Undoable.
-  */
+  /** Rotate selection. Undoable. */
   public static class RotateSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1522,9 +1493,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Mirror selection. Undoable.
-  */
+  /** Mirror selection. Undoable. */
   public static class MirrorSelectionAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1532,16 +1501,18 @@ public class ActionFactory {
     private int direction;
 
     public MirrorSelectionAction(IPlugInPort plugInPort, int direction) {
-      super(plugInPort,
-            getMsg(direction == IComponentTransformer.HORIZONTAL
-                   ? "mirror-horizontally"
-                   : "mirror-vertically"),
-            direction == IComponentTransformer.HORIZONTAL
-            ? "Mirror Horizontally"
-            : "Mirror Vertically",
-            direction == IComponentTransformer.HORIZONTAL
-            ? Icon.FlipHorizontal.icon()
-            : Icon.FlipVertical.icon());
+      super(
+          plugInPort,
+          getMsg(
+              direction == IComponentTransformer.HORIZONTAL
+                  ? "mirror-horizontally"
+                  : "mirror-vertically"),
+          direction == IComponentTransformer.HORIZONTAL
+              ? "Mirror Horizontally"
+              : "Mirror Vertically",
+          direction == IComponentTransformer.HORIZONTAL
+              ? Icon.FlipHorizontal.icon()
+              : Icon.FlipVertical.icon());
       this.direction = direction;
     }
 
@@ -1552,9 +1523,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Send to back. Undoable.
-  */
+  /** Send to back. Undoable. */
   public static class SendToBackAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1570,9 +1539,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Bring to front. Undoable.
-  */
+  /** Bring to front. Undoable. */
   public static class BringToFrontAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1588,9 +1555,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Configuration options settable via checkbox in UI. Not undoable.
-   */
+  /** Configuration options settable via checkbox in UI. Not undoable. */
   public static class ConfigAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1619,8 +1584,11 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
       LOG.info("{} triggered ({})", getValue(AbstractAction.NAME), configKey);
-      LOG.trace("configKey {} tipKey {} SELECTED_KEY {}",
-                configKey, tipKey, getValue(AbstractAction.SELECTED_KEY));
+      LOG.trace(
+          "configKey {} tipKey {} SELECTED_KEY {}",
+          configKey,
+          tipKey,
+          getValue(AbstractAction.SELECTED_KEY));
       App.putValue(configKey, getValue(AbstractAction.SELECTED_KEY));
       if ((Boolean) getValue(AbstractAction.SELECTED_KEY)
           && tipKey != null
@@ -1631,9 +1599,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Select theme. Not undoable.
-  */
+  /** Select theme. Not undoable. */
   public static class ThemeAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1656,9 +1622,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Use component browser. Not undoable.
-   */
+  /** Use component browser. Not undoable. */
   public static class ComponentBrowserAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1682,9 +1646,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Renumber selection. Undoable.
-  */
+  /** Renumber selection. Undoable. */
   public static class RenumberAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1703,9 +1665,7 @@ public class ActionFactory {
     }
   }
 
-  /**
-     Generate netlist. Not undoable.
-   */
+  /** Generate netlist. Not undoable. */
   public static class GenerateNetlistAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1716,53 +1676,54 @@ public class ActionFactory {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      App.ui().executeBackgroundTask(new ITask<List<Netlist>>() {
+      App.ui()
+          .executeBackgroundTask(
+              new ITask<List<Netlist>>() {
 
-          @Override
-          public List<Netlist> doInBackground() throws Exception {
-            return plugInPort.currentProject().extractNetlists(true);
-          }
+                @Override
+                public List<Netlist> doInBackground() throws Exception {
+                  return plugInPort.currentProject().extractNetlists(true);
+                }
 
-          @Override
-          public void failed(Exception e) {
-            App.ui().error("Failed to generate the netlist.", e);
-          }
+                @Override
+                public void failed(Exception e) {
+                  App.ui().error("Failed to generate the netlist.", e);
+                }
 
-          @Override
-          public void complete(List<Netlist> res) {
-            if (res == null) {
-              App.ui().info("The generated netlist is empty, nothing to show.");
-              return;
-            }
-            StringBuilder sb = new StringBuilder("<html>");
+                @Override
+                public void complete(List<Netlist> res) {
+                  if (res == null) {
+                    App.ui().info("The generated netlist is empty, nothing to show.");
+                    return;
+                  }
+                  StringBuilder sb = new StringBuilder("<html>");
 
-            for (Netlist netlist : res) {
-              sb.append(
-                  "<p style=\"font-family: "
-                  + new JLabel().getFont().getName()
-                  + "; font-size: 9px\"><b>Switch configuration: ")
-                  .append(netlist.getSwitchSetup())
-                  .append("</b><br><br>Connected node groups:<br>");
-              for (Group v : netlist.getSortedGroups()) {
-                sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
-              }
-              sb.append("</p><br><hr>");
-            }
-            sb.append("</html>");
-            new TextDialog(
-                App.ui().getOwnerFrame().getRootPane(),
-                sb.toString(),
-                "DIYLC Netlist",
-                new Dimension(600, 480)).setVisible(true);
-          }
-        },
-        true);
+                  for (Netlist netlist : res) {
+                    sb.append(
+                            "<p style=\"font-family: "
+                                + new JLabel().getFont().getName()
+                                + "; font-size: 9px\"><b>Switch configuration: ")
+                        .append(netlist.getSwitchSetup())
+                        .append("</b><br><br>Connected node groups:<br>");
+                    for (Group v : netlist.getSortedGroups()) {
+                      sb.append("&nbsp;&nbsp;").append(v.getSortedNodes()).append("<br>");
+                    }
+                    sb.append("</p><br><hr>");
+                  }
+                  sb.append("</html>");
+                  new TextDialog(
+                          App.ui().getOwnerFrame().getRootPane(),
+                          sb.toString(),
+                          "DIYLC Netlist",
+                          new Dimension(600, 480))
+                      .setVisible(true);
+                }
+              },
+              true);
     }
   }
 
-  /**
-     Summarize netlist. Not undoable.
-  */
+  /** Summarize netlist. Not undoable. */
   public static class SummarizeNetlistAction extends ActionFactoryAction {
 
     private static final long serialVersionUID = 1L;
@@ -1780,59 +1741,62 @@ public class ActionFactory {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-      App.ui().executeBackgroundTask(new ITask<List<Summary>>() {
+      App.ui()
+          .executeBackgroundTask(
+              new ITask<List<Summary>>() {
 
-          @Override
-          public List<Summary> doInBackground() throws Exception {
-            List<Netlist> netlists = plugInPort.currentProject().extractNetlists(true);
-            if (netlists == null || netlists.isEmpty()) {
-              throw new Exception(getMsg("empty-netlist"));
-            }
+                @Override
+                public List<Summary> doInBackground() throws Exception {
+                  List<Netlist> netlists = plugInPort.currentProject().extractNetlists(true);
+                  if (netlists == null || netlists.isEmpty()) {
+                    throw new Exception(getMsg("empty-netlist"));
+                  }
 
-            return summarizer.summarize(netlists, null);
-          }
+                  return summarizer.summarize(netlists, null);
+                }
 
-          @Override
-          public void failed(Exception e) {
-            App.ui().info(summarizer.getName(), e);
-          }
+                @Override
+                public void failed(Exception e) {
+                  App.ui().info(summarizer.getName(), e);
+                }
 
-          @Override
-          public void complete(List<Summary> res) {
-            if (res == null) {
-              App.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
-              return;
-            }
-            StringBuilder sb = new StringBuilder("<html>");
+                @Override
+                public void complete(List<Summary> res) {
+                  if (res == null) {
+                    App.ui().info(summarizer.getName(), getMsg("empty-netlist-summary"));
+                    return;
+                  }
+                  StringBuilder sb = new StringBuilder("<html>");
 
-            for (Summary summary : res) {
-              sb.append("<p style=\"font-family: ")
-                  .append(summarizer.getFontName())
-                  .append("; font-size: 9px\">");
+                  for (Summary summary : res) {
+                    sb.append("<p style=\"font-family: ")
+                        .append(summarizer.getFontName())
+                        .append("; font-size: 9px\">");
 
-              if (res.size() > 1) {
-                sb.append("<b>Switch configuration: ")
-                    .append(summary.getNetlist().getSwitchSetup())
-                    .append("</b><br><br>");
-              }
+                    if (res.size() > 1) {
+                      sb.append("<b>Switch configuration: ")
+                          .append(summary.getNetlist().getSwitchSetup())
+                          .append("</b><br><br>");
+                    }
 
-              sb.append(summary.getSummary());
+                    sb.append(summary.getSummary());
 
-              sb.append("</p><br>");
+                    sb.append("</p><br>");
 
-              if (res.size() > 1) {
-                sb.append("<hr>");
-              }
-            }
-            sb.append("</html>");
-            new TextDialog(
-                App.ui().getOwnerFrame().getRootPane(),
-                sb.toString(),
-                summarizer.getName(),
-                new Dimension(600, 480)).setVisible(true);
-          }
-        },
-        true);
+                    if (res.size() > 1) {
+                      sb.append("<hr>");
+                    }
+                  }
+                  sb.append("</html>");
+                  new TextDialog(
+                          App.ui().getOwnerFrame().getRootPane(),
+                          sb.toString(),
+                          summarizer.getName(),
+                          new Dimension(600, 480))
+                      .setVisible(true);
+                }
+              },
+              true);
     }
   }
 }

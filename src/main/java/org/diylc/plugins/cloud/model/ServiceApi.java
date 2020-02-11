@@ -28,14 +28,13 @@ import java.util.Map;
 import org.diylc.App;
 
 /**
- * Instance of DIYLC service API proxy created with
- * com.diyfever.httpproxy.ProxyFactory at runtime, saved here to avoid
- * runtime compilation.
+ * Instance of DIYLC service API proxy created with com.diyfever.httpproxy.ProxyFactory at runtime,
+ * saved here to avoid runtime compilation.
  *
  * <p>Interface of DIYLC PHP server.
  *
  * <p>Original server located at <code>www.diy-fever.com/diylc/api/v1</code>
-*/
+ */
 public class ServiceApi {
 
   private com.diyfever.httpproxy.IFlatProxy proxy;
@@ -60,11 +59,7 @@ public class ServiceApi {
    * @return "Success" if the operation is successful or error message if it failed.
    */
   public String createUser(
-      String username,
-      String password,
-      String email,
-      String website,
-      String bio) {
+      String username, String password, String email, String website, String bio) {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("username", username);
     params.put("password", password);
@@ -86,12 +81,7 @@ public class ServiceApi {
    * @return "Success" if the operation is successful or error message if it failed.
    */
   public String updateUserDetails(
-      String username,
-      String token,
-      String machineId,
-      String email,
-      String website,
-      String bio) {
+      String username, String token, String machineId, String email, String website, String bio) {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("username", username);
     params.put("token", token);
@@ -124,8 +114,8 @@ public class ServiceApi {
    * @param username
    * @param password
    * @param machineId
-   * @return string with an error message if it fails, or an instance
-   *     of {@link UserEntity} if it succeeds.
+   * @return string with an error message if it fails, or an instance of {@link UserEntity} if it
+   *     succeeds.
    */
   public Object getUserDetails(String username, String token, String machineId) {
     Map<String, Object> params = new HashMap<String, Object>();
@@ -136,8 +126,7 @@ public class ServiceApi {
   }
 
   /**
-   * Tries to authenticate with the token that was previously created
-   * by calling login() function.
+   * Tries to authenticate with the token that was previously created by calling login() function.
    *
    * @param username
    * @param password
@@ -178,10 +167,9 @@ public class ServiceApi {
    * @param itemsPerPage
    * @param sort
    * @param username
-   * @param projectId optional parameter used when we want to fetch a
-   *        particular project
-   * @return string with error message if the error occurred or a list
-   *         of {@link ProjectEntity} objects.
+   * @param projectId optional parameter used when we want to fetch a particular project
+   * @return string with error message if the error occurred or a list of {@link ProjectEntity}
+   *     objects.
    */
   public Object search(
       String criteria,
@@ -203,9 +191,8 @@ public class ServiceApi {
   }
 
   /**
-   * Uploads a project using token to authenticate. When projectId is
-   * specified, it updates the existing project instead. In that case,
-   * the project must belong to the user.
+   * Uploads a project using token to authenticate. When projectId is specified, it updates the
+   * existing project instead. In that case, the project must belong to the user.
    *
    * @param username
    * @param token
@@ -276,11 +263,7 @@ public class ServiceApi {
    * @return
    */
   public String postComment(
-      String username,
-      String token,
-      String machineId,
-      Integer projectId,
-      String comment) {
+      String username, String token, String machineId, Integer projectId, String comment) {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("username", username);
     params.put("token", token);
@@ -290,17 +273,13 @@ public class ServiceApi {
     return (String) sendRequest("postComment", params);
   }
 
-  /**
-     @return a {@link List} of available categories.
-  */
+  /** @return a {@link List} of available categories. */
   public List<String> getCategories() {
     Map<String, Object> params = new HashMap<String, Object>();
     return (List<String>) sendRequest("getCategories", params);
   }
 
-  /**
-     @return a {@link List} of available sortings.
-  */
+  /** @return a {@link List} of available sortings. */
   public List<String> getSortings() {
     Map<String, Object> params = new HashMap<String, Object>();
     return (List<String>) sendRequest("getSortings", params);

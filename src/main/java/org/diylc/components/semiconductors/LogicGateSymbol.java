@@ -69,11 +69,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
   protected GateType gateType = GateType.Not;
   protected String value = "";
-  protected Point[] controlPoints = new Point[] {
-    new Point(0, 0),
-    new Point(0, 0),
-    new Point(0, 0)
-  };
+  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
@@ -180,12 +176,14 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
       switch (getGateType()) {
         case Not:
         case Buffer:
-          main = new Area(new Polygon(
-              new int[] {
-                x + pinSpacing * 3 / 2, x + pinSpacing * 9 / 2, x + pinSpacing * 3 / 2
-              },
-              new int[] {y - pinSpacing * 2, y, y + pinSpacing * 2},
-              3));
+          main =
+              new Area(
+                  new Polygon(
+                      new int[] {
+                        x + pinSpacing * 3 / 2, x + pinSpacing * 9 / 2, x + pinSpacing * 3 / 2
+                      },
+                      new int[] {y - pinSpacing * 2, y, y + pinSpacing * 2},
+                      3));
           break;
         case And:
         case Nand:
@@ -218,11 +216,13 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
       }
 
       if (getGateType().needsCircle()) {
-        Area circle = new Area(new Ellipse2D.Double(
-            x + pinSpacing * 9 / 2,
-            y - pinSpacing / 4 + (getControlPointCount() == 2 ? 0 : pinSpacing),
-            pinSpacing / 2,
-            pinSpacing / 2));
+        Area circle =
+            new Area(
+                new Ellipse2D.Double(
+                    x + pinSpacing * 9 / 2,
+                    y - pinSpacing / 4 + (getControlPointCount() == 2 ? 0 : pinSpacing),
+                    pinSpacing / 2,
+                    pinSpacing / 2));
         main.add(circle);
       }
 
@@ -233,9 +233,8 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
         connections.moveTo(controlPoints[i].x, controlPoints[i].y);
         connections.lineTo(
             controlPoints[i].x
-            + pinSpacing * (i == getControlPointCount() || !getGateType().needsCircle()
-                            ? 3 / 2
-                            : 1),
+                + pinSpacing
+                    * (i == getControlPointCount() || !getGateType().needsCircle() ? 3 / 2 : 1),
             controlPoints[i].y);
       }
       body[1] = new Area(connections);

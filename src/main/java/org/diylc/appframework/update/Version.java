@@ -171,7 +171,7 @@ public class Version implements Serializable, Comparable<Version> {
       return "";
     }
     return ((withText ? "released on " : "")
-            + new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
+        + new SimpleDateFormat("yyyy-MM-dd").format(releaseDate));
   }
 
   private String versionNumberToString(boolean withSpace) {
@@ -194,8 +194,9 @@ public class Version implements Serializable, Comparable<Version> {
     ClassLoader loader = Version.class.getClassLoader();
     BufferedReader reader = null;
     try {
-      reader = new BufferedReader(new InputStreamReader(
-          loader.getResourceAsStream(UPDATE_MD), StandardCharsets.UTF_8));
+      reader =
+          new BufferedReader(
+              new InputStreamReader(loader.getResourceAsStream(UPDATE_MD), StandardCharsets.UTF_8));
       Node document = parser.parse(reader.lines().collect(Collectors.joining("\n")));
       UpdateVisitor v = new UpdateVisitor();
       document.accept(v);

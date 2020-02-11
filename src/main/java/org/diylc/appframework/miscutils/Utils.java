@@ -54,14 +54,15 @@ public class Utils {
     "mozilla"
   };
   static final String errMsg = "Error attempting to launch web browser";
-  static final String userDataDirectoryBase = String.format(
-      "%s%s.%s%sv%d%s",
-      System.getProperty("user.home"),
-      File.separator,
-      App.getString("app.name"),
-      File.separator,
-      App.getVersionNumber().getMajor(),
-      File.separator);
+  static final String userDataDirectoryBase =
+      String.format(
+          "%s%s.%s%sv%d%s",
+          System.getProperty("user.home"),
+          File.separator,
+          App.getString("app.name"),
+          File.separator,
+          App.getVersionNumber().getMajor(),
+          File.separator);
 
   public static void openUrl(URL url) throws Exception {
     openUrl(url.toString());
@@ -70,9 +71,10 @@ public class Utils {
   public static void openUrl(String url) throws Exception {
     try { // attempt to use Desktop library from JDK 1.6+
       Class<?> d = Class.forName("java.awt.Desktop");
-      d.getDeclaredMethod("browse", new Class[] {java.net.URI.class}).invoke(
-          d.getDeclaredMethod("getDesktop").invoke(null),
-          new Object[] {java.net.URI.create(url)});
+      d.getDeclaredMethod("browse", new Class[] {java.net.URI.class})
+          .invoke(
+              d.getDeclaredMethod("getDesktop").invoke(null),
+              new Object[] {java.net.URI.create(url)});
       // above code mimicks: java.awt.Desktop.getDesktop().browse()
     } catch (Exception ignore) { // library not available or failed
       String osName = System.getProperty("os.name");
@@ -201,8 +203,8 @@ public class Utils {
   public static String getUserDataDirectory(String subdirectory) {
     String userDir =
         subdirectory == null
-        ? userDataDirectoryBase
-        : String.format("%s%s%s", userDataDirectoryBase, subdirectory, File.separator);
+            ? userDataDirectoryBase
+            : String.format("%s%s%s", userDataDirectoryBase, subdirectory, File.separator);
     try {
       File dir = new File(userDir);
       if (!dir.isDirectory()) {

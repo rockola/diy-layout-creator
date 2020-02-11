@@ -43,8 +43,8 @@ import org.diylc.swing.ISimpleView;
 import org.diylc.swing.gui.components.HtmlTextArea;
 
 /**
- * {@link JDialog} that shows a list of comments posted to a cloud
- * project and provides controls for posting more comments.
+ * {@link JDialog} that shows a list of comments posted to a cloud project and provides controls for
+ * posting more comments.
  *
  * @author Branislav Stojkovic
  */
@@ -147,37 +147,39 @@ public class CommentDialog extends JDialog {
   private JButton getSendButton() {
     if (sendButton == null) {
       sendButton = new JButton("Send Reply");
-      sendButton.addActionListener((e) -> {
-        final String comment = getReplyArea().getText();
-        if (comment.trim().length() == 0) {
-          cloudUI.error("Cannot post an empty comment.");
-        }
-
-        cloudUI.executeBackgroundTask(new ITask<Void>() {
-
-            @Override
-            public Void doInBackground() throws Exception {
-              CloudPresenter.Instance.postComment(project.getId(), comment);
-              return null;
+      sendButton.addActionListener(
+          (e) -> {
+            final String comment = getReplyArea().getText();
+            if (comment.trim().length() == 0) {
+              cloudUI.error("Cannot post an empty comment.");
             }
 
-            @Override
-            public void failed(Exception e) {
-              cloudUI.error("Error posting comment.");
-            }
+            cloudUI.executeBackgroundTask(
+                new ITask<Void>() {
 
-            @Override
-            public void complete(Void result) {
-              getReplyArea().setText("");
-              CommentEntity newComment = new CommentEntity();
-              newComment.setPostedAt(JUST_NOW);
-              newComment.setUsername(CloudPresenter.Instance.currentUsername());
-              newComment.setComment(comment);
-              addComment(newComment).requestFocusInWindow();
-              getListPanel().revalidate();
-            }
+                  @Override
+                  public Void doInBackground() throws Exception {
+                    CloudPresenter.Instance.postComment(project.getId(), comment);
+                    return null;
+                  }
+
+                  @Override
+                  public void failed(Exception e) {
+                    cloudUI.error("Error posting comment.");
+                  }
+
+                  @Override
+                  public void complete(Void result) {
+                    getReplyArea().setText("");
+                    CommentEntity newComment = new CommentEntity();
+                    newComment.setPostedAt(JUST_NOW);
+                    newComment.setUsername(CloudPresenter.Instance.currentUsername());
+                    newComment.setComment(comment);
+                    addComment(newComment).requestFocusInWindow();
+                    getListPanel().revalidate();
+                  }
+                });
           });
-      });
     }
     return sendButton;
   }
@@ -190,14 +192,16 @@ public class CommentDialog extends JDialog {
     gbc.insets = new Insets(2, 2, 2, 2);
     gbc.anchor = GridBagConstraints.LINE_START;
     gbc.weightx = 1;
-    getListPanel().add(new JLabel(
-        "<html><b>"
-        + c.getUsername()
-        + "</b> wrote "
-        + (c.getPostedAt().equals(JUST_NOW) ? "" : "on ")
-        + c.getPostedAt()
-        + " </html>"),
-                       gbc);
+    getListPanel()
+        .add(
+            new JLabel(
+                "<html><b>"
+                    + c.getUsername()
+                    + "</b> wrote "
+                    + (c.getPostedAt().equals(JUST_NOW) ? "" : "on ")
+                    + c.getPostedAt()
+                    + " </html>"),
+            gbc);
     gbc.gridy = lastPosition++;
 
     JTextArea commentArea = new HtmlTextArea(c.getComment());

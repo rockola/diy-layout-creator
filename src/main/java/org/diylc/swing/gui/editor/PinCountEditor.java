@@ -43,17 +43,18 @@ public class PinCountEditor extends JComboBox {
     setModel(new DefaultComboBoxModel(values));
     setSelectedItem(property.getValue());
     final PinCountEditor editor = this;
-    addItemListener(new ItemListener() {
+    addItemListener(
+        new ItemListener() {
 
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            property.setChanged(true);
-            setBackground(oldBg);
-            editor.property.setValue(e.getItem());
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              property.setChanged(true);
+              setBackground(oldBg);
+              editor.property.setValue(e.getItem());
+            }
           }
-        }
-      });
+        });
     if (!property.isUnique()) {
       setBackground(Constants.MULTI_VALUE_COLOR);
     }

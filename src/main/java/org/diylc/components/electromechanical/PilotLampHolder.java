@@ -149,12 +149,9 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
       Area wafer = Area.ring(x, centerY, waferDiameter, ringDiameter);
       body[0] = wafer;
 
-      Area tip = Area.roundRect(
-          x - springWidth / 2,
-          y - holeToEdge,
-          springWidth,
-          springLength,
-          springWidth);
+      Area tip =
+          Area.roundRect(
+              x - springWidth / 2, y - holeToEdge, springWidth, springLength, springWidth);
       Area sleeve = new Area(tip);
 
       tip.subtract(Area.circle(x, centerY, waferDiameter));
@@ -184,11 +181,13 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
       nut.subtract(Area.rect(x - springWidth / 2, y - holeToEdge, springWidth, springLength));
       nut.subtract(sleeve);
 
-      thread.subtract(new Area(new Ellipse2D.Double(
-          x - threadOuterDiameter / 2 + threadThickness,
-          centerY - threadOuterDiameter / 2 + threadThickness,
-          threadOuterDiameter - 2 * threadThickness,
-          threadOuterDiameter - 2 * threadThickness)));
+      thread.subtract(
+          new Area(
+              new Ellipse2D.Double(
+                  x - threadOuterDiameter / 2 + threadThickness,
+                  centerY - threadOuterDiameter / 2 + threadThickness,
+                  threadOuterDiameter - 2 * threadThickness,
+                  threadOuterDiameter - 2 * threadThickness)));
       thread.subtract(tip);
       thread.subtract(sleeve);
 

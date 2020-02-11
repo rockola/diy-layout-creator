@@ -69,9 +69,9 @@ public class InlinePackageTransformer implements IComponentTransformer {
     } else if (component instanceof SingleInlineIc) {
       mirrorSil(component, center, direction);
     } else {
-      throw new RuntimeException(String.format(
-          "InlinePackageTransformer: don't know how to mirror %s",
-          component.getClass()));
+      throw new RuntimeException(
+          String.format(
+              "InlinePackageTransformer: don't know how to mirror %s", component.getClass()));
     }
   }
 

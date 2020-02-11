@@ -174,7 +174,6 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
     return VisibilityPolicy.NEVER;
   }
 
-
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
@@ -190,10 +189,8 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
 
     JackSize(double dia) {
       diameter = dia;
-      displayName = String.format(
-          "%s (%.2f mm)",
-          WordUtils.capitalize(name().replace('_', ' ')),
-          diameter);
+      displayName =
+          String.format("%s (%.2f mm)", WordUtils.capitalize(name().replace('_', ' ')), diameter);
     }
 
     public double getDiameter() {

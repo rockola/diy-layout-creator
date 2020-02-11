@@ -11,8 +11,8 @@ import java.util.Map;
 public interface IFlatProxy {
 
   /**
-   * Invokes the specified method on the specified url and returns the
-   * result as {@link InputStream} .
+   * Invokes the specified method on the specified url and returns the result as {@link InputStream}
+   * .
    *
    * @param url host url, e.g. <code>yahoo.com</code>
    * @param methodName method name, this is actually a script on the server, e.g. <code>search

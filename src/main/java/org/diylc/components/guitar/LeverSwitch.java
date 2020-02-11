@@ -154,31 +154,32 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
       int baseX = x - terminalLength / 2 - waferSpacing;
       int baseY = y - (baseLength - terminalSpacing * offsetY) / 2;
-      Area baseArea = Area.rect(
-          baseX,
-          baseY,
-          baseWidth,
-          baseLength).subtract(Area.circle(
-              baseX + baseWidth / 2,
-              baseY + (baseLength - holeSpacing) / 2,
-              holeSize)).subtract(Area.circle(
-                  baseX + baseWidth / 2,
-                  baseY + (baseLength - holeSpacing) / 2 + holeSpacing,
-                  holeSize));
+      Area baseArea =
+          Area.rect(baseX, baseY, baseWidth, baseLength)
+              .subtract(
+                  Area.circle(
+                      baseX + baseWidth / 2, baseY + (baseLength - holeSpacing) / 2, holeSize))
+              .subtract(
+                  Area.circle(
+                      baseX + baseWidth / 2,
+                      baseY + (baseLength - holeSpacing) / 2 + holeSpacing,
+                      holeSize));
       body[0] = baseArea;
 
-      Area waferArea = Area.rect(
-          x - terminalLength / 2 - waferThickness / 2,
-          y - (waferLength - terminalSpacing * offsetY) / 2,
-          waferThickness,
-          waferLength);
+      Area waferArea =
+          Area.rect(
+              x - terminalLength / 2 - waferThickness / 2,
+              y - (waferLength - terminalSpacing * offsetY) / 2,
+              waferThickness,
+              waferLength);
 
       if (type == LeverSwitchType._4P5T) {
-        waferArea.add(Area.rect(
-            x - terminalLength / 2 - waferThickness / 2 + waferSpacing,
-            y - (waferLength - terminalSpacing * 12) / 2,
-            waferThickness,
-            waferLength));
+        waferArea.add(
+            Area.rect(
+                x - terminalLength / 2 - waferThickness / 2 + waferSpacing,
+                y - (waferLength - terminalSpacing * 12) / 2,
+                waferThickness,
+                waferLength));
       }
       body[1] = waferArea;
 
@@ -187,15 +188,11 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       final double theta = orientation.getTheta();
       for (int i = 0; i < controlPoints.length; i++) {
         Point point = controlPoints[i];
-        Area terminal = Area.centeredRoundRect(
-            point,
-            terminalLength,
-            terminalWidth,
-            terminalWidth / 2).subtract(Area.centeredRoundRect(
-                point,
-                terminalLength / 2,
-                terminalWidth / 2,
-                terminalWidth / 2));
+        Area terminal =
+            Area.centeredRoundRect(point, terminalLength, terminalWidth, terminalWidth / 2)
+                .subtract(
+                    Area.centeredRoundRect(
+                        point, terminalLength / 2, terminalWidth / 2, terminalWidth / 2));
         // Rotate the terminal if needed
         if (theta != 0) {
           terminal.transform(orientation.getRotation(point));
@@ -289,17 +286,16 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     Area terminals = new Area();
     int terminalLength = getClosestOdd(11 * width / 32);
     int terminalWidth = getClosestOdd(7 * width / 32);
-    Area terminal = Area.roundRect(
-        width / 16 * 7,
-        4 * width / 32,
-        terminalLength,
-        terminalWidth,
-        terminalWidth / 2).subtract(Area.roundRect(
-            width / 16 * 7 + terminalLength / 4 + 1,
-            4 * width / 32 + terminalWidth / 4 + 1,
-            terminalLength / 2,
-            terminalWidth / 2,
-            terminalWidth / 4));
+    Area terminal =
+        Area.roundRect(
+                width / 16 * 7, 4 * width / 32, terminalLength, terminalWidth, terminalWidth / 2)
+            .subtract(
+                Area.roundRect(
+                    width / 16 * 7 + terminalLength / 4 + 1,
+                    4 * width / 32 + terminalWidth / 4 + 1,
+                    terminalLength / 2,
+                    terminalWidth / 2,
+                    terminalWidth / 4));
     terminals.add(terminal);
     terminal = new Area(terminal);
     terminal.transform(

@@ -72,8 +72,7 @@ public class TreeLeaf implements ITree {
     if (this == obj) {
       return true;
     }
-    if (obj == null
-        || getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     TreeLeaf other = (TreeLeaf) obj;
@@ -84,8 +83,7 @@ public class TreeLeaf implements ITree {
     } else if (!component.equals(other.component)) {
       return false;
     }
-    if (pointIndex1 != other.pointIndex1
-        || pointIndex2 != other.pointIndex2) {
+    if (pointIndex1 != other.pointIndex1 || pointIndex2 != other.pointIndex2) {
       return false;
     }
     return true;

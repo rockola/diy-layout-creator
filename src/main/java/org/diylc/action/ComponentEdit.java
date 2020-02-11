@@ -87,6 +87,5 @@ public class ComponentEdit extends AbstractUndoableEdit {
     throw new RuntimeException("undo TODO");
   }
 
-  public void execute() {
-  }
+  public void execute() {}
 }

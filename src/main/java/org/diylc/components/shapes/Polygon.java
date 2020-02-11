@@ -56,12 +56,13 @@ public class Polygon extends AbstractShape {
 
   public Polygon() {
     super();
-    this.controlPoints = new Point[] {
-      new Point(0, 0),
-      new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-      new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
-    };
+    this.controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+        };
   }
 
   @Override

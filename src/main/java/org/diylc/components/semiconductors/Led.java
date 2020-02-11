@@ -78,16 +78,11 @@ public class Led extends AbstractLeadedComponent<String> {
     g2d.drawLine(0, center.y, width, center.y);
 
     int margin = 4 * width / 32;
-    Area area = new Area(new Ellipse2D.Double(
-        margin,
-        margin,
-        width - 2 * margin,
-        width - 2 * margin));
-    area.intersect(new Area(new Rectangle2D.Double(
-        margin,
-        margin,
-        width - 5 * margin / 2,
-        width - 2 * margin)));
+    Area area =
+        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
+    area.intersect(
+        new Area(
+            new Rectangle2D.Double(margin, margin, width - 5 * margin / 2, width - 2 * margin)));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     Area.circle(center, width - 4 * margin + 2).draw(g2d, BORDER_COLOR);
   }

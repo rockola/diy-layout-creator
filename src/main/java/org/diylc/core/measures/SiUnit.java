@@ -20,9 +20,9 @@
 
 package org.diylc.core.measures;
 
-//import java.io.Serializable;
-//import java.text.DecimalFormat;
-//import java.text.Format;
+// import java.io.Serializable;
+// import java.text.DecimalFormat;
+// import java.text.Format;
 
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -53,24 +53,34 @@ public enum SiUnit {
     return WordUtils.capitalize(this.toString());
   }
 
-
   /**
-     Integer exponent to prefix name/symbol.
-     See e.g. https://www.nist.gov/pml/weights-and-measures/metric-si-prefixes
-  */
+   * Integer exponent to prefix name/symbol. See e.g.
+   * https://www.nist.gov/pml/weights-and-measures/metric-si-prefixes
+   */
   private static String exponentToPrefixNameOrSymbol(int exponent, boolean useSymbol) {
     switch (exponent) {
-      case -12: return useSymbol ? "p" : "pico";
-      case -9: return useSymbol ? "n" : "nano";
-      case -6: return useSymbol ? "µ" : "micro"; // hooray for UTF-8!
-      case -3: return useSymbol ? "m" : "milli";
-      case 0: return "";
-      case 3: return useSymbol ? "k" : "kilo";
-      case 6: return useSymbol ? "M" : "mega";
-      case 9: return useSymbol ? "G" : "giga";
-      case 12: return useSymbol ? "T" : "tera";
-      case 15: return useSymbol ? "P" : "peta";
-      case 18: return useSymbol ? "E" : "exa";
+      case -12:
+        return useSymbol ? "p" : "pico";
+      case -9:
+        return useSymbol ? "n" : "nano";
+      case -6:
+        return useSymbol ? "µ" : "micro"; // hooray for UTF-8!
+      case -3:
+        return useSymbol ? "m" : "milli";
+      case 0:
+        return "";
+      case 3:
+        return useSymbol ? "k" : "kilo";
+      case 6:
+        return useSymbol ? "M" : "mega";
+      case 9:
+        return useSymbol ? "G" : "giga";
+      case 12:
+        return useSymbol ? "T" : "tera";
+      case 15:
+        return useSymbol ? "P" : "peta";
+      case 18:
+        return useSymbol ? "E" : "exa";
       default:
         LOG.error("Don't know what the prefix would be for {}", exponent);
         return "";
@@ -86,31 +96,27 @@ public enum SiUnit {
   }
 
   public static String measureToString(
-      double value,
-      int decimals,
-      boolean withSymbol,
-      SiUnit unit) {
+      double value, int decimals, boolean withSymbol, SiUnit unit) {
 
     int exponent = (int) Math.floor(Math.log10(value) / 3) * 3;
     double v = value / Math.pow(10, exponent);
     String prefixNameOrSymbol = exponentToPrefixNameOrSymbol(exponent, withSymbol);
 
-    LOG.debug("measureToString({}, {}, {}, {}) v {} exponent {} name-or-symbol {}",
-              value,
-              decimals,
-              withSymbol,
-              unit,
-              v,
-              exponent,
-              prefixNameOrSymbol);
+    LOG.debug(
+        "measureToString({}, {}, {}, {}) v {} exponent {} name-or-symbol {}",
+        value,
+        decimals,
+        withSymbol,
+        unit,
+        v,
+        exponent,
+        prefixNameOrSymbol);
 
     return String.format(
         "%." + decimals + "f %s%s",
         v,
         prefixNameOrSymbol,
-        withSymbol
-        ? unit.symbol
-        : unit.toString() + "s"); // to do: handle case of exactly 1 & i18n
+        withSymbol ? unit.symbol : unit.toString() + "s"); // to do: handle case of exactly 1 & i18n
   }
 
   /* default is to use unit symbol */

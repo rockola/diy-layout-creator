@@ -61,24 +61,28 @@ public class ComponentTree implements IPlugIn {
     }
     ConfigurationManager.addListener(
         ConfigPlugin.COMPONENT_BROWSER,
-        (key, value) -> getTreePanel().setVisible(
-            ConfigPlugin.COMPONENT_BROWSER.equals(key)
-            && ConfigPlugin.SEARCHABLE_TREE.equals(value)));
-    getTreePanel().setVisible(App.getString(
-        ConfigPlugin.COMPONENT_BROWSER,
-        ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE));
+        (key, value) ->
+            getTreePanel()
+                .setVisible(
+                    ConfigPlugin.COMPONENT_BROWSER.equals(key)
+                        && ConfigPlugin.SEARCHABLE_TREE.equals(value)));
+    getTreePanel()
+        .setVisible(
+            App.getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
+                .equals(ConfigPlugin.SEARCHABLE_TREE));
 
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((e) -> {
-      if ((canvasPanel.hasFocus() || treePanel.hasFocus())
-          && e.getKeyChar() == 'q'
-          && App.getString(
-              ConfigPlugin.COMPONENT_BROWSER,
-              ConfigPlugin.SEARCHABLE_TREE).equals(ConfigPlugin.SEARCHABLE_TREE)) {
-        getTreePanel().getSearchField().requestFocusInWindow();
-        return true;
-      }
-      return false;
-    });
+    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+        .addKeyEventDispatcher(
+            (e) -> {
+              if ((canvasPanel.hasFocus() || treePanel.hasFocus())
+                  && e.getKeyChar() == 'q'
+                  && App.getString(ConfigPlugin.COMPONENT_BROWSER, ConfigPlugin.SEARCHABLE_TREE)
+                      .equals(ConfigPlugin.SEARCHABLE_TREE)) {
+                getTreePanel().getSearchField().requestFocusInWindow();
+                return true;
+              }
+              return false;
+            });
   }
 
   public ComponentTreePanel getTreePanel() {

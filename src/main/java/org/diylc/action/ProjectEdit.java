@@ -40,7 +40,6 @@ public class ProjectEdit extends CompoundEdit {
   private Collection<IDIYComponent<?>> oldComponents;
   private Collection<IDIYComponent<?>> newComponents;
 
-
   public ProjectEdit(
       Project project,
       Collection<IDIYComponent<?>> oldComponents,
@@ -104,7 +103,7 @@ public class ProjectEdit extends CompoundEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    //throw new RuntimeException("undo TODO");
+    // throw new RuntimeException("undo TODO");
     // remove new
     if (!(newComponents == null || newComponents.isEmpty())) {
       project.removeComponents(newComponents);

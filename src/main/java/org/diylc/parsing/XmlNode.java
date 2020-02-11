@@ -79,25 +79,30 @@ public class XmlNode {
     }
     String pad = s.toString();
 
-    return pad + "<" + tagName
+    return pad
+        + "<"
+        + tagName
         + (attributes.isEmpty() ? "" : " ")
-        + attributes.entrySet().stream().map(
-            e -> String.format("%s=\"%s\"", e.getKey(), e.getValue())).collect(
-                Collectors.joining(" "))
+        + attributes.entrySet().stream()
+            .map(e -> String.format("%s=\"%s\"", e.getKey(), e.getValue()))
+            .collect(Collectors.joining(" "))
         + ">"
         + (children.isEmpty() ? "" : "\n")
-        + children.values().stream().map(
-            v -> v.toString(level + 1)).collect(Collectors.joining("\n"))
+        + children.values().stream()
+            .map(v -> v.toString(level + 1))
+            .collect(Collectors.joining("\n"))
         + (value == null ? "" : value)
         + (children.isEmpty() ? "" : pad)
-        + "</" + tagName + ">";
+        + "</"
+        + tagName
+        + ">";
   }
 
   /**
-     Get value from first child that has it.
-
-     @param key Key.
-     @return value if found, or null
+   * Get value from first child that has it.
+   *
+   * @param key Key.
+   * @return value if found, or null
    */
   public String getValue(String key) {
     String value = null;
@@ -114,8 +119,7 @@ public class XmlNode {
     return value;
   }
 
-  /**
-   */
+  /** */
   public boolean nodeIsA(String nodeName) {
     return tagName.toLowerCase().equals(nodeName.toLowerCase());
   }

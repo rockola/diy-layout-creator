@@ -166,10 +166,15 @@ public class V2FileParser implements IOldFileParser {
           for (int j = 0; j < propertyList.getLength(); j++) {
             if (propertyList.item(j).getNodeName().equalsIgnoreCase("property")) {
               // Note: propertyName is transformed to lowercase for comparison purposes
-              String propertyName = propertyList.item(j).getAttributes()
-                                    .getNamedItem("name").getNodeValue().toLowerCase();
-              String nodeValue = propertyList.item(j).getAttributes()
-                                 .getNamedItem("value").getNodeValue();
+              String propertyName =
+                  propertyList
+                      .item(j)
+                      .getAttributes()
+                      .getNamedItem("name")
+                      .getNodeValue()
+                      .toLowerCase();
+              String nodeValue =
+                  propertyList.item(j).getAttributes().getNamedItem("value").getNodeValue();
               switch (propertyName) {
                 case "color":
                   String color = nodeValue;
@@ -210,7 +215,9 @@ public class V2FileParser implements IOldFileParser {
                   break;
                 case "angle":
                   Size anglePro = parseString(nodeValue);
-                  angle = anglePro.getValue() * Constants.PIXELS_PER_INCH
+                  angle =
+                      anglePro.getValue()
+                          * Constants.PIXELS_PER_INCH
                           / Constants.MM_PER_INCH
                           / Constants.DEGREES_PER_RADIAN;
                   angle = Math.floor(angle);
@@ -257,8 +264,8 @@ public class V2FileParser implements IOldFileParser {
                   }
                   break;
                 case "transparency":
-                  transparency = (int) (Double.parseDouble(nodeValue.replaceAll("[^0-9.]", ""))
-                                        * 100);
+                  transparency =
+                      (int) (Double.parseDouble(nodeValue.replaceAll("[^0-9.]", "")) * 100);
                   break;
                 case "pins":
                   pins = Integer.parseInt(nodeValue.replaceAll("[^0-9.]", ""));
@@ -272,10 +279,12 @@ public class V2FileParser implements IOldFileParser {
           ArrayList<Point> tacke = new ArrayList<Point>();
 
           for (int k = 1; k < pointList.getLength(); k += 2) {
-            int iks = Integer.parseInt(
-                pointList.item(k).getAttributes().getNamedItem("x").getNodeValue());
-            int ipsilon = Integer.parseInt(
-                pointList.item(k).getAttributes().getNamedItem("y").getNodeValue());
+            int iks =
+                Integer.parseInt(
+                    pointList.item(k).getAttributes().getNamedItem("x").getNodeValue());
+            int ipsilon =
+                Integer.parseInt(
+                    pointList.item(k).getAttributes().getNamedItem("y").getNodeValue());
             tacke.add(new Point(iks, ipsilon));
           }
 

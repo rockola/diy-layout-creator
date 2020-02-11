@@ -57,10 +57,9 @@ public class TriPadBoard extends AbstractBoard {
   public static final Size STRIP_SIZE = Size.in(0.07);
   public static final Size HOLE_SIZE = Size.mm(0.7);
 
-  /**
-   * Determines how many holes are covered by a strip.
-   */
+  /** Determines how many holes are covered by a strip. */
   protected int stripSpan = 3;
+
   protected Size spacing = SPACING;
   protected Color stripColor = COPPER_COLOR;
   protected OrientationHV orientation = OrientationHV.HORIZONTAL;
@@ -101,10 +100,11 @@ public class TriPadBoard extends AbstractBoard {
 
             drawingObserver.startTrackingContinuityArea(true);
             Area.rect(
-                p.x + spacing - stripSize / 2,
-                p.y - stripSize / 2,
-                spacing * (spacesToDraw - 1) + stripSize,
-                stripSize).fillDraw(g2d, stripColor, stripColor.darker());
+                    p.x + spacing - stripSize / 2,
+                    p.y - stripSize / 2,
+                    spacing * (spacesToDraw - 1) + stripSize,
+                    stripSize)
+                .fillDraw(g2d, stripColor, stripColor.darker());
             drawingObserver.stopTrackingContinuityArea();
             p.x += spacing * spacesToDraw;
           }
@@ -132,11 +132,8 @@ public class TriPadBoard extends AbstractBoard {
 
             drawingObserver.startTrackingContinuityArea(true);
             double height = spacing * (spacesToDraw - 1) + stripSize;
-            Area.rect(
-                p.x - stripSize / 2,
-                p.y + spacing - stripSize / 2,
-                stripSize,
-                height).fillDraw(g2d, stripColor, stripColor.darker());
+            Area.rect(p.x - stripSize / 2, p.y + spacing - stripSize / 2, stripSize, height)
+                .fillDraw(g2d, stripColor, stripColor.darker());
             drawingObserver.stopTrackingContinuityArea();
 
             p.y += spacing * spacesToDraw;
