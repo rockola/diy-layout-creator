@@ -538,6 +538,9 @@ public class DrawingManager {
   }
 
   public static double getExtraSpace(Project project) {
+    if (project == null) {
+      return 0d;
+    }
     double width = project.getWidth().convertToPixels();
     double height = project.getHeight().convertToPixels();
     double targetExtraSpace = EXTRA_SPACE * Math.max(width, height);
@@ -546,6 +549,10 @@ public class DrawingManager {
 
   public static Dimension getCanvasDimensions(
       Project project, Double zoomLevel, boolean includeExtraSpace) {
+    if (project == null) {
+      return new Dimension(0, 0);
+    }
+
     double width = project.getWidth().convertToPixels();
     double height = project.getHeight().convertToPixels();
 
