@@ -92,6 +92,11 @@ public class Area extends java.awt.geom.Area {
     return new Point(p);
   }
 
+  public static Graphics2D rotate(Graphics2D g2d, double theta, Point center) {
+    g2d.rotate(theta, center.x, center.y);
+    return g2d;
+  }
+
   public static Area roundedPolygon(Point[] points, double[] radii) {
     return new Area(new RoundedPolygon(points, radii));
   }
