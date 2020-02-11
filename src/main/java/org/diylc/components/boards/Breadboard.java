@@ -33,6 +33,7 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -279,83 +280,24 @@ public class Breadboard extends AbstractComponent<Void> {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int factor = 32 / width;
-    int arc = 4 / factor;
-    g2d.setColor(FILL_COLOR);
-    g2d.fillRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
+    Area.rect(0, 0, width - 1, height - 1).fillDraw(g2d, FILL_COLOR, BORDER_COLOR);
+    final double holeHorizontalOffset = width / 8;
+    final double holeVerticalOffset = height / 4;
+    final double holeHorizontalSpacing = width / 4;
+    final double holeVerticalSpacing = height / 4;
+    final double holeDiameter = width / 12;
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 4; col++) {
+        Area.circle(
+            holeHorizontalOffset + col * holeHorizontalSpacing,
+            holeVerticalOffset + row * holeVerticalSpacing,
+            holeDiameter).fillDraw(g2d, HOLE_COLOR, BORDER_COLOR);
+      }
+    }
 
-    g2d.setColor(HOLE_COLOR);
-    g2d.fillRoundRect(
-        width / 3 - 2 / factor,
-        width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        width / 3 - 2 / factor,
-        width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-
-    g2d.setColor(HOLE_COLOR);
-    g2d.fillRoundRect(
-        2 * width / 3 - 2 / factor,
-        width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        2 * width / 3 - 2 / factor,
-        width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-
-    g2d.setColor(HOLE_COLOR);
-    g2d.fillRoundRect(
-        width / 3 - 2 / factor,
-        2 * width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        width / 3 - 2 / factor,
-        2 * width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-
-    g2d.setColor(HOLE_COLOR);
-    g2d.fillRoundRect(
-        2 * width / 3 - 2 / factor,
-        2 * width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRoundRect(
-        2 * width / 3 - 2 / factor,
-        2 * width / 3 - 2 / factor,
-        getClosestOdd(5.0 / factor),
-        getClosestOdd(5.0 / factor),
-        arc,
-        arc);
-
+    final int lineOffset = 3;
     g2d.setColor(MINUS_COLOR);
-    g2d.drawLine(width / 2, 2 / factor, width / 2, height - 4 / factor);
+    g2d.drawLine(width / 2, lineOffset, width / 2, height - lineOffset);
   }
 
   @EditableProperty
