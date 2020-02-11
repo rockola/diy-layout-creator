@@ -89,9 +89,8 @@ public class Eyelet extends AbstractComponent<String> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = getClosestOdd(width / 2);
-    Area.circle(width, height, diameter).fillDraw(g2d, COLOR, COLOR.darker());
     int holeDiameter = 5;
-    Area.circle(width, height, holeDiameter).fillDraw(g2d, CANVAS_COLOR, COLOR.darker());
+    Area.ring(width / 2, height / 2, diameter, holeDiameter).fillDraw(g2d, COLOR, COLOR.darker());
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)

@@ -75,7 +75,7 @@ public class Dot extends AbstractComponent<Void> {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int diameter = 7 * width / 32;
-    Area.circle(width, height, diameter).fill(g2d, COLOR);
+    Area.circle(width / 2, height / 2, diameter).fill(g2d, COLOR);
   }
 
   @EditableProperty(validatorClass = PositiveNonZeroMeasureValidator.class)
