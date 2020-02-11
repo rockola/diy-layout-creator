@@ -185,45 +185,64 @@ public class TriPadBoard extends AbstractBoard {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    g2d.setColor(BOARD_COLOR);
-    g2d.fillRect(0, 0, width, height);
-
-    final int horizontalSpacing = width / 5;
-    final int horizontalIndent = horizontalSpacing / 2;
-
-    final int verticalSpacing = height / 5;
-    final int verticalIndent = verticalSpacing / 2;
-
-    for (int row = 0; row < 5; row++) {
-      g2d.setColor(COPPER_COLOR);
-      g2d.fillRect(
-          0,
-          row * verticalSpacing + 2,
-          horizontalIndent / 2 + horizontalSpacing,
-          verticalSpacing - 1);
-
-      g2d.setColor(COPPER_COLOR);
-      g2d.fillRect(
-          horizontalSpacing + 2,
-          row * verticalSpacing + 2,
-          horizontalSpacing * 3 - 1,
-          verticalSpacing - 1);
-
-      g2d.fillRect(
-          horizontalSpacing * 4 + 2,
-          row * verticalSpacing + 2,
-          horizontalIndent / 2 + horizontalSpacing,
-          verticalSpacing - 1);
+    // draw board
+    Area.rect(0, 0, width, height).fill(g2d, BOARD_COLOR);
+    // draw copper
+    final int inset = 1;
+    Area.rect(inset, inset, width - 2 * inset, height - 2 * inset).fill(g2d, COPPER_COLOR);
+    // draw vertical dividing lines
+    Area.rect(width / 4, 0, width / 2, height).draw(g2d, CANVAS_COLOR);
+    // draw horizontal dividing lines
+    for (int i = 0; i < 3; i++) {
+      int y = height * i / 5;
+      Area.rect(0, y, width, height * 3 / 5).draw(g2d, CANVAS_COLOR);
     }
-
-    // draw dots
+    // draw holes
+    final double horizontalOffset = width / 32;
+    final double verticalOffset = height / 10;
+    final double holeHorizontalSpacing = width / 6;
+    final double holeVerticalSpacing = height / 4.95;
+    final double holeDiameter = width / 16;
     for (int row = 0; row < 5; row++) {
-      int y = (verticalSpacing * row) + verticalIndent;
-      for (int col = 0; col < 5; col++) {
-        int x = (horizontalSpacing * col) + horizontalIndent;
-        Area.circle(x, y, 2).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
+      for (int col = 0; col < 7; col++) {
+        double x = horizontalOffset + col * holeHorizontalSpacing;
+        double y = verticalOffset + row * holeVerticalSpacing;
+        Area.circle(x, y, holeDiameter).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
       }
     }
+    Area.rect(0, 0, width - 1, height - 1).draw(g2d, BOARD_COLOR);
+    /*
+    g2d.setColor(BOARD_COLOR);
+    g2d.fillRect(0, 0, width, height);
+    final int horizontalSpacing = width / 5;
+    final int horizontalIndent = horizontalSpacing / 2;
+    final int verticalSpacing = height / 5;
+    final int verticalOffset = 1;
+    final int verticalIndent = verticalSpacing / 2 + verticalOffset;
+    for (int row = 0; row < 5; row++) {
+      int copperY = row * verticalSpacing + verticalOffset;
+      Area.rect(
+          0,
+          copperY,
+          horizontalIndent / 2 + horizontalSpacing,
+          verticalSpacing - 1).fill(g2d, COPPER_COLOR);
+      Area.rect(
+          horizontalSpacing + 2,
+          copperY,
+          horizontalSpacing * 3 - 1,
+          verticalSpacing - 1).fill(g2d, COPPER_COLOR);
+      Area.rect(
+          horizontalSpacing * 4 + 2,
+          copperY,
+          horizontalIndent / 2 + horizontalSpacing,
+          verticalSpacing - 1).fill(g2d, COPPER_COLOR);
+      // draw dots
+      int y = (verticalSpacing * row) + verticalIndent;
+      for (int col = 0; col < 5; col++) {
+        int x = ((horizontalSpacing + 1) * col) + horizontalIndent;
+        Area.circle(x, y, 2).fillDraw(g2d, CANVAS_COLOR, COPPER_COLOR.darker());
+      }
+    */
   }
 
   @EditableProperty(name = "Holes per strip")
