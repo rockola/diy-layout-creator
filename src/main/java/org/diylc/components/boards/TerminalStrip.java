@@ -393,23 +393,18 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     Area.rect(width / 4, 1, width / 2, height - 4).fillDraw(g2d, BOARD_COLOR, BORDER_COLOR);
-    int radius = 6 * width / 32;
-    int holeSize = 3 * width / 32;
-    int terminalSize = getClosestOdd(height / 5);
-    Area terminal = Area.roundRect(
-        2 * width / 32,
-        height / 5,
-        width - 4 * width / 32,
-        terminalSize,
-        radius);
-    terminal.subtract(Area.circle(
-        2 * width / 32 + holeSize,
-        height * 3 / 10 - holeSize / 2,
-        holeSize));
-    terminal.subtract(Area.circle(
-        width - 2 * width / 32 - holeSize * 2,
-        height * 3 / 10 - holeSize / 2,
-        holeSize));
+    final double radius = 6 * width / 32;
+    final double holeSize = 3 * width / 32;
+    final double x = 2 * width / 32;
+    final double y = height / 5;
+    final double terminalWidth = width - 4 * width / 32;
+    final double terminalHeight = height / 4;
+    final double holeCenterX1 = x + terminalHeight / 2;
+    final double holeCenterX2 = x + terminalWidth - terminalHeight / 2;
+    final double holeCenterY = y + terminalHeight / 2;
+    Area terminal = Area.roundRect(x, y, terminalWidth, terminalHeight, radius)
+                    .subtract(Area.circle(holeCenterX1, holeCenterY, holeSize))
+                    .subtract(Area.circle(holeCenterX2, holeCenterY, holeSize));
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
     g2d.translate(0, height * 2 / 5);
     terminal.fillDraw(g2d, TERMINAL_COLOR, TERMINAL_BORDER_COLOR);
