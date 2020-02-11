@@ -24,12 +24,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
-import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
@@ -68,7 +64,7 @@ public class JazzBassPickup extends AbstractBassPickup {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
@@ -94,9 +90,9 @@ public class JazzBassPickup extends AbstractBassPickup {
   }
 
   @Override
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[4];
+      body = new Area[4];
 
       Point[] points = getControlPoints();
       int x = points[0].x;
@@ -111,34 +107,23 @@ public class JazzBassPickup extends AbstractBassPickup {
       final int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());
       final int lipHoleSpacing = getClosestOdd(LIP_HOLE_SPACING.convertToPixels());
 
-      body[0] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
+      body[0] = Area.roundRect(x - length, y - pointMargin, length, width, edgeRadius);
 
-      Area lip =
-          new Area(new Ellipse2D.Double(-lipRadius / 2, -lipRadius / 2, lipRadius, lipRadius));
-      lip.subtract(
-          new Area(
-              new Ellipse2D.Double(
-                  -lipHoleSize / 2, -lipHoleSpacing - lipHoleSize / 2, lipHoleSize, lipHoleSize)));
+      Area lip = Area.circle(0, 0, lipRadius);
+      lip.subtract(Area.circle(0, -lipHoleSpacing, lipHoleSize));
       lip.transform(
           AffineTransform.getTranslateInstance(x - length / 2 - lipSpacing / 2, y - pointMargin));
 
       body[1] = new Area(lip);
       lip.transform(AffineTransform.getTranslateInstance(lipSpacing, 0));
-      ((Area) body[1]).add(lip);
+      body[1].add(lip);
       lip = new Area(body[1]);
       double y1 = lip.getBounds2D().getY();
       lip.transform(AffineTransform.getScaleInstance(1, -1));
       lip.transform(AffineTransform.getTranslateInstance(0, 2 * y1 + width + lipRadius));
-      ((Area) body[1]).add(lip);
+      body[1].add(lip).subtract(body[0]);
 
-      ((Area) body[1]).subtract((Area) body[0]);
-
-      body[2] =
-          new Area(
-              new Ellipse2D.Double(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize));
+      body[2] = Area.circle(x, y, pointSize);
 
       int poleSize = (int) POLE_SIZE.convertToPixels();
       int poleSpacing = (int) POLE_SPACING.convertToPixels();
@@ -146,29 +131,26 @@ public class JazzBassPickup extends AbstractBassPickup {
       int poleMargin = (length - poleSpacing * 3) / 2;
       Area poleArea = new Area();
       for (int i = 0; i < getNumberOfStrings(); i++) {
-        Ellipse2D pole =
-            new Ellipse2D.Double(
-                x - length + poleMargin + i * poleSpacing - poleSize / 2 - poleSpacingMinor / 2,
-                y - pointMargin - poleSize / 2 + width / 2,
-                poleSize,
+        Area pole =
+            Area.circle(
+                x - length + poleMargin + i * poleSpacing - poleSpacingMinor / 2,
+                y - pointMargin + width / 2,
                 poleSize);
-        poleArea.add(new Area(pole));
+        poleArea.add(pole);
         pole =
-            new Ellipse2D.Double(
-                x - length + poleMargin + i * poleSpacing - poleSize / 2 + poleSpacingMinor / 2,
-                y - pointMargin - poleSize / 2 + width / 2,
-                poleSize,
+            Area.circle(
+                x - length + poleMargin + i * poleSpacing + poleSpacingMinor / 2,
+                y - pointMargin + width / 2,
                 poleSize);
-        poleArea.add(new Area(pole));
+        poleArea.add(pole);
       }
       body[3] = poleArea;
 
       // Rotate if needed
-      if (orientation != Orientation.DEFAULT) {
+      if (orientation.isRotated()) {
         AffineTransform rotation = orientation.getRotation(x, y);
-        for (Shape shape : body) {
-          Area area = (Area) shape;
-          if (shape != null) {
+        for (Area area : body) {
+          if (area != null) {
             area.transform(rotation);
           }
         }
@@ -196,31 +178,28 @@ public class JazzBassPickup extends AbstractBassPickup {
     int bodyWidth = (int) (5f * width / 32);
     int bodyLength = (int) (30f * width / 32);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-    g2d.setColor(BODY_COLOR);
-    g2d.fill(Area.centeredRoundRect(x, y, bodyWidth, bodyLength, 3));
+    Area.centeredRoundRect(x, y, bodyWidth, bodyLength, 3).fill(g2d, BODY_COLOR);
 
     // lipSpacing = 1/2 * distance between lips
     int lipSpacing = (int) (7f * width / 32);
     int lipSize = (int) (3f * width / 32);
-    g2d.fill(
-        Area.centeredRoundRect(
-            x - lipSize / 2, y - lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
-    g2d.fill(
-        Area.centeredRoundRect(
-            x - lipSize / 2, y + lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize));
+    Area.centeredRoundRect(
+            x - lipSize / 2, y - lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize)
+        .fill(g2d, BODY_COLOR);
+    Area.centeredRoundRect(
+            x - lipSize / 2, y + lipSpacing, bodyWidth + 2 * lipSize, lipSize, lipSize)
+        .fill(g2d, BODY_COLOR);
 
-    g2d.setColor(BODY_COLOR.darker());
-    g2d.drawRoundRect(
-        (width - bodyWidth) / 2, (height - bodyLength) / 2, bodyWidth, bodyLength, 3, 3);
+    Area.centeredRoundRect(width / 2, height / 2, bodyWidth, bodyLength, 3)
+        .draw(g2d, BODY_COLOR.darker());
 
-    g2d.setColor(METAL_COLOR);
     final int numberOfStrings = 4;
     int poleSize = 2;
     int poleSpacing = bodyLength / (numberOfStrings + 1);
     int poleY = y - poleSpacing * (numberOfStrings - 1) / 2;
     for (int i = 0; i < numberOfStrings; i++) {
-      g2d.fill(Area.circle(x, poleY + i * poleSpacing + (poleSize / 2), poleSize));
-      g2d.fill(Area.circle(x, poleY + i * poleSpacing - (poleSize / 2), poleSize));
+      Area.circle(x, poleY + i * poleSpacing + (poleSize / 2), poleSize).fill(g2d, METAL_COLOR);
+      Area.circle(x, poleY + i * poleSpacing - (poleSize / 2), poleSize).fill(g2d, METAL_COLOR);
     }
   }
 }

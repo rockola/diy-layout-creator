@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,7 +75,7 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
 
   private String value = "";
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
-  transient Shape[] body;
+  transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
   private LeverSwitchType type = LeverSwitchType.DP3T;
   private Boolean highlightCommon;
@@ -93,37 +92,25 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
-      g2d.fill(body[0]);
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
-      g2d.fill(body[1]);
+      body[0].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
+      body[1].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
       g2d.setComposite(oldComposite);
     }
 
-    g2d.setColor(tryBorderColor(outlineMode, BASE_COLOR.darker()));
-    g2d.draw(body[0]);
-
-    g2d.setColor(tryBorderColor(outlineMode, WAFER_COLOR.darker()));
-    g2d.draw(body[1]);
-
-    g2d.setColor(LUG_COLOR);
-    g2d.fill(body[2]);
-    g2d.setColor(LUG_COLOR.darker());
-    g2d.draw(body[2]);
-    g2d.setColor(COMMON_LUG_COLOR);
-    g2d.fill(body[3]);
-    g2d.setColor(COMMON_LUG_COLOR.darker());
-    g2d.draw(body[3]);
+    body[0].draw(g2d, tryBorderColor(outlineMode, BASE_COLOR.darker()));
+    body[1].draw(g2d, tryBorderColor(outlineMode, WAFER_COLOR.darker()));
+    body[2].fillDraw(g2d, LUG_COLOR, LUG_COLOR.darker());
+    body[3].fillDraw(g2d, COMMON_LUG_COLOR, COMMON_LUG_COLOR.darker());
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[4];
+      body = new Area[4];
 
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
@@ -207,13 +194,11 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
       body[3] = commonTerminalArea;
 
       // Rotate if needed
-      if (theta != 0) {
+      if (orientation.isRotated()) {
         AffineTransform rotation = orientation.getRotation(controlPoints[0]);
         // Skip the last two because terminals are already rotated
         for (int i = 0; i < body.length - 2; i++) {
-          Shape shape = body[i];
-          Area area = (Area) shape;
-          area.transform(rotation);
+          body[i].transform(rotation);
         }
       }
     }

@@ -25,7 +25,6 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.awt.StringUtils;
@@ -67,7 +66,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
-  private transient Shape[] body;
+  private transient Area[] body;
 
   public LogicGateSymbol() {
     super();
@@ -86,7 +85,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
       return;
     }
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     Composite oldComposite = setTransparency(g2d);
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : bodyColor);
@@ -158,9 +157,9 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     }
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[3];
+      body = new Area[3];
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
@@ -243,7 +242,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
             y + 2 * pinSpacing,
             x + pinSpacing / 2,
             y + pinSpacing * 3);
-        body[2] = path;
+        body[2] = new Area(path);
       }
     }
     return body;

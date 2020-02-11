@@ -25,14 +25,12 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import org.diylc.awt.StringUtils;
-import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
-import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractTransparentComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -52,11 +50,10 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
   protected Orientation orientation = Orientation.DEFAULT;
   protected int numberOfStrings = DEFAULT_NUMBER_OF_STRINGS;
   protected Point controlPoint = new Point(0, 0);
-  protected Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = getFreshControlPoints(4);
   protected Polarity polarity = Polarity.North;
   protected Color labelColor;
-  protected transient Shape[] body;
+  protected transient Area[] body;
 
   public AbstractGuitarPickup() {
     updateControlPoints();
@@ -89,19 +86,9 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
     g2d.setFont(project.getFont().deriveFont(TERMINAL_FONT_SIZE * 1f));
     Point[] points = getControlPoints();
     StringUtils.drawCenteredText(
-        g2d,
-        "N",
-        (points[0].x + points[1].x) / 2 + dx,
-        (points[0].y + points[1].y) / 2 + dy,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        g2d, "N", (points[0].x + points[1].x) / 2 + dx, (points[0].y + points[1].y) / 2 + dy);
     StringUtils.drawCenteredText(
-        g2d,
-        "S",
-        (points[2].x + points[3].x) / 2 + dx,
-        (points[2].y + points[3].y) / 2 + dy,
-        HorizontalAlignment.CENTER,
-        VerticalAlignment.CENTER);
+        g2d, "S", (points[2].x + points[3].x) / 2 + dx, (points[2].y + points[3].y) / 2 + dy);
   }
 
   protected void drawMainLabel(
@@ -123,13 +110,11 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
       default:
     }
     g2d.translate(0, getMainLabelYOffset());
-
-    StringUtils.drawCenteredText(
-        g2d, getName(), 0, 0, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+    StringUtils.drawCenteredText(g2d, getName(), 0, 0);
     g2d.setTransform(originalTx);
   }
 
-  protected abstract Shape[] getBody();
+  protected abstract Area[] getBody();
 
   public abstract boolean isHumbucker();
 

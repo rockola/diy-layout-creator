@@ -67,6 +67,11 @@ public class Area extends java.awt.geom.Area {
     this.drawColor = drawColor;
   }
 
+  public Area add(Area area) {
+    super.add(area);
+    return this;
+  }
+
   public Area subtract(Area area) {
     super.subtract(area);
     return this;

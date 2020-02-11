@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -33,6 +32,7 @@ import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.components.semiconductors.SymbolFlipping;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
@@ -53,7 +53,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   protected Orientation orientation = Orientation.DEFAULT;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
   protected Point[] controlPoints;
-  protected transient Shape[] body;
+  protected transient Area[] body;
 
   {
     display = Display.NAME;
@@ -74,7 +74,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
 
     // Draw tube
 
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
     g2d.draw(body[0]);
@@ -196,11 +196,11 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
    *
    * @return
    */
-  protected abstract Shape[] initializeBody();
+  protected abstract Area[] initializeBody();
 
-  protected Shape[] getBody() {
+  protected Area[] getBody() {
     if (this.body == null) {
-      Shape[] newBody = initializeBody();
+      Area[] newBody = initializeBody();
 
       //      int pinSpacing = (int) PIN_SPACING.convertToPixels();
       int centerX = this.controlPoints[0].x; // + pinSpacing * 3;
@@ -211,7 +211,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
         tx.concatenate(AffineTransform.getTranslateInstance(-2 * centerX, 0));
         if (newBody != null) {
           for (int i = 0; i < newBody.length; i++) {
-            newBody[i] = tx.createTransformedShape(newBody[i]);
+            newBody[i].transform(tx);
           }
         }
       } else if (getFlip() == SymbolFlipping.Y) {
@@ -219,21 +219,16 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
         tx.concatenate(AffineTransform.getTranslateInstance(0, -2 * centerY));
         if (newBody != null) {
           for (int i = 0; i < newBody.length; i++) {
-            newBody[i] = tx.createTransformedShape(newBody[i]);
+            newBody[i].transform(tx);
           }
         }
       }
 
-      if (getOrientation() != Orientation.DEFAULT) {
-
+      if (getOrientation().isRotated() && newBody != null) {
         Point first = this.controlPoints[0];
-        double angle = Double.parseDouble(getOrientation().name().replace("_", ""));
-        AffineTransform rotate =
-            AffineTransform.getRotateInstance(Math.toRadians(angle), first.x, first.y);
-        if (newBody != null) {
-          for (int i = 0; i < newBody.length; i++) {
-            newBody[i] = rotate.createTransformedShape(newBody[i]);
-          }
+        AffineTransform rotate = getOrientation().getRotation(first);
+        for (int i = 0; i < newBody.length; i++) {
+          newBody[i].transform(rotate);
         }
       }
 

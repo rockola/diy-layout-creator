@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
@@ -89,7 +88,7 @@ public class OpenJack extends AbstractJack {
       Project project,
       IDrawingObserver drawingObserver) {
 
-    Shape[] body = getBody();
+    Area[] body = getBody();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
     Composite oldComposite = setTransparency(g2d);
@@ -263,10 +262,8 @@ public class OpenJack extends AbstractJack {
         AffineTransform rotation = AffineTransform.getRotateInstance(getTheta(), x, y);
         // Skip the last one because it's already rotated
         for (int i = 0; i < body.length; i++) {
-          Shape shape = body[i];
-          Area area = (Area) shape;
-          if (area != null) {
-            area.transform(rotation);
+          if (body[i] != null) {
+            body[i].transform(rotation);
           }
         }
       }

@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import org.diylc.awt.StringUtils;
@@ -188,36 +187,24 @@ public class ClosedJack extends AbstractJack {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
-
-    // Rectangle bounds = body.getBounds();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Composite oldComposite = setTransparency(g2d);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR);
-    g2d.fill(body[0]);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : SHAFT_COLOR);
-    g2d.fill(body[1]);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR);
-    g2d.fill(body[3]);
+    final Color border = tryBorderColor(outlineMode, BORDER_COLOR);
+    body[0].fillDraw(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : BODY_COLOR, border);
+    body[1].fillDraw(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : SHAFT_COLOR, border);
+    if (!outlineMode) {
+      body[2].fillDraw(g2d, SHAFT_COLOR, SHAFT_COLOR.darker());
+    }
+    // Pins
+    body[3].fillDraw(
+        g2d,
+        outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR,
+        outlineMode ? BORDER_COLOR : METAL_COLOR.darker());
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor = tryBorderColor(outlineMode, BORDER_COLOR);
-    g2d.setColor(finalBorderColor);
-    g2d.draw(body[0]);
-    g2d.draw(body[1]);
-    if (!outlineMode) {
-      g2d.setColor(SHAFT_COLOR.darker());
-      g2d.fill(body[2]);
-      g2d.draw(body[2]);
-    }
-
-    // Pins are the last piece.
-    g2d.setColor(outlineMode ? finalBorderColor : METAL_COLOR.darker());
-    g2d.draw(body[3]);
-
-    final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
-    g2d.setColor(finalLabelColor);
+    g2d.setColor(tryLabelColor(outlineMode, LABEL_COLOR));
     g2d.setFont(project.getFont());
     StringUtils.drawCenteredText(g2d, name, body[0].getBounds());
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);

@@ -23,10 +23,10 @@ package org.diylc.components.tube;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TubeSymbolTransformer;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.VisibilityPolicy;
@@ -64,17 +64,17 @@ public class PentodeSymbol extends AbstractTubeSymbol {
     updateControlPoints();
   }
 
-  public Shape[] initializeBody() {
+  public Area[] initializeBody() {
     if (body == null) {
       Point[] controlPoints = initializeControlPoints(this.controlPoints[0]);
 
-      body = new Shape[3];
+      body = new Area[3];
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
 
       // electrodes
-      GeneralPath polyline = new GeneralPath();
+      Path2D polyline = new Path2D.Double();
 
       // grid 1
       polyline.moveTo(x + pinSpacing * 5 / 4, y - pinSpacing * 3 / 8);
@@ -114,10 +114,10 @@ public class PentodeSymbol extends AbstractTubeSymbol {
       polyline.moveTo(x + pinSpacing * 2, y + pinSpacing * 3 / 8);
       polyline.lineTo(x + pinSpacing * 4, y + pinSpacing * 3 / 8);
 
-      body[0] = polyline;
+      body[0] = new Area(polyline);
 
       // connectors
-      polyline = new GeneralPath();
+      polyline = new Path2D.Double();
 
       // grid1
       polyline.moveTo(x, y);
@@ -174,12 +174,13 @@ public class PentodeSymbol extends AbstractTubeSymbol {
             controlPoints[6].x - pinSpacing / 2, controlPoints[6].y - pinSpacing * 10 / 8);
       }
 
-      body[1] = polyline;
+      body[1] = new Area(polyline);
 
       // bulb
       body[2] =
-          new Ellipse2D.Double(
-              x + pinSpacing / 2, y - pinSpacing * 7 / 2, pinSpacing * 5, pinSpacing * 5);
+          new Area(
+              new Ellipse2D.Double(
+                  x + pinSpacing / 2, y - pinSpacing * 7 / 2, pinSpacing * 5, pinSpacing * 5));
     }
     return body;
   }
@@ -187,19 +188,14 @@ public class PentodeSymbol extends AbstractTubeSymbol {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setColor(COLOR);
-
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-
     g2d.drawLine(width / 4, height / 4, width * 3 / 4, height / 4);
     g2d.drawLine(width / 2, height / 4, width / 2, 0);
-
     g2d.drawLine(
         width / 4 + 2 * width / 32, height * 3 / 4, width * 3 / 4 - 4 * width / 32, height * 3 / 4);
     g2d.drawLine(
         width / 4 + 2 * width / 32, height * 3 / 4, width / 4 + 2 * width / 32, height - 1);
-
     g2d.drawOval(1, 1, width - 1 - 2 * width / 32, height - 1 - 2 * width / 32);
-
     g2d.drawLine(0, height / 2, width / 8, height / 2);
     g2d.setStroke(
         new BasicStroke(

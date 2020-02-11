@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
@@ -82,7 +81,7 @@ public class RcaJack extends AbstractMultiPartComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     Composite oldComposite = setTransparency(g2d);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));

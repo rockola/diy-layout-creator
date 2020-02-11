@@ -24,13 +24,10 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import org.diylc.awt.StringUtils;
-import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
-import org.diylc.common.VerticalAlignment;
 import org.diylc.components.Area;
 import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
@@ -176,7 +173,7 @@ public class CliffJack extends AbstractJack {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     Composite oldComposite = setTransparency(g2d);
@@ -197,22 +194,18 @@ public class CliffJack extends AbstractJack {
     }
 
     // Pins are the last piece.
-    Shape pins = body[body.length - 1];
+    Area pins = body[body.length - 1];
     if (!outlineMode) {
-      g2d.setColor(METAL_COLOR);
-      g2d.fill(pins);
+      pins.fill(g2d, METAL_COLOR);
     }
-    g2d.setColor(tryColor(outlineMode, METAL_COLOR.darker()));
-    g2d.draw(pins);
+    pins.draw(g2d, tryColor(outlineMode, METAL_COLOR.darker()));
 
     final Color finalLabelColor = tryLabelColor(outlineMode, LABEL_COLOR);
     g2d.setColor(finalLabelColor);
     g2d.setFont(project.getFont());
     int centerX = (controlPoints[0].x + controlPoints[3].x) / 2;
     int centerY = (controlPoints[0].y + controlPoints[3].y) / 2;
-    StringUtils.drawCenteredText(
-        g2d, name, centerX, centerY, HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-
+    StringUtils.drawCenteredText(g2d, name, centerX, centerY);
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 

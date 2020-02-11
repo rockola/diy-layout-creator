@@ -25,9 +25,7 @@ import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +71,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
   // Array of 7 elements: 3 lug connectors, 1 pot body and 3 lugs
-  protected transient Shape[] body = null;
+  protected transient Area[] body = null;
 
   protected TrimmerType type = TrimmerType.FLAT_SMALL;
 
@@ -95,9 +93,9 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
     controlPoints[2].setLocation(controlPoints[0].x + dx2, controlPoints[0].y + dy2);
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[2];
+      body = new Area[2];
 
       // Calculate the center point as center of the minimum bounding
       // rectangle.
@@ -173,24 +171,18 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
       return;
     }
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    Shape mainShape = getBody()[0];
-    Shape shaftShape = getBody()[1];
+    Area mainShape = getBody()[0];
+    Area shaftShape = getBody()[1];
     if (mainShape != null) {
-      g2d.setColor(bodyColor);
       if (!outlineMode) {
         Composite oldComposite = setTransparency(g2d);
-        g2d.fill(mainShape);
+        mainShape.fill(g2d, bodyColor);
         if (shaftShape != null) {
-          g2d.setColor(SHAFT_COLOR);
-          g2d.fill(shaftShape);
-          g2d.setColor(SHAFT_BORDER_COLOR);
-          g2d.draw(shaftShape);
+          shaftShape.fillDraw(g2d, SHAFT_COLOR, SHAFT_BORDER_COLOR);
         }
         g2d.setComposite(oldComposite);
       }
-      Color finalBorderColor = tryBorderColor(outlineMode, borderColor);
-      g2d.setColor(finalBorderColor);
-      g2d.draw(mainShape);
+      mainShape.draw(g2d, tryBorderColor(outlineMode, borderColor));
     }
 
     // Draw pins.
@@ -222,25 +214,18 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int margin = 4;
-    g2d.setColor(BODY_COLOR);
-    g2d.fillRect(margin, margin, width - 2 * margin, width - 2 * margin);
-    g2d.setColor(BORDER_COLOR);
+    int margin = width / 8;
+    Area.rect(margin, margin, width - 2 * margin, width - 2 * margin)
+        .fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.drawRect(margin, margin, width - 2 * margin, width - 2 * margin);
     int shaftSize = 11;
     int slotSize = 2;
-    Area area =
-        new Area(
-            new Ellipse2D.Double(
-                width / 2 - shaftSize / 2, width / 2 - shaftSize / 2, shaftSize, shaftSize));
-    Area slot = new Area(new Rectangle2D.Double(0, width / 2 - slotSize / 2, width, slotSize));
+    Area area = Area.circle(width / 2, width / 2, shaftSize);
+    Area slot = Area.rect(0, width / 2 - slotSize / 2, width, slotSize);
     slot.transform(AffineTransform.getRotateInstance(Math.PI / 4, width / 2, width / 2));
     area.subtract(slot);
-    g2d.setColor(SHAFT_COLOR);
-    g2d.fill(area);
-    g2d.setColor(SHAFT_BORDER_COLOR);
-    g2d.draw(area);
+    area.fillDraw(g2d, SHAFT_COLOR, SHAFT_BORDER_COLOR);
 
     int pinSize = 3;
     g2d.setColor(PIN_COLOR);

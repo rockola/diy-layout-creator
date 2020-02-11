@@ -23,10 +23,10 @@ package org.diylc.components.tube;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.Area;
 import org.diylc.components.transform.TubeSymbolTransformer;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.VisibilityPolicy;
@@ -55,17 +55,17 @@ public class TriodeSymbol extends AbstractTubeSymbol {
     updateControlPoints();
   }
 
-  public Shape[] initializeBody() {
+  public Area[] initializeBody() {
     if (body == null) {
       Point[] controlPoints = initializeControlPoints(this.controlPoints[0]);
 
-      body = new Shape[3];
+      body = new Area[3];
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
       int pinSpacing = (int) PIN_SPACING.convertToPixels();
 
       // electrodes
-      GeneralPath polyline = new GeneralPath();
+      Path2D polyline = new Path2D.Double();
 
       // grid
       polyline.moveTo(x + pinSpacing * 5 / 4, y);
@@ -91,10 +91,10 @@ public class TriodeSymbol extends AbstractTubeSymbol {
         polyline.lineTo(x + pinSpacing * 4, y + pinSpacing);
       }
 
-      body[0] = polyline;
+      body[0] = new Area(polyline);
 
       // connectors
-      polyline = new GeneralPath();
+      polyline = new Path2D.Double();
 
       // grid
       polyline.moveTo(x, y);
@@ -128,12 +128,13 @@ public class TriodeSymbol extends AbstractTubeSymbol {
         }
       }
 
-      body[1] = polyline;
+      body[1] = new Area(polyline);
 
       // bulb
       body[2] =
-          new Ellipse2D.Double(
-              x + pinSpacing / 2, y - pinSpacing * 5 / 2, pinSpacing * 5, pinSpacing * 5);
+          new Area(
+              new Ellipse2D.Double(
+                  x + pinSpacing / 2, y - pinSpacing * 5 / 2, pinSpacing * 5, pinSpacing * 5));
     }
     return body;
   }

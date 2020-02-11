@@ -23,11 +23,11 @@ package org.diylc.components.passive;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
@@ -65,7 +65,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
   private Color color = COLOR;
   private Size tapSpacing = TAP_SPACING;
 
-  private Shape[] body = null;
+  private Area[] body = null;
 
   public TransformerCoil() {
     super();
@@ -181,7 +181,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       return;
     }
 
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setColor(LEAD_COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -200,18 +200,17 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
     g2d.drawLine(width * 7 / 8, height / 2, width * 7 / 8, height * 6 / 8);
     g2d.setColor(COLOR);
 
-    GeneralPath polyline = new GeneralPath();
+    Path2D polyline = new Path2D.Double();
     polyline.moveTo(width / 8, height / 2);
     polyline.curveTo(width / 8, height / 4, width * 3 / 8, height / 4, width * 3 / 8, height / 2);
     polyline.curveTo(
         width * 3 / 8, height / 4, width * 5 / 8, height / 4, width * 5 / 8, height / 2);
     polyline.curveTo(
         width * 5 / 8, height / 4, width * 7 / 8, height / 4, width * 7 / 8, height / 2);
-
     g2d.draw(polyline);
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
       double spacing = LEAD_SPACING.convertToPixels();
       int fx = 1;
@@ -238,7 +237,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       int coilsPerTap =
           (int) Math.round(4 * tapSpacing.convertToPixels() / TAP_SPACING.convertToPixels());
       double offset = OFFSET.convertToPixels();
-      GeneralPath leads = new GeneralPath();
+      Path2D leads = new Path2D.Double();
       int i = 0;
       leads.moveTo(this.controlPoints[i].x, this.controlPoints[i].y);
       leads.lineTo(
@@ -259,7 +258,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       double dxa = x2 - x1;
       double dya = y2 - y1;
 
-      GeneralPath coil = new GeneralPath();
+      Path2D coil = new Path2D.Double();
       coil.moveTo(
           this.controlPoints[i].getX() + fx * (spacing + offset),
           this.controlPoints[i].getY() + fy * (spacing + offset));
@@ -273,9 +272,9 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
             this.controlPoints[i].getY() + fy * (spacing + offset) + dy / coilsPerTap * (j + 1));
       }
 
-      body = new Shape[2];
-      body[0] = leads;
-      body[1] = coil;
+      body = new Area[2];
+      body[0] = new Area(leads);
+      body[1] = new Area(coil);
     }
     return body;
   }

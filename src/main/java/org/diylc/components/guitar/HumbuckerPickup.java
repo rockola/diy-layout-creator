@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -32,7 +31,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
-import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
@@ -98,7 +96,7 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     final Composite oldComposite = setTransparency(g2d);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
@@ -173,9 +171,9 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
   }
 
   @Override
-  protected Shape[] getBody() {
+  protected Area[] getBody() {
     if (body == null) {
-      body = new Shape[7];
+      body = new Area[7];
       Point[] points = getControlPoints();
       int x = points[0].x;
       int y = points[0].y;
@@ -435,10 +433,9 @@ public class HumbuckerPickup extends AbstractSingleOrHumbuckerPickup {
       body[6] = poleDecorationArea;
 
       // Rotate if needed
-      if (orientation != Orientation.DEFAULT) {
+      if (orientation.isRotated()) {
         AffineTransform rotation = orientation.getRotation(x, y);
-        for (Shape shape : body) {
-          Area area = (Area) shape;
+        for (Area area : body) {
           if (area != null) {
             area.transform(rotation);
           }

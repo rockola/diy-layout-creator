@@ -72,6 +72,10 @@ public enum Orientation {
     return this.theta;
   }
 
+  public boolean isRotated() {
+    return this != DEFAULT;
+  }
+
   /**
    * Get rotation corresponding to angle.
    *

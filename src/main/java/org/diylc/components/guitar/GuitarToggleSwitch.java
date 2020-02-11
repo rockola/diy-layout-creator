@@ -24,10 +24,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
@@ -44,7 +42,7 @@ import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 @ComponentDescriptor(
-    name = "Guitar Toggle Switch",
+    name = "Toggle Switch",
     category = "Guitar",
     author = "Branislav Stojkovic",
     description = "3-position toggle switch, like the pickup switch on a Les Paul",
@@ -63,9 +61,8 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
   private static Size TERMINAL_SPACING = Size.in(0.2);
 
   private String value = "";
-  private Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  transient Shape[] body;
+  private Point[] controlPoints = getFreshControlPoints(4);
+  transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
   public GuitarToggleSwitch() {
@@ -80,32 +77,25 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
-      g2d.fill(body[1]);
-      g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
-      g2d.fill(body[0]);
+      body[1].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : WAFER_COLOR);
+      body[0].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : BASE_COLOR);
       g2d.setComposite(oldComposite);
     }
 
-    g2d.setColor(tryBorderColor(outlineMode, WAFER_COLOR.darker()));
-    g2d.draw(body[0]);
-
-    g2d.setColor(tryBorderColor(outlineMode, BASE_COLOR.darker()));
-    g2d.draw(body[1]);
-
+    body[0].draw(g2d, tryBorderColor(outlineMode, WAFER_COLOR.darker()));
+    body[1].draw(g2d, tryBorderColor(outlineMode, BASE_COLOR.darker()));
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
-    g2d.setColor(METAL_COLOR);
-    g2d.draw(body[2]);
+    body[2].draw(g2d, METAL_COLOR);
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[3];
+      body = new Area[3];
 
       int x = controlPoints[0].x;
       int y = controlPoints[0].y;
@@ -113,38 +103,23 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
       int length = (int) LENGTH.convertToPixels();
       int waferThickness = getClosestOdd(WAFER_THICKNESS.convertToPixels());
 
-      Rectangle2D ground =
-          new Rectangle2D.Double(
+      body[0] =
+          Area.rect(
               x - waferThickness / 2,
               y,
               waferThickness - 1,
               baseLength + (length - baseLength) / 2);
-      body[0] = new Area(ground);
 
       int bodyY = y + (length - baseLength) / 2;
-
       Area waferArea = new Area();
-      waferArea.add(
-          new Area(
-              new Rectangle2D.Double(
-                  x + waferThickness / 2, bodyY, waferThickness * 3, baseLength)));
-      waferArea.add(
-          new Area(
-              new Rectangle2D.Double(
-                  x - waferThickness * 5 / 2, bodyY, waferThickness, baseLength)));
-      waferArea.add(
-          new Area(
-              new Rectangle2D.Double(
-                  x + waferThickness * 3 / 2, bodyY, waferThickness, baseLength)));
-      waferArea.add(
-          new Area(
-              new Rectangle2D.Double(
-                  x - waferThickness * 7 / 2, bodyY, waferThickness * 3, baseLength)));
-
+      waferArea.add(Area.rect(x + waferThickness / 2, bodyY, waferThickness * 3, baseLength));
+      waferArea.add(Area.rect(x - waferThickness * 5 / 2, bodyY, waferThickness, baseLength));
+      waferArea.add(Area.rect(x + waferThickness * 3 / 2, bodyY, waferThickness, baseLength));
+      waferArea.add(Area.rect(x - waferThickness * 7 / 2, bodyY, waferThickness * 3, baseLength));
       body[1] = waferArea;
 
       int terminalSpacing = (int) TERMINAL_SPACING.convertToPixels();
-      GeneralPath terminalPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+      Path2D terminalPath = new Path2D.Double(Path2D.WIND_EVEN_ODD);
       terminalPath.moveTo(x - waferThickness * 3 / 2, bodyY + 1);
       terminalPath.lineTo(x - waferThickness * 3 / 2, bodyY + baseLength);
       terminalPath.lineTo(x, y + length);
@@ -160,22 +135,15 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
       terminalPath.moveTo(x + waferThickness * 5 / 2, bodyY + 1);
       terminalPath.lineTo(x + waferThickness * 5 / 2, bodyY + baseLength);
       terminalPath.lineTo(x + terminalSpacing, y + length);
-      body[2] = terminalPath;
+      body[2] = new Area(terminalPath);
 
       // Rotate if needed
-      double theta = orientation.getTheta();
-      if (theta != 0) {
+      if (orientation.isRotated()) {
         AffineTransform rotation = orientation.getRotation(x, y);
-        // Skip the last one because it's already rotated
+        // TODO comment was "Skip the last one because it's already
+        // rotated" - should this be so?
         for (int i = 0; i < body.length; i++) {
-          Shape shape = body[i];
-          if (shape instanceof Area) {
-            Area area = (Area) shape;
-            area.transform(rotation);
-          } else if (shape instanceof GeneralPath) {
-            GeneralPath path = (GeneralPath) shape;
-            path.transform(rotation);
-          }
+          body[i].transform(rotation);
         }
       }
     }

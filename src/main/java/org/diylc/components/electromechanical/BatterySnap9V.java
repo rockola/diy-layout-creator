@@ -65,7 +65,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
 
   private String value = "";
   private Point controlPoint = new Point(0, 0);
-  transient Shape[] body;
+  private transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
   private Color color = BODY_COLOR;
 
@@ -76,7 +76,7 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     if (!componentState.isDragging()) {
@@ -98,9 +98,9 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     g2d.draw(body[2]);
   }
 
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[3];
+      body = new Area[3];
 
       int x = controlPoint.x;
       int y = controlPoint.y;

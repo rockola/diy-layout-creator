@@ -24,11 +24,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
@@ -103,39 +100,28 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
-
+    Area[] body = getBody();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-
     Composite oldComposite = setTransparency(g2d);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBaseColor());
-    g2d.fill(body[4]);
+    body[4].fill(g2d, outlineMode ? Constants.TRANSPARENT_COLOR : getBaseColor());
     g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getColor());
     g2d.fill(body[3] == null ? body[0] : body[3]);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getLugColor());
-    g2d.fill(body[1]);
-    g2d.setColor(tryColor(outlineMode, darkerOrLighter(LUG_COLOR)));
-    g2d.draw(body[1]);
+    body[1].fillDraw(
+        g2d,
+        outlineMode ? Constants.TRANSPARENT_COLOR : getLugColor(),
+        tryColor(outlineMode, darkerOrLighter(LUG_COLOR)));
     g2d.setComposite(oldComposite);
 
-    Color finalBorderColor = tryBorderColor(outlineMode, darkerOrLighter(getBaseColor()));
-    g2d.setColor(finalBorderColor);
-    g2d.draw(body[4]);
+    body[4].draw(g2d, tryBorderColor(outlineMode, darkerOrLighter(getBaseColor())));
 
-    finalBorderColor = tryBorderColor(outlineMode, darkerOrLighter(color));
-    g2d.setColor(finalBorderColor);
-    g2d.draw(body[0]);
+    final Color finalBorderColor = tryBorderColor(outlineMode, darkerOrLighter(color));
+    body[0].draw(g2d, finalBorderColor);
     if (body[3] != null) {
-      g2d.draw(body[3]);
+      body[3].draw(g2d, finalBorderColor);
     }
-
     if (!outlineMode) {
-      g2d.setColor(getPoleColor());
-      g2d.fill(body[2]);
-      g2d.setColor(darkerOrLighter(getPoleColor()));
-      g2d.draw(body[2]);
+      body[2].fillDraw(g2d, getPoleColor(), darkerOrLighter(getPoleColor()));
     }
-
     drawMainLabel(g2d, project, outlineMode, componentState);
     drawTerminalLabels(g2d, finalBorderColor, project);
   }
@@ -148,9 +134,9 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
   }
 
   @Override
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[5];
+      body = new Area[5];
 
       Point[] points = getControlPoints();
       int x = (points[0].x + points[3].x) / 2;
@@ -174,24 +160,12 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
         coilOffset = lipWidth / 2;
 
         Area mainArea =
-            new Area(
-                new RoundRectangle2D.Double(
-                    x - length / 2, y - lipWidth / 2 - width, length, width, width, width));
+            Area.roundRect(x - length / 2, y - lipWidth / 2 - width, length, width, width);
         // Cutout holes
         mainArea.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x - length / 2 + holeMargin - holeSize / 2,
-                    y - lipWidth / 2 - width / 2 - holeSize / 2,
-                    holeSize,
-                    holeSize)));
+            Area.circle(x - length / 2 + holeMargin, y - lipWidth / 2 - width / 2, holeSize));
         mainArea.subtract(
-            new Area(
-                new Ellipse2D.Double(
-                    x + length / 2 - holeMargin - holeSize / 2,
-                    y - lipWidth / 2 - width / 2 - holeSize / 2,
-                    holeSize,
-                    holeSize)));
+            Area.circle(x + length / 2 - holeMargin, y - lipWidth / 2 - width / 2, holeSize));
 
         body[3] = mainArea;
         RoundedPath basePath = new RoundedPath(baseRadius);
@@ -222,12 +196,8 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
 
         Area base = new Area(basePath.getPath());
         base.intersect(
-            new Area(
-                new Rectangle2D.Double(
-                    x - coilLength * 0.48,
-                    y - teleBaseWidth,
-                    coilLength * 0.96,
-                    teleBaseWidth * 2)));
+            Area.rect(
+                x - coilLength * 0.48, y - teleBaseWidth, coilLength * 0.96, teleBaseWidth * 2));
 
         // Cutout holes
         base.subtract(
@@ -260,7 +230,7 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
             poleArea.add(
                 Area.circle(
                     x - length / 2 + poleMargin + i * poleSpacing,
-                    y - coilOffset - width / 2 - poleSize / 2,
+                    y - coilOffset - width / 2,
                     poleSize));
           }
           break;
@@ -304,15 +274,13 @@ public class SingleCoilPickup extends AbstractSingleOrHumbuckerPickup {
       body[2] = poleArea;
 
       if (body[3] == null) {
-        ((Area) body[4]).subtract((Area) body[0]);
+        body[4].subtract(body[0]);
       }
 
       // Rotate if needed
       if (orientation != Orientation.DEFAULT) {
-        double theta = orientation.getTheta();
-        AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
-        for (Shape shape : body) {
-          Area area = (Area) shape;
+        AffineTransform rotation = orientation.getRotation(x, y);
+        for (Area area : body) {
           if (area != null) {
             area.transform(rotation);
           }

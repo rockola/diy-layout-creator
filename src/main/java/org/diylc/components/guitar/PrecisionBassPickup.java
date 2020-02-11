@@ -24,11 +24,8 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
-import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
@@ -65,7 +62,7 @@ public class PrecisionBassPickup extends AbstractBassPickup {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    Shape[] body = getBody();
+    Area[] body = getBody();
 
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
 
@@ -92,9 +89,9 @@ public class PrecisionBassPickup extends AbstractBassPickup {
   }
 
   @Override
-  public Shape[] getBody() {
+  public Area[] getBody() {
     if (body == null) {
-      body = new Shape[4];
+      body = new Area[4];
 
       Point[] points = getControlPoints();
       int x = points[0].x;
@@ -103,11 +100,7 @@ public class PrecisionBassPickup extends AbstractBassPickup {
       int length = (int) LENGTH.convertToPixels();
       int edgeRadius = (int) EDGE_RADIUS.convertToPixels();
       int pointMargin = (int) POINT_MARGIN.convertToPixels();
-
-      body[0] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  x - length, y - pointMargin, length, width, edgeRadius, edgeRadius));
+      body[0] = Area.roundRect(x - length, y - pointMargin, length, width, edgeRadius);
 
       int lipRadius = (int) LIP_RADIUS.convertToPixels();
       int lipHoleSize = getClosestOdd(LIP_HOLE_SIZE.convertToPixels());
@@ -118,10 +111,8 @@ public class PrecisionBassPickup extends AbstractBassPickup {
       lip.transform(AffineTransform.getTranslateInstance(x, lipY));
       lip2.transform(AffineTransform.getTranslateInstance(x - length, lipY));
       lip.add(lip2);
-
       body[1] = new Area(lip);
-
-      ((Area) body[1]).subtract((Area) body[0]);
+      body[1].subtract(body[0]);
 
       int pointSize = getClosestOdd(POINT_SIZE.convertToPixels());
       body[2] = Area.circle(x, y, pointSize);
@@ -138,12 +129,10 @@ public class PrecisionBassPickup extends AbstractBassPickup {
       body[3] = poleArea;
 
       // Rotate if needed
-      if (orientation != Orientation.DEFAULT) {
-        double theta = orientation.getTheta();
-        AffineTransform rotation = AffineTransform.getRotateInstance(theta, x, y);
-        for (Shape shape : body) {
-          Area area = (Area) shape;
-          if (shape != null) {
+      if (orientation.isRotated()) {
+        AffineTransform rotation = orientation.getRotation(x, y);
+        for (Area area : body) {
+          if (area != null) {
             area.transform(rotation);
           }
         }
