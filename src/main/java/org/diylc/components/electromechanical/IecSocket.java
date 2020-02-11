@@ -198,7 +198,7 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
       }
     }
     drawingObserver.stopTracking();
-    final Color pinFillColor = (outlineMode ? Constants.TRANSPARENT_COLOR : METAL_COLOR);
+    final Color pinFillColor = (outlineMode ? Constants.TRANSPARENT_COLOR : getPinColor());
     for (Pin pin : iec.getPins()) {
       pin.getShape().fillDraw(g2d, pinFillColor, drawColor);
     }
