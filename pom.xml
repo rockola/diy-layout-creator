@@ -202,10 +202,39 @@
       <artifactId>abcl</artifactId>
       <version>1.6.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.theoryinpractise</groupId>
+      <artifactId>googleformatter-maven-plugin</artifactId>
+      <version>1.7.3</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>diy-layout-creator</finalName>
     <plugins>
+      <plugin>
+	<groupId>com.theoryinpractise</groupId>
+	<artifactId>googleformatter-maven-plugin</artifactId>
+	<version>1.7.3</version>
+	<executions>
+          <execution>
+            <id>reformat-sources</id>
+            <configuration>
+              <includeStale>false</includeStale>
+              <style>GOOGLE</style>
+              <formatMain>true</formatMain>
+              <formatTest>true</formatTest>
+              <filterModified>false</filterModified>
+              <skip>false</skip>
+              <fixImports>false</fixImports>
+              <maxLineLength>100</maxLineLength>
+            </configuration>
+            <goals>
+              <goal>format</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+	</executions>
+      </plugin>
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-checkstyle-plugin</artifactId>
