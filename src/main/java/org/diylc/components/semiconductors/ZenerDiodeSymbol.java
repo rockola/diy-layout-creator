@@ -62,25 +62,16 @@ public class ZenerDiodeSymbol extends AbstractDiodeSymbol {
     polygon.lineTo((width - size) / 2 + size / SQRT_TWO, height / 2);
     polygon.closePath();
     Area area = new Area(polygon);
-    area.draw(g2d, COLOR);
+    area.fill(g2d, COLOR);
     g2d.setColor(COLOR);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(bandSize));
-    g2d.drawLine(
-        (int) ((width - size) / 2 + size / SQRT_TWO),
-        (height - size) / 2,
-        (int) ((width - size) / 2 + size / SQRT_TWO),
-        (height + size) / 2);
+    int x1 = (int) ((width - size) / 2 + size / SQRT_TWO);
+    int y1 = (height - size) / 2;
+    int y2 = (height + size) / 2;
+    g2d.drawLine(x1, y1, x1, y2);
     int finSize = 2 * width / 32;
-    g2d.drawLine(
-        (int) ((width - size) / 2 + size / SQRT_TWO),
-        (height - size) / 2,
-        (int) ((width - size) / 2 + size / SQRT_TWO + finSize),
-        (height - size) / 2 - finSize);
-    g2d.drawLine(
-        (int) ((width - size) / 2 + size / SQRT_TWO),
-        (height + size) / 2,
-        (int) ((width - size) / 2 + size / SQRT_TWO - finSize),
-        (height + size) / 2 + finSize);
+    g2d.drawLine(x1, y1, x1 + finSize, y1 - finSize);
+    g2d.drawLine(x1, y2, x1 - finSize, y1 + finSize);
   }
 
   @Override
