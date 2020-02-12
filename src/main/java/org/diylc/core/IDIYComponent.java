@@ -23,6 +23,7 @@ package org.diylc.core;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serializable;
+import java.util.List;
 import javax.swing.Icon;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -218,6 +219,13 @@ public interface IDIYComponent<T> extends Serializable {
 
   /** @return full value for BOM. */
   String getValueForDisplay();
+
+  /**
+   * Get a list of default variants.
+   *
+   * @return List (possibly empty) of component instances.
+   */
+  List<IDIYComponent<T>> getDefaultVariants();
 
   /**
    * Checks if two components are equal.
