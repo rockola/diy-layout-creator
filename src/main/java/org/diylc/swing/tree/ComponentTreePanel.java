@@ -20,10 +20,9 @@
 
 package org.diylc.swing.tree;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +56,7 @@ public class ComponentTreePanel extends JPanel {
 
   /** Constructor. */
   public ComponentTreePanel() {
-    super();
-    setLayout(new GridBagLayout());
+    super(new BorderLayout());
 
     tree = new JTree();
     tree.setRootVisible(false);
@@ -123,13 +121,7 @@ public class ComponentTreePanel extends JPanel {
           }
         });
 
-    GridBagConstraints constraints = new GridBagConstraints();
-    constraints.gridx = 0;
-    constraints.gridy = 0;
-    constraints.fill = GridBagConstraints.HORIZONTAL;
-    constraints.weighty = 0;
-    constraints.gridwidth = 1;
-    add(getSearchField(), constraints);
+    add(getSearchField(), BorderLayout.NORTH);
 
     final ComponentTreePanel treePanel = this;
     getSearchField()
@@ -208,11 +200,8 @@ public class ComponentTreePanel extends JPanel {
               }
             });
 
-    constraints.gridy++;
-    constraints.weightx = 1;
-    constraints.weighty = 1;
     JScrollPane sp = new JScrollPane(tree);
-    add(sp, constraints);
+    add(sp, BorderLayout.CENTER);
   }
 
   private void collapse(TreeNode node) {
