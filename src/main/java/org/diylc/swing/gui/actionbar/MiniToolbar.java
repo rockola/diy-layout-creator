@@ -22,40 +22,35 @@ package org.diylc.swing.gui.actionbar;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JSeparator;
+import javax.swing.JToolBar;
 
-public class MiniToolbar extends JPanel {
+public class MiniToolbar extends JToolBar {
 
   private static final long serialVersionUID = 1L;
 
   public MiniToolbar() {
     setOpaque(false);
     setBorder(BorderFactory.createEmptyBorder());
+    // note: not currently floatable as will be added as a child of
+    // JMenuBar
+    setFloatable(true);
+    setRollover(true);
   }
 
-  public void add(final Action action) {
-    final JLabel l = new JLabel();
-    l.setIcon((Icon) action.getValue(AbstractAction.SMALL_ICON));
-    l.setToolTipText((String) action.getValue(AbstractAction.NAME));
-    l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    l.addMouseListener(
-        new MouseAdapter() {
-
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            action.actionPerformed(null);
-          }
-        });
-    add(l);
-    setEnabled(false);
+  public void addButton(final Action action) {
+    JButton button = new JButton();
+    button.setIcon((Icon) action.getValue(AbstractAction.SMALL_ICON));
+    button.setToolTipText((String) action.getValue(AbstractAction.NAME));
+    button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    button.addActionListener((e) -> action.actionPerformed(null));
+    button.setEnabled(false);
+    add(button);
   }
 
   @Override
@@ -66,8 +61,8 @@ public class MiniToolbar extends JPanel {
   }
 
   public void addSpacer() {
-    JSeparator l = new JSeparator();
-    //    l.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
-    add(l);
+    JSeparator spacer = new JSeparator();
+    //    spacer.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black));
+    add(spacer);
   }
 }

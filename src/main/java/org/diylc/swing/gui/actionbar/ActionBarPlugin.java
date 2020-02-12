@@ -60,21 +60,21 @@ public class ActionBarPlugin implements IPlugIn {
   public MiniToolbar getMiniToolbar() {
     if (miniToolbar == null) {
       miniToolbar = new MiniToolbar();
-      miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, 1));
-      miniToolbar.add(ActionFactory.createRotateSelectionAction(plugInPort, -1));
+      miniToolbar.addButton(ActionFactory.createRotateSelectionAction(plugInPort, 1));
+      miniToolbar.addButton(ActionFactory.createRotateSelectionAction(plugInPort, -1));
       miniToolbar.addSpacer();
-      miniToolbar.add(
+      miniToolbar.addButton(
           ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.HORIZONTAL));
-      miniToolbar.add(
+      miniToolbar.addButton(
           ActionFactory.createMirrorSelectionAction(plugInPort, IComponentTransformer.VERTICAL));
       miniToolbar.addSpacer();
-      miniToolbar.add(ActionFactory.createNudgeAction(plugInPort));
+      miniToolbar.addButton(ActionFactory.createNudgeAction(plugInPort));
       miniToolbar.addSpacer();
-      miniToolbar.add(ActionFactory.createSendToBackAction(plugInPort));
-      miniToolbar.add(ActionFactory.createBringToFrontAction(plugInPort));
+      miniToolbar.addButton(ActionFactory.createSendToBackAction(plugInPort));
+      miniToolbar.addButton(ActionFactory.createBringToFrontAction(plugInPort));
       miniToolbar.addSpacer();
-      miniToolbar.add(ActionFactory.createGroupAction(plugInPort));
-      miniToolbar.add(ActionFactory.createUngroupAction(plugInPort));
+      miniToolbar.addButton(ActionFactory.createGroupAction(plugInPort));
+      miniToolbar.addButton(ActionFactory.createUngroupAction(plugInPort));
     }
     return miniToolbar;
   }
