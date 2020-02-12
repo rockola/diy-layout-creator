@@ -85,22 +85,18 @@ import org.diylc.swingframework.ButtonDialog;
 
 public class MainFrame extends JFrame {
 
-  private static final Logger LOG = LogManager.getLogger(MainFrame.class);
-
   private static final long serialVersionUID = 1L;
+  private static final Logger LOG = LogManager.getLogger(MainFrame.class);
 
   private JPanel centerPanel;
   private JPanel leftPanel;
   private JPanel rightPanel;
   private JPanel topPanel;
   private JPanel bottomPanel;
-
   private Presenter presenter = null;
-
   private JMenuBar mainMenuBar = new JMenuBar();
   private Map<String, JMenu> menuMap = new HashMap<String, JMenu>();
   private Map<String, ButtonGroup> buttonGroupMap = new HashMap<String, ButtonGroup>();
-
   private CanvasPlugin canvasPlugin = new CanvasPlugin();
   private ComponentTabbedPane componentTabbedPane = new ComponentTabbedPane();
 
@@ -110,7 +106,31 @@ public class MainFrame extends JFrame {
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     setPreferredSize(new Dimension(1024, 700));
     setJMenuBar(mainMenuBar);
-    createBasePanels();
+
+    Container c = new Container();
+    c.setLayout(new BorderLayout());
+
+    centerPanel = new JPanel(new BorderLayout());
+    c.add(centerPanel, BorderLayout.CENTER);
+
+    topPanel = new JPanel();
+    topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+    c.add(topPanel, BorderLayout.NORTH);
+
+    leftPanel = new JPanel();
+    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
+    c.add(leftPanel, BorderLayout.WEST);
+
+    bottomPanel = new JPanel();
+    bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+    c.add(bottomPanel, BorderLayout.SOUTH);
+
+    rightPanel = new JPanel();
+    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.X_AXIS));
+    c.add(rightPanel, BorderLayout.EAST);
+
+    setContentPane(c);
+
     setIconImages(Arrays.asList(Icon.AppSmall.image(), Icon.AppMedium.image(), Icon.App.image()));
     DialogFactory.getInstance().initialize(this);
 
@@ -133,14 +153,10 @@ public class MainFrame extends JFrame {
       presenter.installPlugin(new CloudPlugin());
       presenter.installPlugin(new HelpMenuPlugin());
       presenter.installPlugin(new ActionBarPlugin());
-
       presenter.installPlugin(new StatusBar());
-
       presenter.installPlugin(canvasPlugin);
-
       presenter.installPlugin(new ComponentTree(canvasPlugin.getCanvasPanel()));
       presenter.installPlugin(new FramePlugin());
-
       presenter.installPlugin(new AutoSavePlugin());
 
       presenter.createNewProject();
@@ -198,32 +214,6 @@ public class MainFrame extends JFrame {
             });
     timer.setRepeats(false);
     timer.start();
-  }
-
-  private void createBasePanels() {
-    Container c = new Container();
-    c.setLayout(new BorderLayout());
-
-    centerPanel = new JPanel(new BorderLayout());
-    c.add(centerPanel, BorderLayout.CENTER);
-
-    topPanel = new JPanel();
-    topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-    c.add(topPanel, BorderLayout.NORTH);
-
-    leftPanel = new JPanel();
-    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
-    c.add(leftPanel, BorderLayout.WEST);
-
-    bottomPanel = new JPanel();
-    bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-    c.add(bottomPanel, BorderLayout.SOUTH);
-
-    rightPanel = new JPanel();
-    rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.X_AXIS));
-    c.add(rightPanel, BorderLayout.EAST);
-
-    setContentPane(c);
   }
 
   public void showMessage(String message, String title, int messageType) {
