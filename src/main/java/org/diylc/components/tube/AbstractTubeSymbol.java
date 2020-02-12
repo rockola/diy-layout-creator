@@ -69,19 +69,16 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
+
     Color finalColor = tryColor(outlineMode, color);
     g2d.setColor(finalColor);
 
     // Draw tube
-
     Area[] body = getBody();
-
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(2));
     g2d.draw(body[0]);
-
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.draw(body[1]);
-
     if (body[2] != null) {
       g2d.draw(body[2]);
     }
