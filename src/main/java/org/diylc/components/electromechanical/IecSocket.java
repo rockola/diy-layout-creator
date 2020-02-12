@@ -24,7 +24,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,33 +58,32 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(IecSocket.class);
 
-  private static Map<String, Iec60320> subtypes = new HashMap<>();
-
-  static {
-    subtypes.put("C1", Iec60320.getC1());
-    subtypes.put("C2", Iec60320.getC2());
-    subtypes.put("C14", Iec60320.getC14());
-  }
-
   private static Size HORIZONTAL_SPACING = Size.in(0.3);
   private static Size VERTICAL_SPACING = Size.in(0.2);
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = getFreshControlPoints(3);
   protected String value;
 
   private Orientation orientation = Orientation.DEFAULT;
-  private Iec60320 iec;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color pinColor = METAL_COLOR;
 
   public IecSocket() {
     super();
-    iec = Iec60320.getC14();
-    controlPoints = iec.getControlPoints();
+    controlPoints = getControlPoints();
     updateControlPoints();
+  }
+
+  protected abstract Point[] getControlPoints();
+
+  @Override
+  public List<IDIYComponent<?>> getDefaultVariants() {
+    List<IDIYComponent<?>> variants = new ArrayList<>();
+    variants.addAll(subtypes.values());
+    return variants;
   }
 
   private void updateControlPoints() {
