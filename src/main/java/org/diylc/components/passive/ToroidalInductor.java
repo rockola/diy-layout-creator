@@ -29,17 +29,18 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Inductance;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.HENRY)
 @ComponentDescriptor(
     name = "Toroidal Inductor",
     author = "Branislav Stojkovic",
@@ -47,9 +48,9 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "L",
     description = "Ferrite core torroidal inductor mounted vertically",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
+public class ToroidalInductor extends AbstractLeadedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -61,11 +62,11 @@ public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
   public static final int BAND_SPACING = 5;
   public static final int FIRST_BAND = -4;
 
-  private Inductance value = null;
-  private Resistance resistance = null;
+  private Value resistance = null;
 
   public ToroidalInductor() {
     super();
+    valueUnit = SiUnit.HENRY;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.leadColor = COPPER_COLOR;
@@ -75,15 +76,6 @@ public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
   @Override
   protected boolean supportsStandingMode() {
     return false;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Inductance getValue() {
-    return value;
-  }
-
-  public void setValue(Inductance value) {
-    this.value = value;
   }
 
   @Override
@@ -157,12 +149,15 @@ public class ToroidalInductor extends AbstractLeadedComponent<Inductance> {
     return super.getFlipStanding();
   }
 
+  @ComponentValue(SiUnit.OHM)
   @EditableProperty
-  public Resistance getResistance() {
+  public Value getResistance() {
     return resistance;
   }
 
-  public void setResistance(Resistance resistance) {
-    this.resistance = resistance;
+  public void setResistance(Value resistance) {
+    if (resistance == null || resistance.getUnit() == SiUnit.OHM) {
+      this.resistance = resistance;
+    }
   }
 }

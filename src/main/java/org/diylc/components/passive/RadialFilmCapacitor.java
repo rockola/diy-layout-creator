@@ -23,9 +23,10 @@ package org.diylc.components.passive;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.measures.Size;
 
@@ -36,7 +37,8 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Radial film capacitor, similar to Sprague Orange Drop",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
+    leadType = LeadType.RADIAL,
     transformer = SimpleComponentTransformer.class)
 public class RadialFilmCapacitor extends RadialCapacitor {
 

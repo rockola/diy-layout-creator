@@ -22,7 +22,13 @@ package org.diylc.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.diylc.core.IPropertyValidator;
+import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.measures.SiUnit;
 
 /**
  * Entity class for editable properties extracted from component objects. Represents a single
@@ -32,35 +38,88 @@ import org.diylc.core.IPropertyValidator;
  */
 public class PropertyWrapper implements Cloneable {
 
+  private static final Logger LOG = LogManager.getLogger(ComponentType.class);
+
+  private static Map<String, IPropertyValidator> propertyValidatorCache;
+
   private String name;
-  private Class<?> type;
+  private Class type;
   private Object value;
   private String setter;
   private String getter;
   private boolean defaultable;
+  private EditableProperty annotation;
   private IPropertyValidator validator;
   private boolean unique = true;
   private boolean changed = false;
   private int sortOrder;
   private Object ownerObject;
+  /**
+   * If not null, the type of the associated component value (SiUnit.FARAD, etc.).
+   *
+   * <p>Set with class annotation @ComponentValue.
+   */
+  private SiUnit valueType;
+  /**
+   * If true, the value of this component is a String.
+   *
+   * <p>Set with class annotation @StringValue. stringValue is ignored if valueType is not null.
+   */
+  private boolean stringValue = false;
+  /** If true and this property has a String value, the editor should be multi-line. */
+  private boolean multiLine = false;
+
+  static {
+    propertyValidatorCache = new HashMap<String, IPropertyValidator>();
+  }
 
   public PropertyWrapper(
       String name,
-      Class<?> type,
+      Class type,
       String getter,
       String setter,
-      boolean defaultable,
-      IPropertyValidator validator,
-      int sortOrder) {
+      EditableProperty annotation,
+      SiUnit valueType,
+      boolean stringValue,
+      boolean multiLine) {
     super();
     this.name = name;
     this.type = type;
     this.getter = getter;
     this.setter = setter;
-    this.defaultable = defaultable;
-    this.validator = validator;
-    this.sortOrder = sortOrder;
+    this.annotation = annotation;
+    if (annotation != null) {
+      this.defaultable = annotation.defaultable();
+      this.sortOrder = annotation.sortOrder();
+      this.validator = getPropertyValidator(annotation.validatorClass());
+    }
+    this.valueType = valueType;
+    this.stringValue = stringValue;
+    this.multiLine = multiLine;
     this.ownerObject = null;
+  }
+
+  public PropertyWrapper(
+      String name, Class type, String getter, String setter, EditableProperty annotation) {
+    this(name, type, getter, setter, annotation, null, false, false);
+  }
+
+  private static IPropertyValidator getPropertyValidator(
+      Class<? extends IPropertyValidator> clazz) {
+    if (propertyValidatorCache.containsKey(clazz.getName())) {
+      return propertyValidatorCache.get(clazz.getName());
+    }
+    IPropertyValidator validator;
+    try {
+      validator = clazz.newInstance();
+    } catch (Exception e) {
+      LOG.error("Could not instantiate validator for " + clazz.getName(), e);
+      // TODO throw exception? if instantiation fails, null is returned,
+      // but is this really the correct behaviour?
+      return null;
+    }
+    propertyValidatorCache.put(clazz.getName(), validator);
+    return validator;
   }
 
   public void readFrom(Object object)
@@ -69,15 +128,6 @@ public class PropertyWrapper implements Cloneable {
     this.ownerObject = object;
     this.value = getGetter().invoke(object);
   }
-
-  // public void readUniqueFrom(IDIYComponent component)
-  // throws IllegalArgumentException, IllegalAccessException,
-  // InvocationTargetException {
-  // Object newValue = getter.invoke(component);
-  // if (!newValue.equals(value)) {
-  // this.value = null;
-  // }
-  // }
 
   public void writeTo(Object object)
       throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
@@ -105,8 +155,24 @@ public class PropertyWrapper implements Cloneable {
     this.value = value;
   }
 
+  public SiUnit getValueType() {
+    return valueType;
+  }
+
+  public boolean isStringValue() {
+    return stringValue;
+  }
+
+  public boolean isMultiLine() {
+    return multiLine;
+  }
+
   public Object getOwnerObject() {
     return ownerObject;
+  }
+
+  public EditableProperty getAnnotation() {
+    return annotation;
   }
 
   public boolean isDefaultable() {
@@ -174,9 +240,10 @@ public class PropertyWrapper implements Cloneable {
             this.type,
             this.getter,
             this.setter,
-            this.defaultable,
-            this.validator,
-            this.sortOrder);
+            this.annotation,
+            this.valueType,
+            this.stringValue,
+            this.multiLine);
     clone.value = this.value; // NOTE: not copied! //ola 20100110
     clone.changed = this.changed;
     clone.unique = this.unique;

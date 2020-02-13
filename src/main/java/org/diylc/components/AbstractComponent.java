@@ -30,11 +30,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import javax.swing.Icon;
@@ -44,27 +40,32 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.common.Config;
 import org.diylc.common.Display;
-import org.diylc.core.ComponentState; // should probably be in this package
-import org.diylc.core.IDIYComponent; // should probably be in this package
+import org.diylc.core.ComponentState;
+import org.diylc.core.IDrawingObserver;
+import org.diylc.core.Project;
 import org.diylc.core.Theme;
+import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.measures.SiUnit;
+import org.diylc.core.measures.Value;
 import org.diylc.parsing.XmlNode;
-import org.diylc.presenter.ComponentArea; // should probably be in this package
+import org.diylc.presenter.ComponentArea;
 
 /**
- * Abstract implementation of {@link IDIYComponent} that contains component name and toString.
- *
- * <p>IMPORTANT: to improve performance, all fields except for <code>Point</code> and <code>Point
- * </code> arrays should be immutable. Failing to comply with this can result in annoying and hard
- * to trace bugs.
+ * Base class for all components.
  *
  * @author Branislav Stojkovic
- * @param <T> Value type.
  */
-public abstract class AbstractComponent<T> implements IDIYComponent<T> {
+public abstract class AbstractComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(AbstractComponent.class);
+
+  public static final int CHASSIS = 1;
+  public static final int BOARD = 2;
+  public static final int TRACE = 3;
+  public static final int COMPONENT = 4;
+  public static final int TEXT = 5;
 
   public static final Color CANVAS_COLOR = Color.white;
   public static final Color SELECTION_COLOR = Color.red;
@@ -79,16 +80,61 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
   protected static final double HALF_PI = Math.PI / 2;
   protected static final double SQRT_TWO = Math.sqrt(2);
 
-  protected String name = "";
-  protected Display display = Display.NAME;
   protected transient int sequenceNumber = 0;
 
+  protected Point[] points;
+  protected SiUnit valueUnit;
+
   private static int componentSequenceNumber = 0;
+
+  private String name = "";
+  private Value value;
+  private String stringValue = "";
+  private Display display = Display.NAME;
+
   private transient ComponentArea componentArea;
 
   private int nextSequenceNumber() {
     componentSequenceNumber = componentSequenceNumber + 1;
     return componentSequenceNumber;
+  }
+
+  @EditableProperty(defaultable = false)
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @EditableProperty
+  public final Value getValue() {
+    return value;
+  }
+
+  public final void setValue(Value value) {
+    if (value == null || valueUnit != null || value.getUnit() == valueUnit) {
+      this.value = value;
+    }
+  }
+
+  @EditableProperty(name = "Value")
+  public String getStringValue() {
+    return stringValue;
+  }
+
+  public void setStringValue(String value) {
+    this.stringValue = value;
+  }
+
+  @EditableProperty
+  public Display getDisplay() {
+    return display;
+  }
+
+  public void setDisplay(Display value) {
+    this.display = value;
   }
 
   public ComponentArea getArea() {
@@ -224,7 +270,6 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return new Point((a.x + b.x) / 2, (a.y + b.y) / 2);
   }
 
-  @Override
   public String getIdentifier() {
     if (sequenceNumber == 0) {
       // has to be inited here as won't/can't be inited when unmarshaling
@@ -277,28 +322,19 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return strings;
   }
 
-  @EditableProperty(defaultable = false)
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @Override
+  /**
+   * @param index
+   * @return true, if the specified control point may overlap with other control points <b>of the
+   *     same component</b>. The other control point must be able to overlap too.
+   */
   public boolean canControlPointOverlap(int index) {
     return false;
   }
 
-  @Override
   public String toString() {
     return name;
   }
 
-  @Override
   public String getValueForDisplay() {
     return getValue() == null ? "" : getValue().toString();
   }
@@ -325,6 +361,79 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return new Color(
         Color.HSBtoRGB(hsb[0], hsb[1], hsb[2] > 0.5 ? hsb[2] - 0.25f : hsb[2] + 0.25f));
   }
+
+  /**
+   * Copy control points from another component.
+   *
+   * <p>The purpose of this method is to replace other with this, saving location from other.
+   *
+   * @param other Other component.
+   */
+  public void copyControlPoints(AbstractComponent other) {
+    if (other != null) {
+      if (other.getControlPointCount() != this.getControlPointCount()) {
+        throw new RuntimeException(
+            String.format(
+                "copyControlPoints(%s) other has %d points while this has %d",
+                other.getName(), other.getControlPointCount(), this.getControlPointCount()));
+      }
+      for (int i = 0; i < other.getControlPointCount(); i++) {
+        this.points[i] = new Point(other.points[i]);
+      }
+    }
+  }
+
+  public abstract int getControlPointCount();
+
+  /**
+   * Get control point with specified index.
+   *
+   * @param nth
+   * @return nth control point.
+   */
+  public abstract Point getControlPoint(int nth);
+
+  /**
+   * Updates the control point at the specified index.
+   *
+   * @param point
+   * @param index
+   */
+  public abstract void setControlPoint(Point point, int nth);
+
+  public abstract void drawIcon(Graphics2D g2d, int width, int height);
+
+  /**
+   * @param index
+   * @return true if the specified control point may stick to control points of other components.
+   */
+  public boolean isControlPointSticky(int index) {
+    return false;
+  }
+
+  /**
+   * @param index Index of control point
+   * @return visibility policy associated with control point.
+   */
+  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
+    return VisibilityPolicy.NEVER;
+  }
+
+  /**
+   * Draws the component onto the {@link Graphics2D}.
+   *
+   * @param g2d
+   * @param componentState
+   * @param outlineMode
+   * @param project
+   * @param drawingObserver
+   */
+  public abstract void draw(
+      Graphics2D g2d,
+      ComponentState componentState,
+      boolean outlineMode,
+      Project project,
+      IDrawingObserver drawingObserver);
 
   /**
    * @param clip
@@ -363,100 +472,27 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return checkPointsClipped(new Area(clip));
   }
 
-  public IDIYComponent<T> clone() throws CloneNotSupportedException {
-    try {
-      // Instantiate object of the same type
-      AbstractComponent<T> newInstance =
-          (AbstractComponent<T>) this.getClass().getConstructors()[0].newInstance();
-      Class<?> clazz = this.getClass();
-      while (AbstractComponent.class.isAssignableFrom(clazz)) {
-        Field[] fields = clazz.getDeclaredFields();
-        clazz = clazz.getSuperclass();
-        // fields = this.getClass().getDeclaredFields();
-        // Copy over all non-static, non-final fields that are declared
-        // in AbstractComponent or one of it's child classes
-        for (Field field : fields) {
-          if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
-            field.setAccessible(true);
-            Object value = field.get(this);
-
-            // Deep copy point arrays.
-            // TODO: something nicer
-            if (value != null
-                && value.getClass().isArray()
-                && value.getClass().getComponentType().isAssignableFrom(Point.class)) {
-              Object newArray =
-                  Array.newInstance(value.getClass().getComponentType(), Array.getLength(value));
-              for (int i = 0; i < Array.getLength(value); i++) {
-                Point p = (Point) Array.get(value, i);
-                Array.set(newArray, i, new Point(p));
-              }
-              value = newArray;
-            }
-            // Deep copy points.
-            // TODO: something nicer
-            if (value instanceof Point) {
-              value = new Point((Point) value);
-            }
-
-            field.set(newInstance, value);
-          }
-        }
-      }
-      return newInstance;
-    } catch (Exception e) {
-      throw new CloneNotSupportedException("Could not clone the component. " + e.getMessage());
-    }
+  public AbstractComponent clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException(
+        "clone() not implemented for " + this.getClass().getName());
   }
 
-  @Override
-  public boolean isEqualTo(IDIYComponent<?> other) {
-    if (other == null) {
+  // TODO implement this for all subclasses
+  // remember to call super.isEqualTo(other) first
+  public boolean isEqualTo(AbstractComponent other) {
+    if (other == null || !other.getClass().equals(this.getClass())) {
       return false;
     }
-    if (!other.getClass().equals(this.getClass())) {
+    if ((name != other.name
+        || (name == null && other.name != null)
+        || (name != null && other.name == null)
+        || !name.equals(other.name))) {
       return false;
     }
-    Class<?> clazz = this.getClass();
-    while (AbstractComponent.class.isAssignableFrom(clazz)) {
-      Field[] fields = clazz.getDeclaredFields();
-      clazz = clazz.getSuperclass();
-      // fields = this.getClass().getDeclaredFields();
-      // Copy over all non-static, non-final fields that are declared
-      // in
-      // AbstractComponent or one of it's child classes
-      for (Field field : fields) {
-        if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
-          field.setAccessible(true);
-          try {
-            Object value = field.get(this);
-            Object otherValue = field.get(other);
-            if (!compareObjects(value, otherValue)) {
-              return false;
-            }
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
-        }
-      }
+    if (display != other.display) {
+      return false;
     }
     return true;
-  }
-
-  private boolean compareObjects(Object o1, Object o2) {
-    if (o1 == null && o2 == null) {
-      return true;
-    }
-    if (o1 == null || o2 == null) {
-      return false;
-    }
-    if (o1.getClass().isArray()) {
-      if (o1.getClass().getComponentType() == byte.class) {
-        return Arrays.equals((byte[]) o1, (byte[]) o2);
-      }
-      return Arrays.equals((Object[]) o1, (Object[]) o2);
-    }
-    return o1.equals(o2);
   }
 
   protected Point[] getFreshControlPoints(int howMany) {
@@ -467,32 +503,26 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     return array;
   }
 
-  @Override
   public String getControlPointNodeName(int index) {
     return Integer.toString(index + 1);
   }
 
-  @Override
   public String getInternalLinkName(int index1, int index2) {
     return null;
   }
 
-  @Override
   public String[] getSectionNames(int pointIndex) {
     return null;
   }
 
-  @Override
   public String getCommonPointName(int pointIndex) {
     return null;
   }
 
-  @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return true;
   }
 
-  @Override
   public void nudge(int offsetX, int offsetY) {
     for (int i = 0; i < getControlPointCount(); i++) {
       Point p = getControlPoint(i);
@@ -521,6 +551,10 @@ public abstract class AbstractComponent<T> implements IDIYComponent<T> {
     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     drawIcon(g2d, ICON_SIZE, ICON_SIZE);
     return new ImageIcon(image);
+  }
+
+  public List<AbstractComponent> getDefaultVariants() {
+    return new ArrayList<AbstractComponent>();
   }
 
   /** ************************************************************** Unmarshal XML */

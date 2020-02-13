@@ -26,7 +26,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class SelectionTransferable implements Transferable {
 
@@ -34,9 +34,9 @@ public class SelectionTransferable implements Transferable {
       new DataFlavor(List.class, "Component Selection");
 
   private Point startPoint;
-  private List<IDIYComponent<?>> selection;
+  private List<AbstractComponent> selection;
 
-  public SelectionTransferable(List<IDIYComponent<?>> selection, Point startPoint) {
+  public SelectionTransferable(List<AbstractComponent> selection, Point startPoint) {
     super();
     this.selection = selection;
     this.startPoint = startPoint;

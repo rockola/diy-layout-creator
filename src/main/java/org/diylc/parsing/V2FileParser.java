@@ -69,11 +69,10 @@ import org.diylc.components.tube.TriodeSymbol;
 import org.diylc.components.tube.TubeSocket;
 import org.diylc.components.tube.TubeSocket.Base;
 import org.diylc.core.Project;
-import org.diylc.core.measures.Capacitance;
 import org.diylc.core.measures.CapacitanceUnit;
-import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.ResistanceUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 import org.diylc.utils.Constants;
 import org.nfunk.jep.JEP;
 import org.w3c.dom.Element;
@@ -121,6 +120,7 @@ public class V2FileParser implements IOldFileParser {
     String height = root.getAttribute("height");
     Size wp = parseString(width);
     Size hp = parseString(height);
+    Value theValue = null;
 
     project.setTitle(projectName);
     project.setAuthor(credits);
@@ -229,6 +229,7 @@ public class V2FileParser implements IOldFileParser {
                 case "value":
                   String pr8 = nodeValue;
                   if (pr8 != "") {
+                    theValue = Value.parse(pr8);
                     valueString = pr8;
                     String pr9 = pr8.replaceAll("[^0-9.]", "");
                     String pr10 = pr8.replaceAll("[^a-zA-Z]", "");
@@ -363,9 +364,9 @@ public class V2FileParser implements IOldFileParser {
               }
               pad.setSize(sizePro);
               if (shape.equals("square")) {
-                pad.setType(SolderPad.Type.SQUARE);
+                pad.setType(SolderPad.SolderPadType.SQUARE);
               } else {
-                pad.setType(SolderPad.Type.ROUND);
+                pad.setType(SolderPad.SolderPadType.ROUND);
               }
               pad.setControlPoint(tacke.get(0), 0);
               project.getComponents().add(pad);
@@ -394,7 +395,7 @@ public class V2FileParser implements IOldFileParser {
               break;
             case "switch":
               MiniToggleSwitch sw = new MiniToggleSwitch();
-              sw.setValue(ToggleSwitchType.DPDT);
+              sw.setSwitchType(ToggleSwitchType.DPDT);
               if (comName != "") {
                 sw.setName(comName);
               } else {
@@ -477,7 +478,7 @@ public class V2FileParser implements IOldFileParser {
               }
               aec.setAlpha(transparency);
               if (value != -9999) {
-                aec.setValue(new Capacitance(value, cp));
+                aec.setValue(theValue);
               }
               aec.setWidth(diameterPro);
               aec.setLength(lengthPro);
@@ -497,7 +498,7 @@ public class V2FileParser implements IOldFileParser {
               }
               afc.setAlpha(transparency);
               if (value != -9999) {
-                afc.setValue(new Capacitance(value, cp));
+                afc.setValue(theValue);
               } else {
                 afc.setName("A_F_C");
               }
@@ -521,7 +522,7 @@ public class V2FileParser implements IOldFileParser {
               }
               rcdc.setAlpha(transparency);
               if (value != -9999) {
-                rcdc.setValue(new Capacitance(value, cp));
+                rcdc.setValue(theValue);
               }
               if (display.equals("Name")) {
                 rcdc.setDisplay(Display.NAME);
@@ -543,7 +544,7 @@ public class V2FileParser implements IOldFileParser {
               }
               rfc.setAlpha(transparency);
               if (value != -9999) {
-                rfc.setValue(new Capacitance(value, cp));
+                rfc.setValue(theValue);
               }
               if (display.equals("Name")) {
                 rfc.setDisplay(Display.NAME);
@@ -564,7 +565,7 @@ public class V2FileParser implements IOldFileParser {
                 re.setName("Radial_Electrolytic_Capacitor");
               }
               if (value != -9999) {
-                re.setValue(new Capacitance(value, cp));
+                re.setValue(theValue);
               }
               re.setAlpha(transparency);
               re.setLength(diameterPro);
@@ -580,7 +581,7 @@ public class V2FileParser implements IOldFileParser {
                 panel.setName("potentiometer_panel");
               }
               if (value != -9999) {
-                panel.setValue(new Resistance(value, ru));
+                panel.setValue(theValue);
               }
               panel.setAlpha(transparency);
               if (angle > 45 && angle <= 135) {
@@ -608,7 +609,7 @@ public class V2FileParser implements IOldFileParser {
                 resistor.setName("resistor");
               }
               if (value != -9999) {
-                resistor.setValue(new Resistance(value, ru));
+                resistor.setValue(theValue);
               }
               resistor.setAlpha(transparency);
               resistor.setWidth(diameterPro);
@@ -627,7 +628,7 @@ public class V2FileParser implements IOldFileParser {
                 cap.setName("cap_simbol");
               }
               if (value != -9999) {
-                cap.setValue(new Capacitance(value, cp));
+                cap.setValue(theValue);
               }
               cap.setLength(Size.mm(distance));
               cap.setWidth(lengthPro);
@@ -645,7 +646,7 @@ public class V2FileParser implements IOldFileParser {
                 dio.setName("dp");
               }
               if (valueString != "") {
-                dio.setValue(valueString);
+                dio.setStringValue(valueString);
               }
               dio.setBodyColor(cl);
               dio.setWidth(sizePro);
@@ -672,7 +673,7 @@ public class V2FileParser implements IOldFileParser {
                 ls.setName("ls");
               }
               if (valueString != "") {
-                ls.setValue(valueString);
+                ls.setStringValue(valueString);
               }
               ls.setBodyColor(cl);
               ls.setWidth(sizePro);
@@ -689,7 +690,7 @@ public class V2FileParser implements IOldFileParser {
               }
               ps.setColor(cl);
               if (valueString != "") {
-                ps.setValue(valueString);
+                ps.setStringValue(valueString);
               }
               x = (int) (tacke.get(0).getX() - 70);
               y = (int) tacke.get(0).getY();
@@ -705,7 +706,7 @@ public class V2FileParser implements IOldFileParser {
                 cs.setName("cs");
               }
               if (value != -9999) {
-                cs.setValue(new Capacitance(value, cp));
+                cs.setValue(theValue);
               }
               cs.setLength(Size.mm(distance));
               cs.setWidth(lengthPro);
@@ -723,7 +724,7 @@ public class V2FileParser implements IOldFileParser {
                 ic.setName("ics");
               }
               if (valueString != "") {
-                ic.setValue(valueString);
+                ic.setStringValue(valueString);
               }
               ic.setAlpha(transparency);
               x = (int) (tacke.get(0).getX() - 70);
@@ -742,7 +743,7 @@ public class V2FileParser implements IOldFileParser {
               }
               potsym.setOrientation(Orientation._270);
               if (valueString != "") {
-                potsym.setValue(valueString);
+                potsym.setStringValue(valueString);
               }
               potsym.setColor(cl);
               x = (int) (tacke.get(0).getX() + 40);
@@ -763,7 +764,7 @@ public class V2FileParser implements IOldFileParser {
                 rs.setName("rs");
               }
               if (value != -9999) {
-                rs.setValue(new Resistance(value, ru));
+                rs.setValue(theValue);
               }
               rs.setWidth(sizePro);
               rs.setLeadColor(cl);
@@ -781,7 +782,7 @@ public class V2FileParser implements IOldFileParser {
                 triodesym.setName("ts");
               }
               if (valueString != "") {
-                triodesym.setValue(valueString);
+                triodesym.setStringValue(valueString);
               }
               triodesym.setColor(cl);
               x = (int) (tacke.get(0).getX() - 30);
@@ -798,7 +799,7 @@ public class V2FileParser implements IOldFileParser {
                 dp.setName("dp");
               }
               if (valueString != "") {
-                dp.setValue(valueString);
+                dp.setStringValue(valueString);
               }
               dp.setAlpha(transparency);
               if (display.equals("Name")) {
@@ -822,7 +823,7 @@ public class V2FileParser implements IOldFileParser {
               }
               dil.setAlpha(transparency);
               if (valueString != "") {
-                dil.setValue(valueString);
+                dil.setStringValue(valueString);
               }
               dil.setRowSpacing(spacingPro);
               dil.setControlPoint(tacke.get(0), 0);
@@ -834,7 +835,7 @@ public class V2FileParser implements IOldFileParser {
               trans.setName(comName != "" ? comName : "tr");
               trans.setAlpha(transparency);
               if (valueString != "") {
-                trans.setValue(valueString);
+                trans.setStringValue(valueString);
               }
               trans.setPinSpacing(Size.in(0.1));
               Point point0 = null;
@@ -928,7 +929,7 @@ public class V2FileParser implements IOldFileParser {
               }
               ts.setAlpha(transparency);
               if (valueString != "") {
-                ts.setValue(valueString);
+                ts.setStringValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);
@@ -944,7 +945,7 @@ public class V2FileParser implements IOldFileParser {
               }
               bjt.setColor(cl);
               if (valueString != "") {
-                bjt.setValue(valueString);
+                bjt.setStringValue(valueString);
               }
               if (angle <= 45 || angle > 315) {
                 bjt.setOrientation(Orientation.DEFAULT);
@@ -970,7 +971,7 @@ public class V2FileParser implements IOldFileParser {
               }
               ts.setAlpha(transparency);
               if (valueString != "") {
-                ts.setValue(valueString);
+                ts.setStringValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);
@@ -986,7 +987,7 @@ public class V2FileParser implements IOldFileParser {
               }
               ts.setAlpha(transparency);
               if (valueString != "") {
-                ts.setValue(valueString);
+                ts.setStringValue(valueString);
               }
               ts.setAngle((int) angle);
               ts.setControlPoint(tacke.get(0), 0);

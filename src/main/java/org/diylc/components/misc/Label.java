@@ -22,30 +22,29 @@ package org.diylc.components.misc;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.transform.TextTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 
+@StringValue("Text")
 @ComponentDescriptor(
     name = "Label",
     author = "Branislav Stojkovic",
     category = "Misc",
     description = "User defined label",
     instanceNamePrefix = "L",
-    zOrder = IDIYComponent.TEXT,
+    zOrder = AbstractComponent.TEXT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.NEVER_SHOW,
     transformer = TextTransformer.class)
-public class Label extends Misc<String> {
+public class Label extends Misc {
 
   private static final long serialVersionUID = 1L;
-
-  // @Deprecated private boolean center;
 
   @Override
   public void draw(
@@ -55,22 +54,11 @@ public class Label extends Misc<String> {
       Project project,
       IDrawingObserver drawingObserver) {
     super.draw(g2d, componentState, outlineMode, project, drawingObserver);
-    g2d.drawString(text, positionX, positionY);
+    g2d.drawString(getStringValue(), positionX, positionY);
   }
 
   @Override
   protected void flipText(Graphics2D g2d, int width) {
     g2d.setFont(LABEL_FONT.deriveFont(13f * width / 32).deriveFont(Font.PLAIN));
-  }
-
-  @EditableProperty(name = "Text", defaultable = false)
-  @Override
-  public String getValue() {
-    return text;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.text = value;
   }
 }

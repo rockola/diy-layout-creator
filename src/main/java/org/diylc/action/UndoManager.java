@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Project;
 
 public class UndoManager extends javax.swing.undo.UndoManager {
@@ -34,23 +34,23 @@ public class UndoManager extends javax.swing.undo.UndoManager {
 
   public void replaceComponents(
       Project project,
-      Collection<IDIYComponent<?>> oldComponents,
-      Collection<IDIYComponent<?>> newComponents) {
+      Collection<AbstractComponent> oldComponents,
+      Collection<AbstractComponent> newComponents) {
     LOG.trace("replaceComponents()");
     ProjectEdit edit =
         new ProjectEdit(
             project,
-            oldComponents == null ? null : new ArrayList<IDIYComponent<?>>(oldComponents),
-            newComponents == null ? null : new ArrayList<IDIYComponent<?>>(newComponents));
+            oldComponents == null ? null : new ArrayList<AbstractComponent>(oldComponents),
+            newComponents == null ? null : new ArrayList<AbstractComponent>(newComponents));
     edit.execute();
     boolean editAdded = addEdit(edit);
   }
 
-  public void addComponents(Project project, Collection<IDIYComponent<?>> components) {
+  public void addComponents(Project project, Collection<AbstractComponent> components) {
     replaceComponents(project, null, components);
   }
 
-  public void removeComponents(Project project, Collection<IDIYComponent<?>> components) {
+  public void removeComponents(Project project, Collection<AbstractComponent> components) {
     replaceComponents(project, components, null);
   }
 }

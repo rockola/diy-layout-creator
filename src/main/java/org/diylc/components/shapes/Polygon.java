@@ -26,8 +26,8 @@ import java.awt.Point;
 import java.util.Arrays;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -40,7 +40,7 @@ import org.diylc.core.annotations.EditableProperty;
     category = "Shapes",
     instanceNamePrefix = "POLY",
     description = "Polygonal area",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.SHOW_ALL_NAMES,
     autoEdit = false,

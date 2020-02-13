@@ -25,9 +25,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.Config;
 import org.diylc.common.PcbLayer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.transform.TextTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -40,11 +40,11 @@ import org.diylc.core.annotations.EditableProperty;
     category = "Misc",
     description = "Mirrored text for PCB artwork",
     instanceNamePrefix = "L",
-    zOrder = IDIYComponent.TRACE,
+    zOrder = AbstractComponent.TRACE,
     flexibleZOrder = false,
     bomPolicy = BomPolicy.NEVER_SHOW,
     transformer = TextTransformer.class)
-public class PcbText extends Misc<Void> {
+public class PcbText extends Misc {
 
   private static final long serialVersionUID = 1L;
 
@@ -82,6 +82,7 @@ public class PcbText extends Misc<Void> {
     g2d.translate(-width, 0);
   }
 
+  // TODO should this be done with @StringValue("Text") instead?
   @EditableProperty(defaultable = false)
   public String getText() {
     return text;
@@ -101,15 +102,5 @@ public class PcbText extends Misc<Void> {
 
   public void setLayer(PcbLayer layer) {
     this.layer = layer;
-  }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {
-    //
   }
 }

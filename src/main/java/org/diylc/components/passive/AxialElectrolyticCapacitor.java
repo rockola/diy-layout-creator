@@ -27,16 +27,16 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.annotations.ComponentValue;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Electrolytic Capacitor (Axial)",
     author = "Branislav Stojkovic",
@@ -44,67 +44,15 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Axial electrolytic capacitor, similar to Sprague Atom, F&T, etc",
-    zOrder = IDIYComponent.COMPONENT,
+    leadType = LeadType.AXIAL,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacitance> {
+public class AxialElectrolyticCapacitor extends ElectrolyticCapacitor {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_WIDTH = Size.in(.5);
   public static final Size DEFAULT_HEIGHT = Size.in(.125);
-  public static final Color BODY_COLOR = Color.decode("#6B6DCE");
-  public static final Color BORDER_COLOR = BODY_COLOR.darker();
-  public static final Color MARKER_COLOR = Color.decode("#8CACEA");
-  public static final Color TICK_COLOR = Color.white;
-
-  private Capacitance value = null;
-  @Deprecated private Voltage voltage = Voltage._63V;
-  private org.diylc.core.measures.Voltage voltageNew = null;
-
-  private Color markerColor = MARKER_COLOR;
-  private Color tickColor = TICK_COLOR;
-  private boolean polarized = true;
-
-  public AxialElectrolyticCapacitor() {
-    super();
-    this.bodyColor = BODY_COLOR;
-    this.borderColor = BORDER_COLOR;
-    this.labelColor = TICK_COLOR;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
-  }
-
-  @Override
-  public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
-  }
-
-  @Deprecated
-  public Voltage getVoltage() {
-    return voltage;
-  }
-
-  @Deprecated
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
-  }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.rotate(-Math.PI / 4, width / 2, height / 2);
@@ -128,33 +76,6 @@ public class AxialElectrolyticCapacitor extends AbstractLeadedComponent<Capacita
   @Override
   protected Size getDefaultLength() {
     return DEFAULT_WIDTH;
-  }
-
-  @EditableProperty(name = "Marker")
-  public Color getMarkerColor() {
-    return markerColor;
-  }
-
-  public void setMarkerColor(Color coverColor) {
-    this.markerColor = coverColor;
-  }
-
-  @EditableProperty(name = "Tick")
-  public Color getTickColor() {
-    return tickColor;
-  }
-
-  public void setTickColor(Color tickColor) {
-    this.tickColor = tickColor;
-  }
-
-  @EditableProperty(name = "Polarized")
-  public boolean getPolarized() {
-    return polarized;
-  }
-
-  public void setPolarized(boolean polarized) {
-    this.polarized = polarized;
   }
 
   @Override

@@ -26,26 +26,28 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractRadialComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Tantalum Capacitor",
     author = "Branislav Stojkovic",
     category = "Passive",
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
+    leadType = LeadType.RADIAL,
     description = "Vertically mounted tantalum capacitor",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
+public class TantalumCapacitor extends AbstractCapacitor {
 
   private static final long serialVersionUID = 1L;
 
@@ -56,9 +58,6 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
   public static final Color TICK_COLOR = Color.white;
   public static final Size HEIGHT = Size.in(0.4);
 
-  private Capacitance value = null;
-  private org.diylc.core.measures.Voltage voltageNew = null;
-
   private Color markerColor = MARKER_COLOR;
   private Color tickColor = TICK_COLOR;
   private boolean folded = false;
@@ -67,33 +66,15 @@ public class TantalumCapacitor extends AbstractRadialComponent<Capacitance> {
 
   public TantalumCapacitor() {
     super();
+    valueUnit = SiUnit.FARAD;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.labelColor = TICK_COLOR;
   }
 
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
-  }
-
   @Override
   public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
+    return getValue().toString() + (getVoltage() == null ? "" : " " + getVoltage().toString());
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

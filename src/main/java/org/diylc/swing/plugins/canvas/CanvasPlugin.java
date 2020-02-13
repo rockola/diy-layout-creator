@@ -60,11 +60,10 @@ import org.diylc.common.EventType;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentTransferable;
 import org.diylc.core.ExpansionMode;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
 import org.diylc.core.measures.Size;
 import org.diylc.images.Icon;
 import org.diylc.swing.action.ActionFactory;
@@ -465,9 +464,9 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
   private void updateSelectionMenu(int x, int y) {
     getSelectionMenu().removeAll();
-    for (IDIYComponent<?> component : pluginPort.findComponentsAt(new Point(x, y))) {
+    for (AbstractComponent component : pluginPort.findComponentsAt(new Point(x, y))) {
       JMenuItem item = new JMenuItem(component.getName());
-      final IDIYComponent<?> finalComponent = component;
+      final AbstractComponent finalComponent = component;
       item.addActionListener(
           (e) -> {
             Project project = pluginPort.currentProject();
@@ -481,7 +480,7 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
   private void updateApplyTemplateMenu() {
     getApplyTemplateMenu().removeAll();
-    List<Template> templates = null;
+    List<AbstractComponent> templates = null;
 
     try {
       LOG.trace("updateApplyTemplateMenu() Loading variants for selection");
@@ -497,11 +496,18 @@ public class CanvasPlugin implements IPlugIn, ClipboardOwner {
 
     getApplyTemplateMenu().setEnabled(templates.size() > 0);
 
-    for (Template template : templates) {
-      JMenuItem item = new JMenuItem(template.getName());
-      final Template finalTemplate = template;
-      item.addActionListener((e) -> pluginPort.applyVariantToSelection(finalTemplate));
-      getApplyTemplateMenu().add(item);
+    String lastName = null;
+    try {
+      for (AbstractComponent template : templates) {
+        lastName = template.getName();
+        JMenuItem item = new JMenuItem(template.getName());
+        final AbstractComponent finalTemplate = template.clone();
+        item.addActionListener((e) -> pluginPort.applyVariantToSelection(finalTemplate));
+        getApplyTemplateMenu().add(item);
+      }
+    } catch (CloneNotSupportedException ce) {
+      LOG.error("Could not clone variant " + lastName, ce);
+      throw new RuntimeException(ce);
     }
   }
 

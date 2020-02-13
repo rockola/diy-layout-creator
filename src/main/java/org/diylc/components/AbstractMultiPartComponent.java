@@ -8,7 +8,7 @@ import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 
-public abstract class AbstractMultiPartComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class AbstractMultiPartComponent extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(AbstractMultiPartComponent.class);

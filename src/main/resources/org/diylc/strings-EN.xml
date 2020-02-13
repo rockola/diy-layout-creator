@@ -216,6 +216,7 @@
     <property-editor>
       <input-error>Input error for \"%s\": %s</input-error>
     </property-editor>
+    <pangram>The quick brown fox jumped over a lazy dog</pangram>
   </message>
   <components>
     <title>Components</title>

@@ -21,7 +21,7 @@
 package org.diylc.common;
 
 import java.awt.Point;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public interface IComponentTransformer {
 
@@ -31,9 +31,9 @@ public interface IComponentTransformer {
   int HORIZONTAL = 0;
   int VERTICAL = 1;
 
-  boolean canRotate(IDIYComponent<?> component);
+  boolean canRotate(AbstractComponent component);
 
-  default boolean canMirror(IDIYComponent<?> component) {
+  default boolean canMirror(AbstractComponent component) {
     return canRotate(component);
   }
 
@@ -41,11 +41,11 @@ public interface IComponentTransformer {
     return false;
   }
 
-  default boolean mirroringChangesCircuit(IDIYComponent<?> component) {
+  default boolean mirroringChangesCircuit(AbstractComponent component) {
     return mirroringChangesCircuit();
   }
 
-  void rotate(IDIYComponent<?> component, Point center, int direction);
+  void rotate(AbstractComponent component, Point center, int direction);
 
-  void mirror(IDIYComponent<?> component, Point center, int direction);
+  void mirror(AbstractComponent component, Point center, int direction);
 }

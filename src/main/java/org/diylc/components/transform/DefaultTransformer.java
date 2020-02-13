@@ -22,17 +22,17 @@ package org.diylc.components.transform;
 
 import java.awt.Point;
 import org.diylc.common.IComponentTransformer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class DefaultTransformer implements IComponentTransformer {
 
   @Override
-  public boolean canRotate(IDIYComponent<?> component) {
+  public boolean canRotate(AbstractComponent component) {
     return false;
   }
 
   @Override
-  public boolean canMirror(IDIYComponent<?> component) {
+  public boolean canMirror(AbstractComponent component) {
     return false;
   }
 
@@ -42,12 +42,12 @@ public class DefaultTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+  public void rotate(AbstractComponent component, Point center, int direction) {
     //
   }
 
   @Override
-  public void mirror(IDIYComponent<?> component, Point center, int direction) {
+  public void mirror(AbstractComponent component, Point center, int direction) {
     //
   }
 }

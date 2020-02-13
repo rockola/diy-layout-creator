@@ -101,58 +101,59 @@ public class PropertyEditorDialog extends ButtonDialog {
     gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
     for (PropertyWrapper property : properties) {
-      gbc.gridx = 0;
-      gbc.fill = GridBagConstraints.NONE;
-      gbc.weightx = 0;
-      gbc.insets = new Insets(4, 2, 2, 2);
-      gbc.anchor = GridBagConstraints.WEST;
-      editorPanel.add(new JLabel(property.getName() + ": "), gbc);
-
-      gbc.gridx = 1;
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.weightx = 1;
-      gbc.insets = new Insets(2, 2, 2, 2);
-
       Component editor = FieldEditorFactory.createFieldEditor(property);
-
-      editor.addKeyListener(
-          new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-              if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                getButton(OK).doClick();
-              }
-            }
-          });
-
-      editorPanel.add(editor, gbc);
-
-      if (property.isDefaultable()) {
-        gbc.gridx = 2;
+      if (editor != null) {
+        gbc.gridx = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
+        gbc.insets = new Insets(4, 2, 2, 2);
+        gbc.anchor = GridBagConstraints.WEST;
+        editorPanel.add(new JLabel(property.getName() + ": "), gbc);
 
-        if (saveDefaults) {
-          editorPanel.add(createDefaultCheckBox(property), gbc);
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.insets = new Insets(2, 2, 2, 2);
+
+        editor.addKeyListener(
+            new KeyAdapter() {
+
+              @Override
+              public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                  getButton(OK).doClick();
+                }
+              }
+            });
+
+        editorPanel.add(editor, gbc);
+
+        if (property.isDefaultable()) {
+          gbc.gridx = 2;
+          gbc.fill = GridBagConstraints.NONE;
+          gbc.weightx = 0;
+
+          if (saveDefaults) {
+            editorPanel.add(createDefaultCheckBox(property), gbc);
+          }
         }
-      }
 
-      if (property.getName().equalsIgnoreCase("value")) {
-        componentToFocus = editor;
-      }
-
-      // Make value field focused
-      try {
-        if (componentToFocus == null
-            && property.getGetter().getName().equalsIgnoreCase("getValue")) {
+        if (property.getName().equalsIgnoreCase("value")) {
           componentToFocus = editor;
         }
-      } catch (Exception e1) {
-        LOG.warn("Could not determine editor component to focus", e1);
-      }
 
-      gbc.gridy++;
+        // Make value field focused
+        try {
+          if (componentToFocus == null
+              && property.getGetter().getName().equalsIgnoreCase("getValue")) {
+            componentToFocus = editor;
+          }
+        } catch (Exception e1) {
+          LOG.warn("Could not determine editor component to focus", e1);
+        }
+
+        gbc.gridy++;
+      }
     }
 
     return editorPanel;

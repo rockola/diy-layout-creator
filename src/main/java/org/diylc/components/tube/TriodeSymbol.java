@@ -26,9 +26,9 @@ import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.TubeSymbolTransformer;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -40,7 +40,7 @@ import org.diylc.core.annotations.KeywordPolicy;
     category = "Schematic Symbols",
     instanceNamePrefix = "V",
     description = "Triode tube symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = TubeSymbolTransformer.class)
 public class TriodeSymbol extends AbstractTubeSymbol {

@@ -20,7 +20,7 @@
 
 package org.diylc.netlist;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 /**
  * Represents a single node in a {@link Netlist}, uniquely defined by a component and a control
@@ -30,16 +30,16 @@ import org.diylc.core.IDIYComponent;
  */
 public class Node implements Comparable<Node> {
 
-  private IDIYComponent<?> component;
+  private AbstractComponent component;
   private int pointIndex;
 
-  public Node(IDIYComponent<?> component, int pointIndex) {
+  public Node(AbstractComponent component, int pointIndex) {
     super();
     this.component = component;
     this.pointIndex = pointIndex;
   }
 
-  public IDIYComponent<?> getComponent() {
+  public AbstractComponent getComponent() {
     return component;
   }
 

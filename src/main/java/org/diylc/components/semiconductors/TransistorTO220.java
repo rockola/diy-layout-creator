@@ -30,25 +30,27 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.TO220Transformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Transistor (TO-220)",
     author = "Branislav Stojkovic",
     category = "Semiconductors",
     instanceNamePrefix = "Q",
     description = "Transistors with metal tab for heat sink mounting",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = TO220Transformer.class)
 public class TransistorTO220 extends AbstractTransistorPackage {

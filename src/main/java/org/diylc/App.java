@@ -36,7 +36,7 @@ import org.diylc.appframework.miscutils.Utils;
 import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.Config;
 import org.diylc.common.Message;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Theme;
 import org.diylc.swing.gui.MainFrame;
 import org.diylc.swing.gui.TemplateDialog;
@@ -308,18 +308,18 @@ public class App {
     return getBoolean(Config.Flag.WHEEL_ZOOM);
   }
 
-  public static Map<String, List<IDIYComponent<?>>> getBlocks() {
+  public static Map<String, List<AbstractComponent>> getBlocks() {
     if (getObject(Config.Flag.BLOCKS) == null) {
-      setBlocks(new HashMap<String, List<IDIYComponent<?>>>());
+      setBlocks(new HashMap<String, List<AbstractComponent>>());
     }
-    return (Map<String, List<IDIYComponent<?>>>) getObject(Config.Flag.BLOCKS);
+    return (Map<String, List<AbstractComponent>>) getObject(Config.Flag.BLOCKS);
   }
 
-  public static void setBlocks(Map<String, List<IDIYComponent<?>>> blocks) {
+  public static void setBlocks(Map<String, List<AbstractComponent>> blocks) {
     App.putValue(Config.Flag.BLOCKS, blocks);
   }
 
-  public static void addBlock(String name, List<IDIYComponent<?>> components) {
+  public static void addBlock(String name, List<AbstractComponent> components) {
     getBlocks().put(name, components);
   }
 

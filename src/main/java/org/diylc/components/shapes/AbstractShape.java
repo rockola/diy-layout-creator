@@ -28,7 +28,7 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.measures.Size;
 
-public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
+public abstract class AbstractShape extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,6 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
   public static final Size DEFAULT_WIDTH = Size.in(0.6);
   public static final Size DEFAULT_HEIGHT = Size.in(0.4);
 
-  protected String value = "";
   protected Point[] controlPoints =
       new Point[] {
         new Point(0, 0),
@@ -87,11 +86,6 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
   }
 
   @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
   }
@@ -110,17 +104,5 @@ public abstract class AbstractShape extends AbstractTransparentComponent<Void> {
   @Override
   public String getControlPointNodeName(int index) {
     return null;
-  }
-
-  @Deprecated
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Deprecated
-  @Override
-  public void setValue(Void value) {
-    //
   }
 }

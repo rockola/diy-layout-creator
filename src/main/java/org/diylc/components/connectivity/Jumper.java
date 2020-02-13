@@ -26,11 +26,11 @@ import org.diylc.common.Display;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
 import org.diylc.core.IContinuity;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -43,11 +43,11 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "J",
     description = "",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity {
+public class Jumper extends AbstractLeadedComponent implements IContinuity {
 
   private static final long serialVersionUID = 1L;
 
@@ -115,14 +115,6 @@ public class Jumper extends AbstractLeadedComponent<Void> implements IContinuity
   public Size getWidth() {
     return super.getWidth();
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   protected Area getBodyShape() {

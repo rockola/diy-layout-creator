@@ -26,12 +26,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import org.diylc.App;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.transform.TextTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -39,19 +39,22 @@ import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.MultiLineText;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 
+@MultiLineText
+@StringValue
 @ComponentDescriptor(
     name = "Auto-Wrap Label",
     author = "Branislav Stojkovic",
     category = "Misc",
     description = "User defined label with auto-wrapped text",
     instanceNamePrefix = "L",
-    zOrder = IDIYComponent.TEXT,
+    zOrder = AbstractComponent.TEXT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.NEVER_SHOW,
     transformer = TextTransformer.class)
-public class WrapLabel extends AbstractComponent<String> {
+public class WrapLabel extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -70,20 +73,9 @@ public class WrapLabel extends AbstractComponent<String> {
   private Color color = LABEL_COLOR;
   private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
 
-  private String value = "The quick brown fox jumped over a lazy dog";
-
-  public WrapLabel() {}
-
-  @MultiLineText
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
+  public WrapLabel() {
+    super();
+    setStringValue(App.getString("message.pangram", "The quick brown fox jumped over a lazy dog"));
   }
 
   @Override
@@ -187,14 +179,12 @@ public class WrapLabel extends AbstractComponent<String> {
       boolean outlineMode,
       Project project,
       IDrawingObserver drawingObserver) {
-    g2d.setColor(componentState == ComponentState.SELECTED ? LABEL_COLOR_SELECTED : color);
+    g2d.setColor(componentState.isSelected() ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
-
     int x = firstPoint.x;
     int y = firstPoint.y;
     int maxWidth = secondPoint.x - firstPoint.x;
-
-    StringUtils.drawWrappedText(value, g2d, x, y, maxWidth, horizontalAlignment);
+    StringUtils.drawWrappedText(getStringValue(), g2d, x, y, maxWidth, horizontalAlignment);
   }
 
   @Override

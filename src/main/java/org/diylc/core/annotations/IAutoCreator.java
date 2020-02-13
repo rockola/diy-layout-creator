@@ -21,7 +21,7 @@
 package org.diylc.core.annotations;
 
 import java.util.List;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 /**
  * Interface for creating components automatically each time a component is created by the user.
@@ -32,9 +32,9 @@ public interface IAutoCreator {
 
   /**
    * @param lastAdded the component created by the user
-   * @return {@link List} of {@link IDIYComponent}s that will be automatically created as a result.
-   *     Empty {@link List} or {@code null} are valid responses for cases when no components should
-   *     be auto-created.
+   * @return {@link List} of {@link AbstractComponent}s that will be automatically created as a
+   *     result. Empty {@link List} or {@code null} are valid responses for cases when no components
+   *     should be auto-created.
    */
-  List<IDIYComponent<?>> createIfNeeded(IDIYComponent<?> lastAdded);
+  List<AbstractComponent> createIfNeeded(AbstractComponent lastAdded);
 }

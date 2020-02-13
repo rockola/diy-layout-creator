@@ -29,16 +29,18 @@ import org.diylc.common.Orientation;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.VOLT)
 @ComponentDescriptor(
     name = "Transformer Coil",
     author = "Branislav Stojkovic",
@@ -46,10 +48,10 @@ import org.diylc.core.measures.Size;
     instanceNamePrefix = "L",
     description =
         "Transformer coil symbol. Use together with \"Transformer Core Symbol\"<br>for transformer schematics.",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic")
-public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.Voltage> {
+public class TransformerCoil extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -69,6 +71,7 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
 
   public TransformerCoil() {
     super();
+    valueUnit = SiUnit.VOLT;
     updateControlPoints();
   }
 
@@ -100,17 +103,6 @@ public class TransformerCoil extends AbstractComponent<org.diylc.core.measures.V
       this.controlPoints[i].setLocation(
           refPoint.x + i * fx * spacing, refPoint.y + i * fy * spacing);
     }
-  }
-
-  @EditableProperty
-  @Override
-  public org.diylc.core.measures.Voltage getValue() {
-    return voltage;
-  }
-
-  @Override
-  public void setValue(org.diylc.core.measures.Voltage value) {
-    this.voltage = value;
   }
 
   @EditableProperty(defaultable = true)

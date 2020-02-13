@@ -25,8 +25,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.connectivity.SolderPad;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.IAutoCreator;
 
 public class SolderPadAutoCreator implements IAutoCreator {
@@ -34,10 +34,10 @@ public class SolderPadAutoCreator implements IAutoCreator {
   private static final Logger LOG = LogManager.getLogger(SolderPadAutoCreator.class);
 
   @Override
-  public List<IDIYComponent<?>> createIfNeeded(IDIYComponent<?> lastAdded) {
-    List<IDIYComponent<?>> res = null;
+  public List<AbstractComponent> createIfNeeded(AbstractComponent lastAdded) {
+    List<AbstractComponent> res = null;
     if (App.autoPads() && !(lastAdded instanceof SolderPad)) {
-      res = new ArrayList<IDIYComponent<?>>();
+      res = new ArrayList<AbstractComponent>();
       for (int i = 0; i < lastAdded.getControlPointCount(); i++) {
         if (lastAdded.isControlPointSticky(i)) {
           try {

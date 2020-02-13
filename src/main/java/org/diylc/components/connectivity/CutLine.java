@@ -27,12 +27,11 @@ import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -44,11 +43,11 @@ import org.diylc.core.measures.Size;
     author = "Branislav Stojkovic",
     description = "Cut line",
     instanceNamePrefix = "CL",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class CutLine extends AbstractTransparentComponent<Void> {
+public class CutLine extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -119,23 +118,8 @@ public class CutLine extends AbstractTransparentComponent<Void> {
   }
 
   @Override
-  public String getName() {
-    return super.getName();
-  }
-
-  @Override
   public int getControlPointCount() {
     return 1;
-  }
-
-  @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -156,14 +140,6 @@ public class CutLine extends AbstractTransparentComponent<Void> {
   public void setColor(Color color) {
     this.color = color;
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   public String getControlPointNodeName(int index) {

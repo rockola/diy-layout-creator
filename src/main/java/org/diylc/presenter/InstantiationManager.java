@@ -25,10 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,10 +36,9 @@ import org.diylc.common.Config;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.PropertyWrapper;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Grid;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
 
 /**
  * Manages component instantiation.
@@ -60,8 +57,8 @@ public class InstantiationManager {
       new ComponentType("Building block", "Components from the building block", "Multi");
 
   private static ComponentType componentTypeSlot;
-  private static Template template;
-  private static List<IDIYComponent<?>> componentSlot;
+  private static AbstractComponent template;
+  private static List<AbstractComponent> componentSlot;
   private static Point firstControlPoint;
   private static Point potentialControlPoint;
 
@@ -73,11 +70,11 @@ public class InstantiationManager {
     return componentTypeSlot;
   }
 
-  public static Template getTemplate() {
+  public static AbstractComponent getTemplate() {
     return template;
   }
 
-  public static List<IDIYComponent<?>> getComponentSlot() {
+  public static List<AbstractComponent> getComponentSlot() {
     return componentSlot;
   }
 
@@ -94,7 +91,10 @@ public class InstantiationManager {
   }
 
   public static void setComponentTypeSlot(
-      ComponentType typeSlot, Template theTemplate, Project project, boolean forceInstantiate)
+      ComponentType typeSlot,
+      AbstractComponent theTemplate,
+      Project project,
+      boolean forceInstantiate)
       throws Exception {
     componentTypeSlot = typeSlot;
     template = theTemplate;
@@ -133,17 +133,18 @@ public class InstantiationManager {
   }
 
   public static void pasteComponents(
-      Collection<IDIYComponent<?>> components,
+      Collection<AbstractComponent> components,
       Point scaledPoint,
       boolean snapToGrid,
       boolean autoGroup,
       Project project) {
 
     Set<String> existingNames = new HashSet<String>();
-    for (IDIYComponent<?> c : project.getComponents()) {
+    for (AbstractComponent c : project.getComponents()) {
       existingNames.add(c.getName());
     }
-    List<IDIYComponent<?>> allComponents = new ArrayList<IDIYComponent<?>>(project.getComponents());
+    List<AbstractComponent> allComponents =
+        new ArrayList<AbstractComponent>(project.getComponents());
 
     // Adjust location of components so they are centered under the mouse
     // cursor
@@ -153,11 +154,11 @@ public class InstantiationManager {
     int maxX = Integer.MIN_VALUE;
     int maxY = Integer.MIN_VALUE;
     */
-    for (IDIYComponent<?> component : components) {
+    for (AbstractComponent component : components) {
       // assign a new name if it already exists in the project
       if (existingNames.contains(component.getName())) {
         ComponentType componentType =
-            ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+            ComponentType.extractFrom((Class<? extends AbstractComponent>) component.getClass());
         String newName = createUniqueName(componentType, allComponents);
         existingNames.add(newName);
         component.setName(newName);
@@ -188,7 +189,7 @@ public class InstantiationManager {
       x = project.getGrid().roundToGrid(x);
       y = project.getGrid().roundToGrid(y);
     }
-    for (IDIYComponent<?> component : components) {
+    for (AbstractComponent component : components) {
       for (int i = 0; i < component.getControlPointCount(); i++) {
         Point p = component.getControlPoint(i);
         p.translate(-x, -y);
@@ -197,7 +198,7 @@ public class InstantiationManager {
     }
 
     // Update component slot
-    componentSlot = new ArrayList<IDIYComponent<?>>(components);
+    componentSlot = new ArrayList<AbstractComponent>(components);
 
     // Update the component type slot so the app knows that
     // something's being instantiated.
@@ -241,7 +242,7 @@ public class InstantiationManager {
       LOG.error("Component slot should not be null!");
     } else {
       Point p = new Point();
-      for (IDIYComponent<?> component : componentSlot) {
+      for (AbstractComponent component : componentSlot) {
         for (int i = 0; i < component.getControlPointCount(); i++) {
           p.setLocation(component.getControlPoint(i));
           p.translate(dx, dy);
@@ -252,21 +253,21 @@ public class InstantiationManager {
     return true;
   }
 
-  public static List<IDIYComponent<?>> instantiateComponent(
-      ComponentType componentType, Template template, Project project)
+  public static List<AbstractComponent> instantiateComponent(
+      ComponentType componentType, AbstractComponent template, Project project)
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException {
     return instantiateComponent(componentType, template, new Point(0, 0), project);
   }
 
-  public static List<IDIYComponent<?>> instantiateComponent(
-      ComponentType componentType, Template template, Point point, Project project)
+  public static List<AbstractComponent> instantiateComponent(
+      ComponentType componentType, AbstractComponent template, Point point, Project project)
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException {
     LOG.info("Instantiating component of type {}", componentType.getInstanceClass().getName());
 
     // Instantiate the component.
-    IDIYComponent<?> component =
+    AbstractComponent component =
         componentType.getInstanceClass().getDeclaredConstructor().newInstance();
 
     component.setName(createUniqueName(componentType, project.getComponents()));
@@ -281,7 +282,7 @@ public class InstantiationManager {
       }
     }
 
-    loadComponentShapeFromTemplate(component, template);
+    // loadComponentShapeFromTemplate(component, template);
 
     fillWithDefaultProperties(component, template);
 
@@ -303,7 +304,7 @@ public class InstantiationManager {
       App.putValue(Config.Flag.RECENT_COMPONENTS, recentComponentTypes);
     }
 
-    List<IDIYComponent<?>> list = new ArrayList<IDIYComponent<?>>();
+    List<AbstractComponent> list = new ArrayList<AbstractComponent>();
     list.add(component);
     return list;
   }
@@ -317,7 +318,7 @@ public class InstantiationManager {
    * @return
    */
   public static String createUniqueName(
-      ComponentType componentType, List<IDIYComponent<?>> components) {
+      ComponentType componentType, List<AbstractComponent> components) {
     boolean exists = true;
     String[] takenNames = new String[components.size()];
     for (int j = 0; j < components.size(); j++) {
@@ -336,9 +337,13 @@ public class InstantiationManager {
     return componentType.getNamePrefix() + i;
   }
 
+  public static void fillWithDefaultProperties(AbstractComponent target, AbstractComponent source) {
+    throw new RuntimeException("TODO");
+  }
+
   /**
    * Finds any properties that have default values and injects default values. Typically it should
-   * be used for {@link IDIYComponent} and {@link Project} objects.
+   * be used for {@link AbstractComponent} and {@link Project} objects.
    *
    * @param object
    * @param template
@@ -348,7 +353,8 @@ public class InstantiationManager {
    * @throws NoSuchMethodException
    * @throws SecurityException
    */
-  public static void fillWithDefaultProperties(Object object, Template template) {
+  /*
+  public static void fillWithDefaultProperties(Object object, AbstractComponent template) {
     // Extract properties.
     List<PropertyWrapper> properties = ComponentProcessor.extractProperties(object.getClass());
     Map<String, PropertyWrapper> propertyCache = new HashMap<String, PropertyWrapper>();
@@ -386,6 +392,7 @@ public class InstantiationManager {
       }
     }
   }
+  */
 
   /**
    * Uses stored control points from the template to shape component.
@@ -393,7 +400,9 @@ public class InstantiationManager {
    * @param component
    * @param template
    */
-  public static void loadComponentShapeFromTemplate(IDIYComponent<?> component, Template template) {
+  /*
+  public static void loadComponentShapeFromTemplate(
+      AbstractComponent component, AbstractComponent template) {
     if (template != null
         && template.getPoints() != null
         && template.getPoints().size() >= component.getControlPointCount()) {
@@ -404,6 +413,7 @@ public class InstantiationManager {
       }
     }
   }
+  */
 
   public static void tryToRotateComponentSlot() {
     if (componentSlot == null) {
@@ -427,7 +437,7 @@ public class InstantiationManager {
       return;
     }
     try {
-      for (IDIYComponent<?> component : componentSlot) {
+      for (AbstractComponent component : componentSlot) {
         angleProperty.readFrom(component);
         Object value = angleProperty.getValue();
         if (value instanceof Orientation) {

@@ -45,9 +45,9 @@ import org.diylc.common.EventType;
 import org.diylc.common.GridType;
 import org.diylc.common.IComponentFilter;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
@@ -72,7 +72,7 @@ public class DrawingManager {
 
   private Composite slotComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
   private Composite lockedComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-  private List<IDIYComponent<?>> failedComponents = new ArrayList<IDIYComponent<?>>();
+  private List<AbstractComponent> failedComponents = new ArrayList<AbstractComponent>();
   private double zoomLevel = 1d; // ConfigurationManager.readDouble(ZOOM_KEY, 1d);
   private MessageDispatcher<EventType> messageDispatcher;
 
@@ -81,10 +81,11 @@ public class DrawingManager {
     this.messageDispatcher = messageDispatcher;
   }
 
-  private void logTraceComponentSet(Collection<IDIYComponent<?>> components, String setIdentifier) {
+  private void logTraceComponentSet(
+      Collection<AbstractComponent> components, String setIdentifier) {
     if (components != null && !components.isEmpty()) {
       LOG.trace("{} components=", setIdentifier);
-      for (IDIYComponent<?> c : components) {
+      for (AbstractComponent c : components) {
         LOG.trace("{} {}", setIdentifier.toUpperCase(), c.getIdentifier());
       }
     }
@@ -106,17 +107,17 @@ public class DrawingManager {
    * @param externalZoom
    * @return
    */
-  public List<IDIYComponent<?>> drawProject(
+  public List<AbstractComponent> drawProject(
       Graphics2D graphicsContext,
       Project project,
       Set<DrawOption> drawOptions,
       IComponentFilter filter,
       Rectangle selectionRect,
-      // Collection<IDIYComponent<?>> selectedComponents,
-      Set<IDIYComponent<?>> lockedComponents,
-      Set<IDIYComponent<?>> groupedComponents,
+      // Collection<AbstractComponent> selectedComponents,
+      Set<AbstractComponent> lockedComponents,
+      Set<AbstractComponent> groupedComponents,
       List<Point> controlPointSlot,
-      List<IDIYComponent<?>> componentSlot,
+      List<AbstractComponent> componentSlot,
       boolean dragInProgress,
       Double externalZoom) {
 
@@ -252,7 +253,7 @@ public class DrawingManager {
         g2dWrapper.scale(zoom, zoom);
       }
 
-      for (IDIYComponent<?> component : project.getComponents()) {
+      for (AbstractComponent component : project.getComponents()) {
         // Do not draw the component if it's filtered out.
         if (filter != null && !filter.testComponent(component)) {
           continue;
@@ -324,7 +325,7 @@ public class DrawingManager {
       if (drawOptions.contains(DrawOption.CONTROL_POINTS)) {
         // Draw unselected points first to make sure they are below.
         if (dragInProgress || drawOptions.contains(DrawOption.OUTLINE_MODE)) {
-          for (IDIYComponent<?> component : project.getComponents()) {
+          for (AbstractComponent component : project.getComponents()) {
             for (int i = 0; i < component.getControlPointCount(); i++) {
               VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
               boolean inSelection = project.inSelection(component);
@@ -345,7 +346,7 @@ public class DrawingManager {
           }
         }
         // Then draw the selected ones.
-        for (IDIYComponent<?> component : project.getSelection()) {
+        for (AbstractComponent component : project.getSelection()) {
           for (int i = 0; i < component.getControlPointCount(); i++) {
             VisibilityPolicy vp = component.getControlPointVisibilityPolicy(i);
 
@@ -377,7 +378,7 @@ public class DrawingManager {
         g2dWrapper.setComposite(slotComposite);
         ComponentState state = ComponentState.NORMAL;
         boolean outlineMode = drawOptions.contains(DrawOption.OUTLINE_MODE);
-        for (IDIYComponent<?> component : componentSlot) {
+        for (AbstractComponent component : componentSlot) {
           try {
             component.setState(state);
             component.setOutlineMode(outlineMode);
@@ -433,7 +434,7 @@ public class DrawingManager {
       final boolean debugContinuityAreas = App.isDebug(Config.Flag.DEBUG_CONTINUITY_AREA);
       if (debugComponentAreas || debugContinuityAreas) {
         g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-        for (IDIYComponent<?> component : project.getComponents()) {
+        for (AbstractComponent component : project.getComponents()) {
           LOG.trace("Component {}", component.getIdentifier());
           ComponentArea area = component.getArea();
           if (area == null) {
@@ -494,13 +495,13 @@ public class DrawingManager {
     }
   }
 
-  public void invalidateComponent(IDIYComponent<?> component) {
+  public void invalidateComponent(AbstractComponent component) {
     LOG.trace("invalidateComponent({})", component.getIdentifier());
     component.resetArea();
     component.resetState();
   }
 
-  public ComponentArea getComponentArea(IDIYComponent<?> component) {
+  public ComponentArea getComponentArea(AbstractComponent component) {
     // return componentAreaMap.get(component);
     return component.getArea();
   }

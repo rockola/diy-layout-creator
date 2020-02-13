@@ -37,7 +37,7 @@ import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
-public abstract class AbstractCurvedComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class AbstractCurvedComponent extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 

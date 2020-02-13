@@ -35,10 +35,8 @@ import org.diylc.common.VerticalAlignment;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -51,11 +49,11 @@ import org.diylc.core.measures.Size;
     author = "Branislav Stojkovic",
     description = "Prototyping solderless breadboard",
     instanceNamePrefix = "BB",
-    zOrder = IDIYComponent.BOARD,
+    zOrder = AbstractComponent.BOARD,
     bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME)
-public class Breadboard extends AbstractComponent<Void> {
+public class Breadboard extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -348,29 +346,11 @@ public class Breadboard extends AbstractComponent<Void> {
   }
 
   @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public void setControlPoint(Point point, int index) {
     if (index == 0) {
       this.point.setLocation(point);
     }
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   public String getControlPointNodeName(int index) {

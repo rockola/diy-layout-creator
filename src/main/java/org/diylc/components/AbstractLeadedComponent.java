@@ -56,7 +56,7 @@ import org.diylc.utils.Constants;
  *
  * @author Branislav Stojkovic
  */
-public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class AbstractLeadedComponent extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -64,15 +64,15 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
   public static final Color LEAD_COLOR_ICON = LEAD_COLOR.darker().darker();
   public static final Size LEAD_THICKNESS = Size.mm(0.6);
   public static final Size DEFAULT_SIZE = Size.in(1);
+  public static final Size PIN_SPACING = Size.in(0.1);
 
   protected Size length;
   protected Size width;
-  protected Point[] points =
-      new Point[] {
-        new Point((int) (-DEFAULT_SIZE.convertToPixels() / 2), 0),
-        new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
-        new Point(0, 0)
-      };
+  /** Lead type. Defaults to radial. */
+  protected LeadType leadType = LeadType.RADIAL;
+  /** Pin spacing for radial components. */
+  protected Size pinSpacing;
+
   protected Color bodyColor = Color.white;
   protected Color borderColor = Color.black;
   protected Color labelColor = LABEL_COLOR;
@@ -87,9 +87,15 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   protected AbstractLeadedComponent() {
     super();
+    this.points =
+        new Point[] {
+          new Point((int) (-DEFAULT_SIZE.convertToPixels() / 2), 0),
+          new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
+          new Point(0, 0)
+        };
     this.length = getDefaultLength() == null ? null : new Size(getDefaultLength());
     this.width = getDefaultWidth() == null ? null : new Size(getDefaultWidth());
-    this.display = Display.NAME;
+    setDisplay(Display.NAME);
     points[2] = calculateLabelPosition(points[0], points[1]);
   }
 
@@ -104,7 +110,7 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
       // to make standing components backward compatible and not show a label until the user
       // switches the display to something else
       if (isStanding()) {
-        display = Display.NONE;
+        setDisplay(Display.NONE);
       }
     }
     return points;
@@ -438,6 +444,26 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     return true;
   }
 
+  public boolean canBeRadial() {
+    return true;
+  }
+
+  public boolean canBeAxial() {
+    return false;
+  }
+
+  @EditableProperty(name = "Lead Type")
+  protected LeadType getLeadType() {
+    return leadType;
+  }
+
+  protected void setLeadType(LeadType leadType) {
+    if ((leadType == LeadType.RADIAL && canBeRadial())
+        || (leadType == LeadType.AXIAL && canBeAxial())) {
+      this.leadType = leadType;
+    }
+  }
+
   /** @return default lead thickness. Override this method to change it. */
   protected float getLeadThickness() {
     return getClosestOdd(LEAD_THICKNESS.convertToPixels());
@@ -460,8 +486,24 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
     this.leadColor = leadColor;
   }
 
-  protected int calculatePinSpacing(Rectangle shapeRect) {
-    return shapeRect.width;
+  private boolean isRadial() {
+    return leadType != null && leadType.isRadial();
+  }
+
+  public int calculatePinSpacing(Rectangle shapeRect) {
+    return isRadial() ? getPinSpacing().intPixels() : shapeRect.width;
+  }
+
+  @EditableProperty(name = "Pin spacing")
+  public Size getPinSpacing() {
+    if (pinSpacing == null) {
+      pinSpacing = PIN_SPACING;
+    }
+    return pinSpacing;
+  }
+
+  public void setPinSpacing(Size pinSpacing) {
+    this.pinSpacing = pinSpacing;
   }
 
   @Override
@@ -557,15 +599,6 @@ public abstract class AbstractLeadedComponent<T> extends AbstractTransparentComp
 
   public void setWidth(Size width) {
     this.width = width;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Label Color")

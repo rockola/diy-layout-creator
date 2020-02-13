@@ -32,27 +32,29 @@ import java.awt.geom.Rectangle2D;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+// TODO should the value actually be @ComponentValue(SiUnit.AMPERE) ?
+@StringValue
 @ComponentDescriptor(
     name = "Fuse Holder (Panel)",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Panel mounted fuse holder",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "FH",
     autoEdit = false)
-public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
+public class FuseHolderPanel extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -68,7 +70,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
   protected Point[] controlPoints = getFreshControlPoints(2);
   protected transient Area[] body;
-  protected String value = "";
   private OrientationHV orientation = OrientationHV.VERTICAL;
   private boolean hasFuse = false;
 
@@ -79,7 +80,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   public FuseHolderPanel() {
     super();
     updateControlPoints();
-    display = Display.VALUE;
+    setDisplay(Display.VALUE);
   }
 
   private void updateControlPoints() {
@@ -102,11 +103,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public int getControlPointCount() {
     return controlPoints.length;
   }
@@ -116,28 +112,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
     controlPoints[index].setLocation(point);
     // Reset body shape.
     body = null;
-  }
-
-  @EditableProperty
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty
@@ -310,15 +284,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent<String> {
 
   public void setBorderColor(Color borderColor) {
     this.borderColor = borderColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Label")

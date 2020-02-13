@@ -27,9 +27,9 @@ import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractCurvedComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -43,13 +43,13 @@ import org.diylc.core.measures.Size;
     category = "Connectivity",
     instanceNamePrefix = "Trace",
     description = "Curved copper trace with two control points",
-    zOrder = IDIYComponent.TRACE,
+    zOrder = AbstractComponent.TRACE,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "PCB",
     transformer = SimpleComponentTransformer.class)
-public class CurvedTrace extends AbstractCurvedComponent<Void> {
+public class CurvedTrace extends AbstractCurvedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -99,14 +99,6 @@ public class CurvedTrace extends AbstractCurvedComponent<Void> {
   public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   public int getAlpha() {

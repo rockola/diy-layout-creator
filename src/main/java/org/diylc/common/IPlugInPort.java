@@ -31,10 +31,9 @@ import java.util.List;
 import java.util.Set;
 import org.diylc.appframework.simplemq.IMessageListener;
 import org.diylc.appframework.simplemq.MessageDispatcher;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ExpansionMode;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.measures.Size;
 
@@ -166,7 +165,7 @@ public interface IPlugInPort
    * @param components Components to add.
    * @param autoGroup
    */
-  void pasteComponents(Collection<IDIYComponent<?>> components, boolean autoGroup);
+  void pasteComponents(Collection<AbstractComponent> components, boolean autoGroup);
 
   /**
    * Selects all components in the project.
@@ -200,7 +199,7 @@ public interface IPlugInPort
    * @param point Location of interest.
    * @return Found components.
    */
-  List<IDIYComponent<?>> findComponentsAt(Point point);
+  List<AbstractComponent> findComponentsAt(Point point);
 
   /**
    * Rotates selection 90 degrees.
@@ -286,7 +285,7 @@ public interface IPlugInPort
    * @param forceInstantiate
    */
   void setNewComponentTypeSlot(
-      ComponentType componentType, Template template, boolean forceInstantiate);
+      ComponentType componentType, AbstractComponent template, boolean forceInstantiate);
 
   /**
    * Changes default size notation, true for metric, false for imperial.

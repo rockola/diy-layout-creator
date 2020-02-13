@@ -25,23 +25,25 @@ import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.TubeSymbolTransformer;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IPropertyValidator;
 import org.diylc.core.ValidationException;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 
+@StringValue
 @ComponentDescriptor(
     name = "Diode",
     author = "Branislav Stojkovic",
     category = "Schematic Symbols",
     instanceNamePrefix = "V",
     description = "Diode tube symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = TubeSymbolTransformer.class)
 public class DiodeSymbol extends AbstractTubeSymbol {

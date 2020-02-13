@@ -26,33 +26,34 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.PinCount;
 import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "SIP IC",
     author = "Branislav Stojkovic",
     category = "Semiconductors",
     instanceNamePrefix = "IC",
     description = "Single-in-line package IC",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
 public class SingleInlineIc extends InlinePackage {
@@ -69,15 +70,6 @@ public class SingleInlineIc extends InlinePackage {
 
   public static PinCount defaultPinCount() {
     return new PinCount(2, 20);
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty
@@ -119,18 +111,6 @@ public class SingleInlineIc extends InlinePackage {
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   protected void updateControlPoints() {
@@ -183,52 +163,28 @@ public class SingleInlineIc extends InlinePackage {
           height = pinCount.pins() * pinSpacing;
           x -= thickness / 2;
           y -= pinSpacing / 2;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + width / 2 - indentationSize / 2,
-                      y - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.circle(x + width / 2, y, indentationSize);
           break;
         case _90:
           width = pinCount.pins() * pinSpacing;
           height = thickness;
           x -= (pinSpacing / 2) + width - pinSpacing;
           y -= thickness / 2;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + width - indentationSize / 2,
-                      y + height / 2 - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.circle(x + width, y + height / 2, indentationSize);
           break;
         case _180:
           width = thickness;
           height = pinCount.pins() * pinSpacing;
           x -= thickness / 2;
           y -= (pinSpacing / 2) + height - pinSpacing;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x + width / 2 - indentationSize / 2,
-                      y + height - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.circle(x + width / 2, y + height, indentationSize);
           break;
         case _270:
           width = pinCount.pins() * pinSpacing;
           height = thickness;
           x -= pinSpacing / 2;
           y -= thickness / 2;
-          indentation =
-              new Area(
-                  new Ellipse2D.Double(
-                      x - indentationSize / 2,
-                      y + height / 2 - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.circle(x, y + height / 2, indentationSize);
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);

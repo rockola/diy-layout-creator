@@ -43,6 +43,7 @@ import org.diylc.appframework.update.VersionNumber;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
 import org.diylc.common.EventType;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.ComponentFactory;
 import org.diylc.core.annotations.EditableProperty;
@@ -93,13 +94,13 @@ public class Project implements Serializable, Cloneable {
   private Size width = DEFAULT_WIDTH;
   private Size height = DEFAULT_HEIGHT;
   private Grid grid = new Grid();
-  private List<IDIYComponent<?>> components = new ArrayList<IDIYComponent<?>>();
-  private Set<Set<IDIYComponent<?>>> groups = new HashSet<Set<IDIYComponent<?>>>();
+  private List<AbstractComponent> components = new ArrayList<AbstractComponent>();
+  private Set<Set<AbstractComponent>> groups = new HashSet<Set<AbstractComponent>>();
   private Set<Integer> lockedLayers = new HashSet<Integer>();
   private Set<Integer> hiddenLayers = new HashSet<Integer>();
   private Font font = DEFAULT_FONT;
 
-  private transient Set<IDIYComponent<?>> selection = new HashSet<IDIYComponent<?>>();
+  private transient Set<AbstractComponent> selection = new HashSet<AbstractComponent>();
   private transient Area continuityArea;
   private transient Date created = new Date(); // should really be called "instantiated"
   private transient int sequenceNumber = nextSequenceNumber();
@@ -159,7 +160,7 @@ public class Project implements Serializable, Cloneable {
   private Object readResolve() {
     created = new Date();
     sequenceNumber = nextSequenceNumber();
-    selection = new HashSet<IDIYComponent<?>>();
+    selection = new HashSet<AbstractComponent>();
     return this;
   }
 
@@ -172,7 +173,7 @@ public class Project implements Serializable, Cloneable {
     return new Date(created.getTime());
   }
 
-  public Set<IDIYComponent<?>> getSelection() {
+  public Set<AbstractComponent> getSelection() {
     return selection;
   }
 
@@ -191,7 +192,7 @@ public class Project implements Serializable, Cloneable {
     selection.clear();
   }
 
-  public boolean inSelection(IDIYComponent<?> c) {
+  public boolean inSelection(AbstractComponent c) {
     return selection.contains(c);
   }
 
@@ -226,7 +227,7 @@ public class Project implements Serializable, Cloneable {
     List<Area> preliminaryAreas = new ArrayList<Area>();
     List<Boolean> checkBreakout = new ArrayList<Boolean>();
     Set<Connection> connections = new HashSet<Connection>();
-    for (IDIYComponent<?> c : getComponents()) {
+    for (AbstractComponent c : getComponents()) {
       ComponentArea a = c.getArea();
 
       if (c instanceof IContinuity) {
@@ -419,7 +420,7 @@ public class Project implements Serializable, Cloneable {
    *
    * @param newComponents Components to be added.
    */
-  public void addComponents(Collection<IDIYComponent<?>> newComponents) {
+  public void addComponents(Collection<AbstractComponent> newComponents) {
     getComponents().addAll(newComponents);
   }
 
@@ -428,10 +429,10 @@ public class Project implements Serializable, Cloneable {
    *
    * @param componentsToRemove Components to be removed.
    */
-  public void removeComponents(Collection<IDIYComponent<?>> componentsToRemove) {
-    Iterator<IDIYComponent<?>> i = componentsToRemove.iterator();
+  public void removeComponents(Collection<AbstractComponent> componentsToRemove) {
+    Iterator<AbstractComponent> i = componentsToRemove.iterator();
     while (i.hasNext()) {
-      IDIYComponent<?> c = i.next();
+      AbstractComponent c = i.next();
       selection.remove(c);
       components.remove(c);
     }
@@ -443,30 +444,30 @@ public class Project implements Serializable, Cloneable {
     //
     // TODO: figure out a way to remove components from project/selection
     // without duplicating selection
-    removeComponents(new HashSet<IDIYComponent<?>>(selection));
+    removeComponents(new HashSet<AbstractComponent>(selection));
     clearSelection();
   }
 
-  public void setSelection(Collection<IDIYComponent<?>> newSelection) {
+  public void setSelection(Collection<AbstractComponent> newSelection) {
     clearSelection();
-    Iterator<IDIYComponent<?>> i = newSelection.iterator();
+    Iterator<AbstractComponent> i = newSelection.iterator();
     while (i.hasNext()) {
       selection.add(i.next());
     }
   }
 
-  public void addToSelection(IDIYComponent<?> c) {
+  public void addToSelection(AbstractComponent c) {
     selection.add(c);
   }
 
-  private IDIYComponent<?> copyWithUniqueName(IDIYComponent<?> original)
+  private AbstractComponent copyWithUniqueName(AbstractComponent original)
       throws CloneNotSupportedException {
-    IDIYComponent<?> theCopy = original.clone();
+    AbstractComponent theCopy = original.clone();
     /* TODO simplify unique name creation
     TODO make it possible to do this for a number of components
     so that existing components need to be traversed only once */
     ComponentType componentType =
-        ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) theCopy.getClass());
+        ComponentType.extractFrom((Class<? extends AbstractComponent>) theCopy.getClass());
     theCopy.setName(InstantiationManager.createUniqueName(componentType, getComponents()));
     return theCopy;
   }
@@ -474,15 +475,15 @@ public class Project implements Serializable, Cloneable {
   /** Duplicate selection. */
   public void duplicateSelection() {
     int offset = getGridSpacing().intPixels();
-    Set<IDIYComponent<?>> newSelection = new HashSet<>();
+    Set<AbstractComponent> newSelection = new HashSet<>();
     /*
       copy all selected components, move the copies by offset in both
       X and Y directions, place copies in project, set selection to
       copies, notify listeners of project change
     */
     try {
-      for (IDIYComponent<?> component : getSelection()) {
-        IDIYComponent<?> duplicateComponent = copyWithUniqueName(component);
+      for (AbstractComponent component : getSelection()) {
+        AbstractComponent duplicateComponent = copyWithUniqueName(component);
         duplicateComponent.nudge(offset, offset);
         newSelection.add(duplicateComponent);
       }
@@ -512,9 +513,9 @@ public class Project implements Serializable, Cloneable {
    * @param components
    */
   public void ungroupSelection() {
-    Iterator<Set<IDIYComponent<?>>> groupIterator = getGroups().iterator();
+    Iterator<Set<AbstractComponent>> groupIterator = getGroups().iterator();
     while (groupIterator.hasNext()) {
-      Set<IDIYComponent<?>> group = groupIterator.next();
+      Set<AbstractComponent> group = groupIterator.next();
       group.removeAll(getSelection());
       if (group.isEmpty()) {
         groupIterator.remove();
@@ -526,7 +527,7 @@ public class Project implements Serializable, Cloneable {
     // First remove the selected components from other groups
     ungroupSelection();
     // Then group them together
-    getGroups().add(new HashSet<IDIYComponent<?>>(getSelection()));
+    getGroups().add(new HashSet<AbstractComponent>(getSelection()));
   }
 
   public void logTraceSelection() {
@@ -534,18 +535,18 @@ public class Project implements Serializable, Cloneable {
         "Project {} selection {}",
         this,
         emptySelection() ? "is empty" : "size " + getSelection().size());
-    for (IDIYComponent<?> c : getSelection()) {
+    for (AbstractComponent c : getSelection()) {
       LOG.trace("{} is selected", c.getIdentifier());
     }
   }
 
   /*
-  private ProjectEdit addAll(Collection<IDIYComponent<?>> newComponents) {
+  private ProjectEdit addAll(Collection<AbstractComponent> newComponents) {
     ProjectEdit action = new ProjectEdit(
         this,
-        new HashSet<IDIYComponent<?>>(getComponents()),
+        new HashSet<AbstractComponent>(getComponents()),
         newComponents);
-    for (IDIYComponent<?> component : newComponents) {
+    for (AbstractComponent component : newComponents) {
       action.addEdit(new ComponentEdit(component));
     }
     action.end();
@@ -623,11 +624,11 @@ public class Project implements Serializable, Cloneable {
    *
    * @return a list of all components in the project
    */
-  public List<IDIYComponent<?>> getComponents() {
+  public List<AbstractComponent> getComponents() {
     return components;
   }
 
-  public boolean contains(IDIYComponent<?> c) {
+  public boolean contains(AbstractComponent c) {
     return getComponents().contains(c);
   }
 
@@ -636,7 +637,7 @@ public class Project implements Serializable, Cloneable {
    *
    * @return
    */
-  public Set<Set<IDIYComponent<?>>> getGroups() {
+  public Set<Set<AbstractComponent>> getGroups() {
     return groups;
   }
 
@@ -651,14 +652,14 @@ public class Project implements Serializable, Cloneable {
     return hiddenLayers;
   }
 
-  public boolean isLocked(IDIYComponent<?> component) {
+  public boolean isLocked(AbstractComponent component) {
     ComponentType componentType = ComponentType.extractFrom(component);
     return getLockedLayers().contains((int) Math.round(componentType.getZOrder()));
   }
 
-  public Set<IDIYComponent<?>> getLockedComponents() {
-    Set<IDIYComponent<?>> locked = new HashSet<IDIYComponent<?>>();
-    for (IDIYComponent<?> component : getComponents()) {
+  public Set<AbstractComponent> getLockedComponents() {
+    Set<AbstractComponent> locked = new HashSet<AbstractComponent>();
+    for (AbstractComponent component : getComponents()) {
       if (isLocked(component)) {
         locked.add(component);
       }
@@ -666,12 +667,12 @@ public class Project implements Serializable, Cloneable {
     return locked;
   }
 
-  public boolean isVisible(IDIYComponent<?> component) {
+  public boolean isVisible(AbstractComponent component) {
     ComponentType componentType = ComponentType.extractFrom(component);
     return !getHiddenLayers().contains((int) Math.round(componentType.getZOrder()));
   }
 
-  public boolean isActive(IDIYComponent<?> component) {
+  public boolean isActive(AbstractComponent component) {
     return !isLocked(component) && isVisible(component);
   }
 
@@ -704,11 +705,11 @@ public class Project implements Serializable, Cloneable {
     font = getFont().deriveFont((float) size);
   }
 
-  public List<IDIYComponent<?>> findComponentsAt(Point point) {
+  public List<AbstractComponent> findComponentsAt(Point point) {
     LOG.trace("findComponentsAt({}) {}", point, this);
-    List<IDIYComponent<?>> found = new ArrayList<IDIYComponent<?>>();
+    List<AbstractComponent> found = new ArrayList<AbstractComponent>();
     LOG.trace("Project has {} components", getComponents().size());
-    for (IDIYComponent<?> component : getComponents()) {
+    for (AbstractComponent component : getComponents()) {
       LOG.trace(
           "findComponentsAt({}) {} looking at component {}",
           point,
@@ -738,7 +739,7 @@ public class Project implements Serializable, Cloneable {
     }
     if (!found.isEmpty()) {
       LOG.trace("Found {} components", found.size());
-      for (IDIYComponent<?> c : found) {
+      for (AbstractComponent c : found) {
         LOG.trace("{} was found", c.getIdentifier());
       }
     } else {
@@ -786,11 +787,11 @@ public class Project implements Serializable, Cloneable {
     } else if (components.size() != other.components.size()) {
       return false;
     } else {
-      Iterator<IDIYComponent<?>> i1 = components.iterator();
-      Iterator<IDIYComponent<?>> i2 = other.components.iterator();
+      Iterator<AbstractComponent> i1 = components.iterator();
+      Iterator<AbstractComponent> i2 = other.components.iterator();
       while (i1.hasNext()) {
-        IDIYComponent<?> c1 = i1.next();
-        IDIYComponent<?> c2 = i2.next();
+        AbstractComponent c1 = i1.next();
+        AbstractComponent c2 = i2.next();
         if (!c1.isEqualTo(c2)) {
           return false;
         }
@@ -918,13 +919,13 @@ public class Project implements Serializable, Cloneable {
     project.getHiddenLayers().addAll(this.getHiddenLayers());
     project.setFont(this.getFont());
 
-    Map<IDIYComponent<?>, IDIYComponent<?>> cloneMap =
-        new HashMap<IDIYComponent<?>, IDIYComponent<?>>();
+    Map<AbstractComponent, AbstractComponent> cloneMap =
+        new HashMap<AbstractComponent, AbstractComponent>();
 
-    List<IDIYComponent<?>> addedComponents = new ArrayList<>();
-    for (IDIYComponent<?> component : this.components) {
+    List<AbstractComponent> addedComponents = new ArrayList<>();
+    for (AbstractComponent component : this.components) {
       /*
-      IDIYComponent<?> clone = null;
+      AbstractComponent clone = null;
       try {
         clone = component.clone();
         LOG.trace(
@@ -946,9 +947,9 @@ public class Project implements Serializable, Cloneable {
     project.getComponents().clear();
     project.getComponents().addAll(addedComponents);
 
-    for (Set<IDIYComponent<?>> group : this.groups) {
-      Set<IDIYComponent<?>> cloneGroup = new HashSet<IDIYComponent<?>>();
-      for (IDIYComponent<?> component : group) {
+    for (Set<AbstractComponent> group : this.groups) {
+      Set<AbstractComponent> cloneGroup = new HashSet<AbstractComponent>();
+      for (AbstractComponent component : group) {
         cloneGroup.add(cloneMap.get(component));
       }
       project.groups.add(cloneGroup);
@@ -1008,9 +1009,9 @@ public class Project implements Serializable, Cloneable {
 
     List<ISwitch> switches = new ArrayList<ISwitch>();
 
-    for (IDIYComponent<?> c : getComponents()) {
+    for (AbstractComponent c : getComponents()) {
       ComponentType type =
-          ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) c.getClass());
+          ComponentType.extractFrom((Class<? extends AbstractComponent>) c.getClass());
 
       // extract nodes
       if (!(c instanceof IContinuity)) {
@@ -1111,9 +1112,9 @@ public class Project implements Serializable, Cloneable {
 
   private List<Connection> getConnections(Map<ISwitch, Integer> switchPositions) {
     Set<Connection> connections = new HashSet<Connection>();
-    for (IDIYComponent<?> c : getComponents()) {
+    for (AbstractComponent c : getComponents()) {
       ComponentType type =
-          ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) c.getClass());
+          ComponentType.extractFrom((Class<? extends AbstractComponent>) c.getClass());
       // handle direct connections
       if (c instanceof IContinuity) {
         for (int i = 0; i < c.getControlPointCount() - 1; i++) {

@@ -35,7 +35,7 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.Orientation;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.VerticalAlignment;
-import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.BlankBoard;
@@ -62,11 +62,9 @@ import org.diylc.components.semiconductors.DualInlineIc;
 import org.diylc.components.semiconductors.Led;
 import org.diylc.components.semiconductors.SingleInlineIc;
 import org.diylc.components.semiconductors.TransistorTO92;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.Project;
-import org.diylc.core.measures.Capacitance;
-import org.diylc.core.measures.Resistance;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.utils.Constants;
 import org.w3c.dom.Element;
@@ -155,7 +153,7 @@ public class V1FileParser implements IOldFileParser {
           y2Attr = Integer.parseInt(node.getAttributes().getNamedItem("Y2").getNodeValue());
           point2 = convertV1CoordinatesToV3Point(referencePoint, x2Attr, y2Attr);
         }
-        IDIYComponent<?> component = null;
+        AbstractComponent component = null;
         if (nodeName.equalsIgnoreCase("text")) {
           LOG.debug("Recognized " + nodeName);
           Label label = new Label();
@@ -163,7 +161,7 @@ public class V1FileParser implements IOldFileParser {
           if (color != null) {
             label.setColor(color);
           }
-          label.setValue(valueAttr);
+          label.setStringValue(valueAttr);
           label.setHorizontalAlignment(HorizontalAlignment.LEFT);
           label.setVerticalAlignment(VerticalAlignment.CENTER);
           label.setControlPoint(convertV1CoordinatesToV3Point(referencePoint, x1Attr, y1Attr), 0);
@@ -226,7 +224,7 @@ public class V1FileParser implements IOldFileParser {
           Resistor resistor = new Resistor();
           resistor.setName(nameAttr);
           try {
-            resistor.setValue(Resistance.parseResistance(valueAttr));
+            resistor.setValue(Value.parse(valueAttr));
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
@@ -240,7 +238,7 @@ public class V1FileParser implements IOldFileParser {
           RadialFilmCapacitor capacitor = new RadialFilmCapacitor();
           capacitor.setName(nameAttr);
           try {
-            capacitor.setValue(Capacitance.parseCapacitance(valueAttr));
+            capacitor.setValue(Value.parse(valueAttr));
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
@@ -254,7 +252,7 @@ public class V1FileParser implements IOldFileParser {
           RadialElectrolytic capacitor = new RadialElectrolytic();
           capacitor.setName(nameAttr);
           try {
-            capacitor.setValue(Capacitance.parseCapacitance(valueAttr));
+            capacitor.setValue(Value.parse(valueAttr));
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
@@ -281,7 +279,7 @@ public class V1FileParser implements IOldFileParser {
           DiodePlastic capacitor = new DiodePlastic();
           capacitor.setName(nameAttr);
           try {
-            capacitor.setValue(valueAttr);
+            capacitor.setValue(Value.parse(valueAttr));
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
@@ -294,7 +292,7 @@ public class V1FileParser implements IOldFileParser {
           LOG.debug("Recognized " + nodeName);
           Led led = new Led();
           led.setName(nameAttr);
-          led.setValue(valueAttr);
+          led.setStringValue(valueAttr);
           led.setBodyColor(Color.red);
           led.setBorderColor(Color.red.darker());
           led.setLength(Size.mm(3));
@@ -306,9 +304,9 @@ public class V1FileParser implements IOldFileParser {
           TransistorTO92 transistor = new TransistorTO92();
           transistor.setName(nameAttr);
           try {
-            transistor.setValue(valueAttr);
+            transistor.setStringValue(valueAttr);
           } catch (Exception e) {
-            LOG.debug("Could not set value of " + nameAttr);
+            LOG.debug("Could not set value of {}", nameAttr);
           }
           transistor.setControlPoint(point1, 0);
           if (point1.y > point2.y) {
@@ -353,7 +351,7 @@ public class V1FileParser implements IOldFileParser {
             p.translate(point1.x, point1.y);
             ic.setControlPoint(p, j);
           }
-          ic.setValue(valueAttr);
+          ic.setStringValue(valueAttr);
           component = ic;
         } else if (nodeName.equalsIgnoreCase("switch")) {
           LOG.debug("Recognized " + nodeName);
@@ -396,7 +394,7 @@ public class V1FileParser implements IOldFileParser {
           } else {
             sw.setName(nameAttr);
             sw.setOrientation(orientation);
-            sw.setValue(switchType);
+            sw.setSwitchType(switchType);
             sw.setSpacing(Size.in(0.1));
             // compensate for potential negative coordinates after the type and orientation have
             // been set. Make sure that the top left corner is at (0, 0)
@@ -444,7 +442,7 @@ public class V1FileParser implements IOldFileParser {
             p.translate(point1.x, point1.y);
             ic.setControlPoint(p, j);
           }
-          ic.setValue(valueAttr);
+          ic.setStringValue(valueAttr);
           component = ic;
         } else if (nodeName.equalsIgnoreCase("pot")) {
           LOG.debug("Recognized " + nodeName);
@@ -453,7 +451,7 @@ public class V1FileParser implements IOldFileParser {
           pot.setSpacing(Size.in(0.2));
           pot.setName(nameAttr);
           try {
-            pot.setValue(Resistance.parseResistance(valueAttr));
+            pot.setValue(Value.parse(valueAttr));
           } catch (Exception e) {
             LOG.debug("Could not set value of " + nameAttr);
           }
@@ -642,7 +640,7 @@ public class V1FileParser implements IOldFileParser {
             }
           } else {
             try {
-              trimmer.setValue(Resistance.parseResistance(valueAttr));
+              trimmer.setValue(Value.parse(valueAttr));
             } catch (Exception e) {
               LOG.debug("Could not set value of " + nameAttr);
             }
@@ -667,11 +665,9 @@ public class V1FileParser implements IOldFileParser {
           }
         }
         if (component != null) {
-          if (component instanceof AbstractLeadedComponent<?>) {
-            ((AbstractLeadedComponent<?>) component).setDisplay(Display.NAME);
-          }
-          if (component instanceof AbstractTransparentComponent<?>) {
-            ((AbstractTransparentComponent<?>) component).setAlpha(100);
+          component.setDisplay(Display.NAME);
+          if (component instanceof AbstractTransparentComponent) {
+            ((AbstractTransparentComponent) component).setAlpha(100);
           }
           project.getComponents().add(component);
         }
@@ -679,7 +675,7 @@ public class V1FileParser implements IOldFileParser {
     }
 
     int minY = y;
-    for (IDIYComponent<?> c : project.getComponents()) {
+    for (AbstractComponent c : project.getComponents()) {
       for (int i = 0; i < c.getControlPointCount(); i++) {
         Point p = c.getControlPoint(i);
         if (p.y < minY) {
@@ -692,7 +688,7 @@ public class V1FileParser implements IOldFileParser {
     Label titleLabel = new Label();
     titleLabel.setColor(Color.blue);
     titleLabel.setFontSize(24);
-    titleLabel.setValue(project.getTitle());
+    titleLabel.setStringValue(project.getTitle());
     titleLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     titleLabel.setControlPoint(
         project
@@ -706,7 +702,7 @@ public class V1FileParser implements IOldFileParser {
 
     Label creditsLabel = new Label();
     creditsLabel.setFontSize(16);
-    creditsLabel.setValue(project.getAuthor());
+    creditsLabel.setStringValue(project.getAuthor());
     creditsLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
     creditsLabel.setControlPoint(
         project

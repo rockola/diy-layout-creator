@@ -22,7 +22,7 @@ package org.diylc.common;
 
 import java.io.IOException;
 import java.util.List;
-import org.diylc.core.Template;
+import org.diylc.components.AbstractComponent;
 
 public interface IVariantProcessor {
 
@@ -30,11 +30,11 @@ public interface IVariantProcessor {
 
   void saveSelectedComponentAsVariant(String variantName);
 
-  List<Template> getVariantsFor(ComponentType type);
+  List<AbstractComponent> getVariantsFor(ComponentType type);
 
-  List<Template> getVariantsForSelection();
+  List<AbstractComponent> getVariantsForSelection();
 
-  void applyVariantToSelection(Template variant);
+  void applyVariantToSelection(AbstractComponent variant);
 
   void deleteVariant(ComponentType type, String variantName);
 

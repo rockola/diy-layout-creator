@@ -27,15 +27,14 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import org.diylc.common.Display;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -50,11 +49,11 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "LN",
     description = "Line with optional arrows",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class Line extends AbstractLeadedComponent<Void> {
+public class Line extends AbstractLeadedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -263,14 +262,6 @@ public class Line extends AbstractLeadedComponent<Void> {
   }
 
   @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
-
-  @Override
   protected Area getBodyShape() {
     return null;
   }
@@ -288,29 +279,5 @@ public class Line extends AbstractLeadedComponent<Void> {
   @Override
   public String getControlPointNodeName(int index) {
     return null;
-  }
-
-  @Deprecated
-  @Override
-  public Color getLabelColor() {
-    return super.getLabelColor();
-  }
-
-  @Deprecated
-  @Override
-  public String getName() {
-    return super.getName();
-  }
-
-  @Deprecated
-  @Override
-  public Display getDisplay() {
-    return super.getDisplay();
-  }
-
-  @Deprecated
-  @Override
-  public LabelOrientation getLabelOrientation() {
-    return super.getLabelOrientation();
   }
 }

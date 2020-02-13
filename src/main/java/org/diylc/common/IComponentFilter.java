@@ -20,9 +20,9 @@
 
 package org.diylc.common;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public interface IComponentFilter {
 
-  boolean testComponent(IDIYComponent<?> component);
+  boolean testComponent(AbstractComponent component);
 }

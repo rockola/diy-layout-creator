@@ -24,12 +24,14 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 
+@StringValue
 @ComponentDescriptor(
     name = "Diode",
     author = "Branislav Stojkovic",
@@ -37,7 +39,7 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "D",
     description = "Diode schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)

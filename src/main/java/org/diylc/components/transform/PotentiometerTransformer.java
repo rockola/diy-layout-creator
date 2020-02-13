@@ -24,18 +24,18 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.passive.PotentiometerPanel;
-import org.diylc.core.IDIYComponent;
 
 public class PotentiometerTransformer implements IComponentTransformer {
 
   @Override
-  public boolean canRotate(IDIYComponent<?> component) {
+  public boolean canRotate(AbstractComponent component) {
     return component.getClass().equals(PotentiometerPanel.class);
   }
 
   @Override
-  public boolean canMirror(IDIYComponent<?> component) {
+  public boolean canMirror(AbstractComponent component) {
     return component.getClass().equals(PotentiometerPanel.class);
   }
 
@@ -45,7 +45,7 @@ public class PotentiometerTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+  public void rotate(AbstractComponent component, Point center, int direction) {
     AffineTransform rotate =
         AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
@@ -59,7 +59,7 @@ public class PotentiometerTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void mirror(IDIYComponent<?> component, Point center, int direction) {
+  public void mirror(AbstractComponent component, Point center, int direction) {
     PotentiometerPanel potentiometer = (PotentiometerPanel) component;
     int dx = center.x - potentiometer.getControlPoint(1).x;
     int dy = center.y - potentiometer.getControlPoint(1).y;

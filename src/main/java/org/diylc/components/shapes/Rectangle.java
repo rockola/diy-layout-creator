@@ -24,8 +24,8 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -39,7 +39,7 @@ import org.diylc.core.measures.Size;
     category = "Shapes",
     instanceNamePrefix = "RECT",
     description = "Ractangular area, with or withouth rounded edges",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.SHOW_ALL_NAMES,
     autoEdit = false,

@@ -33,28 +33,29 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue("Type")
 @ComponentDescriptor(
     name = "Tube Socket",
     author = "Branislav Stojkovic",
     category = "Tubes",
     instanceNamePrefix = "V",
     description = "Various types of tube/valve sockets",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class TubeSocket extends AbstractTransparentComponent<String> {
+public class TubeSocket extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Size B9A_PIN_SPACING_CHASSIS = Size.mm(12.5);
@@ -394,22 +395,6 @@ public class TubeSocket extends AbstractTransparentComponent<String> {
   @Override
   public int getControlPointCount() {
     return controlPoints.length;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
-  @EditableProperty(name = "Type")
-  public String getValue() {
-    return type;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.type = value;
   }
 
   @Override

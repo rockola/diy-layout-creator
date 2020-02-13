@@ -22,15 +22,19 @@ package org.diylc.components.misc;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.VoltageUnit;
+import org.diylc.core.measures.Value;
 
+@StringValue
 @ComponentDescriptor(
     name = "Battery",
     author = "N9XYP",
@@ -38,8 +42,8 @@ import org.diylc.core.measures.VoltageUnit;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "B",
     description = "Battery schematic symbol",
-    zOrder = IDIYComponent.COMPONENT)
-public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
+    zOrder = AbstractComponent.COMPONENT)
+public class BatterySymbol extends AbstractSchematicLeadedSymbol {
 
   private static final long serialVersionUID = 1L;
 
@@ -48,33 +52,29 @@ public class BatterySymbol extends AbstractSchematicLeadedSymbol<String> {
   /** Plate size. */
   public static final Size DEFAULT_WIDTH = Size.in(0.15);
 
-  private String value = "Battery";
+  /** Battery voltage. */
+  private Value voltage = new Value(9, SiUnit.VOLT);
 
-  private org.diylc.core.measures.Voltage voltageNew =
-      new org.diylc.core.measures.Voltage(9d, VoltageUnit.V);
+  public BatterySymbol() {
+    super();
+    setStringValue("Battery");
+  }
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString() + (getVoltage() == null ? "" : " " + getVoltage().toString());
   }
 
+  @ComponentValue(SiUnit.VOLT)
   @EditableProperty
-  public String getValue() {
-    return value;
+  public Value getVoltage() {
+    return voltage;
   }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
+  public void setVoltage(Value voltage) {
+    if (voltage == null || voltage.getUnit() == SiUnit.VOLT) {
+      this.voltage = voltage;
+    }
   }
 
   @Override

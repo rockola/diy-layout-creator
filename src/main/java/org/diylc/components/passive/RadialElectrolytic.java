@@ -25,13 +25,17 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Electrolytic Capacitor (Radial)",
     author = "Branislav Stojkovic",
@@ -39,33 +43,20 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Vertically mounted electrolytic capacitor, polarized or bipolar",
-    zOrder = IDIYComponent.COMPONENT,
+    leadType = LeadType.RADIAL,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class RadialElectrolytic extends RadialCapacitor {
+public class RadialElectrolytic extends ElectrolyticCapacitor {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_SIZE = Size.in(0.25);
-  public static final Color BODY_COLOR = Color.decode("#6B6DCE");
-  public static final Color BORDER_COLOR = BODY_COLOR.darker();
-  public static final Color MARKER_COLOR = Color.decode("#8CACEA");
-  public static final Color TICK_COLOR = Color.white;
   public static final Size HEIGHT = Size.in(0.4);
   public static final Size EDGE_RADIUS = Size.mm(1);
 
-  private Color markerColor = MARKER_COLOR;
-  private Color tickColor = TICK_COLOR;
-  private boolean polarized = true;
   private boolean folded = false;
   private Size height = HEIGHT;
   private boolean invert = false;
-
-  public RadialElectrolytic() {
-    super();
-    this.bodyColor = BODY_COLOR;
-    this.borderColor = BORDER_COLOR;
-    this.labelColor = TICK_COLOR;
-  }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
     g2d.setColor(BODY_COLOR);
@@ -142,33 +133,6 @@ public class RadialElectrolytic extends RadialCapacitor {
   @Override
   public Size getLength() {
     return super.getLength();
-  }
-
-  @EditableProperty(name = "Marker")
-  public Color getMarkerColor() {
-    return markerColor;
-  }
-
-  public void setMarkerColor(Color coverColor) {
-    this.markerColor = coverColor;
-  }
-
-  @EditableProperty(name = "Tick")
-  public Color getTickColor() {
-    return tickColor;
-  }
-
-  public void setTickColor(Color tickColor) {
-    this.tickColor = tickColor;
-  }
-
-  @EditableProperty(name = "Polarized")
-  public boolean getPolarized() {
-    return polarized;
-  }
-
-  public void setPolarized(boolean polarized) {
-    this.polarized = polarized;
   }
 
   @EditableProperty

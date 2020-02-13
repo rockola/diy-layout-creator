@@ -29,26 +29,27 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Pilot Lamp Holder",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
-    description = "Fender-style pilot bulb holder for T2 and T-3 ¼ miniature bayonet lamps",
-    zOrder = IDIYComponent.COMPONENT,
+    description = "Fender-style pilot bulb holder for T2 and T-3 ¼\" miniature bayonet lamps",
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "PL")
-public class PilotLampHolder extends AbstractMultiPartComponent<String> {
+public class PilotLampHolder extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -69,7 +70,6 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
   private static Size HOLE_TO_EDGE = Size.in(0.063);
   private static Size HOLE_SPACING = Size.in(0.1);
 
-  private String value = "";
   private Point[] controlPoints =
       new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   transient Area[] body;
@@ -271,11 +271,6 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }
@@ -290,16 +285,6 @@ public class PilotLampHolder extends AbstractMultiPartComponent<String> {
     this.controlPoints[index].setLocation(point);
     // Invalidate the body
     body = null;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty

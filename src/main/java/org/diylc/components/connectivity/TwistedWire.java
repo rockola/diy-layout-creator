@@ -38,11 +38,11 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.common.LineStyle;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractCurvedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IContinuity;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -55,12 +55,12 @@ import org.diylc.utils.Constants;
     category = "Connectivity",
     instanceNamePrefix = "W",
     description = "A pair of flexible leads twisted tighly together",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class TwistedWire extends AbstractCurvedComponent<Void> implements IContinuity {
+public class TwistedWire extends AbstractCurvedComponent implements IContinuity {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(TwistedWire.class);
@@ -205,14 +205,6 @@ public class TwistedWire extends AbstractCurvedComponent<Void> implements IConti
     this.firstLeadStripeArea = null;
     this.secondLeadStripeArea = null;
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @EditableProperty(name = "Color 1")
   public Color getLeadColor() {

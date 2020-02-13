@@ -29,30 +29,31 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ISwitch;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Lever Switch",
     category = "Guitar",
     author = "Branislav Stojkovic",
     description = "Strat-style lever switch",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "SW",
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Guitar Wiring Diagram")
-public class LeverSwitch extends AbstractTransparentComponent<String> implements ISwitch {
+public class LeverSwitch extends AbstractTransparentComponent implements ISwitch {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(LeverSwitch.class);
@@ -73,7 +74,6 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
   private static Size TERMINAL_LENGTH = Size.in(0.1);
   private static Size TERMINAL_SPACING = Size.in(0.1);
 
-  private String value = "";
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
@@ -293,11 +293,6 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }
@@ -312,16 +307,6 @@ public class LeverSwitch extends AbstractTransparentComponent<String> implements
     this.controlPoints[index].setLocation(point);
     // Invalidate the body
     body = null;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty

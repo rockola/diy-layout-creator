@@ -27,7 +27,6 @@ import java.awt.Polygon;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -42,10 +41,10 @@ import org.diylc.core.measures.Size;
     category = "Schematic Symbols",
     instanceNamePrefix = "GND",
     description = "Ground schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false)
-public class GroundSymbol extends AbstractComponent<Void> {
+public class GroundSymbol extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -165,16 +164,6 @@ public class GroundSymbol extends AbstractComponent<Void> {
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
   }
-
-  @Deprecated
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Deprecated
-  @Override
-  public void setValue(Void value) {}
 
   public enum GroundSymbolType {
     DEFAULT("Default"),

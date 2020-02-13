@@ -23,16 +23,16 @@ package org.diylc.components.passive;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractLeadedComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Film Capacitor (Axial)",
     author = "Branislav Stojkovic",
@@ -40,9 +40,9 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Axial film capacitor, similar to Mallory 150s",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
+public class AxialFilmCapacitor extends AxialCapacitor {
 
   private static final long serialVersionUID = 1L;
 
@@ -50,10 +50,6 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
   public static final Size DEFAULT_HEIGHT = Size.in(0.125);
   public static final Color BODY_COLOR = Color.decode("#FFE303");
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
-
-  private Capacitance value = null;
-  @Deprecated private Voltage voltage = Voltage._63V;
-  private org.diylc.core.measures.Voltage voltageNew = null;
 
   public AxialFilmCapacitor() {
     super();
@@ -64,40 +60,6 @@ public class AxialFilmCapacitor extends AbstractLeadedComponent<Capacitance> {
   @Override
   protected boolean supportsStandingMode() {
     return true;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
-  }
-
-  @Deprecated
-  public Voltage getVoltage() {
-    return voltage;
-  }
-
-  @Deprecated
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
-  }
-
-  @Override
-  public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

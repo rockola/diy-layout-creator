@@ -28,7 +28,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import org.diylc.awt.StringUtils;
-import org.diylc.common.Display;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
@@ -41,14 +40,13 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
-public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
+public abstract class Abstract3LegSymbol extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
 
-  protected String value = "";
   protected Point[] controlPoints = getFreshControlPoints(4);
   protected Color color = COLOR;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
@@ -216,17 +214,6 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
     return index < 3 || getMoveLabel() ? VisibilityPolicy.WHEN_SELECTED : VisibilityPolicy.NEVER;
   }
 
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return this.value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
   @Override
   public boolean isControlPointSticky(int index) {
     return index < 3;
@@ -279,15 +266,6 @@ public abstract class Abstract3LegSymbol extends AbstractComponent<String> {
 
   public void setMoveLabel(boolean moveLabel) {
     this.moveLabel = moveLabel;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty

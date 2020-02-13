@@ -21,39 +21,29 @@
 package org.diylc.components.smd;
 
 import java.awt.Color;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 
+@ComponentValue(SiUnit.OHM)
 @ComponentDescriptor(
     name = "SMD Resistor",
     author = "Branislav Stojkovic",
     category = "SMD",
     instanceNamePrefix = "C",
     description = "Surface mount resistor",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class SurfaceMountResistor extends PassiveSurfaceMountComponent<Resistance> {
+public class SurfaceMountResistor extends PassiveSurfaceMountComponent {
 
   private static final long serialVersionUID = 1L;
 
   public static final Color BODY_COLOR = Color.gray;
-  public static final Color BORDER_COLOR = Color.gray.darker();
+  public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
   public SurfaceMountResistor() {
-    this.bodyColor = BODY_COLOR;
-    this.borderColor = BORDER_COLOR;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Resistance getValue() {
-    return value;
-  }
-
-  public void setValue(Resistance value) {
-    this.value = value;
+    super(SiUnit.OHM, BODY_COLOR, BORDER_COLOR);
   }
 }

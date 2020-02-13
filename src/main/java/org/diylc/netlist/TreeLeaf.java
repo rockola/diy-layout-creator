@@ -21,21 +21,21 @@
 package org.diylc.netlist;
 
 import java.util.List;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class TreeLeaf implements ITree {
 
-  private IDIYComponent<?> component;
+  private AbstractComponent component;
   private int pointIndex1;
   private int pointIndex2;
 
-  public TreeLeaf(IDIYComponent<?> component, int pointIndex1, int pointIndex2) {
+  public TreeLeaf(AbstractComponent component, int pointIndex1, int pointIndex2) {
     this.component = component;
     this.pointIndex1 = pointIndex1;
     this.pointIndex2 = pointIndex2;
   }
 
-  public IDIYComponent<?> getComponent() {
+  public AbstractComponent getComponent() {
     return component;
   }
 

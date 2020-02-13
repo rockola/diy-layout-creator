@@ -30,10 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -45,12 +43,12 @@ import org.diylc.utils.BomMaker;
     name = "Bill of Materials",
     author = "Branislav Stojkovic",
     category = "Misc",
-    description = "",
+    description = "Bill of Materials lists components and their quantities",
     instanceNamePrefix = "BOM",
-    zOrder = IDIYComponent.TEXT,
+    zOrder = AbstractComponent.TEXT,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false)
-public class BillOfMaterials extends AbstractComponent<Void> {
+public class BillOfMaterials extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,7 +58,6 @@ public class BillOfMaterials extends AbstractComponent<Void> {
   public static final String DEFAULT_TEXT = "No components to show in the Bill of Materials";
 
   private Size size = DEFAULT_SIZE;
-
   private Point point = new Point(0, 0);
   private Color color = COLOR;
 
@@ -189,16 +186,6 @@ public class BillOfMaterials extends AbstractComponent<Void> {
   }
 
   @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public void setControlPoint(Point point, int index) {
     this.point.setLocation(point);
   }
@@ -223,12 +210,4 @@ public class BillOfMaterials extends AbstractComponent<Void> {
   public void setColor(Color color) {
     this.color = color;
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 }

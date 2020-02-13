@@ -27,32 +27,33 @@ import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.TerminalStripTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IContinuity;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Terminal Strip",
     author = "Branislav Stojkovic",
     category = "Boards",
     instanceNamePrefix = "TS",
     description = "Row of terminals for point-to-point construction",
-    zOrder = IDIYComponent.BOARD,
+    zOrder = AbstractComponent.BOARD,
     keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
     transformer = TerminalStripTransformer.class)
-public class TerminalStrip extends AbstractTransparentComponent<String> implements IContinuity {
+public class TerminalStrip extends AbstractTransparentComponent implements IContinuity {
 
   private static final long serialVersionUID = 1L;
 
@@ -64,7 +65,6 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
   public static final Size HOLE_SIZE = Size.in(0.06);
   public static final Size MOUNTING_HOLE_SIZE = Size.in(0.07);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private int terminalCount = 10;
   private Size boardWidth = Size.in(0.35);
@@ -80,15 +80,6 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
   public TerminalStrip() {
     super();
     updateControlPoints();
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty
@@ -177,11 +168,6 @@ public class TerminalStrip extends AbstractTransparentComponent<String> implemen
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

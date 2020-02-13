@@ -23,17 +23,19 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Capacitor",
     author = "Branislav Stojkovic",
@@ -41,54 +43,35 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Capacitor schematic symbol with an optional polarity sign",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)
-public class CapacitorSymbol extends AbstractSchematicLeadedSymbol<Capacitance> {
+public class CapacitorSymbol extends AbstractSchematicLeadedSymbol {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_LENGTH = Size.in(0.05);
   public static final Size DEFAULT_WIDTH = Size.in(0.15);
 
-  private Capacitance value = null;
-  @Deprecated private Voltage voltage = Voltage._63V;
-  private org.diylc.core.measures.Voltage voltageNew = null;
+  private Value voltage;
   private boolean polarized = false;
 
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
+  public CapacitorSymbol() {
+    super();
+    valueUnit = SiUnit.FARAD;
   }
 
-  public void setValue(Capacitance value) {
-    this.value = value;
-  }
-
-  @Override
-  public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
-  }
-
-  @Deprecated
-  public Voltage getVoltage() {
+  @ComponentValue(SiUnit.VOLT)
+  @EditableProperty(name = "Voltage")
+  public Value getVoltage() {
     return voltage;
   }
 
-  @Deprecated
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
+  public void setVoltage(Value voltage) {
+    if (voltage == null || voltage.getUnit() == SiUnit.VOLT) {
+      this.voltage = voltage;
+    }
   }
 
   @EditableProperty

@@ -28,10 +28,10 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractCurvedComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IContinuity;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -44,12 +44,12 @@ import org.diylc.utils.Constants;
     category = "Connectivity",
     instanceNamePrefix = "W",
     description = "Flexible wire with two control points",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class HookupWire extends AbstractCurvedComponent<Void> implements IContinuity {
+public class HookupWire extends AbstractCurvedComponent implements IContinuity {
 
   private static final long serialVersionUID = 1L;
 
@@ -141,14 +141,6 @@ public class HookupWire extends AbstractCurvedComponent<Void> implements IContin
   public void setGauge(AmericanWireGauge gauge) {
     this.gauge = gauge;
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @EditableProperty(name = "Stripe")
   public boolean getStriped() {

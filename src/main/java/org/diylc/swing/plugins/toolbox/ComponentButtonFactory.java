@@ -45,9 +45,8 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.miscutils.Utils;
 import org.diylc.common.ComponentType;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
 import org.diylc.images.Icon;
 
 /**
@@ -82,8 +81,8 @@ public class ComponentButtonFactory {
           public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {
               Project project = plugInPort.currentProject();
-              List<IDIYComponent<?>> newSelection = new ArrayList<IDIYComponent<?>>();
-              for (IDIYComponent<?> component : project.getComponents()) {
+              List<AbstractComponent> newSelection = new ArrayList<AbstractComponent>();
+              for (AbstractComponent component : project.getComponents()) {
                 if (componentType.getInstanceClass().equals(component.getClass())) {
                   newSelection.add(component);
                 }
@@ -118,7 +117,9 @@ public class ComponentButtonFactory {
   private static final Pattern contributedPattern = Pattern.compile("^(.*)\\[(.*)\\]");
 
   public static JMenuItem createVariantItem(
-      final IPlugInPort plugInPort, final Template variant, final ComponentType componentType) {
+      final IPlugInPort plugInPort,
+      final AbstractComponent variant,
+      final ComponentType componentType) {
 
     String display = variant.getName();
 

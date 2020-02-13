@@ -26,9 +26,9 @@ import java.awt.Point;
 import java.util.Arrays;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.shapes.AbstractShape;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -41,7 +41,7 @@ import org.diylc.core.annotations.EditableProperty;
     category = "Electro-Mechanical",
     instanceNamePrefix = "POLYC",
     description = "Polygonal chassis cutout",
-    zOrder = IDIYComponent.CHASSIS + 0.1,
+    zOrder = AbstractComponent.CHASSIS + 0.1,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)

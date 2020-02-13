@@ -28,27 +28,29 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ISwitch;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Toggle Switch",
     category = "Guitar",
     author = "Branislav Stojkovic",
     description = "3-position toggle switch, like the pickup switch on a Les Paul",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "SW")
-public class GuitarToggleSwitch extends AbstractTransparentComponent<String> implements ISwitch {
+public class GuitarToggleSwitch extends AbstractTransparentComponent implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,7 +62,6 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
   private static Size WAFER_THICKNESS = Size.in(0.05);
   private static Size TERMINAL_SPACING = Size.in(0.2);
 
-  private String value = "";
   private Point[] controlPoints = getFreshControlPoints(4);
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
@@ -257,16 +258,6 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent<String> imp
   @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty

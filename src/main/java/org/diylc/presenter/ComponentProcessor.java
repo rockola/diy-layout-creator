@@ -30,9 +30,12 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.IPropertyValidator;
+import org.diylc.components.AbstractComponent;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.MultiLineText;
+import org.diylc.core.annotations.StringValue;
+import org.diylc.core.measures.SiUnit;
 
 /**
  * Utility class with component processing methods.
@@ -44,11 +47,9 @@ public class ComponentProcessor {
   private static final Logger LOG = LogManager.getLogger(ComponentProcessor.class);
 
   private static Map<String, List<PropertyWrapper>> propertyCache;
-  private static Map<String, IPropertyValidator> propertyValidatorCache;
 
   static {
     propertyCache = new HashMap<String, List<PropertyWrapper>>();
-    propertyValidatorCache = new HashMap<String, IPropertyValidator>();
   }
 
   /**
@@ -57,11 +58,14 @@ public class ComponentProcessor {
    * @param clazz The class.
    * @return list of properties.
    */
-  public static List<PropertyWrapper> extractProperties(Class<?> clazz) {
+  public static List<PropertyWrapper> extractProperties(Class clazz) {
     if (propertyCache.containsKey(clazz.getName())) {
       return cloneProperties(propertyCache.get(clazz.getName()));
     }
     List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
+    ComponentValue valueAnnotation = (ComponentValue) clazz.getAnnotation(ComponentValue.class);
+    SiUnit valueType = valueAnnotation == null ? null : valueAnnotation.value();
+    boolean stringValue = clazz.isAnnotationPresent(StringValue.class);
     for (Method getter : clazz.getMethods()) {
       if (getter.getName().startsWith("get")) {
         try {
@@ -74,17 +78,38 @@ public class ComponentProcessor {
             */
             String field = getter.getName().substring(3); // part after "get"
             String name = annotation.name().equals("") ? field : annotation.name();
-            IPropertyValidator validator = getPropertyValidator(annotation.validatorClass());
             Method setter = clazz.getMethod("set" + field, getter.getReturnType());
+            ComponentValue getterValueAnnotation = getter.getAnnotation(ComponentValue.class);
+            SiUnit getterValueType =
+                getterValueAnnotation == null ? null : getterValueAnnotation.value();
+            /*
+              @ComponentValue for class takes precedence over @ComponentValue
+              for method if both are present and getter is getValue().
+            */
+            boolean isGetValue = name.equals("Value");
+            /*
+              If getter is getValue() and @StringValue for class is
+              set to a non-empty string, use that as the field name.
+            */
+            if (isGetValue && stringValue) {
+              String fieldName = ((StringValue) clazz.getAnnotation(StringValue.class)).value();
+              if (!fieldName.equals("")) {
+                name = fieldName;
+              }
+            }
+            boolean multiLine =
+                (isGetValue && stringValue && clazz.isAnnotationPresent(MultiLineText.class))
+                    || getter.isAnnotationPresent(MultiLineText.class);
             PropertyWrapper property =
                 new PropertyWrapper(
                     name,
                     getter.getReturnType(),
                     getter.getName(),
                     setter.getName(),
-                    annotation.defaultable(),
-                    validator,
-                    annotation.sortOrder());
+                    annotation,
+                    isGetValue ? valueType : getterValueType,
+                    isGetValue ? stringValue : false,
+                    multiLine);
             properties.add(property);
           }
         } catch (NoSuchMethodException e) {
@@ -116,13 +141,13 @@ public class ComponentProcessor {
    * @return
    */
   public static List<PropertyWrapper> getMutualSelectionProperties(
-      Collection<IDIYComponent<?>> selectedComponents) throws Exception {
+      Collection<AbstractComponent> selectedComponents) throws Exception {
     if (selectedComponents.isEmpty()) {
       return null;
     }
     List<PropertyWrapper> properties = new ArrayList<PropertyWrapper>();
-    List<IDIYComponent<?>> selectedList = new ArrayList<IDIYComponent<?>>(selectedComponents);
-    IDIYComponent<?> firstComponent = selectedList.get(0);
+    List<AbstractComponent> selectedList = new ArrayList<AbstractComponent>(selectedComponents);
+    AbstractComponent firstComponent = selectedList.get(0);
 
     properties.addAll(extractProperties(firstComponent.getClass()));
     // Initialize values
@@ -130,7 +155,7 @@ public class ComponentProcessor {
       property.readFrom(firstComponent);
     }
     for (int i = 1; i < selectedComponents.size(); i++) {
-      IDIYComponent<?> component = selectedList.get(i);
+      AbstractComponent component = selectedList.get(i);
       List<PropertyWrapper> newProperties = extractProperties(component.getClass());
       for (PropertyWrapper property : newProperties) {
         property.readFrom(component);
@@ -152,23 +177,5 @@ public class ComponentProcessor {
     }
     Collections.sort(properties, ComparatorFactory.getInstance().getDefaultPropertyComparator());
     return properties;
-  }
-
-  private static IPropertyValidator getPropertyValidator(
-      Class<? extends IPropertyValidator> clazz) {
-    if (propertyValidatorCache.containsKey(clazz.getName())) {
-      return propertyValidatorCache.get(clazz.getName());
-    }
-    IPropertyValidator validator;
-    try {
-      validator = clazz.newInstance();
-    } catch (Exception e) {
-      LOG.error("Could not instantiate validator for " + clazz.getName(), e);
-      // TODO throw exception? if instantiation fails, null is returned,
-      // but is this really the correct behaviour?
-      return null;
-    }
-    propertyValidatorCache.put(clazz.getName(), validator);
-    return validator;
   }
 }

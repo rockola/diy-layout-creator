@@ -28,16 +28,19 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractRadialComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.measures.Inductance;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.HENRY)
 @ComponentDescriptor(
     name = "Inductor (Radial)",
     author = "Branislav Stojkovic",
@@ -45,9 +48,10 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "L",
     description = "Vertically mounted ferrite core inductor",
-    zOrder = IDIYComponent.COMPONENT,
+    leadType = LeadType.RADIAL,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class RadialInductor extends AbstractRadialComponent<Inductance> {
+public class RadialInductor extends AbstractRadialComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,15 +64,14 @@ public class RadialInductor extends AbstractRadialComponent<Inductance> {
   public static final Size EDGE_RADIUS = Size.mm(0.5);
   public static final Size LIP = Size.in(0.05);
 
-  private Inductance value = null;
-  private Resistance resistance = null;
-
+  private Value resistance = null;
   private boolean folded = false;
   private Size height = HEIGHT;
   private Size lip = LIP;
 
   public RadialInductor() {
     super();
+    valueUnit = SiUnit.HENRY;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.labelColor = TICK_COLOR;
@@ -209,24 +212,16 @@ public class RadialInductor extends AbstractRadialComponent<Inductance> {
     return Area.oval(Area.point(0, 0), Area.point(diameter, diameter));
   }
 
+  @ComponentValue(SiUnit.OHM)
   @EditableProperty
-  @Override
-  public Inductance getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(Inductance value) {
-    this.value = value;
-  }
-
-  @EditableProperty
-  public Resistance getResistance() {
+  public Value getResistance() {
     return resistance;
   }
 
-  public void setResistance(Resistance resistance) {
-    this.resistance = resistance;
+  public void setResistance(Value resistance) {
+    if (resistance != null && resistance.getUnit() == SiUnit.OHM) {
+      this.resistance = resistance;
+    }
   }
 
   @EditableProperty

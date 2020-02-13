@@ -30,10 +30,10 @@ import java.awt.geom.Path2D;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -49,10 +49,10 @@ import org.diylc.utils.Constants;
     category = "Schematic Symbols",
     instanceNamePrefix = "LG",
     description = "Basic logic gate schematic symbols",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class LogicGateSymbol extends AbstractTransparentComponent<String> {
+public class LogicGateSymbol extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -61,8 +61,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   public static final Color BORDER_COLOR = Color.black;
 
   protected GateType gateType = GateType.Not;
-  protected String value = "";
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  protected Point[] controlPoints = getFreshControlPoints(3);
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
@@ -71,7 +70,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
   public LogicGateSymbol() {
     super();
     updateControlPoints();
-    display = Display.NONE;
+    setDisplay(Display.NONE);
   }
 
   @Override
@@ -253,17 +252,6 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
     return VisibilityPolicy.WHEN_SELECTED;
   }
 
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return this.value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
@@ -302,15 +290,6 @@ public class LogicGateSymbol extends AbstractTransparentComponent<String> {
 
   public void setBorderColor(Color borderColor) {
     this.borderColor = borderColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @Override

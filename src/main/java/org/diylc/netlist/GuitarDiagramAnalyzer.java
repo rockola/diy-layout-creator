@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.JLabel;
 import org.diylc.common.INetlistAnalyzer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.electromechanical.ClosedJack;
 import org.diylc.components.electromechanical.OpenJack;
 import org.diylc.components.guitar.AbstractGuitarPickup;
@@ -40,7 +41,6 @@ import org.diylc.components.passive.AxialFilmCapacitor;
 import org.diylc.components.passive.PotentiometerPanel;
 import org.diylc.components.passive.RadialCeramicDiskCapacitor;
 import org.diylc.components.passive.RadialFilmCapacitor;
-import org.diylc.core.IDIYComponent;
 import org.diylc.netlist.Tree.ITreeWalker;
 
 public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
@@ -129,11 +129,11 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
             }
           });
 
-      Set<IDIYComponent<?>> pickups = tree.extractComponents(PICKUP_TYPES);
-      Map<IDIYComponent<?>, Tree> pickupRoots = new HashMap<IDIYComponent<?>, Tree>();
+      Set<AbstractComponent> pickups = tree.extractComponents(PICKUP_TYPES);
+      Map<AbstractComponent, Tree> pickupRoots = new HashMap<AbstractComponent, Tree>();
 
       // analyze each pickup separately to see how each coil is wired
-      for (IDIYComponent<?> c : pickups) {
+      for (AbstractComponent c : pickups) {
         if (c instanceof AbstractGuitarPickup) {
           AbstractGuitarPickup pickup = (AbstractGuitarPickup) c;
           if (((AbstractGuitarPickup) c).isHumbucker()) {
@@ -168,7 +168,7 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         Tree root = tree.findCommonParent(new ArrayList<Tree>(pickupRoots.values()));
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (IDIYComponent<?> c : pickupRoots.keySet()) {
+        for (AbstractComponent c : pickupRoots.keySet()) {
           if (!first) {
             sb.append(pickupRoots.size() == 2 ? " and " : ", ");
           }
@@ -198,17 +198,17 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
       }
 
       // locate volume and tone pots
-      Map<IDIYComponent<?>, List<IDIYComponent<?>>> volPotPickupMap =
-          new HashMap<IDIYComponent<?>, List<IDIYComponent<?>>>();
-      Map<IDIYComponent<?>, List<IDIYComponent<?>>> tonePotPickupMap =
-          new HashMap<IDIYComponent<?>, List<IDIYComponent<?>>>();
-      Map<IDIYComponent<?>, List<IDIYComponent<?>>> tonePotPickupReverseMap =
-          new HashMap<IDIYComponent<?>, List<IDIYComponent<?>>>();
-      Map<IDIYComponent<?>, List<IDIYComponent<?>>> volPotPickupReverseMap =
-          new HashMap<IDIYComponent<?>, List<IDIYComponent<?>>>();
+      Map<AbstractComponent, List<AbstractComponent>> volPotPickupMap =
+          new HashMap<AbstractComponent, List<AbstractComponent>>();
+      Map<AbstractComponent, List<AbstractComponent>> tonePotPickupMap =
+          new HashMap<AbstractComponent, List<AbstractComponent>>();
+      Map<AbstractComponent, List<AbstractComponent>> tonePotPickupReverseMap =
+          new HashMap<AbstractComponent, List<AbstractComponent>>();
+      Map<AbstractComponent, List<AbstractComponent>> volPotPickupReverseMap =
+          new HashMap<AbstractComponent, List<AbstractComponent>>();
 
-      Set<IDIYComponent<?>> pots = tree.extractComponents(POT_TYPES);
-      for (IDIYComponent<?> pot : pots) {
+      Set<AbstractComponent> pots = tree.extractComponents(POT_TYPES);
+      for (AbstractComponent pot : pots) {
         TreeLeaf leaf1 = new TreeLeaf(pot, 0, 1);
         TreeLeaf leaf2 = new TreeLeaf(pot, 1, 2);
         Tree tree1 = tree.locate(leaf1, false);
@@ -219,23 +219,23 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
           Tree t = tree1 == null ? tree2 : tree1;
           Tree p = tree.findParent(t);
           if (p != null && p.getChildren().size() == 2) {
-            Set<IDIYComponent<?>> caps = p.extractComponents(CAP_TYPES);
+            Set<AbstractComponent> caps = p.extractComponents(CAP_TYPES);
             if (caps != null && caps.size() == 1) {
-              for (Map.Entry<IDIYComponent<?>, Tree> r : pickupRoots.entrySet()) {
+              for (Map.Entry<AbstractComponent, Tree> r : pickupRoots.entrySet()) {
                 Tree toneParent = tree.findCommonParent(p, r.getValue());
                 if (toneParent != null
                     && toneParent.getConnectionType() == TreeConnectionType.Parallel) {
                   if (tonePotReversed) {
-                    List<IDIYComponent<?>> pickupList = tonePotPickupReverseMap.get(pot);
+                    List<AbstractComponent> pickupList = tonePotPickupReverseMap.get(pot);
                     if (pickupList == null) {
-                      pickupList = new ArrayList<IDIYComponent<?>>();
+                      pickupList = new ArrayList<AbstractComponent>();
                       tonePotPickupReverseMap.put(pot, pickupList);
                     }
                     pickupList.add(r.getKey());
                   } else {
-                    List<IDIYComponent<?>> pickupList = tonePotPickupMap.get(pot);
+                    List<AbstractComponent> pickupList = tonePotPickupMap.get(pot);
                     if (pickupList == null) {
-                      pickupList = new ArrayList<IDIYComponent<?>>();
+                      pickupList = new ArrayList<AbstractComponent>();
                       tonePotPickupMap.put(pot, pickupList);
                     }
                     pickupList.add(r.getKey());
@@ -250,16 +250,16 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         if (tree1 == null || tree2 == null) {
           continue;
         }
-        for (Map.Entry<IDIYComponent<?>, Tree> r : pickupRoots.entrySet()) {
+        for (Map.Entry<AbstractComponent, Tree> r : pickupRoots.entrySet()) {
           Tree parent1 = tree.findCommonParent(tree1, r.getValue());
           Tree parent2 = tree.findCommonParent(tree2, r.getValue());
           if (parent1 != null
               && parent2 != null
               && parent1.getConnectionType() == TreeConnectionType.Series
               && parent2.getConnectionType() == TreeConnectionType.Parallel) {
-            List<IDIYComponent<?>> pickupList = volPotPickupMap.get(pot);
+            List<AbstractComponent> pickupList = volPotPickupMap.get(pot);
             if (pickupList == null) {
-              pickupList = new ArrayList<IDIYComponent<?>>();
+              pickupList = new ArrayList<AbstractComponent>();
               volPotPickupMap.put(pot, pickupList);
             }
             pickupList.add(r.getKey());
@@ -267,9 +267,9 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
               && parent2 != null
               && parent1.getConnectionType() == TreeConnectionType.Parallel
               && parent2.getConnectionType() == TreeConnectionType.Series) {
-            List<IDIYComponent<?>> pickupList = volPotPickupReverseMap.get(pot);
+            List<AbstractComponent> pickupList = volPotPickupReverseMap.get(pot);
             if (pickupList == null) {
-              pickupList = new ArrayList<IDIYComponent<?>>();
+              pickupList = new ArrayList<AbstractComponent>();
               volPotPickupReverseMap.put(pot, pickupList);
             }
             pickupList.add(r.getKey());
@@ -277,12 +277,12 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         }
       }
 
-      for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e : volPotPickupMap.entrySet()) {
+      for (Map.Entry<AbstractComponent, List<AbstractComponent>> e : volPotPickupMap.entrySet()) {
         StringBuilder sb =
             new StringBuilder(
                 "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
         boolean first = true;
-        for (IDIYComponent<?> c : e.getValue()) {
+        for (AbstractComponent c : e.getValue()) {
           if (!first) {
             sb.append(e.getValue().size() == 2 ? " and " : ", ");
           }
@@ -292,13 +292,13 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         notes.add(sb.toString());
       }
 
-      for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e :
+      for (Map.Entry<AbstractComponent, List<AbstractComponent>> e :
           volPotPickupReverseMap.entrySet()) {
         StringBuilder sb =
             new StringBuilder(
                 "'" + e.getKey().getName() + "' potentiometer acts as a volume control for ");
         boolean first = true;
-        for (IDIYComponent<?> c : e.getValue()) {
+        for (AbstractComponent c : e.getValue()) {
           if (!first) {
             sb.append(e.getValue().size() == 2 ? " and " : ", ");
           }
@@ -309,12 +309,12 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         notes.add(sb.toString());
       }
 
-      for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e : tonePotPickupMap.entrySet()) {
+      for (Map.Entry<AbstractComponent, List<AbstractComponent>> e : tonePotPickupMap.entrySet()) {
         StringBuilder sb =
             new StringBuilder(
                 "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
         boolean first = true;
-        for (IDIYComponent<?> c : e.getValue()) {
+        for (AbstractComponent c : e.getValue()) {
           if (!first) {
             sb.append(e.getValue().size() == 2 ? " and " : ", ");
           }
@@ -324,13 +324,13 @@ public class GuitarDiagramAnalyzer extends NetlistAnalyzer implements INetlistAn
         notes.add(sb.toString());
       }
 
-      for (Map.Entry<IDIYComponent<?>, List<IDIYComponent<?>>> e :
+      for (Map.Entry<AbstractComponent, List<AbstractComponent>> e :
           tonePotPickupReverseMap.entrySet()) {
         StringBuilder sb =
             new StringBuilder(
                 "'" + e.getKey().getName() + "' potentiometer acts as a tone control for ");
         boolean first = true;
-        for (IDIYComponent<?> c : e.getValue()) {
+        for (AbstractComponent c : e.getValue()) {
           if (!first) {
             sb.append(e.getValue().size() == 2 ? " and " : ", ");
           }

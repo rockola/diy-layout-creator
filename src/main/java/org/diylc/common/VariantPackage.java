@@ -22,20 +22,20 @@ package org.diylc.common;
 
 import java.util.List;
 import java.util.Map;
-import org.diylc.core.Template;
+import org.diylc.components.AbstractComponent;
 
 public class VariantPackage {
 
-  private Map<String, List<Template>> variants;
+  private Map<String, List<AbstractComponent>> variants;
   private String owner;
 
-  public VariantPackage(Map<String, List<Template>> variants, String owner) {
+  public VariantPackage(Map<String, List<AbstractComponent>> variants, String owner) {
     super();
     this.variants = variants;
     this.owner = owner;
   }
 
-  public Map<String, List<Template>> getVariants() {
+  public Map<String, List<AbstractComponent>> getVariants() {
     return variants;
   }
 

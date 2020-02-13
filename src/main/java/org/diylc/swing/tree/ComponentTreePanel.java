@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.App;
 import org.diylc.common.ComponentType;
-import org.diylc.core.Template;
+import org.diylc.components.AbstractComponent;
 import org.diylc.images.Icon;
 
 public class ComponentTreePanel extends JPanel {
@@ -73,8 +73,8 @@ public class ComponentTreePanel extends JPanel {
       for (ComponentType type : componentTypes.get(category)) {
         ComponentNode typeNode = new ComponentNode(type);
         model.addNode(categoryNode, typeNode);
-        for (Template template : type.getVariants()) {
-          model.addNode(typeNode, new ComponentNode(template));
+        for (AbstractComponent variant : type.getVariants()) {
+          model.addNode(typeNode, new ComponentNode(variant));
         }
       }
     }

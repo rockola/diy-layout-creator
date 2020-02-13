@@ -25,22 +25,22 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.IComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.misc.Label;
 import org.diylc.components.misc.Misc;
 import org.diylc.components.misc.PcbText;
-import org.diylc.core.IDIYComponent;
 
 public class TextTransformer implements IComponentTransformer {
 
   private static final Logger LOG = LogManager.getLogger(TextTransformer.class);
 
   @Override
-  public boolean canRotate(IDIYComponent<?> component) {
+  public boolean canRotate(AbstractComponent component) {
     return component instanceof Label || component instanceof PcbText;
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+  public void rotate(AbstractComponent component, Point center, int direction) {
     AffineTransform rotate =
         AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
@@ -58,7 +58,7 @@ public class TextTransformer implements IComponentTransformer {
   }
 
   @Override
-  public boolean canMirror(IDIYComponent<?> component) {
+  public boolean canMirror(AbstractComponent component) {
     return false;
   }
 
@@ -68,7 +68,7 @@ public class TextTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void mirror(IDIYComponent<?> component, Point center, int direction) {
+  public void mirror(AbstractComponent component, Point center, int direction) {
     throw new RuntimeException("Unexpected call to mirror() in TextTransformer");
   }
 }

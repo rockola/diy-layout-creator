@@ -23,17 +23,17 @@ package org.diylc.presenter;
 import java.util.Comparator;
 import org.diylc.common.ComponentType;
 import org.diylc.common.PropertyWrapper;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Project;
 
 public class ComparatorFactory {
 
   private static ComparatorFactory instance;
 
-  private Comparator<IDIYComponent<?>> componentNameComparator;
+  private Comparator<AbstractComponent> componentNameComparator;
   private Comparator<ComponentType> componentTypeComparator;
   private Comparator<PropertyWrapper> propertyNameComparator;
-  private Comparator<IDIYComponent<?>> componentZOrderComparator;
+  private Comparator<AbstractComponent> componentZOrderComparator;
 
   public static ComparatorFactory getInstance() {
     if (instance == null) {
@@ -42,13 +42,13 @@ public class ComparatorFactory {
     return instance;
   }
 
-  public Comparator<IDIYComponent<?>> getComponentNameComparator() {
+  public Comparator<AbstractComponent> getComponentNameComparator() {
     if (componentNameComparator == null) {
       componentNameComparator =
-          new Comparator<IDIYComponent<?>>() {
+          new Comparator<AbstractComponent>() {
 
             @Override
-            public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+            public int compare(AbstractComponent o1, AbstractComponent o2) {
               String name1 = o1.getName();
               String name2 = o2.getName();
               if (name1 == null || name2 == null) {
@@ -112,17 +112,17 @@ public class ComparatorFactory {
     return propertyNameComparator;
   }
 
-  public Comparator<IDIYComponent<?>> getComponentZOrderComparator() {
+  public Comparator<AbstractComponent> getComponentZOrderComparator() {
     if (componentZOrderComparator == null) {
       componentZOrderComparator =
-          new Comparator<IDIYComponent<?>>() {
+          new Comparator<AbstractComponent>() {
 
             @Override
-            public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+            public int compare(AbstractComponent o1, AbstractComponent o2) {
               ComponentType type1 =
-                  ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) o1.getClass());
+                  ComponentType.extractFrom((Class<? extends AbstractComponent>) o1.getClass());
               ComponentType type2 =
-                  ComponentType.extractFrom((Class<? extends IDIYComponent<?>>) o2.getClass());
+                  ComponentType.extractFrom((Class<? extends AbstractComponent>) o2.getClass());
               return Double.compare(type1.getZOrder(), type2.getZOrder());
             }
           };
@@ -130,11 +130,11 @@ public class ComparatorFactory {
     return componentZOrderComparator;
   }
 
-  public Comparator<IDIYComponent<?>> getComponentProjectZOrderComparator(final Project project) {
-    return new Comparator<IDIYComponent<?>>() {
+  public Comparator<AbstractComponent> getComponentProjectZOrderComparator(final Project project) {
+    return new Comparator<AbstractComponent>() {
 
       @Override
-      public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+      public int compare(AbstractComponent o1, AbstractComponent o2) {
         int index1 = project.getComponents().indexOf(o1);
         int index2 = project.getComponents().indexOf(o2);
         return Integer.compare(index1, index2);

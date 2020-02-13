@@ -31,7 +31,7 @@ import org.diylc.App;
 import org.diylc.common.EventType;
 import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.IView;
 
 public class LayersMenuPlugin implements IPlugIn {
@@ -128,11 +128,11 @@ public class LayersMenuPlugin implements IPlugIn {
   }
 
   public enum Layer {
-    CHASSIS("Chassis", IDIYComponent.CHASSIS),
-    BOARD("Board", IDIYComponent.BOARD),
-    TRACE("Trace", IDIYComponent.TRACE),
-    COMPONENT("Component", IDIYComponent.COMPONENT),
-    TEXT("Text", IDIYComponent.TEXT);
+    CHASSIS("Chassis", AbstractComponent.CHASSIS),
+    BOARD("Board", AbstractComponent.BOARD),
+    TRACE("Trace", AbstractComponent.TRACE),
+    COMPONENT("Component", AbstractComponent.COMPONENT),
+    TEXT("Text", AbstractComponent.TEXT);
 
     String title;
     int zOrder;

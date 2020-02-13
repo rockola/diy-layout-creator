@@ -25,10 +25,10 @@ import java.awt.Graphics2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -43,13 +43,13 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "Trace",
     description = "Straight copper trace",
-    zOrder = IDIYComponent.TRACE,
+    zOrder = AbstractComponent.TRACE,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "PCB",
     transformer = SimpleComponentTransformer.class)
-public class CopperTrace extends AbstractLeadedComponent<Void> {
+public class CopperTrace extends AbstractLeadedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -136,14 +136,6 @@ public class CopperTrace extends AbstractLeadedComponent<Void> {
   public Size getWidth() {
     return super.getWidth();
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   protected Area getBodyShape() {

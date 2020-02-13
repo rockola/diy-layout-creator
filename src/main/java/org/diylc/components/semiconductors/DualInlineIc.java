@@ -32,27 +32,29 @@ import java.util.List;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.PinCount;
 import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "DIP IC",
     author = "Branislav Stojkovic",
     category = "Semiconductors",
     instanceNamePrefix = "IC",
     description = "Dual-in-line package IC",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
 public class DualInlineIc extends InlinePackage {
@@ -72,15 +74,6 @@ public class DualInlineIc extends InlinePackage {
 
   public static PinCount defaultPinCount() {
     return new PinCount(4, 50, true);
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty
@@ -132,18 +125,6 @@ public class DualInlineIc extends InlinePackage {
     updateControlPoints();
     // Reset body shape;
     body = null;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   protected void updateControlPoints() {

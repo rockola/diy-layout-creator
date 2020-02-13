@@ -24,15 +24,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.diylc.core.IDIYComponent;
 import org.diylc.parsing.XmlNode;
 
 public class ComponentFactory {
 
   private ComponentFactory() {}
 
-  public static List<IDIYComponent<?>> makeComponents(Map<String, Collection<XmlNode>> specs) {
-    List<IDIYComponent<?>> components = new ArrayList<>();
+  public static List<AbstractComponent> makeComponents(Map<String, Collection<XmlNode>> specs) {
+    List<AbstractComponent> components = new ArrayList<>();
 
     specs.entrySet().stream()
         .forEach(

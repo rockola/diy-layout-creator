@@ -30,30 +30,30 @@ import java.util.ArrayList;
 import java.util.List;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ISwitch;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Mini Toggle Switch",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Panel mounted mini toggle switch",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "SW",
     autoEdit = false)
-public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchType>
-    implements ISwitch {
+public class MiniToggleSwitch extends AbstractTransparentComponent implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -111,11 +111,6 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public int getControlPointCount() {
     return controlPoints.length;
   }
@@ -127,25 +122,12 @@ public class MiniToggleSwitch extends AbstractTransparentComponent<ToggleSwitchT
     body = null;
   }
 
-  @EditableProperty
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @EditableProperty(name = "Type")
-  @Override
-  public ToggleSwitchType getValue() {
+  @EditableProperty(name = "Switch Type")
+  public ToggleSwitchType getSwitchType() {
     return switchType;
   }
 
-  @Override
-  public void setValue(ToggleSwitchType value) {
+  public void setSwitchType(ToggleSwitchType value) {
     this.switchType = value;
     updateControlPoints();
     // Reset body shape.

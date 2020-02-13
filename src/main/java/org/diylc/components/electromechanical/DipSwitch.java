@@ -33,32 +33,33 @@ import java.util.List;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.ISwitch;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "DIP Switch",
     author = "Branislav Stojkovic",
     category = "Electro-Mechanical",
     instanceNamePrefix = "SW",
     description = "Dual-in-line package switch",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class DipSwitch extends AbstractTransparentComponent<String> implements ISwitch {
+public class DipSwitch extends AbstractTransparentComponent implements ISwitch {
 
   private static final long serialVersionUID = 1L;
 
@@ -73,7 +74,6 @@ public class DipSwitch extends AbstractTransparentComponent<String> implements I
   public static final Size DEFAULT_WIDTH = Size.in(0.4);
   public static final Size INDENT_SIZE = Size.in(0.07);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private SwitchCount switchCount = SwitchCount._8;
   private Size pinSpacing = Size.in(0.1);
@@ -100,16 +100,7 @@ public class DipSwitch extends AbstractTransparentComponent<String> implements I
     super();
     updateControlPoints();
     alpha = 100;
-    display = Display.NONE;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.NONE);
   }
 
   @EditableProperty
@@ -160,18 +151,6 @@ public class DipSwitch extends AbstractTransparentComponent<String> implements I
     body = null;
   }
 
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
-  }
-
   @Override
   public int getControlPointCount() {
     return controlPoints.length;
@@ -185,11 +164,6 @@ public class DipSwitch extends AbstractTransparentComponent<String> implements I
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

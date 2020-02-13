@@ -26,7 +26,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.CompoundEdit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Project;
 
 public class ProjectEdit extends CompoundEdit {
@@ -35,13 +35,13 @@ public class ProjectEdit extends CompoundEdit {
   private static final Logger LOG = LogManager.getLogger(ProjectEdit.class);
 
   private Project project;
-  private Collection<IDIYComponent<?>> oldComponents;
-  private Collection<IDIYComponent<?>> newComponents;
+  private Collection<AbstractComponent> oldComponents;
+  private Collection<AbstractComponent> newComponents;
 
   public ProjectEdit(
       Project project,
-      Collection<IDIYComponent<?>> oldComponents,
-      Collection<IDIYComponent<?>> newComponents) {
+      Collection<AbstractComponent> oldComponents,
+      Collection<AbstractComponent> newComponents) {
     super();
     this.project = project;
     this.oldComponents = oldComponents;

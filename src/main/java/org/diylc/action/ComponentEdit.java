@@ -24,13 +24,13 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class ComponentEdit extends AbstractUndoableEdit {
 
   private static final long serialVersionUID = 1L;
 
-  public ComponentEdit(IDIYComponent<?> c) {
+  public ComponentEdit(AbstractComponent c) {
     super();
     // TODO sth w/c
   }

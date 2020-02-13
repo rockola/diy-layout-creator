@@ -24,17 +24,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 
+@StringValue
 @ComponentDescriptor(
     name = "LED",
     author = "Branislav Stojkovic",
@@ -42,9 +43,9 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "D",
     description = "Light Emitting Diode",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class Led extends AbstractLeadedComponent<String> {
+public class Led extends AbstractLeadedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -52,21 +53,10 @@ public class Led extends AbstractLeadedComponent<String> {
   public static final Color BODY_COLOR = Color.decode("#5DFC0A");
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
-  private String value = "";
-
   public Led() {
     super();
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -75,13 +65,10 @@ public class Led extends AbstractLeadedComponent<String> {
     Area.rotate(g2d, -Math.PI / 4, center);
     g2d.setColor(LEAD_COLOR_ICON);
     g2d.drawLine(0, center.y, width, center.y);
-
     int margin = 4 * width / 32;
-    Area area =
-        new Area(new Ellipse2D.Double(margin, margin, width - 2 * margin, width - 2 * margin));
-    area.intersect(
-        new Area(
-            new Rectangle2D.Double(margin, margin, width - 5 * margin / 2, width - 2 * margin)));
+    int w = width - 2 * margin;
+    Area area = new Area(new Ellipse2D.Double(margin, margin, w, w));
+    area.intersect(Area.rect(margin, margin, width - 5 * margin / 2, width - 2 * margin));
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
     Area.circle(center, width - 4 * margin + 2).draw(g2d, BORDER_COLOR);
   }

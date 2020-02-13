@@ -28,22 +28,24 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Closed Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Enclosed panel mount phono jack",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "J",
     xmlTag = "jack:closed",
     autoEdit = false,
@@ -206,7 +208,7 @@ public class ClosedJack extends AbstractJack {
 
     g2d.setColor(tryLabelColor(outlineMode, LABEL_COLOR));
     g2d.setFont(project.getFont());
-    StringUtils.drawCenteredText(g2d, name, body[0].getBounds());
+    StringUtils.drawCenteredText(g2d, getName(), body[0].getBounds());
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 

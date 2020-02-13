@@ -53,12 +53,11 @@ import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.common.VariantPackage;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentTransferable;
 import org.diylc.core.ExpansionMode;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IView;
 import org.diylc.core.Project;
-import org.diylc.core.Template;
 import org.diylc.core.Theme;
 import org.diylc.core.measures.Nudge;
 import org.diylc.core.measures.Size;
@@ -773,11 +772,11 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ExportVariantsAction triggered");
 
-      Map<String, List<Template>> selectedVariants;
+      Map<String, List<AbstractComponent>> selectedVariants;
 
       try {
-        Map<String, List<Template>> variantMap =
-            (Map<String, List<Template>>) App.getObject(Config.Flag.TEMPLATES);
+        Map<String, List<AbstractComponent>> variantMap =
+            (Map<String, List<AbstractComponent>>) App.getObject(Config.Flag.TEMPLATES);
         if (variantMap == null || variantMap.isEmpty()) {
           App.ui().error(getMsg("no-variants"));
           return;
@@ -819,11 +818,11 @@ public class ActionFactory {
           return;
         }
 
-        selectedVariants = new HashMap<String, List<Template>>();
+        selectedVariants = new HashMap<String, List<AbstractComponent>>();
         for (Object key : selected) {
           ComponentType type = (ComponentType) key;
           String clazz = type.getInstanceClass().getCanonicalName();
-          List<Template> variants = variantMap.get(clazz);
+          List<AbstractComponent> variants = variantMap.get(clazz);
           if (variants != null) {
             selectedVariants.put(clazz, variants);
           }
@@ -948,11 +947,11 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("ExportBuildingBlocksAction triggered");
 
-      Map<String, List<IDIYComponent<?>>> selectedBlocks;
+      Map<String, List<AbstractComponent>> selectedBlocks;
 
       try {
-        Map<String, List<IDIYComponent<?>>> blocks =
-            (Map<String, List<IDIYComponent<?>>>) App.getObject(Config.Flag.BLOCKS);
+        Map<String, List<AbstractComponent>> blocks =
+            (Map<String, List<AbstractComponent>>) App.getObject(Config.Flag.BLOCKS);
         if (blocks == null || blocks.isEmpty()) {
           App.ui().error(getMsg("no-building-blocks"));
           return;
@@ -987,7 +986,7 @@ public class ActionFactory {
           return;
         }
 
-        selectedBlocks = new HashMap<String, List<IDIYComponent<?>>>();
+        selectedBlocks = new HashMap<String, List<AbstractComponent>>();
         for (Object key : selected) {
           selectedBlocks.put(key.toString(), blocks.get(key));
         }
@@ -1193,8 +1192,8 @@ public class ActionFactory {
     public void actionPerformed(ActionEvent e) {
       LOG.info("Paste triggered");
       try {
-        List<IDIYComponent<?>> components =
-            (List<IDIYComponent<?>>) clipboard.getData(ComponentTransferable.listFlavor);
+        List<AbstractComponent> components =
+            (List<AbstractComponent>) clipboard.getData(ComponentTransferable.listFlavor);
         plugInPort.pasteComponents(cloneComponents(components), false);
       } catch (Exception ex) {
         LOG.error("Could not paste.", ex);
@@ -1247,9 +1246,9 @@ public class ActionFactory {
     }
   }
 
-  private static List<IDIYComponent<?>> cloneComponents(Collection<IDIYComponent<?>> components) {
-    List<IDIYComponent<?>> result = new ArrayList<IDIYComponent<?>>(components.size());
-    for (IDIYComponent<?> component : components) {
+  private static List<AbstractComponent> cloneComponents(Collection<AbstractComponent> components) {
+    List<AbstractComponent> result = new ArrayList<AbstractComponent>(components.size());
+    for (AbstractComponent component : components) {
       try {
         result.add(component.clone());
       } catch (CloneNotSupportedException e) {

@@ -26,16 +26,14 @@ import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.netlist.ISpiceMapper;
 
-public abstract class AbstractTransistorPackage extends AbstractTransparentComponent<String>
+public abstract class AbstractTransistorPackage extends AbstractTransparentComponent
     implements ISpiceMapper {
 
   private static final long serialVersionUID = 1L;
 
-  protected String value = "";
   protected TransistorPinout pinout;
   protected Orientation orientation = Orientation.DEFAULT;
   protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
@@ -47,7 +45,7 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   public AbstractTransistorPackage() {
     super();
-    display = Display.NAME;
+    setDisplay(Display.NAME);
     alpha = 100;
   }
 
@@ -110,15 +108,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
   }
 
   @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty
   public Orientation getOrientation() {
     return orientation;
   }
@@ -143,11 +132,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -184,18 +168,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.NAME;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty

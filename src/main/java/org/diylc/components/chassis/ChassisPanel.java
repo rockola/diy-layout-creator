@@ -24,9 +24,9 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.shapes.AbstractShape;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -40,7 +40,7 @@ import org.diylc.core.measures.Size;
     category = "Electro-Mechanical",
     instanceNamePrefix = "CP",
     description = "One side of a chassis, with or withouth rounded edges",
-    zOrder = IDIYComponent.CHASSIS,
+    zOrder = AbstractComponent.CHASSIS,
     bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)

@@ -37,7 +37,7 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
-public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<String> {
+public abstract class AbstractGuitarPickup extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,6 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
   protected static final int DEFAULT_NUMBER_OF_STRINGS = 6;
   protected static final String INSTANCE_NAME_PREFIX = "PUP";
 
-  protected String value = "";
   protected Orientation orientation = Orientation.DEFAULT;
   protected int numberOfStrings = DEFAULT_NUMBER_OF_STRINGS;
   protected Point controlPoint = new Point(0, 0);
@@ -122,15 +121,13 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent<
     return 0;
   }
 
-  @EditableProperty(name = "Model")
-  @Override
-  public String getValue() {
-    return value;
+  @EditableProperty
+  public String getModel() {
+    return getStringValue();
   }
 
-  @Override
-  public void setValue(String value) {
-    this.value = value;
+  public void setModel(String value) {
+    setStringValue(value);
   }
 
   @EditableProperty

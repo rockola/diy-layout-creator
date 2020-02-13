@@ -27,13 +27,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.diylc.common.DefaultTransformer;
 import org.diylc.common.IComponentTransformer;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.parsing.XmlNode;
 
 /**
- * Annotation to use for each {@link IDIYComponent} implementation. Describes component properties,
- * how the component should be represented, and how it interacts with the rest of the system.
+ * Annotation to use for each instantiable {@link AbstractComponent} subclass. Describes component
+ * properties, how the component should be represented, and how it interacts with the rest of the
+ * system.
  *
  * @author Branislav Stojkovic
  */
@@ -84,6 +85,9 @@ public @interface ComponentDescriptor {
 
   /** @return controls what should be shown in the Bill of Materials. */
   BomPolicy bomPolicy() default BomPolicy.SHOW_ALL_NAMES;
+
+  /** @return component lead type (radial, axial, or both). */
+  LeadType[] leadType() default LeadType.NONE;
 
   /** @return true if component editor dialog should be shown in Auto-Edit mode, false otherwise. */
   boolean autoEdit() default true;

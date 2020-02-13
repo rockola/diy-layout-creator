@@ -24,23 +24,23 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.IComponentTransformer;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.electromechanical.DipSwitch;
 import org.diylc.components.passive.AudioTransformer;
 import org.diylc.components.semiconductors.BridgeRectifier;
 import org.diylc.components.semiconductors.DualInlineIc;
 import org.diylc.components.semiconductors.InlinePackage;
 import org.diylc.components.semiconductors.SingleInlineIc;
-import org.diylc.core.IDIYComponent;
 
 public class InlinePackageTransformer implements IComponentTransformer {
 
   @Override
-  public boolean canRotate(IDIYComponent<?> component) {
+  public boolean canRotate(AbstractComponent component) {
     return component instanceof InlinePackage;
   }
 
   @Override
-  public boolean mirroringChangesCircuit(IDIYComponent<?> component) {
+  public boolean mirroringChangesCircuit(AbstractComponent component) {
     return component instanceof DualInlineIc
         || component instanceof DipSwitch
         || component instanceof AudioTransformer
@@ -48,7 +48,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+  public void rotate(AbstractComponent component, Point center, int direction) {
     AffineTransform rotate =
         AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
@@ -62,7 +62,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void mirror(IDIYComponent<?> component, Point center, int direction) {
+  public void mirror(AbstractComponent component, Point center, int direction) {
     // TODO: combine common code in mirrorDil() and mirrorSil()
     if (component instanceof DualInlineIc) {
       mirrorDil(component, center, direction);
@@ -75,7 +75,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
     }
   }
 
-  private void mirrorSil(IDIYComponent<?> component, Point center, int direction) {
+  private void mirrorSil(AbstractComponent component, Point center, int direction) {
     SingleInlineIc ic = (SingleInlineIc) component;
     int dx = center.x - ic.getControlPoint(0).x;
     int dy = center.y - ic.getControlPoint(0).y;
@@ -118,7 +118,7 @@ public class InlinePackageTransformer implements IComponentTransformer {
     }
   }
 
-  private void mirrorDil(IDIYComponent<?> component, Point center, int direction) {
+  private void mirrorDil(AbstractComponent component, Point center, int direction) {
     DualInlineIc ic = (DualInlineIc) component;
 
     if (direction == IComponentTransformer.HORIZONTAL) {

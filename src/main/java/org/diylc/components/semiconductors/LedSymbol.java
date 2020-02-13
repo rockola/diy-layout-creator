@@ -25,8 +25,8 @@ import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 
@@ -37,7 +37,7 @@ import org.diylc.core.annotations.KeywordPolicy;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "D",
     description = "Diode schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)

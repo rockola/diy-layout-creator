@@ -20,7 +20,7 @@
 
 package org.diylc.netlist;
 
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ISwitch;
 
 /**
@@ -83,18 +83,18 @@ public class Position implements Comparable<Position> {
 
   @Override
   public String toString() {
-    return (theSwitch instanceof IDIYComponent<?>
-            ? ((IDIYComponent<?>) theSwitch).getName() + "."
+    return (theSwitch instanceof AbstractComponent
+            ? ((AbstractComponent) theSwitch).getName() + "."
             : "")
         + theSwitch.getPositionName(position);
   }
 
   @Override
   public int compareTo(Position o) {
-    if (theSwitch instanceof IDIYComponent<?> && o.theSwitch instanceof IDIYComponent<?>) {
-      return ((IDIYComponent<?>) theSwitch)
+    if (theSwitch instanceof AbstractComponent && o.theSwitch instanceof AbstractComponent) {
+      return ((AbstractComponent) theSwitch)
           .getName()
-          .compareToIgnoreCase(((IDIYComponent<?>) o.theSwitch).getName());
+          .compareToIgnoreCase(((AbstractComponent) o.theSwitch).getName());
     }
     return 0;
   }

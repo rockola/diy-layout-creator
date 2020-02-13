@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.diylc.common.INetlistAnalyzer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
 
@@ -50,14 +50,14 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
 
   protected Summary summarize(Netlist netlist, Node preferredOutput) throws TreeException {
     // grab all components that are in the netlist
-    List<IDIYComponent<?>> allComponents =
-        new ArrayList<IDIYComponent<?>>(extractComponents(netlist));
+    List<AbstractComponent> allComponents =
+        new ArrayList<AbstractComponent>(extractComponents(netlist));
     Collections.sort(
         allComponents,
-        new Comparator<IDIYComponent<?>>() {
+        new Comparator<AbstractComponent>() {
 
           @Override
-          public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+          public int compare(AbstractComponent o1, AbstractComponent o2) {
             return o1.getName().compareToIgnoreCase(o2.getName());
           }
         });
@@ -68,13 +68,13 @@ public class SpiceAnalyzer extends NetlistAnalyzer implements INetlistAnalyzer {
     int unconnectedIndex = groups.size();
 
     int maxLen = 0;
-    for (IDIYComponent<?> c : allComponents) {
+    for (AbstractComponent c : allComponents) {
       if (c.getName().length() > maxLen) {
         maxLen = c.getName().length();
       }
     }
 
-    for (IDIYComponent<?> c : allComponents) {
+    for (AbstractComponent c : allComponents) {
       // change the prefix to match spice convention if needed
       String name = c.getName();
       String prefix = null;

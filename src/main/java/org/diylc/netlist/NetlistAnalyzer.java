@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public abstract class NetlistAnalyzer {
 
@@ -93,7 +93,7 @@ public abstract class NetlistAnalyzer {
     List<Tree> newConcurrentPaths = new ArrayList<Tree>();
 
     for (Node n : groupA.getNodes()) {
-      IDIYComponent<?> c = n.getComponent();
+      AbstractComponent c = n.getComponent();
       for (int i = 0; i < c.getControlPointCount(); i++) {
         if (i != n.getPointIndex() && c.getInternalLinkName(i, n.getPointIndex()) != null) {
           TreeLeaf l = new TreeLeaf(c, i, n.getPointIndex());
@@ -272,22 +272,22 @@ public abstract class NetlistAnalyzer {
     return -1;
   }
 
-  protected String extractName(IDIYComponent<?> c) {
+  protected String extractName(AbstractComponent c) {
     return c.getName() + " " + c.getValueForDisplay();
   }
 
-  public static List<Set<IDIYComponent<?>>> extractComponentGroups(List<Netlist> netlists) {
-    List<Set<IDIYComponent<?>>> res = new ArrayList<Set<IDIYComponent<?>>>();
+  public static List<Set<AbstractComponent>> extractComponentGroups(List<Netlist> netlists) {
+    List<Set<AbstractComponent>> res = new ArrayList<Set<AbstractComponent>>();
     for (Netlist n : netlists) {
       res.addAll(extractComponentGroups(n));
     }
     return res;
   }
 
-  public static List<Set<IDIYComponent<?>>> extractComponentGroups(Netlist netlist) {
-    List<Set<IDIYComponent<?>>> res = new ArrayList<Set<IDIYComponent<?>>>();
+  public static List<Set<AbstractComponent>> extractComponentGroups(Netlist netlist) {
+    List<Set<AbstractComponent>> res = new ArrayList<Set<AbstractComponent>>();
     for (Group g : netlist.getGroups()) {
-      Set<IDIYComponent<?>> components = new HashSet<IDIYComponent<?>>();
+      Set<AbstractComponent> components = new HashSet<AbstractComponent>();
       for (Node n : g.getNodes()) {
         components.add(n.getComponent());
       }
@@ -296,8 +296,8 @@ public abstract class NetlistAnalyzer {
     return res;
   }
 
-  public static Set<IDIYComponent<?>> extractComponents(Netlist netlist) {
-    Set<IDIYComponent<?>> res = new HashSet<IDIYComponent<?>>();
+  public static Set<AbstractComponent> extractComponents(Netlist netlist) {
+    Set<AbstractComponent> res = new HashSet<AbstractComponent>();
     for (Group g : netlist.getGroups()) {
       for (Node n : g.getNodes()) {
         res.add(n.getComponent());

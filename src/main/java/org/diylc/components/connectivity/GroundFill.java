@@ -29,7 +29,6 @@ import org.diylc.common.PcbLayer;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -44,11 +43,11 @@ import org.diylc.core.measures.Size;
     category = "Connectivity",
     instanceNamePrefix = "GF",
     description = "Polygonal ground fill area",
-    zOrder = IDIYComponent.TRACE,
+    zOrder = AbstractComponent.TRACE,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class GroundFill extends AbstractComponent<Void> {
+public class GroundFill extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -161,16 +160,6 @@ public class GroundFill extends AbstractComponent<Void> {
   public void setLayer(PcbLayer layer) {
     this.layer = layer;
   }
-
-  @Deprecated
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Deprecated
-  @Override
-  public void setValue(Void value) {}
 
   @Override
   public String getControlPointNodeName(int index) {

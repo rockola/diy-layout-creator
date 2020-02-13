@@ -23,17 +23,17 @@ package org.diylc.components.transform;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.IComponentTransformer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class LeadedComponentTransformer implements IComponentTransformer {
 
   @Override
-  public boolean canRotate(IDIYComponent<?> component) {
+  public boolean canRotate(AbstractComponent component) {
     return true;
   }
 
   @Override
-  public boolean canMirror(IDIYComponent<?> component) {
+  public boolean canMirror(AbstractComponent component) {
     return true;
   }
 
@@ -43,7 +43,7 @@ public class LeadedComponentTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void rotate(IDIYComponent<?> component, Point center, int direction) {
+  public void rotate(AbstractComponent component, Point center, int direction) {
     AffineTransform rotate =
         AffineTransform.getRotateInstance(Math.PI / 2 * direction, center.x, center.y);
     for (int index = 0; index < component.getControlPointCount(); index++) {
@@ -54,7 +54,7 @@ public class LeadedComponentTransformer implements IComponentTransformer {
   }
 
   @Override
-  public void mirror(IDIYComponent<?> component, Point center, int direction) {
+  public void mirror(AbstractComponent component, Point center, int direction) {
     for (int i = 0; i < component.getControlPointCount(); i++) {
       Point p = component.getControlPoint(i);
       if (direction == IComponentTransformer.HORIZONTAL) {

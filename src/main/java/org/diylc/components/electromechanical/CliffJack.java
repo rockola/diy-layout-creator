@@ -28,22 +28,24 @@ import java.awt.geom.AffineTransform;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.JackTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Cliff Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Cliff-style closed panel mount 1/4\" phono jack",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "J",
     autoEdit = false,
     xmlTag = "jack:cliff",
@@ -205,7 +207,7 @@ public class CliffJack extends AbstractJack {
     g2d.setFont(project.getFont());
     int centerX = (controlPoints[0].x + controlPoints[3].x) / 2;
     int centerY = (controlPoints[0].y + controlPoints[3].y) / 2;
-    StringUtils.drawCenteredText(g2d, name, centerX, centerY);
+    StringUtils.drawCenteredText(g2d, getName(), centerX, centerY);
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
   }
 

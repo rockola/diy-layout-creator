@@ -31,28 +31,29 @@ import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.core.measures.Voltage;
 import org.diylc.core.measures.VoltageUnit;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Mini Relay",
     author = "Branislav Stojkovic",
     category = "Electro-Mechanical",
     instanceNamePrefix = "RY",
     description = "Miniature PCB mount relay, like Omron G5V-1 or G5V-2",
-    zOrder = IDIYComponent.COMPONENT)
-public class MiniRelay extends AbstractTransparentComponent<String> {
+    zOrder = AbstractComponent.COMPONENT)
+public class MiniRelay extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -77,9 +78,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   public static final Size ULTRA_HEIGHT = Size.mm(7.2);
   public static final Size ULTRA_GAP = Size.in(0.1);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
-
   private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private RelayType type = RelayType.DPDT;
   private RelaySize size = RelaySize.Miniature;
@@ -89,16 +88,7 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   public MiniRelay() {
     super();
     updateControlPoints();
-    display = Display.NAME;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.NAME);
   }
 
   @EditableProperty
@@ -111,18 +101,6 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @Override
@@ -138,11 +116,6 @@ public class MiniRelay extends AbstractTransparentComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

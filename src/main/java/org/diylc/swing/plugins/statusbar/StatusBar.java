@@ -63,7 +63,7 @@ import org.diylc.common.IPlugIn;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.ITask;
 import org.diylc.common.Message;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.images.Icon;
 import org.diylc.swingframework.MemoryBar;
 import org.diylc.swingframework.miscutils.PercentageListCellRenderer;
@@ -403,27 +403,20 @@ public class StatusBar extends JPanel implements IPlugIn {
       case ZOOM_CHANGED:
         if (!params[0].equals(zoomBox.getSelectedItem())) {
           final Double zoom = (Double) params[0];
-          SwingUtilities.invokeLater(
-              new Runnable() {
-
-                @Override
-                public void run() {
-                  zoomBox.setSelectedItem(zoom);
-                }
-              });
+          SwingUtilities.invokeLater(() -> zoomBox.setSelectedItem(zoom));
         }
         break;
       case SELECTION_CHANGED:
-        Collection<IDIYComponent<?>> selection = (Collection<IDIYComponent<?>>) params[0];
+        Collection<AbstractComponent> selection = (Collection<AbstractComponent>) params[0];
         Collection<String> componentNames = new HashSet<String>();
-        for (IDIYComponent<?> component : selection) {
+        for (AbstractComponent component : selection) {
           componentNames.add(blueFont(component.getName()));
         }
         this.selectedComponentNames = new ArrayList<String>(componentNames);
         Collections.sort(this.selectedComponentNames);
         this.stuckComponentNames = new ArrayList<String>();
-        Collection<IDIYComponent<?>> stuckComponents = (Collection<IDIYComponent<?>>) params[1];
-        for (IDIYComponent<?> component : stuckComponents) {
+        Collection<AbstractComponent> stuckComponents = (Collection<AbstractComponent>) params[1];
+        for (AbstractComponent component : stuckComponents) {
           this.stuckComponentNames.add(blueFont(component.getName()));
         }
         this.stuckComponentNames.removeAll(this.selectedComponentNames);
@@ -439,7 +432,7 @@ public class StatusBar extends JPanel implements IPlugIn {
         break;
       case AVAILABLE_CTRL_POINTS_CHANGED:
         componentNamesUnderCursor = new ArrayList<String>();
-        for (IDIYComponent<?> component : ((Map<IDIYComponent<?>, Integer>) params[0]).keySet()) {
+        for (AbstractComponent component : ((Map<AbstractComponent, Integer>) params[0]).keySet()) {
           componentNamesUnderCursor.add(blueFont(component.getName()));
         }
         Collections.sort(componentNamesUnderCursor);

@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.diylc.common.ComponentType;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.KeywordPolicy;
 
@@ -45,7 +45,7 @@ public class KeywordExtractor {
 
   public String extractKeywords(Project project) {
     Set<String> words = new HashSet<String>();
-    for (IDIYComponent<?> c : project.getComponents()) {
+    for (AbstractComponent c : project.getComponents()) {
       ComponentType componentType = ComponentType.extractFrom(c);
       KeywordPolicy policy = componentType.getKeywordPolicy();
       if (policy == KeywordPolicy.SHOW_TYPE_NAME) {

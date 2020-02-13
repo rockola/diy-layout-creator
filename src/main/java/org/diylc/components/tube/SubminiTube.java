@@ -36,16 +36,16 @@ import org.diylc.components.PinCount;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
 // @ComponentDescriptor(name = "Sub-Mini Tube", author = "Branislav Stojkovic", category = "Tubes",
 // instanceNamePrefix = "V", description = "Sub-miniature (pencil) vacuum tube", stretchable =
-// false, zOrder = IDIYComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE, transformer =
+// false, zOrder = AbstractComponent.COMPONENT, keywordPolicy = KeywordPolicy.SHOW_VALUE,
+// transformer =
 // TO220Transformer.class)
-public class SubminiTube extends AbstractTransparentComponent<String> {
+public class SubminiTube extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -64,7 +64,6 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   public static final Size LEAD_LENGTH = Size.in(0.2);
   public static final Size LEAD_THICKNESS = Size.mm(0.8);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private transient Area[] body;
@@ -82,16 +81,7 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   public SubminiTube() {
     super();
     updateControlPoints();
-    display = Display.NAME;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.NAME);
   }
 
   @EditableProperty
@@ -119,11 +109,6 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -479,18 +464,6 @@ public class SubminiTube extends AbstractTransparentComponent<String> {
     this.leadLength = leadLength;
     // Invalidate the body
     this.body = null;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.NAME;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Pin Arrangement")

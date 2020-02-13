@@ -36,7 +36,7 @@ import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
-public abstract class AbstractBoard extends AbstractTransparentComponent<String> {
+public abstract class AbstractBoard extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,6 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
   public static final Size DEFAULT_WIDTH = Size.in(1.5);
   public static final Size DEFAULT_HEIGHT = Size.in(1.2);
 
-  protected String value = "";
   protected Point[] controlPoints =
       new Point[] {
         new Point(0, 0),
@@ -296,17 +295,6 @@ public abstract class AbstractBoard extends AbstractTransparentComponent<String>
     secondPoint.setLocation(
         Math.max(controlPoints[0].x, controlPoints[1].x),
         Math.max(controlPoints[0].y, controlPoints[1].y));
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   public enum CoordinateType {

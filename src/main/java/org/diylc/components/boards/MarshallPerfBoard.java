@@ -26,9 +26,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -42,7 +42,7 @@ import org.diylc.core.measures.Size;
     name = "Marshall Style Perf Board",
     category = "Boards",
     author = "Branislav Stojkovic",
-    zOrder = IDIYComponent.BOARD,
+    zOrder = AbstractComponent.BOARD,
     instanceNamePrefix = "Board",
     description = "Perforated board as found on some Marshall and Trainwreck amps",
     bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,

@@ -29,10 +29,8 @@ import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -47,13 +45,13 @@ import org.diylc.core.measures.Size;
     author = "Branislav Stojkovic",
     description = "Copper solder pad, round or square",
     instanceNamePrefix = "Pad",
-    zOrder = IDIYComponent.TRACE + 0.1,
+    zOrder = AbstractComponent.TRACE + 0.1,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "PCB",
     transformer = SimpleComponentTransformer.class)
-public class SolderPad extends AbstractComponent<Void> {
+public class SolderPad extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -64,7 +62,7 @@ public class SolderPad extends AbstractComponent<Void> {
   private Size size = SIZE;
   private Color color = COLOR;
   private Point point = new Point(0, 0);
-  private Type type = Type.ROUND;
+  private SolderPadType type = SolderPadType.ROUND;
   private Size holeSize = HOLE_SIZE;
   private PcbLayer layer = PcbLayer._1;
 
@@ -144,11 +142,6 @@ public class SolderPad extends AbstractComponent<Void> {
   }
 
   @Override
-  public String getName() {
-    return super.getName();
-  }
-
-  @Override
   public int getControlPointCount() {
     return 1;
   }
@@ -156,11 +149,6 @@ public class SolderPad extends AbstractComponent<Void> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -183,17 +171,12 @@ public class SolderPad extends AbstractComponent<Void> {
   }
 
   @EditableProperty
-  public Type getType() {
+  public SolderPadType getType() {
     return type;
   }
 
-  public void setType(Type type) {
+  public void setType(SolderPadType type) {
     this.type = type;
-  }
-
-  @Override
-  public Void getValue() {
-    return null;
   }
 
   @Override
@@ -201,10 +184,7 @@ public class SolderPad extends AbstractComponent<Void> {
     return null;
   }
 
-  @Override
-  public void setValue(Void value) {}
-
-  public enum Type {
+  public enum SolderPadType {
     ROUND,
     SQUARE,
     OVAL_HORIZONTAL,

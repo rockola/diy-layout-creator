@@ -26,7 +26,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.ComponentType;
-import org.diylc.core.Template;
+import org.diylc.components.AbstractComponent;
 
 public class ComponentNode extends DefaultMutableTreeNode {
 
@@ -112,15 +112,15 @@ public class ComponentNode extends DefaultMutableTreeNode {
   public ComponentType getComponentType() {
     Object o = getUserObject();
     ComponentType type = o instanceof ComponentType ? (ComponentType) o : null;
-    if (type == null && o instanceof Template && parent instanceof ComponentNode) {
+    if (type == null && o instanceof AbstractComponent && parent instanceof ComponentNode) {
       type = ((ComponentNode) parent).getComponentType();
     }
     return type;
   }
 
-  public Template getVariant() {
+  public AbstractComponent getVariant() {
     Object o = getUserObject();
-    return o instanceof Template ? (Template) o : null;
+    return o instanceof AbstractComponent ? (AbstractComponent) o : null;
   }
 
   @Override
@@ -136,9 +136,9 @@ public class ComponentNode extends DefaultMutableTreeNode {
       ComponentType type = (ComponentType) o;
       return type.getName();
     }
-    if (o instanceof Template) {
-      Template type = (Template) o;
-      return type.getName();
+    if (o instanceof AbstractComponent) {
+      AbstractComponent variant = (AbstractComponent) o;
+      return variant.getName();
     }
     throw new RuntimeException("unknown userObject " + o.getClass());
   }

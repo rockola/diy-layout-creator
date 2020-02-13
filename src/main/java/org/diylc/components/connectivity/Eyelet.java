@@ -28,30 +28,30 @@ import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveMeasureValidator;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 
+@StringValue
 @ComponentDescriptor(
     name = "Eyelet",
     category = "Connectivity",
     author = "Branislav Stojkovic",
     description = "Eyelet or turret terminal",
     instanceNamePrefix = "Eyelet",
-    zOrder = IDIYComponent.TRACE + 0.1,
+    zOrder = AbstractComponent.TRACE + 0.1,
     bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TYPE_NAME,
     transformer = SimpleComponentTransformer.class)
-public class Eyelet extends AbstractComponent<String> {
+public class Eyelet extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -63,7 +63,6 @@ public class Eyelet extends AbstractComponent<String> {
   private Size holeSize = HOLE_SIZE;
   private Color color = COLOR;
   private Point point = new Point(0, 0);
-  private String value = "";
 
   @Override
   public void draw(
@@ -112,11 +111,6 @@ public class Eyelet extends AbstractComponent<String> {
   }
 
   @Override
-  public String getName() {
-    return super.getName();
-  }
-
-  @Override
   public int getControlPointCount() {
     return 1;
   }
@@ -124,11 +118,6 @@ public class Eyelet extends AbstractComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -148,17 +137,6 @@ public class Eyelet extends AbstractComponent<String> {
 
   public void setColor(Color color) {
     this.color = color;
-  }
-
-  @Override
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @Override

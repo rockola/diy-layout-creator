@@ -20,11 +20,14 @@
 
 package org.diylc.common;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +36,14 @@ import javax.swing.Icon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.appframework.Serializer;
-import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.appframework.miscutils.Utils;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
-import org.diylc.core.Template;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.Unmarshaller;
+import org.diylc.core.annotations.Variant;
 import org.diylc.parsing.XmlNode;
 import org.diylc.parsing.XmlReader;
 
@@ -49,26 +51,26 @@ import org.diylc.parsing.XmlReader;
  * Entity class used to describe a component type. In other words, component metadata.
  *
  * @author Branislav Stojkovic
- * @see IDIYComponent
+ * @see AbstractComponentComponent
  */
 public class ComponentType {
 
   private static final Logger LOG = LogManager.getLogger(ComponentType.class);
   private static final Map<String, List<ComponentType>> componentTypes;
-  private static final Map<String, Class<? extends IDIYComponent<?>>> xmlReaders;
+  private static final Map<String, Class<? extends AbstractComponent>> xmlReaders;
   private static final Map<String, Map<String, ComponentType>> unmarshalledTypes;
 
-  private static volatile Map<String, List<Template>> defaultVariantMap;
+  private static volatile Map<String, List<AbstractComponent>> defaultVariantMap;
   private static volatile Map<String, ComponentType> componentTypeMap;
   private static volatile Map<String, IComponentTransformer> componentTransformerMap;
   private static volatile int typeOrdinal;
 
   static {
-    defaultVariantMap = new TreeMap<String, List<Template>>(String.CASE_INSENSITIVE_ORDER);
+    defaultVariantMap = new TreeMap<String, List<AbstractComponent>>(String.CASE_INSENSITIVE_ORDER);
     componentTypeMap = new HashMap<String, ComponentType>();
     componentTransformerMap = new HashMap<String, IComponentTransformer>();
     unmarshalledTypes = new HashMap<String, Map<String, ComponentType>>();
-    xmlReaders = new HashMap<String, Class<? extends IDIYComponent<?>>>();
+    xmlReaders = new HashMap<String, Class<? extends AbstractComponent>>();
     componentTypes = loadComponentTypes();
     LOG.trace("unmarshalledTypes is {}", unmarshalledTypes == null ? "NULL" : "not null");
     typeOrdinal = 1;
@@ -81,7 +83,7 @@ public class ComponentType {
   private String namePrefix;
   private String author;
   private Icon icon;
-  private Class<? extends IDIYComponent<?>> instanceClass;
+  private Class<? extends AbstractComponent> instanceClass;
   private double zOrder;
   private boolean flexibleZOrder;
   private BomPolicy bomPolicy;
@@ -91,7 +93,7 @@ public class ComponentType {
   private KeywordPolicy keywordPolicy;
   private String keywordTag;
 
-  private List<Template> variants = new ArrayList<>();
+  private List<AbstractComponent> variants = new ArrayList<>();
   private String searchKey;
 
   /**
@@ -122,7 +124,7 @@ public class ComponentType {
       String namePrefix,
       String author,
       Icon icon,
-      Class<? extends IDIYComponent<?>> instanceClass,
+      Class<? extends AbstractComponent> instanceClass,
       double zOrder,
       boolean flexibleZOrder,
       BomPolicy bomPolicy,
@@ -238,7 +240,7 @@ public class ComponentType {
     return icon;
   }
 
-  public Class<? extends IDIYComponent<?>> getInstanceClass() {
+  public Class<? extends AbstractComponent> getInstanceClass() {
     return instanceClass;
   }
 
@@ -275,15 +277,26 @@ public class ComponentType {
    *
    * @return list of variants.
    */
-  public List<Template> getVariants() {
+  public List<AbstractComponent> getVariants() {
     if (variants.isEmpty()) {
-      LOG.trace("getVariants() {} Getting variant map from {}", getName(), Config.Flag.TEMPLATES);
+      LOG.trace("getVariants() Getting variant map from {}", getName());
       // Variants have not been cached yet for this type, let's do it
       // First try by class name and then by old category.type format
       List<String> keys = new ArrayList<String>();
       keys.add(getInstanceClass().getCanonicalName());
       keys.add(getCategory() + "." + getName());
 
+      variants.clear();
+      try {
+        variants.addAll(getInstanceClass().newInstance().getDefaultVariants());
+      } catch (IllegalAccessException | InstantiationException e) {
+        LOG.error(
+            "getVariants() Could not fetch default variants for {}", getInstanceClass().getName());
+      }
+
+      // TODO: add user variants
+
+      /*
       Map<String, List<Template>> variantMap =
           (Map<String, List<Template>>) ConfigurationManager.getObject(Config.Flag.TEMPLATES);
       if (variantMap != null) {
@@ -313,6 +326,7 @@ public class ComponentType {
               return o1.getName().compareTo(o2.getName());
             }
           });
+      */
     } else {
       LOG.trace("getVariants() {} Getting variant map from cache", getName());
     }
@@ -378,10 +392,12 @@ public class ComponentType {
     LOG.trace("loadComponentTypes()");
     LOG.info("Loading component types.");
     Map<String, List<ComponentType>> foundTypes = new HashMap<>();
+    ListMultimap<Class<? extends AbstractComponent>, AbstractComponent> variantMap =
+        MultimapBuilder.hashKeys().arrayListValues().build();
     try {
       for (Class<?> clazz : Utils.getClasses("org.diylc.components")) {
-        if (IDIYComponent.class.isAssignableFrom(clazz)) {
-          Class<? extends IDIYComponent<?>> theClass = (Class<? extends IDIYComponent<?>>) clazz;
+        if (AbstractComponent.class.isAssignableFrom(clazz)) {
+          Class<? extends AbstractComponent> theClass = (Class<? extends AbstractComponent>) clazz;
           LOG.trace("Looking at {}", theClass.getName());
           if (!Modifier.isAbstract(theClass.getModifiers())) {
             ComponentType componentType = extractFrom(theClass);
@@ -394,6 +410,37 @@ public class ComponentType {
               nestedList.add(componentType);
             }
           }
+          // Variants
+          for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Variant.class)) {
+              Type variantOwnerType = method.getAnnotatedReturnType().getType();
+              LOG.debug(
+                  "{} declares method {} as producing a variant for {}",
+                  clazz.getName(),
+                  method.getName(),
+                  variantOwnerType.getTypeName());
+              if (variantOwnerType instanceof Class) {
+                Class<?> variantClass = (Class<?>) variantOwnerType;
+                if (AbstractComponent.class.isAssignableFrom(variantClass)) {
+                  Class<? extends AbstractComponent> variantOwner =
+                      (Class<? extends AbstractComponent>) variantOwnerType;
+                  Object o = method.invoke(clazz);
+                  if (o instanceof AbstractComponent) {
+                    variantMap.put(variantOwner, (AbstractComponent) o);
+                  } else {
+                    LOG.error("variant {} is not a valid component", o);
+                  }
+                } else {
+                  LOG.error("variant assignee {} is not a valid component class", variantClass);
+                }
+              } else {
+                LOG.error(
+                    "variants can only be assigned to component classes, {} is not one",
+                    variantOwnerType);
+              }
+            }
+          }
+          // Unmarshallers
           Unmarshaller[] unmarshallers = theClass.getAnnotationsByType(Unmarshaller.class);
           for (Unmarshaller unmarshaller : unmarshallers) {
             String tagName = unmarshaller.value();
@@ -410,7 +457,7 @@ public class ComponentType {
         LOG.trace("{}: {}", e.getKey(), e.getValue());
       }
       // Log all found unmarshallers for posterity
-      for (Map.Entry<String, Class<? extends IDIYComponent<?>>> e : xmlReaders.entrySet()) {
+      for (Map.Entry<String, Class<? extends AbstractComponent>> e : xmlReaders.entrySet()) {
         if (e.getValue() != null) {
           LOG.trace("{} unmarshals {}", e.getValue().getName(), e.getKey());
         } else {
@@ -480,13 +527,13 @@ public class ComponentType {
    * @param component Component instance.
    * @return ComponentType instance corresponding to component.
    */
-  public static ComponentType extractFrom(IDIYComponent<?> component) {
-    return extractFrom((Class<? extends IDIYComponent<?>>) component.getClass());
+  public static ComponentType extractFrom(AbstractComponent component) {
+    return extractFrom((Class<? extends AbstractComponent>) component.getClass());
   }
 
   /**
-   * Extract component type from class. Class should implement IDIYComponent or be a subclass of one
-   * that does. Also, class should have a ComponentDescriptor annotation.
+   * Extract component type from class. Class should implement AbstractComponent or be a subclass of
+   * one that does. Also, class should have a ComponentDescriptor annotation.
    *
    * <p>NOTE: Could - and indeed should - this be done at compile time? Runtime handling is of
    * course required if components are to be loaded from external JARs.
@@ -494,7 +541,7 @@ public class ComponentType {
    * @param clazz The class.
    * @return component type
    */
-  public static ComponentType extractFrom(Class<? extends IDIYComponent<?>> clazz) {
+  public static ComponentType extractFrom(Class<? extends AbstractComponent> clazz) {
     LOG.trace("extractFrom({})", clazz == null ? "null" : clazz.getName());
     if (clazz == null) {
       return null;
@@ -528,7 +575,7 @@ public class ComponentType {
 
     try {
       // Draw component icon for later use
-      IDIYComponent<?> componentInstance = (IDIYComponent<?>) clazz.newInstance();
+      AbstractComponent componentInstance = (AbstractComponent) clazz.newInstance();
       icon = componentInstance.getImageIcon();
     } catch (Exception e) {
       LOG.error("Error drawing component icon for " + clazz.getName(), e);
@@ -555,10 +602,10 @@ public class ComponentType {
     return extractedType;
   }
 
-  public static void addVariants(Map<String, List<Template>> variants) {
-    for (Map.Entry<String, List<Template>> e : variants.entrySet()) {
+  public static void addVariants(Map<String, List<AbstractComponent>> variants) {
+    for (Map.Entry<String, List<AbstractComponent>> e : variants.entrySet()) {
       String key = e.getKey();
-      List<Template> value = e.getValue();
+      List<AbstractComponent> value = e.getValue();
       if (defaultVariantMap.containsKey(key)) {
         defaultVariantMap.get(key).addAll(value);
       } else {

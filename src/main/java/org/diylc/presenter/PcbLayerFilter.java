@@ -23,7 +23,7 @@ package org.diylc.presenter;
 import java.lang.reflect.Method;
 import org.diylc.common.IComponentFilter;
 import org.diylc.common.PcbLayer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class PcbLayerFilter implements IComponentFilter {
 
@@ -35,7 +35,7 @@ public class PcbLayerFilter implements IComponentFilter {
   }
 
   @Override
-  public boolean testComponent(IDIYComponent<?> component) {
+  public boolean testComponent(AbstractComponent component) {
     Class<?> clazz = component.getClass();
     try {
       Method m = clazz.getMethod("getLayer");

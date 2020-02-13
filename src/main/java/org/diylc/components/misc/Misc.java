@@ -37,7 +37,7 @@ import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 
-public abstract class Misc<T> extends AbstractComponent<T> {
+public abstract class Misc extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 

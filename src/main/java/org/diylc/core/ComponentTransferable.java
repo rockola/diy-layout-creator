@@ -27,14 +27,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.diylc.components.AbstractComponent;
 
 /**
- * Represents component selection as a {@link List} of {@link IDIYComponent} objects. Implements
+ * Represents component selection as a {@link List} of {@link AbstractComponent} objects. Implements
  * {@link Transferable}, so it is suitable for clipboard usage.
  *
  * @author Branislav Stojkovic
  */
-public class ComponentTransferable extends ArrayList<IDIYComponent<?>> implements Transferable {
+public class ComponentTransferable extends ArrayList<AbstractComponent> implements Transferable {
 
   private static final long serialVersionUID = 1L;
 
@@ -45,7 +46,7 @@ public class ComponentTransferable extends ArrayList<IDIYComponent<?>> implement
     super();
   }
 
-  public ComponentTransferable(Collection<IDIYComponent<?>> selectedComponents) {
+  public ComponentTransferable(Collection<AbstractComponent> selectedComponents) {
     super(selectedComponents);
   }
 

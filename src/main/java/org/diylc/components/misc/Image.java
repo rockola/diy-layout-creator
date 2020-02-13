@@ -32,12 +32,11 @@ import org.apache.poi.util.IOUtils;
 import org.diylc.appframework.miscutils.IconImageConverter;
 import org.diylc.common.Config;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -49,10 +48,10 @@ import org.diylc.core.annotations.PercentEditor;
     category = "Misc",
     description = "User defined image",
     instanceNamePrefix = "Img",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     flexibleZOrder = true,
     bomPolicy = BomPolicy.NEVER_SHOW)
-public class Image extends AbstractTransparentComponent<Void> {
+public class Image extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
   private static final ImageIcon ICON;
@@ -153,16 +152,6 @@ public class Image extends AbstractTransparentComponent<Void> {
   }
 
   @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public void setControlPoint(Point point, int index) {
     this.point.setLocation(point);
   }
@@ -221,15 +210,5 @@ public class Image extends AbstractTransparentComponent<Void> {
   @Override
   public String getName() {
     return super.getName();
-  }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {
-    //
   }
 }

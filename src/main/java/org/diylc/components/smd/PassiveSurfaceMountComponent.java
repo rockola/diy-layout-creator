@@ -36,12 +36,12 @@ import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
-public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparentComponent<T> {
+public abstract class PassiveSurfaceMountComponent extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -51,7 +51,6 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
   public static final int EDGE_RADIUS = 4;
   public static final Size PIN_SIZE = Size.mm(0.8);
 
-  protected T value;
   protected Color bodyColor;
   protected Color borderColor;
 
@@ -61,10 +60,13 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
   private Color labelColor = LABEL_COLOR;
   private transient Area[] body;
 
-  public PassiveSurfaceMountComponent() {
+  public PassiveSurfaceMountComponent(SiUnit unit, Color bodyColor, Color borderColor) {
     super();
+    valueUnit = unit;
+    this.bodyColor = bodyColor;
+    this.borderColor = borderColor;
     updateControlPoints();
-    display = Display.NAME;
+    setDisplay(Display.NAME);
   }
 
   @EditableProperty
@@ -77,18 +79,6 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty
@@ -116,11 +106,6 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -236,33 +221,26 @@ public abstract class PassiveSurfaceMountComponent<T> extends AbstractTransparen
 
     // draw main area
     Area mainArea = getBody()[0];
-    Composite oldComposite = setTransparency(g2d);
-    g2d.setColor(outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor());
-    g2d.fill(mainArea);
-    g2d.setComposite(oldComposite);
-
-    Color finalBorderColor = tryBorderColor(outlineMode, getBorderColor());
-    g2d.setColor(finalBorderColor);
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    g2d.draw(mainArea);
+    Composite oldComposite = setTransparency(g2d);
+    Color fillColor = outlineMode ? Constants.TRANSPARENT_COLOR : getBodyColor();
+    mainArea.fill(g2d, fillColor);
+    g2d.setComposite(oldComposite);
+    Color drawColor = tryBorderColor(outlineMode, getBorderColor());
+    mainArea.draw(g2d, drawColor);
 
     // draw contact area
     Area contactArea = getBody()[1];
     if (!outlineMode) {
       setTransparency(g2d);
-      g2d.setColor(PIN_COLOR);
-      g2d.fill(contactArea);
+      contactArea.fill(g2d, PIN_COLOR);
       g2d.setComposite(oldComposite);
     }
+    contactArea.draw(g2d, tryBorderColor(outlineMode, PIN_BORDER_COLOR));
 
-    finalBorderColor = tryBorderColor(outlineMode, PIN_BORDER_COLOR);
-    g2d.setColor(finalBorderColor);
-    g2d.draw(contactArea);
-
-    // Draw label.
+    // draw label
     g2d.setFont(project.getFont());
-    Color finalLabelColor = tryLabelColor(outlineMode, getLabelColor());
-    g2d.setColor(finalLabelColor);
+    g2d.setColor(tryLabelColor(outlineMode, getLabelColor()));
     FontMetrics fontMetrics = g2d.getFontMetrics(g2d.getFont());
     Rectangle textTarget = mainArea.getBounds();
     int length = textTarget.height > textTarget.width ? textTarget.height : textTarget.width;

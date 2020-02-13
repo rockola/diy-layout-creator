@@ -18,42 +18,43 @@
   along with DIYLC.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.diylc.components.electromechanical;
+package org.diylc.components.electromechanical.iec;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.components.RoundedPolygon;
+import org.diylc.components.electromechanical.Pin;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "IEC Socket",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
-    description = "Panel-mounted IEC 60320 C14 power inlet",
-    zOrder = IDIYComponent.COMPONENT,
+    description = "Panel-mounted IEC 60320 power inlet",
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "IEC",
     autoEdit = false)
-public class IecSocket extends AbstractMultiPartComponent<String> {
+public abstract class IecSocket extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(IecSocket.class);
@@ -64,7 +65,8 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
   protected Point[] controlPoints = getFreshControlPoints(3);
-  protected String value;
+  /** Coupler pins. */
+  protected final List<Pin> pins = new ArrayList<>();
 
   private Orientation orientation = Orientation.DEFAULT;
   private Color bodyColor = BODY_COLOR;
@@ -75,15 +77,6 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
     super();
     controlPoints = getControlPoints();
     updateControlPoints();
-  }
-
-  protected abstract Point[] getControlPoints();
-
-  @Override
-  public List<IDIYComponent<?>> getDefaultVariants() {
-    List<IDIYComponent<?>> variants = new ArrayList<>();
-    variants.addAll(subtypes.values());
-    return variants;
   }
 
   private void updateControlPoints() {
@@ -127,25 +120,12 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
     controlPoints[index].setLocation(point);
   }
 
-  @EditableProperty
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
+  public Point[] getControlPoints() {
+    Point[] controlPoints = new Point[howManyPins()];
+    for (int i = 0; i < howManyPins(); i++) {
+      controlPoints[i] = getPin(i).getOffset();
+    }
+    return controlPoints;
   }
 
   @EditableProperty
@@ -159,6 +139,18 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
   public void setOrientation(Orientation orientation) {
     this.orientation = orientation;
     updateControlPoints();
+  }
+
+  public int howManyPins() {
+    return pins.size();
+  }
+
+  public List<Pin> getPins() {
+    return pins;
+  }
+
+  public Pin getPin(int i) {
+    return getPins().get(i);
   }
 
   @Override
@@ -191,17 +183,13 @@ public class IecSocket extends AbstractMultiPartComponent<String> {
     }
     drawingObserver.stopTracking();
     final Color pinFillColor = (outlineMode ? Constants.TRANSPARENT_COLOR : getPinColor());
-    for (Pin pin : iec.getPins()) {
+    for (Pin pin : getPins()) {
       pin.getShape().fillDraw(g2d, pinFillColor, drawColor);
     }
 
     drawSelectionOutline(g2d, componentState, outlineMode, project, drawingObserver);
 
     g2d.setTransform(at);
-  }
-
-  public Area[] getBody() {
-    return iec.getBody();
   }
 
   @Override

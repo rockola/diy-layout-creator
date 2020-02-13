@@ -30,10 +30,8 @@ import org.diylc.components.Area;
 import org.diylc.components.boards.AbstractBoard;
 import org.diylc.components.boards.VeroBoard;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.BomPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
@@ -45,11 +43,11 @@ import org.diylc.core.measures.Size;
     author = "Branislav Stojkovic",
     description = "Designates the place where a trace on the vero board needs to be cut",
     instanceNamePrefix = "Cut",
-    zOrder = IDIYComponent.BOARD + 1,
+    zOrder = AbstractComponent.BOARD + 1,
     bomPolicy = BomPolicy.NEVER_SHOW,
     autoEdit = false,
     transformer = SimpleComponentTransformer.class)
-public class TraceCut extends AbstractComponent<Void> {
+public class TraceCut extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -147,27 +145,9 @@ public class TraceCut extends AbstractComponent<Void> {
   }
 
   @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public void setControlPoint(Point point, int index) {
     this.point.setLocation(point);
   }
-
-  @Override
-  public Void getValue() {
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {}
 
   @EditableProperty
   public Size getSize() {

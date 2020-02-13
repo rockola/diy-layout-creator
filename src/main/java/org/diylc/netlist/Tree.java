@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 public class Tree {
 
@@ -211,13 +211,13 @@ public class Tree {
     }
   }
 
-  public Set<IDIYComponent<?>> extractComponents(Set<String> types) {
-    Set<IDIYComponent<?>> res = new HashSet<IDIYComponent<?>>();
+  public Set<AbstractComponent> extractComponents(Set<String> types) {
+    Set<AbstractComponent> res = new HashSet<AbstractComponent>();
     if (leaf != null && types.contains(leaf.getComponent().getClass().getCanonicalName())) {
       res.add(leaf.getComponent());
     } else if (children != null) {
       for (Tree t : children) {
-        Set<IDIYComponent<?>> childRes = t.extractComponents(types);
+        Set<AbstractComponent> childRes = t.extractComponents(types);
         if (childRes != null) {
           res.addAll(childRes);
         }

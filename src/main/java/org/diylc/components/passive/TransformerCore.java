@@ -28,7 +28,6 @@ import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractComponent;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -44,11 +43,11 @@ import org.diylc.core.measures.Size;
     instanceNamePrefix = "T",
     description =
         "Transformer core symbol. Use together with \"Transformer Coil Symbol\"<br>for transformer schematics.",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     creationMethod = CreationMethod.POINT_BY_POINT,
     keywordTag = "Schematic")
-public class TransformerCore extends AbstractComponent<Void> {
+public class TransformerCore extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -76,11 +75,6 @@ public class TransformerCore extends AbstractComponent<Void> {
   @Override
   public void setControlPoint(Point point, int index) {
     this.controlPoints[index].setLocation(point);
-  }
-
-  @Override
-  public boolean isControlPointSticky(int index) {
-    return false;
   }
 
   @Override
@@ -145,17 +139,6 @@ public class TransformerCore extends AbstractComponent<Void> {
     polyline.lineTo(width, height * 9 / 16);
 
     g2d.draw(polyline);
-  }
-
-  @Override
-  public Void getValue() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void setValue(Void value) {
-    // TODO Auto-generated method stub
   }
 
   @Override

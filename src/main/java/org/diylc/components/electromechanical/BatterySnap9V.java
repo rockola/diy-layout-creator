@@ -30,29 +30,31 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.BatterySnapTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "9V Battery Snap",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "BTR",
     autoEdit = false,
     transformer = BatterySnapTransformer.class)
-public class BatterySnap9V extends AbstractTransparentComponent<String> {
+public class BatterySnap9V extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -63,7 +65,6 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
   private static Size TERMINAL_SPACING = Size.in(0.5);
   private static Size TERMINAL_BORDER = Size.mm(0.7);
 
-  private String value = "";
   private Point controlPoint = new Point(0, 0);
   private transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
@@ -223,16 +224,6 @@ public class BatterySnap9V extends AbstractTransparentComponent<String> {
     this.controlPoint.setLocation(point);
     // Invalidate the body
     body = null;
-  }
-
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty

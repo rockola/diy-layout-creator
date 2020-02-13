@@ -28,25 +28,29 @@ import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.StringJoiner;
+import java.util.ArrayList;
+import java.util.List;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.annotations.MultipleValues;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 import org.diylc.utils.Constants;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Multi-Section Capacitor",
     author = "Branislav Stojkovic",
@@ -54,9 +58,9 @@ import org.diylc.utils.Constants;
     instanceNamePrefix = "C",
     description =
         "Multi-section vertically mounted electrolytic capacitor, similar to JJ, CE and others",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacitance[]> {
+public class MultiSectionCapacitor extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -69,14 +73,23 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   public static final Size PIN_SIZE = Size.in(0.08);
   //  public static final Size PIN_SPACING = Size.in(0.05);
   public static final Size BODY_DIAMETER = Size.in(1);
+
+  /**
+   * Maximum number of capacitor sections.
+   *
+   * <p>In the absence of a better guess there can be 1...9 sections, but the number of sections in
+   * an actual manufactured multi-section capacitor is probably way less than 9. Any better guesses?
+   */
+  private static final int MAX_SECTIONS = 9;
+
   private static final double[] RELATIVE_DIAMETERS = new double[] {0.4d, 0.6d};
   private static final Format format = new DecimalFormat("0.#####");
 
-  private Capacitance[] value = new Capacitance[3];
-  private org.diylc.core.measures.Voltage voltage = null;
+  private Value voltage = null;
 
+  private int sections = 3;
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+  private Point[] controlPoints = getFreshControlPoints(sections);
   private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color baseColor = BASE_COLOR;
@@ -86,24 +99,29 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   //  private Size pinSpacing = PIN_SPACING;
   private Size diameter = BODY_DIAMETER;
 
+  private List<Value> values = new ArrayList<>();
+
   public MultiSectionCapacitor() {
     super();
+    valueUnit = SiUnit.FARAD;
     updateControlPoints();
-    display = Display.NAME;
+    setDisplay(Display.NAME);
   }
 
+  @MultipleValues(9)
+  @ComponentValue(SiUnit.FARAD)
   @EditableProperty
-  public Capacitance[] getValue() {
-    return value;
+  public List<Value> getValues() {
+    return values;
   }
 
-  public void setValue(Capacitance[] value) {
+  public void setValues(List<Value> values) {
     boolean needsUpdate = false;
-    if ((this.value == null ? 0 : this.value.length) != (value == null ? 0 : value.length)) {
+    if ((this.values == null ? 0 : this.values.size()) != (values == null ? 0 : values.size())) {
       needsUpdate = true;
     }
 
-    this.value = value;
+    this.values = values;
 
     if (needsUpdate) {
       updateControlPoints();
@@ -111,6 +129,8 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     }
   }
 
+  /*
+  @Override
   private String getStringValue() {
     if (value == null || value.length == 0) {
       return "";
@@ -123,14 +143,29 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
         ? sb.toString()
         : sb.toString() + " " + (value[0].getUnit() == null ? "" : value[0].getUnit());
   }
+  */
 
+  @ComponentValue(SiUnit.VOLT)
   @EditableProperty
-  public org.diylc.core.measures.Voltage getVoltage() {
+  public Value getVoltage() {
     return voltage;
   }
 
-  public void setVoltage(org.diylc.core.measures.Voltage voltage) {
-    this.voltage = voltage;
+  public void setVoltage(Value voltage) {
+    if (voltage == null || voltage.getUnit() == SiUnit.VOLT) {
+      this.voltage = voltage;
+    }
+  }
+
+  @EditableProperty
+  public int getSections() {
+    return sections;
+  }
+
+  public void setSections(int sections) {
+    if (sections > 0 && sections <= MAX_SECTIONS) {
+      this.sections = sections;
+    }
   }
 
   @EditableProperty
@@ -173,11 +208,6 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public void setControlPoint(Point point, int index) {
     controlPoints[index].setLocation(point);
     body = null;
@@ -187,9 +217,9 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
     int pinSpacing =
         (int)
             (getDiameter().convertToPixels()
-                * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+                * RELATIVE_DIAMETERS[values == null || values.size() == 1 ? 0 : 1]);
 
-    int newCount = value.length + 1;
+    int newCount = values.size() + 1;
     if (newCount != controlPoints.length) {
       // need new control points
       Point[] newPoints = new Point[newCount];
@@ -290,7 +320,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
       int pinSpacing =
           (int)
               (getDiameter().convertToPixels()
-                  * RELATIVE_DIAMETERS[value == null || value.length == 1 ? 0 : 1]);
+                  * RELATIVE_DIAMETERS[values == null || values.size() == 1 ? 0 : 1]);
       if (controlPoints.length == 2 || controlPoints.length == 3) {
         switch (orientation) {
           case DEFAULT:
@@ -339,18 +369,8 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
 
       body =
           new Area[] {
-            new Area(
-                new Ellipse2D.Double(
-                    centerX - bodyDiameter / 2,
-                    centerY - bodyDiameter / 2,
-                    bodyDiameter,
-                    bodyDiameter)),
-            new Area(
-                new Ellipse2D.Double(
-                    centerX - innerDiameter / 2,
-                    centerY - innerDiameter / 2,
-                    innerDiameter,
-                    innerDiameter))
+            Area.circle(centerX, centerY, bodyDiameter),
+            Area.circle(centerX, centerY, innerDiameter)
           };
     }
     return body;
@@ -484,18 +504,6 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent<Capacita
 
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.NAME;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Pin Color")

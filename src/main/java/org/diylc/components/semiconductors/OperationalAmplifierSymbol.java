@@ -28,10 +28,10 @@ import java.awt.geom.Path2D;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.VisibilityPolicy;
@@ -47,10 +47,10 @@ import org.diylc.utils.Constants;
     category = "Schematic Symbols",
     instanceNamePrefix = "IC",
     description = "Operational amplifier symbol with 3 or 5 contacts",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG_AND_VALUE,
     keywordTag = "Schematic")
-public class OperationalAmplifierSymbol extends AbstractTransparentComponent<String> {
+public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,7 +60,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
   public static final int DEFAULT_POINT_COUNT = 5;
 
   protected int pointCount = DEFAULT_POINT_COUNT;
-  protected String value = "";
   protected Point[] controlPoints = getFreshControlPoints(DEFAULT_POINT_COUNT);
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
@@ -71,7 +70,7 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
   public OperationalAmplifierSymbol() {
     super();
     updateControlPoints();
-    display = Display.NAME;
+    setDisplay(Display.NAME);
   }
 
   @Override
@@ -201,17 +200,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
     return VisibilityPolicy.WHEN_SELECTED;
   }
 
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return this.value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
@@ -264,15 +252,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent<Str
 
   public void setFlip(Boolean flip) {
     this.flip = flip;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @Override

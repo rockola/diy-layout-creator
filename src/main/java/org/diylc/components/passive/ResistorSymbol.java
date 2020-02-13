@@ -23,17 +23,19 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.measures.PowerUnit;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.OHM)
 @ComponentDescriptor(
     name = "Resistor",
     author = "Branislav Stojkovic",
@@ -41,59 +43,38 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "R",
     description = "Resistor schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)
-public class ResistorSymbol extends AbstractSchematicLeadedSymbol<Resistance> {
+public class ResistorSymbol extends AbstractSchematicLeadedSymbol {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_LENGTH = Size.in(0.3);
   public static final Size DEFAULT_WIDTH = Size.in(0.08);
 
-  private Resistance value = null;
-  @Deprecated private Power power = Power.HALF;
-  private org.diylc.core.measures.Power powerNew =
-      new org.diylc.core.measures.Power(0.5, PowerUnit.W);
+  private Value power = new Value(0.5, SiUnit.WATT);
 
-  @EditableProperty
-  public Resistance getValue() {
-    return value;
-  }
-
-  public void setValue(Resistance value) {
-    this.value = value;
+  public ResistorSymbol() {
+    valueUnit = SiUnit.OHM;
   }
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + " " + getPowerNew().toString();
+    return getValue().toString() + " " + getPower().toString();
   }
 
-  @Deprecated
-  public Power getPower() {
+  @ComponentValue(SiUnit.WATT)
+  @EditableProperty(name = "Power Rating")
+  public Value getPower() {
     return power;
   }
 
-  @Deprecated
-  public void setPower(Power power) {
-    this.power = power;
-  }
-
-  @EditableProperty(name = "Power Rating")
-  public org.diylc.core.measures.Power getPowerNew() {
-    // Backward compatibility
-    if (powerNew == null) {
-      powerNew = power.convertToNewFormat();
-      // Clear old value, don't need it anymore
-      power = null;
+  public void setPower(Value powerNew) {
+    if (powerNew == null || powerNew.getUnit() == SiUnit.WATT) {
+      this.power = powerNew;
     }
-    return powerNew;
-  }
-
-  public void setPowerNew(org.diylc.core.measures.Power powerNew) {
-    this.powerNew = powerNew;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

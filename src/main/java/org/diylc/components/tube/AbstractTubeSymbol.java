@@ -40,14 +40,13 @@ import org.diylc.core.Project;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.measures.Size;
 
-public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
+public abstract class AbstractTubeSymbol extends AbstractComponent {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
 
-  protected String value = "";
   protected Color color = COLOR;
   protected boolean showHeaters;
   protected Orientation orientation = Orientation.DEFAULT;
@@ -56,7 +55,7 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   protected transient Area[] body;
 
   {
-    display = Display.NAME;
+    setDisplay(Display.NAME);
   }
 
   @Override
@@ -118,32 +117,12 @@ public abstract class AbstractTubeSymbol extends AbstractComponent<String> {
   }
 
   @EditableProperty
-  @Override
-  public String getValue() {
-    return this.value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
-  }
-
-  @EditableProperty
   public Color getColor() {
     return color;
   }
 
   public void setColor(Color color) {
     this.color = color;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Heaters")

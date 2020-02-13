@@ -21,53 +21,36 @@
 package org.diylc.components.passive;
 
 import org.diylc.components.AbstractRadialComponent;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.SiUnit;
+import org.diylc.core.measures.Value;
 
-public abstract class RadialCapacitor extends AbstractRadialComponent<Capacitance> {
+public abstract class RadialCapacitor extends AbstractRadialComponent {
 
   private static final long serialVersionUID = 1L;
 
-  protected Capacitance value = null;
-  @Deprecated protected Voltage voltage = Voltage._63V;
-  protected org.diylc.core.measures.Voltage voltageNew = null;
+  protected Value voltage;
 
   protected RadialCapacitor() {
     super();
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
+    valueUnit = SiUnit.FARAD;
   }
 
   @Override
   public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
+    return getValue().toString() + (getVoltage() == null ? "" : " " + getVoltage().toString());
   }
 
-  @Deprecated
-  public Voltage getVoltage() {
+  @ComponentValue(SiUnit.VOLT)
+  @EditableProperty
+  public Value getVoltage() {
     return voltage;
   }
 
-  @Deprecated
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
+  public void setVoltage(Value voltageNew) {
+    if (voltageNew == null || voltageNew.getUnit() == SiUnit.VOLT) {
+      this.voltage = voltageNew;
+    }
   }
 }

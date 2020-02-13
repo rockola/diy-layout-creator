@@ -23,19 +23,19 @@ package org.diylc.components.passive;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Current;
-import org.diylc.core.measures.Inductance;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.HENRY)
 @ComponentDescriptor(
     name = "Inductor",
     author = "Branislav Stojkovic",
@@ -43,47 +43,48 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "L",
     description = "Inductor schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_TAG,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)
-public class InductorSymbol extends AbstractSchematicLeadedSymbol<Inductance> {
+public class InductorSymbol extends AbstractSchematicLeadedSymbol {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_LENGTH = Size.in(0.3);
   public static final Size DEFAULT_WIDTH = Size.in(0.08);
 
-  private Inductance value = null;
-  private Current current = null;
-  private Resistance resistance = null;
+  private Value current = null;
+  private Value resistance = null;
   private boolean core = false;
 
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Inductance getValue() {
-    return value;
+  public InductorSymbol() {
+    super();
+    valueUnit = SiUnit.HENRY;
   }
 
-  public void setValue(Inductance value) {
-    this.value = value;
-  }
-
+  @ComponentValue(SiUnit.AMPERE)
   @EditableProperty
-  public Current getCurrent() {
+  public Value getCurrent() {
     return current;
   }
 
-  public void setCurrent(Current current) {
-    this.current = current;
+  public void setCurrent(Value current) {
+    if (current == null || current.hasUnit(SiUnit.AMPERE)) {
+      this.current = current;
+    }
   }
 
+  @ComponentValue(SiUnit.OHM)
   @EditableProperty
-  public Resistance getResistance() {
+  public Value getResistance() {
     return resistance;
   }
 
-  public void setResistance(Resistance resistance) {
-    this.resistance = resistance;
+  public void setResistance(Value resistance) {
+    if (resistance == null || resistance.hasUnit(SiUnit.OHM)) {
+      this.resistance = resistance;
+    }
   }
 
   @Override

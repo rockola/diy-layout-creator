@@ -76,8 +76,8 @@ public enum EventType {
   PROJECT_MODIFIED,
   /**
    * Called when control points under the cursor are changed. A single parameter is passed, an
-   * instance of <code>Map&lt;IDIYComponent&lt;?&gt;, Set&lt;Integer&gt;&gt;</code> containing all
-   * the components and indices of their control points that are under the cursor.
+   * instance of <code>Map&lt;AbstractComponent&lt;?&gt;, Set&lt;Integer&gt;&gt;</code> containing
+   * all the components and indices of their control points that are under the cursor.
    */
   AVAILABLE_CTRL_POINTS_CHANGED,
   /**

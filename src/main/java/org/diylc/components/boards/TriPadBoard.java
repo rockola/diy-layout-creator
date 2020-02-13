@@ -27,9 +27,9 @@ import java.awt.Point;
 import java.awt.Shape;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -42,7 +42,7 @@ import org.diylc.core.measures.Size;
     name = "TriPad Board",
     category = "Boards",
     author = "Hauke Juhls",
-    zOrder = IDIYComponent.BOARD,
+    zOrder = AbstractComponent.BOARD,
     instanceNamePrefix = "Board",
     description =
         "Perforated FR4 board with copper strips connecting 3 holes in a row (aka TriPad Board)",

@@ -24,16 +24,17 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractSchematicLeadedSymbol;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.measures.Current;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.AMPERE)
 @ComponentDescriptor(
     name = "Fuse",
     author = "Branislav Stojkovic",
@@ -41,32 +42,20 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "F",
     description = "Fuse schematic symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     keywordTag = "Schematic",
     transformer = SimpleComponentTransformer.class)
-public class FuseSymbol extends AbstractSchematicLeadedSymbol<Current> {
+public class FuseSymbol extends AbstractSchematicLeadedSymbol {
 
   private static final long serialVersionUID = 1L;
 
   public static final Size DEFAULT_LENGTH = Size.in(0.3);
   public static final Size DEFAULT_WIDTH = Size.in(0.12);
 
-  private Current value = null;
-
-  @EditableProperty
-  public Current getValue() {
-    return value;
-  }
-
-  public void setValue(Current value) {
-    this.value = value;
-  }
-
-  @Override
-  public String getValueForDisplay() {
-    return getValue()
-        .toString(); // + (getPowerNew() == null ? "" : " " + getPowerNew().toString());
+  public FuseSymbol() {
+    super();
+    valueUnit = SiUnit.AMPERE;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

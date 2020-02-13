@@ -26,9 +26,9 @@ import java.awt.Shape;
 import org.apache.commons.text.WordUtils;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.BomPolicy;
@@ -39,7 +39,7 @@ import org.diylc.core.annotations.EditableProperty;
     name = "Blank Board",
     category = "Boards",
     author = "Branislav Stojkovic",
-    zOrder = IDIYComponent.BOARD,
+    zOrder = AbstractComponent.BOARD,
     instanceNamePrefix = "Board",
     description = "Blank circuit board",
     bomPolicy = BomPolicy.SHOW_ONLY_TYPE_NAME,

@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 
 /**
  * Represents a group of {@link Node}s that are connected together.
@@ -46,7 +46,7 @@ public class Group implements Cloneable, Comparable<Group> {
     nodes.add(node2);
   }
 
-  public Group connect(IDIYComponent<?> component, int index) {
+  public Group connect(AbstractComponent component, int index) {
     getNodes().add(new Node(component, index));
     return this;
   }

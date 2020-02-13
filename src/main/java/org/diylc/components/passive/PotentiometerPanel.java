@@ -26,22 +26,23 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.PotentiometerTransformer;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.OHM)
 @ComponentDescriptor(
     name = "Potentiometer",
     author = "Branislav Stojkovic",
@@ -49,7 +50,7 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.SINGLE_CLICK,
     instanceNamePrefix = "VR",
     description = "Panel mount potentiometer with solder lugs",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = PotentiometerTransformer.class)
 public class PotentiometerPanel extends AbstractPotentiometer {
 
@@ -131,23 +132,20 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y - spacing / 2 - diameter / 2;
 
           body[9] =
-              new Area(
-                  new RoundRectangle2D.Double(
-                      centerX - waferWidth / 2,
-                      controlPoints[0].y - waferHeight - spacing / 2,
-                      waferWidth,
-                      waferHeight,
-                      spacing / 4,
-                      spacing / 4));
+              Area.roundRect(
+                  centerX - waferWidth / 2,
+                  controlPoints[0].y - waferHeight - spacing / 2,
+                  waferWidth,
+                  waferHeight,
+                  spacing / 4);
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(
-                    new Rectangle2D.Double(
-                        controlPoints[i].x - pinWidth / 2,
-                        controlPoints[i].y - (spacing + diameter) / 2,
-                        pinWidth,
-                        (spacing + diameter) / 2));
+                Area.rect(
+                    controlPoints[i].x - pinWidth / 2,
+                    controlPoints[i].y - (spacing + diameter) / 2,
+                    pinWidth,
+                    (spacing + diameter) / 2);
           }
           break;
         case _90:
@@ -155,23 +153,20 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y + spacing;
 
           body[9] =
-              new Area(
-                  new RoundRectangle2D.Double(
-                      controlPoints[0].x + spacing / 2,
-                      centerY - waferWidth / 2,
-                      waferHeight,
-                      waferWidth,
-                      spacing / 4,
-                      spacing / 4));
+              Area.roundRect(
+                  controlPoints[0].x + spacing / 2,
+                  centerY - waferWidth / 2,
+                  waferHeight,
+                  waferWidth,
+                  spacing / 4);
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(
-                    new Rectangle2D.Double(
-                        controlPoints[i].x,
-                        controlPoints[i].y - pinWidth / 2,
-                        (spacing + diameter) / 2,
-                        pinWidth));
+                Area.rect(
+                    controlPoints[i].x,
+                    controlPoints[i].y - pinWidth / 2,
+                    (spacing + diameter) / 2,
+                    pinWidth);
           }
           break;
         case _180:
@@ -179,23 +174,20 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y + spacing / 2 + diameter / 2;
 
           body[9] =
-              new Area(
-                  new RoundRectangle2D.Double(
-                      centerX - waferWidth / 2,
-                      controlPoints[0].y + spacing / 2,
-                      waferWidth,
-                      waferHeight,
-                      spacing / 4,
-                      spacing / 4));
+              Area.roundRect(
+                  centerX - waferWidth / 2,
+                  controlPoints[0].y + spacing / 2,
+                  waferWidth,
+                  waferHeight,
+                  spacing / 4);
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(
-                    new Rectangle2D.Double(
-                        controlPoints[i].x - pinWidth / 2,
-                        controlPoints[i].y,
-                        pinWidth,
-                        (spacing + diameter) / 2));
+                Area.rect(
+                    controlPoints[i].x - pinWidth / 2,
+                    controlPoints[i].y,
+                    pinWidth,
+                    (spacing + diameter) / 2);
           }
           break;
         case _270:
@@ -203,33 +195,27 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           centerY = controlPoints[0].y - spacing;
 
           body[9] =
-              new Area(
-                  new RoundRectangle2D.Double(
-                      controlPoints[0].x - waferHeight - spacing / 2,
-                      centerY - waferWidth / 2,
-                      waferHeight,
-                      waferWidth,
-                      spacing / 4,
-                      spacing / 4));
+              Area.roundRect(
+                  controlPoints[0].x - waferHeight - spacing / 2,
+                  centerY - waferWidth / 2,
+                  waferHeight,
+                  waferWidth,
+                  spacing / 4);
 
           for (int i = 0; i < 3; i++) {
             body[i] =
-                new Area(
-                    new Rectangle2D.Double(
-                        controlPoints[i].x - (spacing + diameter) / 2,
-                        controlPoints[i].y - pinWidth / 2,
-                        (spacing + diameter) / 2,
-                        pinWidth));
+                Area.rect(
+                    controlPoints[i].x - (spacing + diameter) / 2,
+                    controlPoints[i].y - pinWidth / 2,
+                    (spacing + diameter) / 2,
+                    pinWidth);
           }
           break;
         default:
           break;
       }
 
-      body[3] =
-          new Area(
-              new Ellipse2D.Double(
-                  centerX - diameter / 2, centerY - diameter / 2, diameter, diameter));
+      body[3] = Area.circle(centerX, centerY, diameter);
 
       body[9].subtract(body[3]);
 
@@ -240,32 +226,14 @@ public class PotentiometerPanel extends AbstractPotentiometer {
       if (getType() == Type.ThroughHole) {
         int lugDiameter = getClosestOdd(this.lugDiameter.convertToPixels());
         int holeDiameter = getClosestOdd(this.lugDiameter.convertToPixels() / 2);
-
         for (int i = 0; i < 3; i++) {
-          Area area =
-              new Area(
-                  new Ellipse2D.Double(
-                      controlPoints[i].x - lugDiameter / 2,
-                      controlPoints[i].y - lugDiameter / 2,
-                      lugDiameter,
-                      lugDiameter));
-          body[4 + i] = area;
+          body[4 + i] = Area.ring(controlPoints[i], lugDiameter, holeDiameter);
         }
 
         for (int i = 0; i < 3; i++) {
           for (int j = 0; j < 3; j++) {
             body[i].subtract(body[4 + j]);
           }
-        }
-        // Make holes in the lugs.
-        for (int i = 0; i < 3; i++) {
-          body[4 + i].subtract(
-              new Area(
-                  new Ellipse2D.Double(
-                      controlPoints[i].x - holeDiameter / 2,
-                      controlPoints[i].y - holeDiameter / 2,
-                      holeDiameter,
-                      holeDiameter)));
         }
       }
 
@@ -280,10 +248,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
           pointsY[i] = (int) (centerY + Math.sin(alpha) * nutSize / 2);
         }
         body[7] = new Area(new Polygon(pointsX, pointsY, 6));
-        body[8] =
-            new Area(
-                new Ellipse2D.Double(
-                    centerX - shaftSize / 2, centerY - shaftSize / 2, shaftSize, shaftSize));
+        body[8] = Area.circle(centerX, centerY, shaftSize);
       }
     }
     return body;

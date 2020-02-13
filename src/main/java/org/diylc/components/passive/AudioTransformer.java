@@ -36,31 +36,32 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Audio Transformer",
     author = "Branislav Stojkovic",
     category = "Passive",
     instanceNamePrefix = "TR",
     description = "Small signal audio transformer with EI core",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class AudioTransformer extends AbstractMultiPartComponent<String> {
+public class AudioTransformer extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -74,7 +75,6 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   public static final int EDGE_RADIUS = 6;
   public static final Size PIN_SIZE = Size.in(0.03);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Size leadSpacing = Size.in(0.1);
   private Size windingSpacing = Size.in(0.5);
@@ -97,16 +97,7 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     super();
     updateControlPoints();
     alpha = 100;
-    display = Display.BOTH;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.BOTH);
   }
 
   @EditableProperty
@@ -147,18 +138,6 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
     body = null;
   }
 
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
-  }
-
   @Override
   public int getControlPointCount() {
     return controlPoints.length;
@@ -172,11 +151,6 @@ public class AudioTransformer extends AbstractMultiPartComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

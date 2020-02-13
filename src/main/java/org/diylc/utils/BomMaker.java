@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.diylc.common.ComponentType;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.annotations.BomPolicy;
 
 public class BomMaker {
@@ -47,15 +47,15 @@ public class BomMaker {
     //
   }
 
-  public List<BomEntry> createBom(List<IDIYComponent<?>> components) {
+  public List<BomEntry> createBom(List<AbstractComponent> components) {
     Map<String, BomEntry> entryMap = new LinkedHashMap<String, BomEntry>();
-    List<IDIYComponent<?>> sortedComponents = new ArrayList<IDIYComponent<?>>(components);
+    List<AbstractComponent> sortedComponents = new ArrayList<AbstractComponent>(components);
     Collections.sort(
         sortedComponents,
-        new Comparator<IDIYComponent<?>>() {
+        new Comparator<AbstractComponent>() {
 
           @Override
-          public int compare(IDIYComponent<?> o1, IDIYComponent<?> o2) {
+          public int compare(AbstractComponent o1, AbstractComponent o2) {
             String name1 = o1.getName();
             String name2 = o2.getName();
             Pattern p = Pattern.compile("(\\D+)(\\d+)");
@@ -75,7 +75,7 @@ public class BomMaker {
             return name1.compareToIgnoreCase(name2);
           }
         });
-    for (IDIYComponent<?> component : sortedComponents) {
+    for (AbstractComponent component : sortedComponents) {
       ComponentType type = ComponentType.extractFrom(component);
       if (type.getBomPolicy() == BomPolicy.NEVER_SHOW) {
         continue;

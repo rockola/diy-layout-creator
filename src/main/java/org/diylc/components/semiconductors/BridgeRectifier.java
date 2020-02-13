@@ -37,34 +37,36 @@ import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
 import org.diylc.common.VerticalAlignment;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent.LabelOrientation;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.RoundedPolygon;
 import org.diylc.components.transform.InlinePackageTransformer;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.measures.Current;
+import org.diylc.core.annotations.StringValue;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
-import org.diylc.core.measures.Voltage;
+import org.diylc.core.measures.Value;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Bridge Rectifier",
     author = "Branislav Stojkovic",
     category = "Semiconductors",
     instanceNamePrefix = "BR",
     description = "Few variations of bridge rectifier chips",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE,
     transformer = InlinePackageTransformer.class)
-public class BridgeRectifier extends AbstractTransparentComponent<String> {
+public class BridgeRectifier extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Size MINI_LENGTH = Size.mm(6.7);
@@ -95,7 +97,6 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   public static final Size ROUND_PIN_SIZE = Size.in(0.032);
   public static final Size INDENT_SIZE = Size.in(0.07);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints =
       new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
@@ -104,8 +105,8 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
   private RectifierType rectifierType = RectifierType.MiniDIP1;
-  private Voltage voltage;
-  private Current current;
+  private Value voltage;
+  private Value current;
   private transient Area[] body;
   private LabelOrientation labelOrientation = LabelOrientation.Directional;
 
@@ -113,16 +114,7 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     super();
     updateControlPoints();
     alpha = 100;
-    display = Display.BOTH;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.BOTH);
   }
 
   @EditableProperty
@@ -135,18 +127,6 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.VALUE;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @Override
@@ -162,11 +142,6 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -605,22 +580,28 @@ public class BridgeRectifier extends AbstractTransparentComponent<String> {
     body = null;
   }
 
+  @ComponentValue(SiUnit.AMPERE)
   @EditableProperty
-  public Current getCurrent() {
+  public Value getCurrent() {
     return current;
   }
 
-  public void setCurrent(Current current) {
-    this.current = current;
+  public void setCurrent(Value current) {
+    if (current == null || current.hasUnit(SiUnit.AMPERE)) {
+      this.current = current;
+    }
   }
 
+  @ComponentValue(SiUnit.VOLT)
   @EditableProperty
-  public Voltage getVoltage() {
+  public Value getVoltage() {
     return voltage;
   }
 
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
+  public void setVoltage(Value voltage) {
+    if (voltage == null || voltage.hasUnit(SiUnit.VOLT)) {
+      this.voltage = voltage;
+    }
   }
 
   @EditableProperty(name = "Label Orientation")

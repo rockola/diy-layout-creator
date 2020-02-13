@@ -46,7 +46,7 @@ public class Pin {
     return new Area(shape);
   }
 
-  static Pin circular(Point center, Size diameter) {
+  public static Pin circular(Point center, Size diameter) {
     return new Pin(Area.circle(center, diameter));
   }
 
@@ -58,39 +58,39 @@ public class Pin {
     return circular(x, 0d, diameter);
   }
 
-  static Pin circular(double diameter) {
+  public static Pin circular(double diameter) {
     return circular(0d, 0d, diameter);
   }
 
-  static Pin circular(Size x, Size y, Size diameter) {
+  public static Pin circular(Size x, Size y, Size diameter) {
     return circular(x.asPixels(), y.asPixels(), diameter.asPixels());
   }
 
-  static Pin circular(Size x, Size diameter) {
+  public static Pin circular(Size x, Size diameter) {
     return circular(x.asPixels(), diameter.asPixels());
   }
 
-  static Pin rectangular(Point center, double width, double height) {
+  public static Pin rectangular(Point center, double width, double height) {
     return new Pin(Area.centeredRect(center, width, height));
   }
 
-  static Pin rectangular(Point center, Size width, Size height) {
+  public static Pin rectangular(Point center, Size width, Size height) {
     return rectangular(center, width.asPixels(), height.asPixels());
   }
 
-  static Pin rectangular(double width, double height) {
+  public static Pin rectangular(double width, double height) {
     return rectangular(reference, width, height);
   }
 
-  static Pin rectangular(Size width, Size height) {
+  public static Pin rectangular(Size width, Size height) {
     return rectangular(width.asPixels(), height.asPixels());
   }
 
-  static Pin square(double width) {
+  public static Pin square(double width) {
     return rectangular(width, width);
   }
 
-  static Pin square(Size width) {
+  public static Pin square(Size width) {
     return square(width.asPixels());
   }
 }

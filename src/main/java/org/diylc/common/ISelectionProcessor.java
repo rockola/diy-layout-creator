@@ -23,8 +23,8 @@ package org.diylc.common;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.ExpansionMode;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.measures.Size;
 
 public interface ISelectionProcessor {
@@ -34,7 +34,7 @@ public interface ISelectionProcessor {
    *
    * @return
    */
-  Collection<IDIYComponent<?>> getSelectedComponents();
+  Collection<AbstractComponent> getSelectedComponents();
 
   /**
    * Updates the selection with the specified list of component. Also, updates control point map
@@ -42,7 +42,7 @@ public interface ISelectionProcessor {
    *
    * @param newSelection
    */
-  void updateSelection(Collection<IDIYComponent<?>> newSelection);
+  void updateSelection(Collection<AbstractComponent> newSelection);
 
   /**
    * Expands the current selection to include surrounding components. Options are controlled with

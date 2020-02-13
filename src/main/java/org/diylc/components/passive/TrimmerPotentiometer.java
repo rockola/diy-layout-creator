@@ -32,10 +32,10 @@ import java.util.Map;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -49,7 +49,7 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.SINGLE_CLICK,
     instanceNamePrefix = "VR",
     description = "Various types of board mounted trimmer potentiometers",
-    zOrder = IDIYComponent.COMPONENT)
+    zOrder = AbstractComponent.COMPONENT)
 public class TrimmerPotentiometer extends AbstractPotentiometer {
 
   private static final long serialVersionUID = 1L;
@@ -61,7 +61,6 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   protected static final Size FLAT_SHAFT_SIZE = Size.mm(4.5);
   protected static final Size ROUNDED_EDGE = Size.mm(1);
   protected static final Size SPACING = Size.in(0.1);
-  protected static final Display DISPLAY = Display.NAME;
 
   private static final Color BODY_COLOR = Color.decode("#FFFFE0");
   private static final Color BORDER_COLOR = Color.decode("#8E8E38");
@@ -78,7 +77,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   public TrimmerPotentiometer() {
     controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
     updateControlPoints();
-    display = DISPLAY;
+    setDisplay(Display.NAME);
   }
 
   protected void updateControlPoints() {
@@ -251,18 +250,6 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
 
   public void setBodyColor(Color bodyColor) {
     this.bodyColor = bodyColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = DISPLAY;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 
   @EditableProperty(name = "Border")

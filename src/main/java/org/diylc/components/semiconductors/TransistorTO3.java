@@ -33,29 +33,30 @@ import java.awt.geom.Rectangle2D;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.TwoCircleTangent;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.KeywordPolicy;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Transistor (TO-3)",
     author = "Branislav Stojkovic",
     category = "Semiconductors",
     instanceNamePrefix = "Q",
     description = "Transistor with large metal body",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class TransistorTO3 extends AbstractTransparentComponent<String> {
+public class TransistorTO3 extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -73,7 +74,6 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
   public static final Size PIN_OFFSET = Size.mm(1.85);
   public static final Size PIN_DIAMETER = Size.mm(1);
 
-  private String value = "";
   private Orientation orientation = Orientation.DEFAULT;
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   private transient Area[] body;
@@ -84,16 +84,7 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
   public TransistorTO3() {
     super();
     updateControlPoints();
-    display = Display.NAME;
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
+    setDisplay(Display.NAME);
   }
 
   @EditableProperty
@@ -121,11 +112,6 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override
@@ -313,17 +299,5 @@ public class TransistorTO3 extends AbstractTransparentComponent<String> {
 
   public void setLabelColor(Color labelColor) {
     this.labelColor = labelColor;
-  }
-
-  @EditableProperty
-  public Display getDisplay() {
-    if (display == null) {
-      display = Display.NAME;
-    }
-    return display;
-  }
-
-  public void setDisplay(Display display) {
-    this.display = display;
   }
 }

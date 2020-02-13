@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.common.DrawOption;
 import org.diylc.common.IPlugInPort;
 import org.diylc.common.PcbLayer;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.presenter.PcbLayerFilter;
 import org.diylc.swingframework.IDrawingProvider;
 
@@ -76,7 +76,7 @@ public class TraceMaskDrawingProvider implements IDrawingProvider {
 
   private PcbLayer[] getUsedLayers() {
     Set<PcbLayer> layers = EnumSet.noneOf(PcbLayer.class);
-    for (IDIYComponent<?> c : plugInPort.currentProject().getComponents()) {
+    for (AbstractComponent c : plugInPort.currentProject().getComponents()) {
       Class<?> clazz = c.getClass();
       try {
         Method m = clazz.getMethod("getLayer");

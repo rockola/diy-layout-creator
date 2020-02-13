@@ -29,9 +29,9 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
 import org.diylc.core.annotations.ComponentDescriptor;
@@ -45,7 +45,7 @@ import org.diylc.utils.Constants;
     category = "Guitar",
     author = "Branislav Stojkovic",
     description = "Single coil P-90 guitar pickup, both \"dog ear\" and \"soap bar\"",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = AbstractGuitarPickup.INSTANCE_NAME_PREFIX,
     autoEdit = false,
     keywordPolicy = KeywordPolicy.SHOW_TAG,

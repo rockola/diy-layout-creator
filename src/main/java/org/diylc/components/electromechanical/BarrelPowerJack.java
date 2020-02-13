@@ -26,27 +26,28 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.ObjectCache;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
 import org.diylc.core.ComponentState;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.IDrawingObserver;
 import org.diylc.core.Project;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.ComponentDescriptor;
 import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.StringValue;
 import org.diylc.core.measures.Size;
 import org.diylc.utils.Constants;
 
+@StringValue
 @ComponentDescriptor(
     name = "Barrel Power Jack",
     category = "Electro-Mechanical",
     author = "Branislav Stojkovic",
     description = "Panel mount plastic DC jack",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     instanceNamePrefix = "J",
     autoEdit = false)
-public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
+public class BarrelPowerJack extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -60,7 +61,6 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
   private static Color MARKING_COLOR = Color.lightGray;
 
   private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  private String value = "";
   private DcPolarity polarity = DcPolarity.CENTER_NEGATIVE;
   private transient Area[] body;
 
@@ -193,24 +193,8 @@ public class BarrelPowerJack extends AbstractMultiPartComponent<String> {
   }
 
   @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty

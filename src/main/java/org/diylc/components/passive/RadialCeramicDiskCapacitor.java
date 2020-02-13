@@ -23,16 +23,16 @@ package org.diylc.components.passive;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import org.diylc.common.SimpleComponentTransformer;
-import org.diylc.components.AbstractRadialComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
+import org.diylc.components.LeadType;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.annotations.ComponentValue;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "Ceramic Capacitor (Radial)",
     author = "Branislav Stojkovic",
@@ -40,9 +40,10 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "C",
     description = "Standard radial ceramic capacitor",
-    zOrder = IDIYComponent.COMPONENT,
+    leadType = LeadType.RADIAL,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacitance> {
+public class RadialCeramicDiskCapacitor extends AbstractCapacitor {
 
   private static final long serialVersionUID = 1L;
 
@@ -51,47 +52,10 @@ public class RadialCeramicDiskCapacitor extends AbstractRadialComponent<Capacita
   public static final Color BODY_COLOR = Color.decode("#F0E68C");
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
-  private Capacitance value = null;
-  @Deprecated private Voltage voltage = Voltage._63V;
-  private org.diylc.core.measures.Voltage voltageNew = null;
-
   public RadialCeramicDiskCapacitor() {
     super();
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
-  }
-
-  @Override
-  public String getValueForDisplay() {
-    return getValue().toString()
-        + (getVoltageNew() == null ? "" : " " + getVoltageNew().toString());
-  }
-
-  @EditableProperty(name = "Voltage")
-  public org.diylc.core.measures.Voltage getVoltageNew() {
-    return voltageNew;
-  }
-
-  public void setVoltageNew(org.diylc.core.measures.Voltage voltageNew) {
-    this.voltageNew = voltageNew;
-  }
-
-  @Deprecated
-  public Voltage getVoltage() {
-    return voltage;
-  }
-
-  public void setVoltage(Voltage voltage) {
-    this.voltage = voltage;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

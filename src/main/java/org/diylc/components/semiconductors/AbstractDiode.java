@@ -25,9 +25,8 @@ import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.annotations.EditableProperty;
 
-public abstract class AbstractDiode extends AbstractLeadedComponent<String> {
+public abstract class AbstractDiode extends AbstractLeadedComponent {
 
-  protected String value = "";
   protected Color markerColor;
 
   protected AbstractDiode(Color markerColor) {
@@ -48,15 +47,6 @@ public abstract class AbstractDiode extends AbstractLeadedComponent<String> {
   @EditableProperty(name = "Reverse (standing)")
   public boolean getFlipStanding() {
     return super.getFlipStanding();
-  }
-
-  @EditableProperty
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty(name = "Marker")

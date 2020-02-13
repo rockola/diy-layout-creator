@@ -28,16 +28,18 @@ import java.awt.geom.Line2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.ResistorColorCode;
 import org.diylc.common.SimpleComponentTransformer;
+import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractLeadedComponent;
 import org.diylc.components.Area;
 import org.diylc.core.CreationMethod;
-import org.diylc.core.IDIYComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Resistance;
+import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
+@ComponentValue(SiUnit.OHM)
 @ComponentDescriptor(
     name = "Resistor",
     author = "Branislav Stojkovic",
@@ -45,9 +47,9 @@ import org.diylc.core.measures.Size;
     creationMethod = CreationMethod.POINT_BY_POINT,
     instanceNamePrefix = "R",
     description = "Resistor layout symbol",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     transformer = SimpleComponentTransformer.class)
-public class Resistor extends AbstractLeadedComponent<Resistance> {
+public class Resistor extends AbstractLeadedComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -58,14 +60,13 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
   public static final int BAND_SPACING = 5;
   public static final int FIRST_BAND = -4;
 
-  private Resistance value = null;
-  @Deprecated private Power power = Power.HALF;
-  private org.diylc.core.measures.Power powerNew = null;
+  private Value power = null;
   private ResistorColorCode colorCode = ResistorColorCode._5_BAND;
   private ResistorShape shape = ResistorShape.Standard;
 
   public Resistor() {
     super();
+    valueUnit = SiUnit.OHM;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
   }
@@ -75,37 +76,21 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
     return true;
   }
 
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Resistance getValue() {
-    return value;
-  }
-
-  public void setValue(Resistance value) {
-    this.value = value;
-  }
-
   @Override
   public String getValueForDisplay() {
-    return getValue().toString() + (getPowerNew() == null ? "" : " " + getPowerNew().toString());
+    return getValue().toString() + (getPower() == null ? "" : " " + getPower().toString());
   }
 
-  @Deprecated
-  public Power getPower() {
+  @ComponentValue(SiUnit.WATT)
+  @EditableProperty(name = "Power Rating")
+  public Value getPower() {
     return power;
   }
 
-  @Deprecated
-  public void setPower(Power power) {
-    this.power = power;
-  }
-
-  @EditableProperty(name = "Power Rating")
-  public org.diylc.core.measures.Power getPowerNew() {
-    return powerNew;
-  }
-
-  public void setPowerNew(org.diylc.core.measures.Power powerNew) {
-    this.powerNew = powerNew;
+  public void setPower(Value powerNew) {
+    if (powerNew == null || powerNew.getUnit() == SiUnit.WATT) {
+      this.power = powerNew;
+    }
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {
@@ -175,12 +160,12 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
 
   @Override
   protected void decorateComponentBody(Graphics2D g2d, boolean outlineMode) {
-    if (!outlineMode && value != null && colorCode != ResistorColorCode.NONE) {
+    if (!outlineMode && getValue() != null && colorCode != ResistorColorCode.NONE) {
       Area body = (Area) getBodyShape();
       Stroke stroke = ObjectCache.getInstance().fetchZoomableStroke(2);
       int width = getClosestOdd(getWidth().convertToPixels());
       int x = getShape() == ResistorShape.Standard ? width + FIRST_BAND : -FIRST_BAND;
-      Color[] bands = value.getColorCode(colorCode);
+      Color[] bands = getColorCode().getBands(getValue());
       for (int i = 0; i < bands.length; i++) {
         g2d.setColor(bands[i]);
         Area line = new Area(stroke.createStrokedShape(new Line2D.Double(x, 0, x, width)));
@@ -193,13 +178,13 @@ public class Resistor extends AbstractLeadedComponent<Resistance> {
 
   @Override
   protected int getLabelOffset(int bodyLength, int bodyWidth, int labelLength) {
-    if (value == null
+    if (getValue() == null
         || getColorCode() == ResistorColorCode.NONE
         || !getLabelOrientation().isDirectional()) {
       return 0;
     }
 
-    Color[] bands = value.getColorCode(colorCode);
+    Color[] bands = getColorCode().getBands(getValue());
     int bandLenght = FIRST_BAND + BAND_SPACING * (bands.length - 1);
 
     if (labelLength

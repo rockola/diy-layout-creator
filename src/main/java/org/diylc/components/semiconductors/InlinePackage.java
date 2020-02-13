@@ -27,10 +27,9 @@ import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.components.Area;
 import org.diylc.components.PinCount;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.measures.Size;
 
-public abstract class InlinePackage extends AbstractTransparentComponent<String> {
+public abstract class InlinePackage extends AbstractTransparentComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -52,13 +51,12 @@ public abstract class InlinePackage extends AbstractTransparentComponent<String>
   protected Color labelColor = LABEL_COLOR;
   protected Color indentColor = INDENT_COLOR;
   protected Size pinSpacing = Size.in(0.1);
-  protected String value = "";
   protected Orientation orientation = Orientation.DEFAULT;
 
   protected InlinePackage(PinCount pinCount, Display display) {
     super();
     this.pinCount = pinCount;
-    this.display = display;
+    setDisplay(display);
     updateControlPoints();
   }
 
@@ -81,11 +79,6 @@ public abstract class InlinePackage extends AbstractTransparentComponent<String>
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

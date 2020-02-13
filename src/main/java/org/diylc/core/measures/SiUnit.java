@@ -20,27 +20,49 @@
 
 package org.diylc.core.measures;
 
-// import java.io.Serializable;
-// import java.text.DecimalFormat;
-// import java.text.Format;
-
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public enum SiUnit {
-  AMPERE("A"), // current
-  FARAD("F"), // capacitance
-  HENRY("H"), // inductance
-  METER("m"), // length
-  OHM("Ω"), // resistance
-  VOLT("V"), // voltage
-  WATT("W"); // power
+  AMPERE("A", -6, 0), // current
+  FARAD("F", -12, 0), // capacitance
+  HENRY("H", -12, 0), // inductance
+  METER("m", -9, 0), // length
+  OHM("Ω", 0, 6), // resistance
+  VOLT("V", -3, 3), // voltage
+  WATT("W", -3, 3); // power
 
   public final String symbol;
+  public final int rangeStart;
+  public final int rangeEnd;
+  public final Map<Integer, String> range;
+  public final Map<String, SiPrefix> prefixRange;
 
-  SiUnit(String symbol) {
+  public static final Map<String, SiUnit> symbolMap;
+
+  static {
+    symbolMap = new HashMap<String, SiUnit>();
+    for (SiUnit unit : SiUnit.values()) {
+      symbolMap.put(unit.getSymbol(), unit);
+    }
+  }
+
+  SiUnit(String symbol, int rangeStart, int rangeEnd) {
     this.symbol = symbol;
+    this.rangeStart = rangeStart;
+    this.rangeEnd = rangeEnd;
+    this.range = new HashMap<>();
+    this.prefixRange = new HashMap<>();
+    for (int i = rangeStart; i <= rangeEnd; i += 3) {
+      SiPrefix prefix = SiPrefix.fromExponent(i);
+      String unitString = prefix.getAbbreviation() + symbol;
+      this.range.put(i, unitString);
+      this.prefixRange.put(unitString, prefix);
+    }
   }
 
   private static final Logger LOG = LogManager.getLogger(SiUnit.class);
@@ -53,38 +75,47 @@ public enum SiUnit {
     return WordUtils.capitalize(this.toString());
   }
 
+  public String getSymbol() {
+    return symbol;
+  }
+
+  public Collection<String> getRange() {
+    return range.values();
+  }
+
+  public String[] getRangeArray() {
+    return (String[]) getRange().toArray();
+  }
+
+  public Map<String, SiPrefix> getRangeMap() {
+    return new HashMap<>(prefixRange);
+  }
+
+  public static SiUnit fromSymbol(String symbol) {
+    return symbolMap.get(symbol);
+  }
+
+  public static SiUnit fromSymbol(Character symbol) {
+    return fromSymbol(String.valueOf(symbol));
+  }
+
   /**
    * Integer exponent to prefix name/symbol. See e.g.
    * https://www.nist.gov/pml/weights-and-measures/metric-si-prefixes
+   *
+   * @param exponent The exponent
+   * @param useSymbol If true, use prefix abbreviation, otherwise full name of prefix
+   * @returns prefix name
    */
   private static String exponentToPrefixNameOrSymbol(int exponent, boolean useSymbol) {
-    switch (exponent) {
-      case -12:
-        return useSymbol ? "p" : "pico";
-      case -9:
-        return useSymbol ? "n" : "nano";
-      case -6:
-        return useSymbol ? "µ" : "micro"; // hooray for UTF-8!
-      case -3:
-        return useSymbol ? "m" : "milli";
-      case 0:
-        return "";
-      case 3:
-        return useSymbol ? "k" : "kilo";
-      case 6:
-        return useSymbol ? "M" : "mega";
-      case 9:
-        return useSymbol ? "G" : "giga";
-      case 12:
-        return useSymbol ? "T" : "tera";
-      case 15:
-        return useSymbol ? "P" : "peta";
-      case 18:
-        return useSymbol ? "E" : "exa";
-      default:
-        LOG.error("Don't know what the prefix would be for {}", exponent);
-        return "";
+    String ret = "";
+    SiPrefix prefix = SiPrefix.fromExponent(exponent);
+    if (prefix == null) {
+      LOG.error("Don't know what the prefix would be for {}", exponent);
+    } else {
+      ret = useSymbol ? prefix.getAbbreviation() : prefix.toString();
     }
+    return ret;
   }
 
   public static String exponentToPrefix(int exponent) {
@@ -93,6 +124,22 @@ public enum SiUnit {
 
   public static String exponentToPrefixSymbol(int exponent) {
     return exponentToPrefixNameOrSymbol(exponent, true);
+  }
+
+  /**
+   * Get string containing unit symbol and prefix according to given value.
+   *
+   * <p>Example: If value is 1000.0 and unit is WATT, "kW" is returned.
+   *
+   * @param value Value to use in determining prefix.
+   * @return String containing exponent prefix and unit symbol.
+   */
+  public String unitString(double value) {
+    // TODO: get rid of cut'n'paste, make measureToString() use this
+    int exponent = (int) Math.floor(Math.log10(value) / 3) * 3;
+    double v = value / Math.pow(10, exponent);
+    String prefixSymbol = exponentToPrefixSymbol(exponent);
+    return prefixSymbol + symbol;
   }
 
   public static String measureToString(

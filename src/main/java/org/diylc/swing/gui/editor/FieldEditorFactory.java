@@ -29,8 +29,8 @@ import org.apache.logging.log4j.Logger;
 import org.diylc.common.PropertyWrapper;
 import org.diylc.components.PinCount;
 import org.diylc.core.annotations.DynamicList;
-import org.diylc.core.annotations.MultiLineText;
 import org.diylc.core.measures.AbstractMeasure;
+import org.diylc.core.measures.Value;
 
 /**
  * Based on {@link PropertyWrapper#getType()}, creates an appropriate {@link Component} that can
@@ -43,6 +43,7 @@ public class FieldEditorFactory {
   private static final Logger LOG = LogManager.getLogger(FieldEditorFactory.class);
 
   public static Component createFieldEditor(PropertyWrapper property) {
+    final boolean isValue = property.getName().equals("Value");
     try {
       if (property.getType().equals(String.class)
           && property.getGetter().isAnnotationPresent(DynamicList.class)) {
@@ -50,15 +51,16 @@ public class FieldEditorFactory {
         return editor;
       }
     } catch (Exception e) {
+      // TODO why are we catching AND ignoring all exceptions here?
       LOG.error("Could not determine if a function is annotated with DynamicList", e);
     }
     try {
-      if (property.getType().equals(String.class)
-          && property.getGetter().isAnnotationPresent(MultiLineText.class)) {
+      if (property.getType().equals(String.class) && property.isMultiLine()) {
         MultiLineStringEditor editor = new MultiLineStringEditor(property);
         return editor;
       }
     } catch (Exception e) {
+      // TODO why are we catching AND ignoring all exceptions here?
       LOG.error("Could not determine if a function is annotated with MultiLineText", e);
     }
     if (property.getType().equals(String.class)) {
@@ -68,6 +70,15 @@ public class FieldEditorFactory {
     if (property.getType().equals(Color.class)) {
       ColorEditor editor = new ColorEditor(property);
       return editor;
+    }
+    if (property.getType().equals(Value.class)) {
+      if (!(isValue && property.isStringValue())) {
+        ValueEditor editor = new ValueEditor(property);
+        return editor;
+      } else {
+        // this component has String values
+        return null;
+      }
     }
     if (AbstractMeasure.class.isAssignableFrom(property.getType())) {
       MeasureEditor editor = new MeasureEditor(property);
@@ -110,8 +121,9 @@ public class FieldEditorFactory {
       return editor;
     }
 
-    LOG.error(
-        "Unrecognized parameter type {} for {}", property.getType().getName(), property.getName());
-    return new JLabel("Unrecognized");
+    String unrecognized =
+        "Unrecognized property " + property.getType().getName() + "." + property.getName();
+    LOG.error("{}", unrecognized);
+    return new JLabel(unrecognized);
   }
 }

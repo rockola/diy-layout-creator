@@ -41,7 +41,7 @@ import org.diylc.appframework.miscutils.ConfigurationManager;
 import org.diylc.common.ComponentType;
 import org.diylc.common.Config;
 import org.diylc.common.IPlugInPort;
-import org.diylc.core.Template;
+import org.diylc.components.AbstractComponent;
 import org.diylc.presenter.ComparatorFactory;
 import org.diylc.presenter.Presenter;
 
@@ -234,13 +234,13 @@ public class ComponentTabbedPane extends JTabbedPane {
           @Override
           public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
             variantPopup.removeAll();
-            List<Template> variants = componentType.getVariants();
+            List<AbstractComponent> variants = componentType.getVariants();
             if (variants == null || variants.isEmpty()) {
               JMenuItem item = new JMenuItem("<no variants>");
               item.setEnabled(false);
               variantPopup.add(item);
             } else {
-              for (Template variant : variants) {
+              for (AbstractComponent variant : variants) {
                 JMenuItem item =
                     ComponentButtonFactory.createVariantItem(plugInPort, variant, componentType);
                 variantPopup.add(item);

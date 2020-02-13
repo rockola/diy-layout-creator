@@ -31,14 +31,13 @@ import org.diylc.common.Orientation;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.AbstractMultiPartComponent;
 import org.diylc.components.Area;
-import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
 import org.diylc.core.annotations.Unmarshaller;
 import org.diylc.parsing.XmlNode;
 import org.diylc.utils.Constants;
 
 @Unmarshaller("jack")
-public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
+public abstract class AbstractJack extends AbstractMultiPartComponent {
 
   private static final long serialVersionUID = 1L;
   private static final Logger LOG = LogManager.getLogger(AbstractJack.class);
@@ -46,7 +45,6 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
   protected JackType type = JackType.MONO;
   protected Orientation orientation = Orientation.DEFAULT;
   protected Point[] controlPoints;
-  protected String value = ""; // not really used for anything
   protected Integer angle = 0;
   protected boolean showLabels = false;
 
@@ -74,17 +72,6 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
   public void setOrientation(Orientation orientation) {
     this.orientation = orientation;
     updateControlPoints();
-  }
-
-  @EditableProperty
-  @Override
-  public String getValue() {
-    return value;
-  }
-
-  @Override
-  public void setValue(String value) {
-    this.value = value;
   }
 
   @EditableProperty(name = "Labels")
@@ -164,11 +151,6 @@ public abstract class AbstractJack extends AbstractMultiPartComponent<String> {
   @Override
   public int getControlPointCount() {
     return controlPoints.length;
-  }
-
-  @Override
-  public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
-    return VisibilityPolicy.NEVER;
   }
 
   @Override

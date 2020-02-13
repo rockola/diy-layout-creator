@@ -21,22 +21,22 @@
 package org.diylc.components.smd;
 
 import java.awt.Color;
-import org.diylc.core.IDIYComponent;
+import org.diylc.components.AbstractComponent;
 import org.diylc.core.annotations.ComponentDescriptor;
-import org.diylc.core.annotations.EditableProperty;
+import org.diylc.core.annotations.ComponentValue;
 import org.diylc.core.annotations.KeywordPolicy;
-import org.diylc.core.annotations.PositiveMeasureValidator;
-import org.diylc.core.measures.Capacitance;
+import org.diylc.core.measures.SiUnit;
 
+@ComponentValue(SiUnit.FARAD)
 @ComponentDescriptor(
     name = "SMD Capacitor",
     author = "Branislav Stojkovic",
     category = "SMD",
     instanceNamePrefix = "C",
     description = "Surface mount capacitor",
-    zOrder = IDIYComponent.COMPONENT,
+    zOrder = AbstractComponent.COMPONENT,
     keywordPolicy = KeywordPolicy.SHOW_VALUE)
-public class SurfaceMountCapacitor extends PassiveSurfaceMountComponent<Capacitance> {
+public class SurfaceMountCapacitor extends PassiveSurfaceMountComponent {
 
   private static final long serialVersionUID = 1L;
 
@@ -44,16 +44,6 @@ public class SurfaceMountCapacitor extends PassiveSurfaceMountComponent<Capacita
   public static final Color BORDER_COLOR = BODY_COLOR.darker();
 
   public SurfaceMountCapacitor() {
-    this.bodyColor = BODY_COLOR;
-    this.borderColor = BORDER_COLOR;
-  }
-
-  @EditableProperty(validatorClass = PositiveMeasureValidator.class)
-  public Capacitance getValue() {
-    return value;
-  }
-
-  public void setValue(Capacitance value) {
-    this.value = value;
+    super(SiUnit.FARAD, BODY_COLOR, BORDER_COLOR);
   }
 }
