@@ -72,13 +72,10 @@ public class OpenJack extends AbstractJack {
   private static Size HOLE_DIAMETER = Size.in(0.05);
   private static Size HOLE_TO_EDGE = Size.in(0.063);
 
-  {
-    controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-    showLabels = true;
-  }
-
   public OpenJack() {
     super();
+    showLabels = true;
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
   }
 

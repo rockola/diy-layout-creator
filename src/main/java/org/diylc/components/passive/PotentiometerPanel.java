@@ -81,7 +81,7 @@ public class PotentiometerPanel extends AbstractPotentiometer {
   protected transient Area[] body = null;
 
   public PotentiometerPanel() {
-    controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
   }
 

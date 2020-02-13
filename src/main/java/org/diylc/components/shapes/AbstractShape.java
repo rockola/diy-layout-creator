@@ -37,16 +37,20 @@ public abstract class AbstractShape extends AbstractTransparentComponent {
   public static final Size DEFAULT_WIDTH = Size.in(0.6);
   public static final Size DEFAULT_HEIGHT = Size.in(0.4);
 
-  protected Point[] controlPoints =
-      new Point[] {
-        new Point(0, 0),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
-      };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
   protected Color color = COLOR;
   protected Color borderColor = BORDER_COLOR;
   protected Size borderThickness = Size.mm(0.2);
+
+  public AbstractShape() {
+    super();
+    controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+        };
+  }
 
   @EditableProperty(name = "Color")
   public Color getColor() {

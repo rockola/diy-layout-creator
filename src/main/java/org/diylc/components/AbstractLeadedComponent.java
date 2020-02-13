@@ -87,7 +87,7 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
 
   protected AbstractLeadedComponent() {
     super();
-    this.points =
+    controlPoints =
         new Point[] {
           new Point((int) (-DEFAULT_SIZE.convertToPixels() / 2), 0),
           new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
@@ -96,7 +96,7 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
     this.length = getDefaultLength() == null ? null : new Size(getDefaultLength());
     this.width = getDefaultWidth() == null ? null : new Size(getDefaultWidth());
     setDisplay(Display.NAME);
-    points[2] = calculateLabelPosition(points[0], points[1]);
+    controlPoints[2] = calculateLabelPosition(controlPoints[0], controlPoints[1]);
   }
 
   protected boolean isCopperArea() {
@@ -105,15 +105,20 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
 
   protected Point[] getPoints() {
     // convert old points to new
-    if (points.length == 2) {
-      points = new Point[] {points[0], points[1], calculateLabelPosition(points[0], points[1])};
+    if (controlPoints.length == 2) {
+      controlPoints =
+          new Point[] {
+            controlPoints[0],
+            controlPoints[1],
+            calculateLabelPosition(controlPoints[0], controlPoints[1])
+          };
       // to make standing components backward compatible and not show a label until the user
       // switches the display to something else
       if (isStanding()) {
         setDisplay(Display.NONE);
       }
     }
-    return points;
+    return controlPoints;
   }
 
   protected Point getPoint(int nth) {
@@ -504,11 +509,6 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
 
   public void setPinSpacing(Size pinSpacing) {
     this.pinSpacing = pinSpacing;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return getPoints().length;
   }
 
   @Override

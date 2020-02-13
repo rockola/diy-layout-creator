@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,17 +66,17 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements IS
   private static Color BORDER_COLOR = BODY_COLOR.darker();
   private static Color CIRCLE_COLOR = Color.decode("#FFFFAA");
 
-  protected Point[] controlPoints = new Point[] {new Point(0, 0)};
-  protected transient Shape body;
   protected ToggleSwitchType switchType = ToggleSwitchType.DPDT;
+  protected transient Area body;
+
   private OrientationHV orientation = OrientationHV.VERTICAL;
   private Size spacing = SPACING;
-
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
 
   public MiniToggleSwitch() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
   }
 
@@ -108,11 +107,6 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements IS
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override
@@ -174,7 +168,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements IS
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-    Shape body = getBody();
+    Area body = getBody();
     // Draw body if available.
     if (body != null) {
       final Composite oldComposite = setTransparency(g2d);
@@ -208,7 +202,7 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements IS
     }
   }
 
-  public Shape getBody() {
+  public Area getBody() {
     if (body == null) {
       Point firstPoint = controlPoints[0];
       int margin = (int) MARGIN.convertToPixels();

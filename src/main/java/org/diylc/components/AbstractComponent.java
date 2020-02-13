@@ -82,7 +82,7 @@ public abstract class AbstractComponent {
 
   protected transient int sequenceNumber = 0;
 
-  protected Point[] points;
+  protected Point[] controlPoints;
   protected SiUnit valueUnit;
 
   private static int componentSequenceNumber = 0;
@@ -378,12 +378,14 @@ public abstract class AbstractComponent {
                 other.getName(), other.getControlPointCount(), this.getControlPointCount()));
       }
       for (int i = 0; i < other.getControlPointCount(); i++) {
-        this.points[i] = new Point(other.points[i]);
+        this.controlPoints[i] = new Point(other.controlPoints[i]);
       }
     }
   }
 
-  public abstract int getControlPointCount();
+  public final int getControlPointCount() {
+    return getControlPoints() == null ? 0 : getControlPoints().length;
+  }
 
   /**
    * Get control point with specified index.
@@ -392,6 +394,10 @@ public abstract class AbstractComponent {
    * @return nth control point.
    */
   public abstract Point getControlPoint(int nth);
+
+  protected Point[] getControlPoints() {
+    return controlPoints;
+  }
 
   /**
    * Updates the control point at the specified index.

@@ -78,26 +78,16 @@ public class DipSwitch extends AbstractTransparentComponent implements ISwitch {
   private SwitchCount switchCount = SwitchCount._8;
   private Size pinSpacing = Size.in(0.1);
   private Size rowSpacing = Size.in(0.3);
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
   private Color tickColor = TICK_COLOR;
   private Size width = DEFAULT_WIDTH;
-  // new Point(0, pinSpacing.convertToPixels()),
-  // new Point(0, 2 * pinSpacing.convertToPixels()),
-  // new Point(0, 3 * pinSpacing.convertToPixels()),
-  // new Point(3 * pinSpacing.convertToPixels(), 0),
-  // new Point(3 * pinSpacing.convertToPixels(),
-  // pinSpacing.convertToPixels()),
-  // new Point(3 * pinSpacing.convertToPixels(), 2 *
-  // pinSpacing.convertToPixels()),
-  // new Point(3 * pinSpacing.convertToPixels(), 3 *
-  // pinSpacing.convertToPixels()) };
   private transient Area[] body;
 
   public DipSwitch() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
     alpha = 100;
     setDisplay(Display.NONE);
@@ -149,11 +139,6 @@ public class DipSwitch extends AbstractTransparentComponent implements ISwitch {
     updateControlPoints();
     // Reset body shape;
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

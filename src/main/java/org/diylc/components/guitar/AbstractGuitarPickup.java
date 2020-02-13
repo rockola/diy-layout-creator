@@ -48,13 +48,13 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent 
 
   protected Orientation orientation = Orientation.DEFAULT;
   protected int numberOfStrings = DEFAULT_NUMBER_OF_STRINGS;
-  protected Point controlPoint = new Point(0, 0);
-  protected Point[] controlPoints = getFreshControlPoints(4);
+  protected Point referencePoint = new Point(0, 0);
   protected Polarity polarity = Polarity.North;
   protected Color labelColor;
   protected transient Area[] body;
 
   public AbstractGuitarPickup() {
+    controlPoints = getFreshControlPoints(4);
     updateControlPoints();
   }
 
@@ -146,10 +146,10 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent 
     if (controlPoints == null) {
       controlPoints =
           new Point[] {
-            controlPoint,
-            new Point(controlPoint.x, controlPoint.y),
-            new Point(controlPoint.x, controlPoint.y),
-            new Point(controlPoint.x, controlPoint.y)
+            Area.point(referencePoint),
+            Area.point(referencePoint),
+            Area.point(referencePoint),
+            Area.point(referencePoint)
           };
       updateControlPoints();
     }
@@ -157,18 +157,8 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent 
   }
 
   @Override
-  public int getControlPointCount() {
-    return getControlPoints().length;
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.ALWAYS;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return getControlPoints()[index];
   }
 
   @Override

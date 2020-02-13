@@ -82,7 +82,6 @@ public class AudioTransformer extends AbstractMultiPartComponent {
   private Size coreWidth = Size.in(0.6);
   private Size coilWidth = Size.in(0.5);
   private Size coilLength = Size.in(0.6);
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color coreColor = CORE_COLOR;
   private Color coreBorderColor = CORE_BORDER_COLOR;
   private Color coilColor = COIL_COLOR;
@@ -95,6 +94,7 @@ public class AudioTransformer extends AbstractMultiPartComponent {
 
   public AudioTransformer() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
     alpha = 100;
     setDisplay(Display.BOTH);
@@ -136,11 +136,6 @@ public class AudioTransformer extends AbstractMultiPartComponent {
     updateControlPoints();
     // Reset body shape;
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

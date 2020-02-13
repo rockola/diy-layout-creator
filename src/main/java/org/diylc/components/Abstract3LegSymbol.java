@@ -47,7 +47,6 @@ public abstract class Abstract3LegSymbol extends AbstractComponent {
   public static final Size PIN_SPACING = Size.in(0.1);
   public static final Color COLOR = Color.black;
 
-  protected Point[] controlPoints = getFreshControlPoints(4);
   protected Color color = COLOR;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
   protected transient Area[] body;
@@ -56,6 +55,7 @@ public abstract class Abstract3LegSymbol extends AbstractComponent {
 
   public Abstract3LegSymbol() {
     super();
+    controlPoints = getFreshControlPoints(4);
     updateControlPoints();
     controlPoints[3] = getDefaultLabelPosition(controlPoints);
   }

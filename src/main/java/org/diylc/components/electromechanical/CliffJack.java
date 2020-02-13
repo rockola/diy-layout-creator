@@ -65,12 +65,9 @@ public class CliffJack extends AbstractJack {
   private static Size BODY_LENGTH = Size.in(0.9);
   private static Size TAIL_LENGTH = Size.in(0.1);
 
-  {
-    controlPoints = new Point[] {new Point(0, 0)};
-  }
-
   public CliffJack() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
   }
 

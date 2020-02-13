@@ -68,7 +68,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent {
   private static final Color BORDER_COLOR = BODY_COLOR.darker();
   private static final Color LABEL_COLOR = Color.white;
 
-  protected Point[] controlPoints = getFreshControlPoints(2);
   protected transient Area[] body;
   private OrientationHV orientation = OrientationHV.VERTICAL;
   private boolean hasFuse = false;
@@ -79,6 +78,7 @@ public class FuseHolderPanel extends AbstractMultiPartComponent {
 
   public FuseHolderPanel() {
     super();
+    controlPoints = getFreshControlPoints(2);
     updateControlPoints();
     setDisplay(Display.VALUE);
   }

@@ -113,7 +113,7 @@ public enum SiUnit {
     if (prefix == null) {
       LOG.error("Don't know what the prefix would be for {}", exponent);
     } else {
-      ret = useSymbol ? prefix.getAbbreviation() : prefix.toString();
+      ret = useSymbol ? prefix.getAbbreviation() : prefix == SiPrefix.NONE ? "" : prefix.toString();
     }
     return ret;
   }

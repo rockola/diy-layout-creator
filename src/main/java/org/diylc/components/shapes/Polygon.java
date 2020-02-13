@@ -53,7 +53,7 @@ public class Polygon extends AbstractShape {
 
   public Polygon() {
     super();
-    this.controlPoints =
+    controlPoints =
         new Point[] {
           new Point(0, 0),
           new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),

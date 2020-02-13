@@ -27,6 +27,7 @@ public class ValueTest {
   @Test
   public void parseTest() {
     // voltage
+    assertEquals(Value.parse("1V"), new Value(1, SiUnit.VOLT));
     assertEquals(Value.parse("1 V"), new Value(1, SiUnit.VOLT));
     assertEquals(Value.parse("1.0 V"), new Value(1, SiUnit.VOLT));
     assertEquals(Value.parse("1.01 V"), new Value(1.01, SiUnit.VOLT));

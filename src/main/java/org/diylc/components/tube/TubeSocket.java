@@ -87,11 +87,11 @@ public class TubeSocket extends AbstractTransparentComponent {
   private String electrodeLabels = null;
   private Mount mount = null;
   private Color labelColor = LABEL_COLOR;
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private transient Shape body;
 
   public TubeSocket() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
   }
 
@@ -390,11 +390,6 @@ public class TubeSocket extends AbstractTransparentComponent {
   @Override
   public Point getControlPoint(int index) {
     return controlPoints[index];
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

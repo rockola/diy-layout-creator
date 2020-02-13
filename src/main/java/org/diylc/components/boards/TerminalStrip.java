@@ -70,7 +70,6 @@ public class TerminalStrip extends AbstractTransparentComponent implements ICont
   private Size boardWidth = Size.in(0.35);
   private Size terminalSpacing = Size.in(0.25);
   private Size holeSpacing = Size.in(0.5);
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private Color boardColor = BOARD_COLOR;
   private Color borderColor = BORDER_COLOR;
   private boolean centerHole = false;
@@ -79,6 +78,7 @@ public class TerminalStrip extends AbstractTransparentComponent implements ICont
 
   public TerminalStrip() {
     super();
+    controlPoints = new Point[] {new Point(0, 0)};
     updateControlPoints();
   }
 
@@ -153,11 +153,6 @@ public class TerminalStrip extends AbstractTransparentComponent implements ICont
     this.boardWidth = boardWidth;
     // Reset body shape;
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

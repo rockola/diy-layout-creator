@@ -51,16 +51,7 @@ public class PentodeSymbol extends AbstractTubeSymbol {
 
   public PentodeSymbol() {
     super();
-    this.controlPoints =
-        new Point[] {
-          new Point(0, 0),
-          new Point(0, 0),
-          new Point(0, 0),
-          new Point(0, 0),
-          new Point(0, 0),
-          new Point(0, 0),
-          new Point(0, 0)
-        };
+    controlPoints = getFreshControlPoints(7);
     updateControlPoints();
   }
 

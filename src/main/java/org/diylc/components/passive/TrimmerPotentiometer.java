@@ -75,7 +75,7 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   protected TrimmerType type = TrimmerType.FLAT_SMALL;
 
   public TrimmerPotentiometer() {
-    controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
     setDisplay(Display.NAME);
   }

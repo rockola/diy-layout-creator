@@ -79,7 +79,6 @@ public class MiniRelay extends AbstractTransparentComponent {
   public static final Size ULTRA_GAP = Size.in(0.1);
 
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   private RelayType type = RelayType.DPDT;
   private RelaySize size = RelaySize.Miniature;
   private Voltage voltage = new Voltage(12d, VoltageUnit.V);
@@ -87,6 +86,7 @@ public class MiniRelay extends AbstractTransparentComponent {
 
   public MiniRelay() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
     setDisplay(Display.NAME);
   }
@@ -101,11 +101,6 @@ public class MiniRelay extends AbstractTransparentComponent {
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

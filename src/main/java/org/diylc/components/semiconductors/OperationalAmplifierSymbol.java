@@ -60,7 +60,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
   public static final int DEFAULT_POINT_COUNT = 5;
 
   protected int pointCount = DEFAULT_POINT_COUNT;
-  protected Point[] controlPoints = getFreshControlPoints(DEFAULT_POINT_COUNT);
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
@@ -69,6 +68,7 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
 
   public OperationalAmplifierSymbol() {
     super();
+    controlPoints = getFreshControlPoints(DEFAULT_POINT_COUNT);
     updateControlPoints();
     setDisplay(Display.NAME);
   }
@@ -138,11 +138,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
   @Override
   public Point getControlPoint(int index) {
     return controlPoints[index];
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return pointCount;
   }
 
   private void updateControlPoints() {

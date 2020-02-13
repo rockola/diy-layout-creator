@@ -74,7 +74,6 @@ public class LeverSwitch extends AbstractTransparentComponent implements ISwitch
   private static Size TERMINAL_LENGTH = Size.in(0.1);
   private static Size TERMINAL_SPACING = Size.in(0.1);
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0)};
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
   private LeverSwitchType type = LeverSwitchType.DP3T;
@@ -82,6 +81,7 @@ public class LeverSwitch extends AbstractTransparentComponent implements ISwitch
 
   public LeverSwitch() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
   }
 
@@ -285,11 +285,6 @@ public class LeverSwitch extends AbstractTransparentComponent implements ISwitch
         AffineTransform.getTranslateInstance(terminalLength, terminalWidth + 2 * width / 32));
     terminals.add(terminal);
     terminals.fillDraw(g2d, METAL_COLOR, METAL_COLOR.darker());
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

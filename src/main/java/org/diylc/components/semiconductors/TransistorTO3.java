@@ -75,14 +75,14 @@ public class TransistorTO3 extends AbstractTransparentComponent {
   public static final Size PIN_DIAMETER = Size.mm(1);
 
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
-  private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private Color labelColor = LABEL_COLOR;
+  private transient Area[] body;
 
   public TransistorTO3() {
     super();
+    controlPoints = getFreshControlPoints(2);
     updateControlPoints();
     setDisplay(Display.NAME);
   }
@@ -97,11 +97,6 @@ public class TransistorTO3 extends AbstractTransparentComponent {
     updateControlPoints();
     // Reset body shape;
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

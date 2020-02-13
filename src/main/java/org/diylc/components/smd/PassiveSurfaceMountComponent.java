@@ -56,12 +56,12 @@ public abstract class PassiveSurfaceMountComponent extends AbstractTransparentCo
 
   private Orientation orientation = Orientation.DEFAULT;
   private PassiveSurfaceMountPackage size = PassiveSurfaceMountPackage._1206;
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   private Color labelColor = LABEL_COLOR;
   private transient Area[] body;
 
   public PassiveSurfaceMountComponent(SiUnit unit, Color bodyColor, Color borderColor) {
     super();
+    controlPoints = getFreshControlPoints(2);
     valueUnit = unit;
     this.bodyColor = bodyColor;
     this.borderColor = borderColor;
@@ -91,11 +91,6 @@ public abstract class PassiveSurfaceMountComponent extends AbstractTransparentCo
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

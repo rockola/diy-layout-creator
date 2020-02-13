@@ -47,14 +47,8 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
   public static final Size DEFAULT_WIDTH = Size.in(1.5);
   public static final Size DEFAULT_HEIGHT = Size.in(1.2);
 
-  protected Point[] controlPoints =
-      new Point[] {
-        new Point(0, 0),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
-      };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
-
   protected Color boardColor = BOARD_COLOR;
   protected Color borderColor = BORDER_COLOR;
   protected Color coordinateColor = COORDINATE_COLOR;
@@ -63,6 +57,15 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
   protected CoordinateOrigin coordinateOrigin = CoordinateOrigin.Top_Left;
   protected CoordinateDisplay coordinateDisplay = CoordinateDisplay.One_Side;
   protected CoordinateType yType = CoordinateType.Letters;
+
+  public AbstractBoard() {
+    super();
+    controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+        };
+  };
 
   @Override
   public void draw(
@@ -264,11 +267,6 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
 
   public void setyType(CoordinateType yType) {
     this.yType = yType;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

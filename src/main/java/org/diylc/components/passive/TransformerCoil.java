@@ -39,6 +39,7 @@ import org.diylc.core.annotations.KeywordPolicy;
 import org.diylc.core.annotations.PositiveNonZeroMeasureValidator;
 import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Size;
+import org.diylc.core.measures.Value;
 
 @ComponentValue(SiUnit.VOLT)
 @ComponentDescriptor(
@@ -61,9 +62,9 @@ public class TransformerCoil extends AbstractComponent {
   public static final Color COLOR = Color.blue;
   public static final Color LEAD_COLOR = Color.black;
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   private Orientation orientation = Orientation.DEFAULT;
-  private org.diylc.core.measures.Voltage voltage = null;
+  // TODO: should this be used?
+  private Value voltage = null;
   private Color color = COLOR;
   private Size tapSpacing = TAP_SPACING;
 
@@ -71,7 +72,7 @@ public class TransformerCoil extends AbstractComponent {
 
   public TransformerCoil() {
     super();
-    valueUnit = SiUnit.VOLT;
+    controlPoints = getFreshControlPoints(2);
     updateControlPoints();
   }
 
@@ -114,11 +115,6 @@ public class TransformerCoil extends AbstractComponent {
     this.orientation = orientation;
     updateControlPoints();
     this.body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return this.controlPoints.length;
   }
 
   @Override

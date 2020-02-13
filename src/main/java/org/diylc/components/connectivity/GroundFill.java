@@ -55,17 +55,20 @@ public class GroundFill extends AbstractComponent {
   public static final Size DEFAULT_WIDTH = Size.in(1.5);
   public static final Size DEFAULT_HEIGHT = Size.in(1.2);
 
-  protected Point[] controlPoints =
-      new Point[] {
-        new Point(0, 0),
-        new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
-      };
-
   protected Color color = COLOR;
   protected PointCount pointCount = PointCount._4;
   private PcbLayer layer = PcbLayer._1;
+
+  public GroundFill() {
+    super();
+    controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point(0, (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels()),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), 0)
+        };
+  }
 
   @Override
   public void draw(
@@ -98,11 +101,6 @@ public class GroundFill extends AbstractComponent {
 
   public void setColor(Color color) {
     this.color = color;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

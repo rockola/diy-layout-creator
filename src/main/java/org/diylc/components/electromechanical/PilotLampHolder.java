@@ -70,14 +70,13 @@ public class PilotLampHolder extends AbstractMultiPartComponent {
   private static Size HOLE_TO_EDGE = Size.in(0.063);
   private static Size HOLE_SPACING = Size.in(0.1);
 
-  private Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   transient Area[] body;
   @Deprecated private Orientation orientation = Orientation.DEFAULT;
   private Integer angle = 0;
 
   public PilotLampHolder() {
     super();
+    controlPoints = getFreshControlPoints(4);
     updateControlPoints();
   }
 

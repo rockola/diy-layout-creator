@@ -65,12 +65,12 @@ public class RcaJack extends AbstractMultiPartComponent {
   private static Size HOLE_DIAMETER = Size.in(0.05);
   private static Size HOLE_TO_EDGE = Size.in(0.063);
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
   transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
 
   public RcaJack() {
     super();
+    controlPoints = getFreshControlPoints(2);
     updateControlPoints();
   }
 
@@ -218,11 +218,6 @@ public class RcaJack extends AbstractMultiPartComponent {
     g2d.draw(
         new Ellipse2D.Double(
             x0 - waferDiameter / 2, y0 - waferDiameter / 2, waferDiameter, waferDiameter));
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

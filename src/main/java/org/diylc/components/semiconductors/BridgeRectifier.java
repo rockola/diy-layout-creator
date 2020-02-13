@@ -98,8 +98,6 @@ public class BridgeRectifier extends AbstractTransparentComponent {
   public static final Size INDENT_SIZE = Size.in(0.07);
 
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints =
-      new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private String[] pointLabels = new String[] {"+", "~", "~", "-"};
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
@@ -112,6 +110,7 @@ public class BridgeRectifier extends AbstractTransparentComponent {
 
   public BridgeRectifier() {
     super();
+    controlPoints = getFreshControlPoints(4);
     updateControlPoints();
     alpha = 100;
     setDisplay(Display.BOTH);
@@ -127,11 +126,6 @@ public class BridgeRectifier extends AbstractTransparentComponent {
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

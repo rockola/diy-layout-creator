@@ -64,9 +64,8 @@ public class SubminiTube extends AbstractTransparentComponent {
   public static final Size LEAD_LENGTH = Size.in(0.2);
   public static final Size LEAD_THICKNESS = Size.mm(0.8);
 
+  private final PinCount pinCount = new PinCount(3, 10).setPins(8);
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
-  private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color borderColor = BORDER_COLOR;
   private boolean folded = false;
@@ -75,11 +74,12 @@ public class SubminiTube extends AbstractTransparentComponent {
   private boolean topLead = false;
   private Size diameter = DIAMETER;
   private Size length = LENGTH;
-  private final PinCount pinCount = new PinCount(3, 10).setPins(8);
   private Size leadSpacing = PIN_SPACING;
+  private transient Area[] body;
 
   public SubminiTube() {
     super();
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
     setDisplay(Display.NAME);
   }

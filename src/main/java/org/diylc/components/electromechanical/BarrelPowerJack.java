@@ -60,11 +60,11 @@ public class BarrelPowerJack extends AbstractMultiPartComponent {
   private static Color BORDER_COLOR = Color.black;
   private static Color MARKING_COLOR = Color.lightGray;
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   private DcPolarity polarity = DcPolarity.CENTER_NEGATIVE;
   private transient Area[] body;
 
   public BarrelPowerJack() {
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
   }
 
@@ -174,11 +174,6 @@ public class BarrelPowerJack extends AbstractMultiPartComponent {
     g2d.fillRect(
         width / 2 - lugWidth * 3 / 2, height * 2 / 3 - lugWidth / 2, lugWidth * 3 / 2, lugWidth);
     Area.circle(width / 2, height * 2 / 3, margin).fill(g2d, PHENOLIC_COLOR);
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

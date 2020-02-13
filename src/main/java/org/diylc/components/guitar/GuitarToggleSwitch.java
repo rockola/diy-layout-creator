@@ -53,21 +53,19 @@ import org.diylc.utils.Constants;
 public class GuitarToggleSwitch extends AbstractTransparentComponent implements ISwitch {
 
   private static final long serialVersionUID = 1L;
-
   private static Color BASE_COLOR = Color.lightGray;
   private static Color WAFER_COLOR = Color.decode("#CD8500");
-
   private static Size LENGTH = Size.in(1.3);
   private static Size BASE_LENGTH = Size.mm(18);
   private static Size WAFER_THICKNESS = Size.in(0.05);
   private static Size TERMINAL_SPACING = Size.in(0.2);
 
-  private Point[] controlPoints = getFreshControlPoints(4);
-  transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
+  private transient Area[] body;
 
   public GuitarToggleSwitch() {
     super();
+    controlPoints = getFreshControlPoints(4);
     updateControlPoints();
   }
 

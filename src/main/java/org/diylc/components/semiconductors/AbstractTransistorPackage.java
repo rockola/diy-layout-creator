@@ -36,7 +36,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   protected TransistorPinout pinout;
   protected Orientation orientation = Orientation.DEFAULT;
-  protected Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0), new Point(0, 0)};
   protected transient Area[] body;
 
   protected Color bodyColor;
@@ -45,6 +44,7 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
 
   public AbstractTransistorPackage() {
     super();
+    controlPoints = getFreshControlPoints(3);
     setDisplay(Display.NAME);
     alpha = 100;
   }
@@ -117,11 +117,6 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
     updateControlPoints();
     // Reset body shape;
     body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

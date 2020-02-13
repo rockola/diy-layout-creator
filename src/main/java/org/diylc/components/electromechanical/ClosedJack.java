@@ -68,12 +68,9 @@ public class ClosedJack extends AbstractJack {
   private static Size BODY_LENGTH = Size.in(0.8);
   private static JackSize JACK_SIZE = JackSize.QUARTER_INCH;
 
-  {
-    controlPoints = new Point[] {new Point(0, 0)};
-  }
-
   public ClosedJack() {
     super();
+    controlPoints = getFreshControlPoints(1);
     updateControlPoints();
   }
 

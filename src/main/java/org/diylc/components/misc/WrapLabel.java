@@ -61,11 +61,6 @@ public class WrapLabel extends AbstractComponent {
   public static final Size DEFAULT_WIDTH = Size.in(1.5);
   public static final Size DEFAULT_HEIGHT = Size.in(0.5);
 
-  protected Point[] controlPoints =
-      new Point[] {
-        new Point(0, 0),
-        new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
-      };
   protected Point firstPoint = new Point();
   protected Point secondPoint = new Point();
 
@@ -75,6 +70,11 @@ public class WrapLabel extends AbstractComponent {
 
   public WrapLabel() {
     super();
+    controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
+        };
     setStringValue(App.getString("message.pangram", "The quick brown fox jumped over a lazy dog"));
   }
 
@@ -119,8 +119,7 @@ public class WrapLabel extends AbstractComponent {
   }
 
   // Bold and italic fields are named to be alphabetically after Font. This is
-  // important!
-
+  // important! (but nobody knows why...)
   @EditableProperty(name = "Font Bold")
   public boolean getBold() {
     return font.isBold();

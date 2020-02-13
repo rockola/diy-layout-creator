@@ -54,17 +54,11 @@ public class TransformerCore extends AbstractComponent {
   public static final Size SPACING = Size.in(0.025);
   public static final Color COLOR = Color.blue;
 
-  private Point[] controlPoints = new Point[] {new Point(0, 0), new Point(0, 0)};
-
   protected Color color = COLOR;
 
   public TransformerCore() {
     super();
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 2;
+    controlPoints = getFreshControlPoints(2);
   }
 
   @Override

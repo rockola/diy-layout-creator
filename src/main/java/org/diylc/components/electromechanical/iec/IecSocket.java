@@ -64,7 +64,6 @@ public abstract class IecSocket extends AbstractMultiPartComponent {
   private static Color BODY_COLOR = Color.decode("#555555");
   private static Color BORDER_COLOR = BODY_COLOR.darker();
 
-  protected Point[] controlPoints = getFreshControlPoints(3);
   /** Coupler pins. */
   protected final List<Pin> pins = new ArrayList<>();
 
@@ -108,11 +107,6 @@ public abstract class IecSocket extends AbstractMultiPartComponent {
   @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.NEVER;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @Override

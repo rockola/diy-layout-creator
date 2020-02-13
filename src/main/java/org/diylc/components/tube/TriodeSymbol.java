@@ -51,7 +51,7 @@ public class TriodeSymbol extends AbstractTubeSymbol {
 
   public TriodeSymbol() {
     super();
-    this.controlPoints = getFreshControlPoints(5);
+    controlPoints = getFreshControlPoints(5);
     updateControlPoints();
   }
 

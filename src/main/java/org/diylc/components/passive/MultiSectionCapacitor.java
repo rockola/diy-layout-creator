@@ -89,7 +89,6 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent {
 
   private int sections = 3;
   private Orientation orientation = Orientation.DEFAULT;
-  private Point[] controlPoints = getFreshControlPoints(sections);
   private transient Area[] body;
   private Color bodyColor = BODY_COLOR;
   private Color baseColor = BASE_COLOR;
@@ -103,7 +102,7 @@ public class MultiSectionCapacitor extends AbstractTransparentComponent {
 
   public MultiSectionCapacitor() {
     super();
-    valueUnit = SiUnit.FARAD;
+    controlPoints = getFreshControlPoints(sections);
     updateControlPoints();
     setDisplay(Display.NAME);
   }

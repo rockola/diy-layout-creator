@@ -43,7 +43,6 @@ public abstract class InlinePackage extends AbstractTransparentComponent {
   public static final Size INDENT_SIZE = Size.in(0.07);
 
   protected PinCount pinCount;
-  protected Point[] controlPoints = new Point[] {new Point(0, 0)};
   protected transient Area[] body;
 
   protected Color bodyColor = BODY_COLOR;
@@ -55,6 +54,7 @@ public abstract class InlinePackage extends AbstractTransparentComponent {
 
   protected InlinePackage(PinCount pinCount, Display display) {
     super();
+    controlPoints = getFreshControlPoints(1);
     this.pinCount = pinCount;
     setDisplay(display);
     updateControlPoints();
@@ -65,11 +65,6 @@ public abstract class InlinePackage extends AbstractTransparentComponent {
   public abstract Orientation getOrientation();
 
   public abstract void setOrientation(Orientation orientation);
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
 
   @Override
   public Point getControlPoint(int index) {

@@ -51,10 +51,10 @@ public abstract class AbstractTubeSymbol extends AbstractComponent {
   protected boolean showHeaters;
   protected Orientation orientation = Orientation.DEFAULT;
   protected SymbolFlipping flip = SymbolFlipping.NONE;
-  protected Point[] controlPoints;
   protected transient Area[] body;
 
-  {
+  public AbstractTubeSymbol() {
+    super();
     setDisplay(Display.NAME);
   }
 

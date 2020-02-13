@@ -61,7 +61,6 @@ public class LogicGateSymbol extends AbstractTransparentComponent {
   public static final Color BORDER_COLOR = Color.black;
 
   protected GateType gateType = GateType.Not;
-  protected Point[] controlPoints = getFreshControlPoints(3);
   protected Color bodyColor = BODY_COLOR;
   protected Color borderColor = BORDER_COLOR;
 
@@ -69,6 +68,7 @@ public class LogicGateSymbol extends AbstractTransparentComponent {
 
   public LogicGateSymbol() {
     super();
+    controlPoints = getFreshControlPoints(3);
     updateControlPoints();
     setDisplay(Display.NONE);
   }
@@ -133,10 +133,12 @@ public class LogicGateSymbol extends AbstractTransparentComponent {
     return controlPoints[index];
   }
 
+  /*
   @Override
   public int getControlPointCount() {
     return getGateType() == GateType.Not || getGateType() == GateType.Buffer ? 2 : 3;
   }
+  */
 
   private void updateControlPoints() {
     int pinSpacing = (int) PIN_SPACING.convertToPixels();

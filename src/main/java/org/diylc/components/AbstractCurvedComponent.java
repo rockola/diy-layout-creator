@@ -44,24 +44,24 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
   public static final Color GUIDELINE_COLOR = Color.blue;
   public static final Size DEFAULT_SIZE = Size.in(1);
 
-  // for backward compatibility
-  protected Point[] controlPoints = null;
-
-  protected Point[] controlPoints2 =
-      new Point[] {
-        new Point(0, 0),
-        new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
-        new Point(
-            (int) (DEFAULT_SIZE.convertToPixels() / 2), (int) (DEFAULT_SIZE.convertToPixels())),
-        new Point((int) DEFAULT_SIZE.convertToPixels(), (int) DEFAULT_SIZE.convertToPixels())
-      };
-
   protected Color color = getDefaultColor();
   protected PointCount pointCount = PointCount.FOUR;
   protected LineStyle style = LineStyle.SOLID;
   protected Boolean smooth = true;
 
   private int lastUpdatePointIndex = -1;
+
+  AbstractCurvedComponent() {
+    super();
+    controlPoints =
+        new Point[] {
+          new Point(0, 0),
+          new Point((int) (DEFAULT_SIZE.convertToPixels() / 2), 0),
+          new Point(
+              (int) (DEFAULT_SIZE.convertToPixels() / 2), (int) (DEFAULT_SIZE.convertToPixels())),
+          new Point((int) DEFAULT_SIZE.convertToPixels(), (int) DEFAULT_SIZE.convertToPixels())
+        };
+  }
 
   /**
    * Draws the specified curve onto graphics.
@@ -165,38 +165,6 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
     return pointCount;
   }
 
-  protected Point[] getControlPoints() {
-    if (this.controlPoints != null) {
-      // ensure backward compatibility by copying points from the old
-      // structure to the new one
-      switch (getPointCount()) {
-        case TWO:
-          this.controlPoints2 = new Point[2];
-          this.controlPoints2[0] = this.controlPoints[0];
-          this.controlPoints2[1] = this.controlPoints[3];
-          break;
-        case THREE:
-          this.controlPoints2 = new Point[3];
-          this.controlPoints2[0] = this.controlPoints[0];
-          this.controlPoints2[1] = this.controlPoints[1];
-          this.controlPoints2[2] = this.controlPoints[3];
-          break;
-        case FOUR:
-          this.controlPoints2 = new Point[4];
-          this.controlPoints2[0] = this.controlPoints[0];
-          this.controlPoints2[1] = this.controlPoints[1];
-          this.controlPoints2[2] = this.controlPoints[2];
-          this.controlPoints2[3] = this.controlPoints[3];
-          break;
-        default: // shouldn't happen
-          this.controlPoints2 = this.controlPoints;
-      }
-      // we don't need old points anymore
-      this.controlPoints = null;
-    }
-    return this.controlPoints2;
-  }
-
   public void setPointCount(PointCount pointCount) {
     Point[] p = getControlPoints();
     Point[] newPoints = new Point[pointCount.count];
@@ -247,13 +215,8 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
               (newPoints[pointCount.count - 1].y + newPoints[3].y) / 2);
     }
 
-    this.controlPoints2 = newPoints;
+    this.controlPoints = newPoints;
     this.pointCount = pointCount;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return getControlPoints().length;
   }
 
   @Override

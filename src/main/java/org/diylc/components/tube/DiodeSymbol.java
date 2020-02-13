@@ -54,10 +54,7 @@ public class DiodeSymbol extends AbstractTubeSymbol {
 
   public DiodeSymbol() {
     super();
-    this.controlPoints =
-        new Point[] {
-          new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0)
-        };
+    controlPoints = getFreshControlPoints(5);
     updateControlPoints();
   }
 
