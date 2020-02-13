@@ -388,20 +388,8 @@ public class TubeSocket extends AbstractTransparentComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return index > 0;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-
-    body = null;
   }
 
   @EditableProperty(name = "Electrode Labels")

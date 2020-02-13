@@ -22,6 +22,7 @@ package org.diylc.components.shapes;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -61,28 +62,30 @@ public class Rectangle extends AbstractShape {
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
 
+    Point firstPoint =
+        new Point(
+            Math.min(controlPoints[0].x, controlPoints[1].x),
+            Math.min(controlPoints[0].y, controlPoints[1].y));
+    Point secondPoint =
+        new Point(
+            Math.max(controlPoints[0].x, controlPoints[1].x),
+            Math.max(controlPoints[0].y, controlPoints[1].y));
+
+    Area rect =
+        Area.roundRect(
+            firstPoint.x,
+            firstPoint.y,
+            secondPoint.x - firstPoint.x,
+            secondPoint.y - firstPoint.y,
+            radius);
     Composite oldComposite = setTransparency(g2d, 0);
-    g2d.setColor(color);
-    g2d.fillRoundRect(
-        firstPoint.x,
-        firstPoint.y,
-        secondPoint.x - firstPoint.x,
-        secondPoint.y - firstPoint.y,
-        radius,
-        radius);
+    rect.fill(g2d, color);
     g2d.setComposite(oldComposite);
 
     // Do not track any changes that follow because the whole rect has been
     // tracked so far.
     drawingObserver.stopTracking();
-    g2d.setColor(tryBorderColor(false, borderColor));
-    g2d.drawRoundRect(
-        firstPoint.x,
-        firstPoint.y,
-        secondPoint.x - firstPoint.x,
-        secondPoint.y - firstPoint.y,
-        radius,
-        radius);
+    rect.draw(g2d, tryBorderColor(false, borderColor));
   }
 
   @EditableProperty(name = "Radius")
@@ -97,9 +100,7 @@ public class Rectangle extends AbstractShape {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    g2d.setColor(COLOR);
-    g2d.fillRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
-    g2d.setColor(BORDER_COLOR);
-    g2d.drawRect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
+    Area.rect(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor)
+        .fillDraw(g2d, COLOR, BORDER_COLOR);
   }
 }

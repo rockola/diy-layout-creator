@@ -146,16 +146,6 @@ public abstract class Abstract3LegSymbol extends AbstractComponent {
     StringUtils.drawCenteredText(g2d, label, labelX, labelY, alignment, VerticalAlignment.CENTER);
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return getControlPoints()[index];
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return getControlPoints().length;
-  }
-
   protected int getLabelX(
       Rectangle2D shapeRect, Rectangle2D textRect, FontMetrics fontMetrics, boolean outlineMode) {
     int f = flip == SymbolFlipping.X ? -1 : 1;
@@ -217,14 +207,6 @@ public abstract class Abstract3LegSymbol extends AbstractComponent {
   @Override
   public boolean isControlPointSticky(int index) {
     return index < 3;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    getControlPoints()[index].setLocation(point);
-
-    // make sure we have a new drawing
-    body = null;
   }
 
   @Override

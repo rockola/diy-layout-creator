@@ -137,23 +137,6 @@ public abstract class AbstractJack extends AbstractMultiPartComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
-    // Invalidate the body
-    body = null;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }

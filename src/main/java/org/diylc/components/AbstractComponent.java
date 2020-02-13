@@ -46,7 +46,6 @@ import org.diylc.core.Project;
 import org.diylc.core.Theme;
 import org.diylc.core.VisibilityPolicy;
 import org.diylc.core.annotations.EditableProperty;
-import org.diylc.core.measures.SiUnit;
 import org.diylc.core.measures.Value;
 import org.diylc.parsing.XmlNode;
 import org.diylc.presenter.ComponentArea;
@@ -83,7 +82,8 @@ public abstract class AbstractComponent {
   protected transient int sequenceNumber = 0;
 
   protected Point[] controlPoints;
-  protected SiUnit valueUnit;
+  protected int lastUpdatedPoint = -1;
+  protected transient Area[] body;
 
   private static int componentSequenceNumber = 0;
 
@@ -114,9 +114,9 @@ public abstract class AbstractComponent {
   }
 
   public final void setValue(Value value) {
-    if (value == null || valueUnit != null || value.getUnit() == valueUnit) {
-      this.value = value;
-    }
+    // TODO figure out how to get proper value unit type at runtime
+    // and do appropriate checks with that
+    this.value = value;
   }
 
   @EditableProperty(name = "Value")
@@ -393,7 +393,9 @@ public abstract class AbstractComponent {
    * @param nth
    * @return nth control point.
    */
-  public abstract Point getControlPoint(int nth);
+  public final Point getControlPoint(int nth) {
+    return nth < 0 || nth >= getControlPointCount() ? null : controlPoints[nth];
+  }
 
   protected Point[] getControlPoints() {
     return controlPoints;
@@ -405,7 +407,19 @@ public abstract class AbstractComponent {
    * @param point
    * @param index
    */
-  public abstract void setControlPoint(Point point, int nth);
+  public final void setControlPoint(Point point, int nth) {
+    if (nth >= 0 && nth < getControlPointCount()) {
+      controlPoints[nth].setLocation(point);
+      lastupdatedPoint = nth;
+      body = null;
+    } else {
+      LOG.error(
+          "setControlPoint({}, {}) only {} control points available",
+          point,
+          nth,
+          getControlPointCount());
+    }
+  }
 
   public abstract void drawIcon(Graphics2D g2d, int width, int height);
 

@@ -72,6 +72,8 @@ public class TriPadBoard extends AbstractBoard {
       Project project,
       IDrawingObserver drawingObserver) {
     Shape clip = g2d.getClip();
+    Point firstPoint = firstPoint();
+    Point secondPoint = secondPoint();
     if (checkPointsClipped(clip)
         && !clip.contains(firstPoint.x, secondPoint.y)
         && !clip.contains(secondPoint.x, firstPoint.y)) {

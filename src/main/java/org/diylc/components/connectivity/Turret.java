@@ -117,11 +117,6 @@ public class Turret extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }
@@ -129,16 +124,6 @@ public class Turret extends AbstractComponent {
   @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.NEVER;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Color")

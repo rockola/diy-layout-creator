@@ -270,11 +270,6 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return false;
   }
@@ -284,13 +279,14 @@ public abstract class AbstractBoard extends AbstractTransparentComponent {
     return VisibilityPolicy.WHEN_SELECTED;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    firstPoint.setLocation(
+  protected Point firstPoint() {
+    return new Point(
         Math.min(controlPoints[0].x, controlPoints[1].x),
         Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint.setLocation(
+  }
+
+  protected Point secondPoint() {
+    return new Point(
         Math.max(controlPoints[0].x, controlPoints[1].x),
         Math.max(controlPoints[0].y, controlPoints[1].y));
   }

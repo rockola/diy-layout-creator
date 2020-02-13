@@ -29,28 +29,11 @@ public abstract class AbstractPotentiometer extends AbstractTransparentComponent
 
   private static final long serialVersionUID = 1L;
 
-  protected Point[] controlPoints;
-
   protected Orientation orientation = Orientation.DEFAULT;
   protected Taper taper = Taper.LIN;
 
   protected AbstractPotentiometer() {
     super();
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
   }
 
   @Override

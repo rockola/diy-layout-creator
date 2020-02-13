@@ -55,7 +55,6 @@ public class FuseSymbol extends AbstractSchematicLeadedSymbol {
 
   public FuseSymbol() {
     super();
-    valueUnit = SiUnit.AMPERE;
   }
 
   public void drawIcon(Graphics2D g2d, int width, int height) {

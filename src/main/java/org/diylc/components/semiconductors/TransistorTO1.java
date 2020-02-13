@@ -28,7 +28,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractComponent;
 import org.diylc.components.Area;
@@ -120,60 +119,31 @@ public class TransistorTO1 extends AbstractTransistorPackage {
         switch (orientation) {
           case DEFAULT:
             newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyLength,
-                        y - bodyDiameter / 2,
-                        bodyLength,
-                        bodyDiameter,
-                        edgeRadius,
-                        edgeRadius));
+                Area.roundRect(
+                    x - bodyLength, y - bodyDiameter / 2, bodyLength, bodyDiameter, edgeRadius);
             newBody.add(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+                Area.rect(x - bodyLength / 2, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter));
             break;
           case _90:
             newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyDiameter / 2,
-                        y - bodyLength,
-                        bodyDiameter,
-                        bodyLength,
-                        edgeRadius,
-                        edgeRadius));
+                Area.roundRect(
+                    x - bodyDiameter / 2, y - bodyLength, bodyDiameter, bodyLength, edgeRadius);
             newBody.add(
-                new Area(
-                    new Rectangle2D.Double(
-                        x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2)));
+                Area.rect(x - bodyDiameter / 2, y - bodyLength / 2, bodyDiameter, bodyLength / 2));
             break;
           case _180:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x, y - bodyDiameter / 2, bodyLength, bodyDiameter, edgeRadius, edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter)));
+            newBody = Area.roundRect(x, y - bodyDiameter / 2, bodyLength, bodyDiameter, edgeRadius);
+            newBody.add(Area.rect(x, y - bodyDiameter / 2, bodyLength / 2, bodyDiameter));
             break;
           case _270:
-            newBody =
-                new Area(
-                    new RoundRectangle2D.Double(
-                        x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius, edgeRadius));
-            newBody.add(
-                new Area(
-                    new Rectangle2D.Double(x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2)));
+            newBody = Area.roundRect(x - bodyDiameter / 2, y, bodyDiameter, bodyLength, edgeRadius);
+            newBody.add(Area.rect(x - bodyDiameter / 2, y, bodyDiameter, bodyLength / 2));
             break;
           default:
             throw new RuntimeException("Unexpected orientation: " + orientation);
         }
       } else {
-        newBody =
-            new Area(
-                new Ellipse2D.Double(
-                    x - bodyDiameter / 2, y - bodyDiameter / 2, bodyDiameter, bodyDiameter));
+        newBody = Area.circle(x, y, bodyDiameter);
       }
 
       body = new Area[] {newBody};

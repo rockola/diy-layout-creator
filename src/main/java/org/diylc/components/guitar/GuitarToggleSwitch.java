@@ -227,11 +227,6 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent implements 
   }
 
   @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.ALWAYS;
   }
@@ -239,18 +234,6 @@ public class GuitarToggleSwitch extends AbstractTransparentComponent implements 
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
-    // Invalidate the body
-    body = null;
   }
 
   @Override

@@ -147,12 +147,6 @@ public class TrimmerPotentiometer extends AbstractPotentiometer {
   }
 
   @Override
-  public void setControlPoint(Point point, int index) {
-    super.setControlPoint(point, index);
-    body = null;
-  }
-
-  @Override
   public void setOrientation(Orientation orientation) {
     super.setOrientation(orientation);
     updateControlPoints();

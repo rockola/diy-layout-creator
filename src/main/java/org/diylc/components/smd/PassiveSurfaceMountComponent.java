@@ -61,8 +61,8 @@ public abstract class PassiveSurfaceMountComponent extends AbstractTransparentCo
 
   public PassiveSurfaceMountComponent(SiUnit unit, Color bodyColor, Color borderColor) {
     super();
+    // ignore unit
     controlPoints = getFreshControlPoints(2);
-    valueUnit = unit;
     this.bodyColor = bodyColor;
     this.borderColor = borderColor;
     updateControlPoints();
@@ -94,19 +94,8 @@ public abstract class PassiveSurfaceMountComponent extends AbstractTransparentCo
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
   }
 
   private void updateControlPoints() {

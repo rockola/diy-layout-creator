@@ -22,6 +22,7 @@ package org.diylc.components.boards;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import org.apache.commons.text.WordUtils;
 import org.diylc.common.ObjectCache;
@@ -68,6 +69,8 @@ public class BlankBoard extends AbstractBoard {
       Project project,
       IDrawingObserver drawingObserver) {
     Shape clip = g2d.getClip();
+    Point firstPoint = firstPoint();
+    Point secondPoint = secondPoint();
     if (checkPointsClipped(clip)
         && !clip.contains(firstPoint.x, secondPoint.y)
         && !clip.contains(secondPoint.x, firstPoint.y)) {
@@ -90,32 +93,6 @@ public class BlankBoard extends AbstractBoard {
     // NOTE: ignoring outline mode as per original implementation
     board.draw(g2d, tryBorderColor(false, borderColor));
   }
-
-  /* unnecessary overrides
-  @Override
-  public CoordinateType getxType() {
-    // Override to prevent editing.
-    return super.getxType();
-  }
-
-  @Override
-  public CoordinateDisplay getCoordinateDisplay() {
-    // Override to prevent editing.
-    return super.getCoordinateDisplay();
-  }
-
-  @Override
-  public CoordinateType getyType() {
-    // Override to prevent editing.
-    return super.getyType();
-  }
-
-  @Override
-  public Color getCoordinateColor() {
-    // Override to prevent editing.
-    return super.getCoordinateColor();
-  }
-  */
 
   @EditableProperty(name = "Shape")
   public Type getType() {

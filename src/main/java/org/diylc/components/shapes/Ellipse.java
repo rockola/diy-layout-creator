@@ -22,6 +22,7 @@ package org.diylc.components.shapes;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -55,6 +56,15 @@ public class Ellipse extends AbstractShape {
       IDrawingObserver drawingObserver) {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
+
+    Point firstPoint =
+        new Point(
+            Math.min(controlPoints[0].x, controlPoints[1].x),
+            Math.min(controlPoints[0].y, controlPoints[1].y));
+    Point secondPoint =
+        new Point(
+            Math.max(controlPoints[0].x, controlPoints[1].x),
+            Math.max(controlPoints[0].y, controlPoints[1].y));
 
     Composite oldComposite = setTransparency(g2d, 0);
     g2d.setColor(color);

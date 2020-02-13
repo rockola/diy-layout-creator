@@ -34,7 +34,6 @@ public abstract class RadialCapacitor extends AbstractRadialComponent {
 
   protected RadialCapacitor() {
     super();
-    valueUnit = SiUnit.FARAD;
   }
 
   @Override

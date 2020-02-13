@@ -66,7 +66,6 @@ public class TantalumCapacitor extends AbstractCapacitor {
 
   public TantalumCapacitor() {
     super();
-    valueUnit = SiUnit.FARAD;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.labelColor = TICK_COLOR;

@@ -66,7 +66,6 @@ public class Resistor extends AbstractLeadedComponent {
 
   public Resistor() {
     super();
-    valueUnit = SiUnit.OHM;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
   }

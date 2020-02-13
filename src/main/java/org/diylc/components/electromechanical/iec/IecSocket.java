@@ -95,11 +95,6 @@ public abstract class IecSocket extends AbstractMultiPartComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }

@@ -43,7 +43,6 @@ public abstract class Misc extends AbstractComponent {
 
   public static final String DEFAULT_TEXT = Config.getString("components.double-click-to-edit");
 
-  protected Point point = new Point(0, 0);
   protected String text = DEFAULT_TEXT;
   protected Color color = LABEL_COLOR;
   protected Font font = LABEL_FONT;
@@ -56,6 +55,11 @@ public abstract class Misc extends AbstractComponent {
   protected transient int positionX;
   protected transient int positionY;
 
+  public Misc() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
+
   @Override
   public void draw(
       Graphics2D g2d,
@@ -67,8 +71,9 @@ public abstract class Misc extends AbstractComponent {
     Rectangle2D rect = fontMetrics.getStringBounds(text, g2d);
     textHeight = (int) rect.getHeight();
     textWidth = (int) rect.getWidth();
-    positionX = point.x;
-    positionY = point.y;
+    Point point = controlPoints[0];
+    positionX = controlPoints[0].x;
+    positionY = controlPoints[0].y;
 
     switch (getVerticalAlignment()) {
       case CENTER:
@@ -184,16 +189,6 @@ public abstract class Misc extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return false;
   }
@@ -201,11 +196,6 @@ public abstract class Misc extends AbstractComponent {
   @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @Override

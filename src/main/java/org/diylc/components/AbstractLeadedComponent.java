@@ -512,11 +512,6 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return (Point) getPoints()[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return index < 2;
   }
@@ -531,6 +526,8 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
     return index >= 2;
   }
 
+  /* TODO figure out whether this needs to be done
+
   @Override
   public void setControlPoint(Point point, int index) {
     // when moving one of the ending points, try to retain the angle and distance from the center
@@ -544,7 +541,8 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
         double beta = Math.atan2(getPoints()[2].y - y, getPoints()[2].x - x);
         gamma = beta + (HALF_PI - theta);
         r = getPoints()[2].distance(x, y);
-      } else { // in case when we are copy pasting we don't want to recalculate 3rd point position
+      } else {
+        // in case when we are copy pasting we don't want to recalculate 3rd point position
         // as they will all move in unison
         // when we moved the first point, gamma and r were initialized, so now we are canceling
         gamma = null;
@@ -554,6 +552,7 @@ public abstract class AbstractLeadedComponent extends AbstractTransparentCompone
 
     getPoints()[index].setLocation(point);
   }
+  */
 
   @EditableProperty(name = "Color")
   public Color getBodyColor() {

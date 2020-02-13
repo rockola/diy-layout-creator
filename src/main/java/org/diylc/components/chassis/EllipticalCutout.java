@@ -60,6 +60,8 @@ public class EllipticalCutout extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
 
+    Point firstPoint = firstPoint();
+    Point secondPoint = secondPoint();
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
       g2d.setColor(color);
@@ -77,10 +79,7 @@ public class EllipticalCutout extends AbstractShape {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    int factor = 32 / width;
-    g2d.setColor(COLOR);
-    g2d.fillOval(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
-    g2d.setColor(LIGHT_METAL_COLOR.darker());
-    g2d.drawOval(2 / factor, 2 / factor, width - 4 / factor, height - 4 / factor);
+    Area.oval(width / 2, height / 2, width, 2 * height / 3)
+        .fillDraw(g2d, COLOR, LIGHT_METAL_COLOR.darker());
   }
 }

@@ -34,7 +34,6 @@ public abstract class AbstractCapacitor extends AbstractLeadedComponent {
 
   public AbstractCapacitor() {
     super();
-    valueUnit = SiUnit.FARAD;
   }
 
   @ComponentValue(SiUnit.VOLT)

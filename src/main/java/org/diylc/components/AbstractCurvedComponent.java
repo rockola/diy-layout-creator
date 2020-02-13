@@ -49,8 +49,6 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
   protected LineStyle style = LineStyle.SOLID;
   protected Boolean smooth = true;
 
-  private int lastUpdatePointIndex = -1;
-
   AbstractCurvedComponent() {
     super();
     controlPoints =
@@ -107,22 +105,22 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
     Point[] p = getControlPoints();
 
     // smoothen the curve if needed
-    if (getSmooth() && lastUpdatePointIndex >= 0) {
+    if (getSmooth() && lastUpdatedPoint >= 0) {
       if (getPointCount() == PointCount.FIVE
-          && (lastUpdatePointIndex == 1 || lastUpdatePointIndex == 2)) {
+          && (lastUpdatedPoint == 1 || lastUpdatedPoint == 2)) {
         p[3] = findThirdPoint(p[2], p[1]);
       }
-      if (getPointCount() == PointCount.FIVE && lastUpdatePointIndex == 3) {
+      if (getPointCount() == PointCount.FIVE && lastUpdatedPoint == 3) {
         p[1] = findThirdPoint(p[2], p[3]);
       }
       if (getPointCount() == PointCount.SEVEN
-          && (lastUpdatePointIndex == 2 || lastUpdatePointIndex == 3)) {
+          && (lastUpdatedPoint == 2 || lastUpdatedPoint == 3)) {
         p[4] = findThirdPoint(p[3], p[2]);
       }
-      if (getPointCount() == PointCount.SEVEN && lastUpdatePointIndex == 4) {
+      if (getPointCount() == PointCount.SEVEN && lastUpdatedPoint == 4) {
         p[2] = findThirdPoint(p[3], p[4]);
       }
-      lastUpdatePointIndex = -1;
+      lastUpdatedPoint = -1;
     }
 
     if (isSelectedOrDragging()) {
@@ -232,18 +230,6 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
   @Override
   public boolean canControlPointOverlap(int index) {
     return index > 0 && index < getControlPointCount() - 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return getControlPoints()[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    Point[] p = getControlPoints();
-    p[index].setLocation(point);
-    this.lastUpdatePointIndex = index;
   }
 
   private Point findThirdPoint(Point p0, Point p) {

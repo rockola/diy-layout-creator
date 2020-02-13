@@ -57,14 +57,17 @@ public class TraceCut extends AbstractComponent {
   public static final Size HOLE_SIZE = Size.mm(0.7);
   public static final Size SIZE = Size.in(0.08);
 
-  protected Point point = new Point(0, 0);
-
   private Size size = SIZE;
   private Color fillColor = FILL_COLOR;
   private Color boardColor = AbstractBoard.BOARD_COLOR;
   private Boolean cutBetweenHoles = false;
   private Size holeSpacing = VeroBoard.SPACING;
   @Deprecated private Color borderColor = BORDER_COLOR;
+
+  public TraceCut() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -80,6 +83,7 @@ public class TraceCut extends AbstractComponent {
     g2d.setColor(tryColor(false, boardColor));
     int size = getClosestOdd((int) this.size.convertToPixels());
     int cutWidth = getClosestOdd((int) CUT_WIDTH.convertToPixels());
+    Point point = getControlPoint(0);
     if (getCutBetweenHoles()) {
       int holeSpacing = getClosestOdd(getHoleSpacing().convertToPixels());
       drawingObserver.startTrackingContinuityArea(false);
@@ -132,21 +136,6 @@ public class TraceCut extends AbstractComponent {
         width / 2 - 1, width / 2 - 1, getClosestOdd(3.0 / factor), getClosestOdd(3.0 / factor));
     g2d.drawOval(
         5 * width / 6 - 1, width / 2 - 1, getClosestOdd(3.0 / factor), getClosestOdd(3.0 / factor));
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty

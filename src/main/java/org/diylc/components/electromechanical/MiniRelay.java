@@ -113,12 +113,6 @@ public class MiniRelay extends AbstractTransparentComponent {
     return true;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
-  }
-
   private void updateControlPoints() {
     Point firstPoint = controlPoints[0];
     int pinCount = 0;

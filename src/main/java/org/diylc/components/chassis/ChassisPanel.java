@@ -22,6 +22,7 @@ package org.diylc.components.chassis;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -65,6 +66,8 @@ public class ChassisPanel extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
+    Point firstPoint = firstPoint();
+    Point secondPoint = secondPoint();
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
       g2d.setColor(color);
@@ -102,9 +105,7 @@ public class ChassisPanel extends AbstractShape {
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
     int factor = 32 / width;
-    g2d.setColor(LIGHT_METAL_COLOR);
-    g2d.fillRect(2 / factor, 4 / factor, width - 4 / factor, height - 8 / factor);
-    g2d.setColor(LIGHT_METAL_COLOR.darker());
-    g2d.drawRect(2 / factor, 4 / factor, width - 4 / factor, height - 8 / factor);
+    Area.rect(2 / factor, 4 / factor, width - 4 / factor, height - 8 / factor)
+        .fillDraw(g2d, LIGHT_METAL_COLOR, LIGHT_METAL_COLOR.darker());
   }
 }

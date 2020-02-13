@@ -51,10 +51,14 @@ public class GroundSymbol extends AbstractComponent {
   public static final Color COLOR = Color.black;
   public static final Size SIZE = Size.in(0.15);
 
-  private Point point = new Point(0, 0);
   private Color color = COLOR;
   private Size size = SIZE;
   private GroundSymbolType type = GroundSymbolType.DEFAULT;
+
+  public GroundSymbol() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -66,8 +70,8 @@ public class GroundSymbol extends AbstractComponent {
     int sizePx = (int) size.convertToPixels();
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
     g2d.setColor(color);
-    int x = point.x;
-    int y = point.y;
+    int x = controlPoints[0].x;
+    int y = controlPoints[0].y;
     g2d.drawLine(x, y, x, y + sizePx / 6);
     if (type == GroundSymbolType.DEFAULT) {
       int delta = sizePx / 7;
@@ -112,11 +116,6 @@ public class GroundSymbol extends AbstractComponent {
     this.type = type;
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
   @EditableProperty
   public Color getColor() {
     return color;
@@ -136,19 +135,10 @@ public class GroundSymbol extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
-  }
   //
   //  @Override
   //  public String getControlPointNodeName(int index) {

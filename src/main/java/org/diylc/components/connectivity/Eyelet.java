@@ -62,7 +62,11 @@ public class Eyelet extends AbstractComponent {
   private Size size = SIZE;
   private Size holeSize = HOLE_SIZE;
   private Color color = COLOR;
-  private Point point = new Point(0, 0);
+
+  public Eyelet() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -77,12 +81,10 @@ public class Eyelet extends AbstractComponent {
     g2d.setStroke(ObjectCache.getInstance().fetchZoomableStroke(1f));
     drawingObserver.startTrackingContinuityArea(true);
     int diameter = getClosestOdd((int) size.convertToPixels());
-    Area.circle(point, diameter).fillDraw(g2d, color, tryColor(false, color.darker()));
-    g2d.fillOval(point.x - diameter / 2, point.y - diameter / 2, diameter, diameter);
-    drawingObserver.stopTrackingContinuityArea();
-
     int holeDiameter = getClosestOdd((int) holeSize.convertToPixels());
-    Area.circle(point, holeDiameter).fillDraw(g2d, CANVAS_COLOR, tryColor(false, color.darker()));
+    Point point = controlPoints[0];
+    Area.ring(point, diameter, holeDiameter).fillDraw(g2d, color, tryColor(false, color.darker()));
+    drawingObserver.stopTrackingContinuityArea();
   }
 
   @Override
@@ -111,23 +113,8 @@ public class Eyelet extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Color")

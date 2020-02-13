@@ -21,7 +21,6 @@
 package org.diylc.components.semiconductors;
 
 import java.awt.Color;
-import java.awt.Point;
 import org.diylc.common.Display;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
@@ -120,19 +119,8 @@ public abstract class AbstractTransistorPackage extends AbstractTransparentCompo
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
   }
 
   @EditableProperty(name = "Body")

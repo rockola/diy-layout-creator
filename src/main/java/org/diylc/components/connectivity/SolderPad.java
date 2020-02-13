@@ -61,10 +61,14 @@ public class SolderPad extends AbstractComponent {
 
   private Size size = SIZE;
   private Color color = COLOR;
-  private Point point = new Point(0, 0);
   private SolderPadType type = SolderPadType.ROUND;
   private Size holeSize = HOLE_SIZE;
   private PcbLayer layer = PcbLayer._1;
+
+  public SolderPad() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -80,6 +84,7 @@ public class SolderPad extends AbstractComponent {
     double holeDiameter = getHoleSize().convertToPixels();
     g2d.setColor(tryColor(false, color));
     drawingObserver.startTrackingContinuityArea(true);
+    Point point = controlPoint[0];
     switch (type) {
       case ROUND:
         g2d.fill(Area.circle(point, diameter));
@@ -142,23 +147,8 @@ public class SolderPad extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Color")

@@ -60,7 +60,6 @@ public class InductorSymbol extends AbstractSchematicLeadedSymbol {
 
   public InductorSymbol() {
     super();
-    valueUnit = SiUnit.HENRY;
   }
 
   @ComponentValue(SiUnit.AMPERE)

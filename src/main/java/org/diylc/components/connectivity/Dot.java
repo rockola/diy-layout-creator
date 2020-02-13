@@ -54,7 +54,11 @@ public class Dot extends AbstractComponent {
 
   private Size size = SIZE;
   private Color color = COLOR;
-  private Point point = new Point(0, 0);
+
+  public Dot() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -67,7 +71,7 @@ public class Dot extends AbstractComponent {
       return;
     }
     int diameter = getClosestOdd((int) getSize().convertToPixels());
-    Area.circle(point, diameter).fill(g2d, tryColor(false, color));
+    Area.circle(controlPoints[0], diameter).fill(g2d, tryColor(false, color));
   }
 
   @Override
@@ -86,23 +90,8 @@ public class Dot extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Color")

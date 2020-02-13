@@ -107,13 +107,6 @@ public class FuseHolderPanel extends AbstractMultiPartComponent {
     return controlPoints.length;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    // Reset body shape.
-    body = null;
-  }
-
   @EditableProperty
   public OrientationHV getOrientation() {
     return orientation;

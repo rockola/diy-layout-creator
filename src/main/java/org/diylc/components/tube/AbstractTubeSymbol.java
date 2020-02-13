@@ -97,25 +97,6 @@ public abstract class AbstractTubeSymbol extends AbstractComponent {
         VerticalAlignment.BOTTOM);
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-
-    if (index == controlPoints.length - 1) {
-      this.body = null;
-    }
-  }
-
   @EditableProperty
   public Color getColor() {
     return color;

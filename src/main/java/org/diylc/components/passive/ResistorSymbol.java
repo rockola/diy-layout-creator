@@ -57,7 +57,7 @@ public class ResistorSymbol extends AbstractSchematicLeadedSymbol {
   private Value power = new Value(0.5, SiUnit.WATT);
 
   public ResistorSymbol() {
-    valueUnit = SiUnit.OHM;
+    super();
   }
 
   @Override

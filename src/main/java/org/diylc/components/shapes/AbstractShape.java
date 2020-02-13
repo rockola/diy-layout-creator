@@ -37,8 +37,6 @@ public abstract class AbstractShape extends AbstractTransparentComponent {
   public static final Size DEFAULT_WIDTH = Size.in(0.6);
   public static final Size DEFAULT_HEIGHT = Size.in(0.4);
 
-  protected Point firstPoint = new Point();
-  protected Point secondPoint = new Point();
   protected Color color = COLOR;
   protected Color borderColor = BORDER_COLOR;
   protected Size borderThickness = Size.mm(0.2);
@@ -80,29 +78,8 @@ public abstract class AbstractShape extends AbstractTransparentComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    firstPoint.setLocation(
-        Math.min(controlPoints[0].x, controlPoints[1].x),
-        Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint.setLocation(
-        Math.max(controlPoints[0].x, controlPoints[1].x),
-        Math.max(controlPoints[0].y, controlPoints[1].y));
   }
 
   @Override

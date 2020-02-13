@@ -58,8 +58,12 @@ public class BillOfMaterials extends AbstractComponent {
   public static final String DEFAULT_TEXT = "No components to show in the Bill of Materials";
 
   private Size size = DEFAULT_SIZE;
-  private Point point = new Point(0, 0);
   private Color color = COLOR;
+
+  public BillOfMaterials() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public String getControlPointNodeName(int index) {
@@ -120,6 +124,7 @@ public class BillOfMaterials extends AbstractComponent {
     }
     int columnWidth = (int) size.convertToPixels() / columnCount;
     int entriesPerColumn = (int) Math.ceil(1.d * bom.size() / columnCount);
+    Point point = getControlPoint(0);
     if (entriesPerColumn == 0) {
       g2d.drawString(DEFAULT_TEXT, point.x, point.y);
       return;
@@ -173,21 +178,6 @@ public class BillOfMaterials extends AbstractComponent {
     g2d.drawString("tubes", x, y);
     y += rect.getHeight() - 1;
     g2d.drawString("diodes", x, y);
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Width")

@@ -61,9 +61,6 @@ public class WrapLabel extends AbstractComponent {
   public static final Size DEFAULT_WIDTH = Size.in(1.5);
   public static final Size DEFAULT_HEIGHT = Size.in(0.5);
 
-  protected Point firstPoint = new Point();
-  protected Point secondPoint = new Point();
-
   private Font font = LABEL_FONT;
   private Color color = LABEL_COLOR;
   private HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
@@ -76,27 +73,6 @@ public class WrapLabel extends AbstractComponent {
           new Point((int) DEFAULT_WIDTH.convertToPixels(), (int) DEFAULT_HEIGHT.convertToPixels())
         };
     setStringValue(App.getString("message.pangram", "The quick brown fox jumped over a lazy dog"));
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 2;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    firstPoint.setLocation(
-        Math.min(controlPoints[0].x, controlPoints[1].x),
-        Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint.setLocation(
-        Math.max(controlPoints[0].x, controlPoints[1].x),
-        Math.max(controlPoints[0].y, controlPoints[1].y));
   }
 
   @Override
@@ -180,6 +156,12 @@ public class WrapLabel extends AbstractComponent {
       IDrawingObserver drawingObserver) {
     g2d.setColor(componentState.isSelected() ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
+    firstPoint = new Point(
+        Math.min(controlPoints[0].x, controlPoints[1].x),
+        Math.min(controlPoints[0].y, controlPoints[1].y));
+    secondPoint = new Point(
+        Math.max(controlPoints[0].x, controlPoints[1].x),
+        Math.max(controlPoints[0].y, controlPoints[1].y));
     int x = firstPoint.x;
     int y = firstPoint.y;
     int maxWidth = secondPoint.x - firstPoint.x;

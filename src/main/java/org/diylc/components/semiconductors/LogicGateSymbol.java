@@ -128,11 +128,6 @@ public class LogicGateSymbol extends AbstractTransparentComponent {
     area.fillDraw(g2d, BODY_COLOR, BORDER_COLOR);
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
   /*
   @Override
   public int getControlPointCount() {
@@ -257,12 +252,6 @@ public class LogicGateSymbol extends AbstractTransparentComponent {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
   }
 
   @EditableProperty(name = "Type")
