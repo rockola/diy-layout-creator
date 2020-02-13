@@ -23,7 +23,6 @@ package org.diylc.components.electromechanical;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -65,10 +64,13 @@ public class BatterySnap9V extends AbstractTransparentComponent {
   private static Size TERMINAL_SPACING = Size.in(0.5);
   private static Size TERMINAL_BORDER = Size.mm(0.7);
 
-  private Point controlPoint = new Point(0, 0);
-  private transient Area[] body;
   private Orientation orientation = Orientation.DEFAULT;
   private Color color = BODY_COLOR;
+
+  public BatterySnap9V() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -103,8 +105,8 @@ public class BatterySnap9V extends AbstractTransparentComponent {
     if (body == null) {
       body = new Area[3];
 
-      int x = controlPoint.x;
-      int y = controlPoint.y;
+      int x = controlPoints[0].x;
+      int y = controlPoints[0].y;
       int width = (int) WIDTH.convertToPixels();
       int length = (int) LENGTH.convertToPixels();
       int totalLength = length + width / 2;
@@ -200,11 +202,6 @@ public class BatterySnap9V extends AbstractTransparentComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
   public VisibilityPolicy getControlPointVisibilityPolicy(int index) {
     return VisibilityPolicy.WHEN_SELECTED;
   }
@@ -212,18 +209,6 @@ public class BatterySnap9V extends AbstractTransparentComponent {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoint;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoint.setLocation(point);
-    // Invalidate the body
-    body = null;
   }
 
   @EditableProperty

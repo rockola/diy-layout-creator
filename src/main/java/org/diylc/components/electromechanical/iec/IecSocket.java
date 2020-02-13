@@ -104,11 +104,6 @@ public abstract class IecSocket extends AbstractMultiPartComponent {
     return VisibilityPolicy.NEVER;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-  }
-
   public Point[] getControlPoints() {
     Point[] controlPoints = new Point[howManyPins()];
     for (int i = 0; i < howManyPins(); i++) {

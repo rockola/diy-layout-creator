@@ -129,27 +129,14 @@ public class BridgeRectifier extends AbstractTransparentComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }
 
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
-  }
-
   private void updateControlPoints() {
     Point firstPoint = controlPoints[0];
-
     int spacingH;
     int spacingV;
-
     switch (rectifierType) {
       case MiniDIP1:
         spacingH = (int) MINI_HORIZONTAL_SPACING.convertToPixels();

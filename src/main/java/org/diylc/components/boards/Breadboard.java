@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.HorizontalAlignment;
 import org.diylc.common.ObjectCache;
@@ -69,10 +68,14 @@ public class Breadboard extends AbstractComponent {
   public static final Size HOLE_SIZE = Size.mm(1.5);
   public static final Size HOLE_ARC = Size.mm(1);
 
-  protected Point point = new Point(0, 0);
   protected BreadboardSize breadboardSize;
   protected PowerStripPosition powerStripPosition;
   protected Orientation orientation;
+
+  public Breadboard() {
+    super();
+    controlPoints = getFreshControlPoints(2);
+  }
 
   @Override
   public void draw(
@@ -84,7 +87,7 @@ public class Breadboard extends AbstractComponent {
     if (checkPointsClipped(g2d.getClip())) {
       return;
     }
-
+    Point point = controlPoints[0];
     // adjust the angle
     getOrientation().applyRotation(g2d, point);
 
@@ -318,15 +321,11 @@ public class Breadboard extends AbstractComponent {
   }
 
   @Override
-  public int getControlPointCount() {
-    return 2;
-  }
-
-  @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
 
+  /*
   @Override
   public Point getControlPoint(int index) {
     if (index == 0) {
@@ -342,15 +341,9 @@ public class Breadboard extends AbstractComponent {
       AffineTransform tx = getOrientation().getRotation(point);
       tx.transform(secondPoint, secondPoint);
     }
-    return secondPoint;
+    return controlPoints[index];
   }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    if (index == 0) {
-      this.point.setLocation(point);
-    }
-  }
+  */
 
   @Override
   public String getControlPointNodeName(int index) {

@@ -23,7 +23,6 @@ package org.diylc.components.semiconductors;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.Path2D;
 import org.diylc.awt.StringUtils;
 import org.diylc.common.Display;
@@ -135,11 +134,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
     g2d.draw(area);
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
   private void updateControlPoints() {
     int pinSpacing = (int) PIN_SPACING.convertToPixels();
     // Update control points.
@@ -198,12 +192,6 @@ public class OperationalAmplifierSymbol extends AbstractTransparentComponent {
   @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    body = null;
   }
 
   @EditableProperty(name = "Contacts (3 or 5)")

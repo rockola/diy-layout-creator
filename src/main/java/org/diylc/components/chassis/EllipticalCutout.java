@@ -22,9 +22,11 @@ package org.diylc.components.chassis;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.components.shapes.AbstractShape;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;

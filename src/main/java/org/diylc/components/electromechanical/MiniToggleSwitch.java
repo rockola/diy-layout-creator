@@ -100,20 +100,8 @@ public class MiniToggleSwitch extends AbstractTransparentComponent implements IS
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    controlPoints[index].setLocation(point);
-    // Reset body shape.
-    body = null;
   }
 
   @EditableProperty(name = "Switch Type")

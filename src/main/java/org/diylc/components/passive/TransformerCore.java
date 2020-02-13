@@ -22,7 +22,6 @@ package org.diylc.components.passive;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.GeneralPath;
 import org.diylc.common.ObjectCache;
 import org.diylc.components.AbstractComponent;
@@ -59,16 +58,6 @@ public class TransformerCore extends AbstractComponent {
   public TransformerCore() {
     super();
     controlPoints = getFreshControlPoints(2);
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return this.controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
   }
 
   @Override

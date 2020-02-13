@@ -78,10 +78,10 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
   private boolean stripe2 = false;
 
   // cached areas
-  private transient Area firstLeadArea = null;
-  private transient Area secondLeadArea = null;
-  private transient Area firstLeadStripeArea = null;
-  private transient Area secondLeadStripeArea = null;
+  // private transient Area firstLeadArea = null;
+  // private transient Area secondLeadArea = null;
+  // private transient Area firstLeadStripeArea = null;
+  // private transient Area secondLeadStripeArea = null;
 
   protected AmericanWireGauge gauge = AmericanWireGauge._22;
 
@@ -100,48 +100,51 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
         (int) (gauge.diameterIn() * Constants.PIXELS_PER_INCH * (1 + 2 * INSULATION_THICKNESS_PCT))
             - 1;
 
-    if (firstLeadArea == null || secondLeadArea == null) {
-      firstLeadArea = new Area();
-      secondLeadArea = new Area();
+    if (body == null) {
+      body = new Area[4];
+      Area firstLeadArea = new Area();
+      Area secondLeadArea = new Area();
       recalculate(curve, thickness, firstLeadArea, secondLeadArea, false);
+      body[0] = firstLeadArea;
+      body[1] = secondLeadArea;
 
       if (stripe1 || stripe2) {
-        firstLeadStripeArea = new Area();
-        secondLeadStripeArea = new Area();
+        Area firstLeadStripeArea = new Area();
+        Area secondLeadStripeArea = new Area();
         recalculate(curve, thickness, firstLeadStripeArea, secondLeadStripeArea, true);
         firstLeadStripeArea.intersect(firstLeadArea);
         secondLeadStripeArea.intersect(secondLeadArea);
+        body[2] = firstLeadStripeArea;
+        body[3] = secondLeadStripeArea;
       }
     }
 
-    final Color curveColor1 = tryColor(false, color);
-    g2d.setColor(curveColor1);
-    g2d.fill(firstLeadArea);
+    // firstLeadArea
+    body[0].fill(g2d, tryColor(false, color));
 
-    if (stripe1 && componentState == ComponentState.NORMAL) {
+    if (stripe1 && componentState.isNormal()) {
+      // firstLeadStripeArea
       drawingObserver.stopTracking();
-      g2d.setColor(stripeColor);
-      g2d.fill(firstLeadStripeArea);
+      body[2].fill(g2d, stripeColor);
       drawingObserver.startTracking();
     }
 
-    final Color curveColor2 = tryColor(false, color2);
-    g2d.setColor(curveColor2);
-    g2d.fill(secondLeadArea);
+    // secondLeadArea
+    body[1].fill(g2d, tryColor(false, color2));
 
     if (stripe2 && componentState == ComponentState.NORMAL) {
+      // secondLeadStripeArea
       drawingObserver.stopTracking();
-      g2d.setColor(stripeColor2);
-      g2d.fill(secondLeadStripeArea);
+      body[3].fill(g2d, stripeColor2);
       drawingObserver.startTracking();
     }
 
-    if (componentState == ComponentState.NORMAL) {
+    if (componentState.isNormal()) {
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
-      g2d.setColor(color.darker());
-      g2d.draw(firstLeadArea);
-      g2d.setColor(color2.darker());
-      g2d.draw(secondLeadArea);
+      // firstLeadArea
+      body[0].draw(g2d, color.darker());
+      // secondLeadArea
+      body[1].draw(g2d, color2.darker());
     }
   }
 
@@ -157,16 +160,9 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
     Area area2 = new Area(stroke.createStrokedShape(curve2));
     area2.subtract(area1);
 
-    g2d.setColor(COLOR2);
-    g2d.fill(area2);
-    g2d.setColor(COLOR);
-    g2d.fill(area1);
-
     g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1));
-    g2d.setColor(COLOR2.darker());
-    g2d.draw(area2);
-    g2d.setColor(COLOR.darker());
-    g2d.draw(area1);
+    area2.fillDraw(g2d, COLOR2, COLOR2.darker());
+    area1.fillDraw(g2d, COLOR, COLOR.darker());
   }
 
   @EditableProperty(name = "AWG")
@@ -178,21 +174,7 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
     this.gauge = gauge;
 
     // invalidate cached areas
-    this.firstLeadArea = null;
-    this.secondLeadArea = null;
-    this.firstLeadStripeArea = null;
-    this.secondLeadStripeArea = null;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    super.setControlPoint(point, index);
-
-    // invalidate cached areas
-    this.firstLeadArea = null;
-    this.secondLeadArea = null;
-    this.firstLeadStripeArea = null;
-    this.secondLeadStripeArea = null;
+    body = null;
   }
 
   @Override
@@ -200,10 +182,7 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
     super.setPointCount(pointCount);
 
     // invalidate cached areas
-    this.firstLeadArea = null;
-    this.secondLeadArea = null;
-    this.firstLeadStripeArea = null;
-    this.secondLeadStripeArea = null;
+    body = null;
   }
 
   @EditableProperty(name = "Color 1")
@@ -254,10 +233,7 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
 
     if (stripe1) {
       // invalidate cached areas
-      this.firstLeadArea = null;
-      this.secondLeadArea = null;
-      this.firstLeadStripeArea = null;
-      this.secondLeadStripeArea = null;
+      body = null;
     }
   }
 
@@ -271,10 +247,7 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
 
     if (stripe2) {
       // invalidate cached areas
-      this.firstLeadArea = null;
-      this.secondLeadArea = null;
-      this.firstLeadStripeArea = null;
-      this.secondLeadStripeArea = null;
+      body = null;
     }
   }
 
@@ -395,10 +368,12 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
 
     // convert to Area
     for (Path2D p : firstCurves) {
-      firstLeadArea.add(new Area(stroke.createStrokedShape(p)));
+      // firstLeadArea
+      body[0].add(new Area(stroke.createStrokedShape(p)));
     }
     for (Path2D p : secondCurves) {
-      secondLeadArea.add(new Area(stroke.createStrokedShape(p)));
+      // secondLeadArea
+      body[1].add(new Area(stroke.createStrokedShape(p)));
     }
 
     // at overlapping points, decide which lead goes on top and clear the overlapping area from the
@@ -412,23 +387,24 @@ public class TwistedWire extends AbstractCurvedComponent implements IContinuity 
 
       if (i % 2 != 0) {
         pointRect1.intersect(firstLeadArea);
-        secondLeadArea.subtract(pointRect1);
+        // secondLeadArea
+        body[1].subtract(pointRect1);
       } else {
         pointRect1.intersect(secondLeadArea);
-        firstLeadArea.subtract(pointRect1);
+        // firstLeadArea
+        body[0].subtract(pointRect1);
       }
 
       if (i == polygon.size() - 1) {
-        Area pointRect2 =
-            new Area(
-                new Rectangle2D.Double(
-                    line.getX2() - rectSize / 2, line.getY2() - rectSize / 2, rectSize, rectSize));
+        Area pointRect2 = Area.centeredSquare(line.getX2(), line.getY2(), rectSize);
         if (i % 2 == 0) {
           pointRect2.intersect(firstLeadArea);
-          secondLeadArea.subtract(pointRect2);
+          // secondLeadArea
+          body[1].subtract(pointRect2);
         } else {
           pointRect2.intersect(secondLeadArea);
-          firstLeadArea.subtract(pointRect2);
+          // firstLeadArea
+          body[0].subtract(pointRect2);
         }
       }
     }

@@ -50,6 +50,18 @@ public abstract class AbstractShape extends AbstractTransparentComponent {
         };
   }
 
+  protected Point firstPoint() {
+    return new Point(
+        Math.min(controlPoints[0].x, controlPoints[1].x),
+        Math.min(controlPoints[0].y, controlPoints[1].y));
+  }
+
+  protected Point secondPoint() {
+    return new Point(
+        Math.max(controlPoints[0].x, controlPoints[1].x),
+        Math.max(controlPoints[0].y, controlPoints[1].y));
+  }
+
   @EditableProperty(name = "Color")
   public Color getColor() {
     return color;

@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.geom.Rectangle2D;
 import org.diylc.common.ObjectCache;
@@ -252,12 +251,6 @@ public class PotentiometerPanel extends AbstractPotentiometer {
       }
     }
     return body;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    super.setControlPoint(point, index);
-    body = null;
   }
 
   @Override

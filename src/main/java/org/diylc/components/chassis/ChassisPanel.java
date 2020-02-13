@@ -26,6 +26,7 @@ import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
+import org.diylc.components.Area;
 import org.diylc.components.shapes.AbstractShape;
 import org.diylc.core.ComponentState;
 import org.diylc.core.IDrawingObserver;

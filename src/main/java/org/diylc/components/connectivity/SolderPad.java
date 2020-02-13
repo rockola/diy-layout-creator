@@ -84,7 +84,7 @@ public class SolderPad extends AbstractComponent {
     double holeDiameter = getHoleSize().convertToPixels();
     g2d.setColor(tryColor(false, color));
     drawingObserver.startTrackingContinuityArea(true);
-    Point point = controlPoint[0];
+    Point point = controlPoints[0];
     switch (type) {
       case ROUND:
         g2d.fill(Area.circle(point, diameter));

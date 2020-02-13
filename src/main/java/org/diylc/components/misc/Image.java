@@ -23,7 +23,6 @@ package org.diylc.components.misc;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -59,7 +58,6 @@ public class Image extends AbstractTransparentComponent {
 
   public static final String DEFAULT_TEXT = Config.getString("components.double-click-to-edit");
 
-  private Point point = new Point(0, 0);
   private byte[] data;
   private Byte scale;
   private byte newScale = DEFAULT_SCALE;
@@ -82,16 +80,15 @@ public class Image extends AbstractTransparentComponent {
     }
   }
 
-  {
-    image = new ImageIcon(ICON.getImage());
-  }
-
   @Override
   public String getControlPointNodeName(int index) {
     return null;
   }
 
   public Image() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+    image = new ImageIcon(ICON.getImage());
     try {
       data = IOUtils.toByteArray(Image.class.getResourceAsStream("/org/diylc/images/image.png"));
     } catch (IOException e) {
@@ -110,8 +107,8 @@ public class Image extends AbstractTransparentComponent {
     Shape clip = g2d.getClip().getBounds();
     if (!clip.intersects(
         new Rectangle2D.Double(
-            point.getX(),
-            point.getY(),
+            controlPoints[0].getX(),
+            controlPoints[0].getY(),
             getImage().getIconWidth() * s,
             getImage().getIconHeight() * s))) {
       return;
@@ -119,8 +116,8 @@ public class Image extends AbstractTransparentComponent {
 
     Composite oldComposite = setTransparency(g2d);
     g2d.scale(s, s);
-    int x = (int) (point.x / s);
-    int y = (int) (point.y / s);
+    int x = (int) (controlPoints[0].x / s);
+    int y = (int) (controlPoints[0].y / s);
     g2d.drawImage(getImage().getImage(), x, y, null);
     g2d.setComposite(oldComposite);
 
@@ -129,8 +126,8 @@ public class Image extends AbstractTransparentComponent {
       g2d.setColor(SELECTION_COLOR);
       g2d.setStroke(ObjectCache.getInstance().fetchBasicStroke(1f));
       g2d.drawRect(
-          point.x,
-          point.y,
+          controlPoints[0].x,
+          controlPoints[0].y,
           (int) (getImage().getIconWidth() * s),
           (int) (getImage().getIconHeight() * s));
     }
@@ -138,22 +135,7 @@ public class Image extends AbstractTransparentComponent {
 
   @Override
   public void drawIcon(Graphics2D g2d, int width, int height) {
-    g2d.drawImage(ICON.getImage(), point.x, point.y, null);
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
+    g2d.drawImage(ICON.getImage(), controlPoints[0].x, controlPoints[0].y, null);
   }
 
   public ImageIcon getImage() {

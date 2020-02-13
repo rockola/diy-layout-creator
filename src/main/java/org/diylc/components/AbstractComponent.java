@@ -410,7 +410,7 @@ public abstract class AbstractComponent {
   public final void setControlPoint(Point point, int nth) {
     if (nth >= 0 && nth < getControlPointCount()) {
       controlPoints[nth].setLocation(point);
-      lastupdatedPoint = nth;
+      lastUpdatedPoint = nth;
       body = null;
     } else {
       LOG.error(

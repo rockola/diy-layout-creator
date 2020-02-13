@@ -156,12 +156,14 @@ public class WrapLabel extends AbstractComponent {
       IDrawingObserver drawingObserver) {
     g2d.setColor(componentState.isSelected() ? LABEL_COLOR_SELECTED : color);
     g2d.setFont(font);
-    firstPoint = new Point(
-        Math.min(controlPoints[0].x, controlPoints[1].x),
-        Math.min(controlPoints[0].y, controlPoints[1].y));
-    secondPoint = new Point(
-        Math.max(controlPoints[0].x, controlPoints[1].x),
-        Math.max(controlPoints[0].y, controlPoints[1].y));
+    Point firstPoint =
+        new Point(
+            Math.min(controlPoints[0].x, controlPoints[1].x),
+            Math.min(controlPoints[0].y, controlPoints[1].y));
+    Point secondPoint =
+        new Point(
+            Math.max(controlPoints[0].x, controlPoints[1].x),
+            Math.max(controlPoints[0].y, controlPoints[1].y));
     int x = firstPoint.x;
     int y = firstPoint.y;
     int maxWidth = secondPoint.x - firstPoint.x;

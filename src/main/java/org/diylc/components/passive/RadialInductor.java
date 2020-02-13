@@ -71,7 +71,6 @@ public class RadialInductor extends AbstractRadialComponent {
 
   public RadialInductor() {
     super();
-    valueUnit = SiUnit.HENRY;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.labelColor = TICK_COLOR;

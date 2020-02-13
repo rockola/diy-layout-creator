@@ -23,7 +23,6 @@ package org.diylc.components.connectivity;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.OrientationHV;
 import org.diylc.common.SimpleComponentTransformer;
@@ -58,8 +57,12 @@ public class CutLine extends AbstractTransparentComponent {
   private Size width = WIDTH;
   private Size length = LENGTH;
   private Color color = COLOR;
-  private Point point = new Point(0, 0);
   private OrientationHV orientation = OrientationHV.VERTICAL;
+
+  CutLine() {
+    super();
+    controlPoints = getFreshControlPoints(1);
+  }
 
   @Override
   public void draw(
@@ -76,10 +79,10 @@ public class CutLine extends AbstractTransparentComponent {
     boolean isHorizontal = getOrientation() == OrientationHV.HORIZONTAL;
     Composite oldComposite = setTransparency(g2d);
     g2d.drawLine(
-        point.x,
-        point.y,
-        isHorizontal ? point.x + l : point.x,
-        isHorizontal ? point.y : point.y + l);
+        controlPoints[0].x,
+        controlPoints[0].y,
+        isHorizontal ? controlPoints[0].x + l : controlPoints[0].x,
+        isHorizontal ? controlPoints[0].y : controlPoints[0].y + l);
     g2d.setComposite(oldComposite);
   }
 
@@ -115,21 +118,6 @@ public class CutLine extends AbstractTransparentComponent {
 
   public void setOrientation(OrientationHV orientation) {
     this.orientation = orientation;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return 1;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return point;
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.point.setLocation(point);
   }
 
   @EditableProperty(name = "Color")

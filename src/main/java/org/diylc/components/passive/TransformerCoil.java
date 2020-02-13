@@ -118,17 +118,6 @@ public class TransformerCoil extends AbstractComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return this.controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
-    this.body = null;
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
   }

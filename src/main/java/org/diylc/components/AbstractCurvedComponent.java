@@ -49,7 +49,7 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
   protected LineStyle style = LineStyle.SOLID;
   protected Boolean smooth = true;
 
-  AbstractCurvedComponent() {
+  public AbstractCurvedComponent() {
     super();
     controlPoints =
         new Point[] {
@@ -106,15 +106,13 @@ public abstract class AbstractCurvedComponent extends AbstractTransparentCompone
 
     // smoothen the curve if needed
     if (getSmooth() && lastUpdatedPoint >= 0) {
-      if (getPointCount() == PointCount.FIVE
-          && (lastUpdatedPoint == 1 || lastUpdatedPoint == 2)) {
+      if (getPointCount() == PointCount.FIVE && (lastUpdatedPoint == 1 || lastUpdatedPoint == 2)) {
         p[3] = findThirdPoint(p[2], p[1]);
       }
       if (getPointCount() == PointCount.FIVE && lastUpdatedPoint == 3) {
         p[1] = findThirdPoint(p[2], p[3]);
       }
-      if (getPointCount() == PointCount.SEVEN
-          && (lastUpdatedPoint == 2 || lastUpdatedPoint == 3)) {
+      if (getPointCount() == PointCount.SEVEN && (lastUpdatedPoint == 2 || lastUpdatedPoint == 3)) {
         p[4] = findThirdPoint(p[3], p[2]);
       }
       if (getPointCount() == PointCount.SEVEN && lastUpdatedPoint == 4) {

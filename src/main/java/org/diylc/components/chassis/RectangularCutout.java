@@ -22,6 +22,7 @@ package org.diylc.components.chassis;
 
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.SimpleComponentTransformer;
 import org.diylc.components.AbstractComponent;
@@ -64,6 +65,8 @@ public class RectangularCutout extends AbstractShape {
     g2d.setStroke(
         ObjectCache.getInstance().fetchBasicStroke((int) borderThickness.convertToPixels()));
     int radius = (int) edgeRadius.convertToPixels();
+    Point firstPoint = firstPoint();
+    Point secondPoint = secondPoint();
     if (!componentState.isDragging()) {
       Composite oldComposite = setTransparency(g2d);
       g2d.setColor(color);

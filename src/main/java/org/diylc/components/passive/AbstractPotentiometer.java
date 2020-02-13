@@ -20,7 +20,6 @@
 
 package org.diylc.components.passive;
 
-import java.awt.Point;
 import org.diylc.common.Orientation;
 import org.diylc.components.AbstractTransparentComponent;
 import org.diylc.core.annotations.EditableProperty;

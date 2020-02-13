@@ -59,7 +59,6 @@ public class AirCoreInductor extends AbstractLeadedComponent {
 
   public AirCoreInductor() {
     super();
-    valueUnit = SiUnit.HENRY;
     this.bodyColor = BODY_COLOR;
     this.borderColor = BORDER_COLOR;
     this.leadColor = COPPER_COLOR;

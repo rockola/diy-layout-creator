@@ -27,7 +27,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import org.diylc.common.Display;
 import org.diylc.common.ObjectCache;
 import org.diylc.common.Orientation;
@@ -101,11 +100,6 @@ public class MiniRelay extends AbstractTransparentComponent {
     updateControlPoints();
     // Reset body shape.
     body = null;
-  }
-
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
   }
 
   @Override
@@ -215,13 +209,7 @@ public class MiniRelay extends AbstractTransparentComponent {
                       : ULTRA_WIDTH.convertToPixels());
           x -= bodyMargin;
           y -= bodyMargin;
-          indentation =
-              new Area(
-                  new Rectangle2D.Double(
-                      centerX - indentationSize / 2,
-                      y - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.centeredSquare(centerX, y, indentationSize);
           break;
         case _90:
           width =
@@ -236,13 +224,7 @@ public class MiniRelay extends AbstractTransparentComponent {
                       : ULTRA_HEIGHT.convertToPixels());
           x -= -bodyMargin + width;
           y -= bodyMargin;
-          indentation =
-              new Area(
-                  new Rectangle2D.Double(
-                      x + width - indentationSize / 2,
-                      centerY - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.centeredSquare(x + width, centerY, indentationSize);
           break;
         case _180:
           width =
@@ -257,13 +239,7 @@ public class MiniRelay extends AbstractTransparentComponent {
                       : ULTRA_WIDTH.convertToPixels());
           x -= rowSpacing + bodyMargin;
           y -= -bodyMargin + height;
-          indentation =
-              new Area(
-                  new Rectangle2D.Double(
-                      centerX - indentationSize / 2,
-                      y + height - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.centeredSquare(centerX, y, indentationSize);
           break;
         case _270:
           width =
@@ -278,26 +254,12 @@ public class MiniRelay extends AbstractTransparentComponent {
                       : ULTRA_HEIGHT.convertToPixels());
           x -= bodyMargin;
           y -= bodyMargin + rowSpacing;
-          indentation =
-              new Area(
-                  new Rectangle2D.Double(
-                      x - indentationSize / 2,
-                      centerY - indentationSize / 2,
-                      indentationSize,
-                      indentationSize));
+          indentation = Area.centeredSquare(x, centerY, indentationSize);
           break;
         default:
           throw new RuntimeException("Unexpected orientation: " + orientation);
       }
-      body[0] =
-          new Area(
-              new RoundRectangle2D.Double(
-                  centerX - width / 2,
-                  centerY - height / 2,
-                  width,
-                  height,
-                  EDGE_RADIUS,
-                  EDGE_RADIUS));
+      body[0] = Area.centeredRoundRect(centerX, centerY, width, height, EDGE_RADIUS);
       body[1] = indentation;
       if (indentation != null) {
         indentation.intersect(body[0]);

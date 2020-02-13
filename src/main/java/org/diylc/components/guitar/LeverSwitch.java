@@ -292,18 +292,6 @@ public class LeverSwitch extends AbstractTransparentComponent implements ISwitch
     return true;
   }
 
-  @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
-  public void setControlPoint(Point point, int index) {
-    this.controlPoints[index].setLocation(point);
-    // Invalidate the body
-    body = null;
-  }
-
   @EditableProperty
   public Orientation getOrientation() {
     return orientation;

@@ -59,7 +59,6 @@ public class CapacitorSymbol extends AbstractSchematicLeadedSymbol {
 
   public CapacitorSymbol() {
     super();
-    valueUnit = SiUnit.FARAD;
   }
 
   @ComponentValue(SiUnit.VOLT)

@@ -93,18 +93,8 @@ public class FuseHolderPanel extends AbstractMultiPartComponent {
   }
 
   @Override
-  public Point getControlPoint(int index) {
-    return controlPoints[index];
-  }
-
-  @Override
   public boolean isControlPointSticky(int index) {
     return true;
-  }
-
-  @Override
-  public int getControlPointCount() {
-    return controlPoints.length;
   }
 
   @EditableProperty
