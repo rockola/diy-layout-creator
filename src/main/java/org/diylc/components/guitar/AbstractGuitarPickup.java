@@ -162,13 +162,6 @@ public abstract class AbstractGuitarPickup extends AbstractTransparentComponent 
   }
 
   @Override
-  public void setControlPoint(Point point, int index) {
-    getControlPoints()[index].setLocation(point);
-    // Invalidate the body
-    body = null;
-  }
-
-  @Override
   public boolean canPointMoveFreely(int pointIndex) {
     return false;
   }
